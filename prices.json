@@ -1,0 +1,30 @@
+{
+  "version": 1,
+  "updated": "2026-10-27",
+  "items": {
+    "ile-de-france/paris/restaurant/arpege": [
+      {
+        "meal": "午餐套餐",
+        "currency": "EUR",
+        "min": 260,
+        "max": 260,
+        "basis": "每位套餐价格，并非完整用餐人均",
+        "includes": "含服务费；饮品及额外加点另计，季节菜单以官网为准",
+        "checked": "2026-10-27",
+        "source": "https://www.alain-passard.com/wp-content/uploads/2026/03/LUNCH-Menu-%F0%9F%87%BA%F0%9F%87%B8.pdf"
+      }
+    ],
+    "capital-region/copenhagen/restaurant/geranium": [
+      {
+        "meal": "午餐 / 晚餐品鉴菜单",
+        "currency": "DKK",
+        "min": 4500,
+        "max": 4500,
+        "basis": "每位 The Autumn Universe 套餐价格",
+        "includes": "酒水搭配另计；部分信用卡可能收取手续费，订金不是套餐全价",
+        "checked": "2026-10-27",
+        "source": "https://www.geranium.dk/menu"
+      }
+    ]
+  }
+}

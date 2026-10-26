@@ -1,0 +1,32 @@
+name: Check upstream data
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '15 2 * * 1'
+permissions:
+  contents: read
+jobs:
+  compare:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python tools/check_updates.py --out update-report.json
+      - uses: actions/upload-artifact@v4
+        with:
+          name: upstream-data-review
+          path: update-report.json
+          retention-days: 30
+      - name: Summarize candidate differences
+        run: |
+          python - <<'PY'
+          import json, os
+          r=json.load(open('update-report.json'))
+          with open(os.environ['GITHUB_STEP_SUMMARY'],'a') as f:
+              f.write('# Upstream review\n\n')
+              f.write('Compared with published snapshot '+r['baseline_snapshot']+'.\n\n')
+              for k in ['added','removed','award_changes']: f.write(f'- {k}: {len(r[k])}\n')
+              f.write('\n'+r['notice']+'\n\nDownload the artifact for details.\n')
+          PY
