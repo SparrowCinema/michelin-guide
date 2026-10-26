@@ -30,3 +30,12 @@ test('half-star ratings persist with existing integer scores',()=>{
  assert.equal(p.records.a.rating,3.5);assert.equal(p.records.b.rating,5);assert.equal(p.records.c.rating,.5);assert.equal(p.records.d.rating,0);
  const restored=MG.personal(JSON.parse(JSON.stringify(p)),byU);assert.equal(restored.records.a.rating,3.5);
 });
+
+test('multiple meals survive validation, JSON backups and merging by stable entry ID',()=>{
+ const old=MG.personal({records:{a:{visits:[{id:'first',date:'2025-03-01',rating:3.5,note:'first note'},{id:'second',date:'2025-04-02',rating:5,note:'second note'}]}}},{a:{}});
+ assert.equal(old.records.a.rating,5);assert.equal(old.records.a.visits.length,2);
+ const incoming=MG.personal({records:{a:{visits:[{id:'first',rating:1,note:'overwrite'},{id:'third',date:'2025-05-03',rating:4.5,note:'third note'},{id:'third',rating:2}]}}},{a:{}});
+ const merged=MG.mergePersonal(old,incoming),restored=MG.personal(JSON.parse(JSON.stringify(merged)),{a:{}});
+ assert.equal(restored.records.a.visits.length,3);assert.equal(restored.records.a.visits.find(v=>v.id==='first').note,'first note');assert.equal(restored.records.a.visits.find(v=>v.id==='third').rating,4.5);assert.equal(restored.records.a.rating,5);
+ const tenth=MG.personal({records:{a:{visits:Array.from({length:10},(_,i)=>({id:'meal-'+i,date:'2025-01-01',rating:i%2?4.5:5,note:'Meal '+i}))}}},{a:{}});assert.equal(tenth.records.a.visits.length,10);
+});

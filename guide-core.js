@@ -35,7 +35,10 @@
     if(raw.records&&typeof raw.records==='object')for(const [u,r] of Object.entries(raw.records)){
       if(!validID(u)||!r||typeof r!=='object')continue;
       const date=typeof r.date==='string'&&/^\d{4}-\d{2}-\d{2}$/.test(r.date)?r.date:'';
-      records[u]={date,rating:Number.isFinite(r.rating)&&r.rating>=0&&r.rating<=5&&Number.isInteger(r.rating*2)?r.rating:0,note:typeof r.note==='string'?r.note.slice(0,3000):''};
+      const clean=v=>({date:typeof v.date==='string'&&/^\d{4}-\d{2}-\d{2}$/.test(v.date)?v.date:'',rating:Number.isFinite(v.rating)&&v.rating>=0&&v.rating<=5&&Number.isInteger(v.rating*2)?v.rating:0,note:typeof v.note==='string'?v.note.slice(0,3000):''});
+      const record=clean(r);
+      if(Array.isArray(r.visits)){const seen=new Set();record.visits=r.visits.filter(v=>v&&typeof v==='object').map((v,i)=>({...clean(v),id:typeof v.id==='string'&&/^[a-zA-Z0-9_-]{1,100}$/.test(v.id)?v.id:'legacy-'+i})).filter(v=>{if(seen.has(v.id))return false;seen.add(v.id);return true;});if(record.visits.length)Object.assign(record,clean(record.visits[record.visits.length-1]));}
+      records[u]=record;
     }
     return {version:2,trips,records};
   }
@@ -45,7 +48,13 @@
       if(prev){prev.items=[...new Set([...prev.items,...t.items])];}else trips.push(t);}
     if(trips.length>300)throw new Error('旅行清单超过 300 个，请拆分备份');
     // Existing personal notes win when merging a backup; no silent overwrite.
-    return {version:2,trips,records:Object.assign(Object.create(null),incoming.records,old.records)};
+    const records=Object.assign(Object.create(null),incoming.records,old.records);
+    for(const [u,r] of Object.entries(old.records)){const other=incoming.records[u];if(!other||!Array.isArray(r.visits)&&!Array.isArray(other.visits))continue;
+      const entries=v=>Array.isArray(v.visits)?v.visits:((v.date||v.rating||v.note)?[{id:'legacy',date:v.date,rating:v.rating,note:v.note}]:[]);
+      const visits=entries(other),current=entries(r),currentIDs=new Set(current.map(v=>v.id));
+      if(visits.length||current.length)records[u]={...r,visits:[...visits.filter(v=>!currentIDs.has(v.id)),...current]};
+    }
+    return {version:2,trips,records};
   }
   const api={norm,index,near,matcher,personal,mergePersonal};
   if(typeof module!=='undefined')module.exports=api;else root.MG=api;

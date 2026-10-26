@@ -5,7 +5,7 @@ const assert=require('node:assert/strict'),fs=require('node:fs'),path=require('n
 const {chromium}=require(process.env.PLAYWRIGHT_MODULE||'playwright');
 (async()=>{
   const base=path.resolve(__dirname,'..');
-  const previousCache='mg-v15';
+  const previousCache='mg-v16';
   const cacheName=fs.readFileSync(path.join(base,'sw.js'),'utf8').match(/const CACHE = "([^"]+)"/)[1];
   // A new page must never load an old cached script: index.html asset versions must match sw.js.
   const swText=fs.readFileSync(path.join(base,'sw.js'),'utf8'),assetVer=swText.match(/const ASSET_VER = "([^"]+)"/)[1],indexText=fs.readFileSync(path.join(base,'index.html'),'utf8');
@@ -37,13 +37,18 @@ const {chromium}=require(process.env.PLAYWRIGHT_MODULE||'playwright');
     // Only Leaflet assets/tiles are stubbed, so assertions do not depend on external map services.
     const leaflet=path.dirname(require.resolve(process.env.LEAFLET_MODULE||'leaflet'));
     await page.route(/https:\/\/.*leaflet.*\.(js|css)$/,route=>route.fulfill({path:path.join(leaflet,route.request().url().endsWith('.css')?'leaflet.css':'leaflet.js'),contentType:route.request().url().endsWith('.css')?'text/css':'text/javascript'}));
-    await page.route(/https:\/\/.*(autonavi|arcgisonline|tile\.openstreetmap).*$/,route=>route.fulfill({status:200,contentType:'image/png',body:Buffer.from('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+aN1sAAAAASUVORK5CYII=','base64')}));
+    await page.route(/https:\/\/.*(autonavi|arcgisonline|tile\.openstreetmap).*$/,route=>route.fulfill({status:200,headers:{'Access-Control-Allow-Origin':'*'},contentType:'image/png',body:Buffer.from('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+aN1sAAAAASUVORK5CYII=','base64')}));
     await page.goto(url);await page.waitForFunction(()=>typeof DB!=='undefined'&&DB&&upLoaded);
     await page.locator('#tabbar [data-tab="me"]').click();
     assert(await page.locator('.pp-cover').isVisible());
     if(process.env.SCREENSHOT_DIR)await page.screenshot({path:path.join(process.env.SCREENSHOT_DIR,'passport-cover.png')});
-    await page.locator('[data-passport-open]').click();assert(await page.locator('.pp-identity').isVisible());
-    await page.locator('[data-passport-tab="stamps"]').click();assert(await page.locator('.pp-blank-stamp').isVisible());assert.equal(await page.locator('#passportMap').count(),0);
+    await page.locator('.pp-cover').scrollIntoViewIfNeeded();
+    const coverBox=await page.locator('.pp-cover').boundingBox();
+    await cdp.send('Input.dispatchTouchEvent',{type:'touchStart',touchPoints:[{x:coverBox.x+coverBox.width*.8,y:coverBox.y+coverBox.height/2}]});
+    for(let i=1;i<=8;i++){await cdp.send('Input.dispatchTouchEvent',{type:'touchMove',touchPoints:[{x:coverBox.x+coverBox.width*(.8-i*.07),y:coverBox.y+coverBox.height/2}]});await page.waitForTimeout(20);}
+    await cdp.send('Input.dispatchTouchEvent',{type:'touchEnd',touchPoints:[]});await page.waitForFunction(()=>PASSPORT.open);
+    assert(await page.locator('.pp-turning-leaf').isVisible());assert(await page.locator('.pp-identity').isVisible());
+    await page.waitForFunction(()=>!PASSPORT.busy);assert(await page.locator('.pp-visas').isVisible());assert(await page.locator('.pp-blank-stamp').isVisible());assert.equal(await page.locator('#passportMap').count(),0);
     await page.locator('[data-passport-browse]').click();
     assert(!(await page.locator('#browse').innerText()).includes('快照'));
     assert(!(await page.locator('#browse').innerText()).includes('数据更新'));
@@ -61,25 +66,25 @@ const {chromium}=require(process.env.PLAYWRIGHT_MODULE||'playwright');
     await page.locator('.restaurant-title').first().click();assert(new URL(page.url()).searchParams.get('restaurant'));
     assert.equal(await page.locator('#detailTitle').evaluate(el=>getComputedStyle(el).outlineStyle),'none');
     assert(!(await page.locator('#detailBody').innerText()).includes('快照'));
-    await page.locator('.detail-record>summary').click();await page.fill('#visitDate','2026-11-26');await page.locator('[data-rating-star="4"]').click({position:{x:6,y:18}});assert.equal(await page.inputValue('#visitRating'),'3.5');await page.locator('#starRating').press('ArrowRight');assert.equal(await page.inputValue('#visitRating'),'4');await page.locator('#starRating').press('ArrowLeft');await page.fill('#visitNote','旅途笔记 <script>');await page.locator('#visitForm button[type="submit"]').click();
+    assert(await page.locator('.detail-record').evaluate(el=>el.open));await page.fill('#visitDate','2026-11-26');await page.locator('[data-rating-star="4"]').click({position:{x:6,y:18}});assert.equal(await page.inputValue('#visitRating'),'3.5');await page.locator('#starRating').press('ArrowRight');assert.equal(await page.inputValue('#visitRating'),'4');await page.locator('#starRating').press('ArrowLeft');await page.fill('#visitNote','旅途笔记 <script>');await page.locator('#visitForm button[type="submit"]').click();
     assert.equal(await page.evaluate(()=>favOf(document.getElementById('detailDlg').dataset.u)),2); // saving the rating marks 去过
     assert(!(await page.locator('#detailDlg').evaluate(d=>d.open)));assert((await page.locator('#toast').innerText()).includes('已保存'));
     await page.locator('.restaurant-title').first().click();assert.equal(await page.inputValue('#visitNote'),'旅途笔记 <script>');
     assert.equal(await page.inputValue('#visitRating'),'3.5');
     const historyHTML=await page.evaluate(()=>upHistory({h:'--g2',l:1}));assert(!/2022|2023|2024|暂无记录/.test(historyHTML));assert(historyHTML.includes('2025')&&historyHTML.includes('2026'));
     // Body scrolling is preserved; the persistent header dismisses from any depth in one short swipe.
-    await page.locator('.detail-record>summary').click();
+    assert(await page.locator('.detail-record').evaluate(el=>el.open));
     await page.evaluate(()=>{const d=document.getElementById('detailDlg'),target=document.getElementById('detailTitle');
       const swipe=()=>{const fire=(type,y)=>{const t=new Touch({identifier:1,target,clientX:100,clientY:y});target.dispatchEvent(new TouchEvent(type,{bubbles:true,cancelable:true,touches:type==='touchend'?[]:[t],changedTouches:[t]}));};fire('touchstart',100);fire('touchmove',230);fire('touchend',230);};
       d.scrollTop=150;swipe();if(!d.open)throw new Error('Closed during inner scroll');d.scrollTop=0;swipe();});
     await page.waitForFunction(()=>!document.getElementById('detailDlg').open&&!new URL(location.href).searchParams.has('restaurant'));
     await page.locator('.restaurant-title').first().click();
     const detailURL=page.url();await page.reload();await page.waitForSelector('#detailDlg[open]');assert.equal(await page.inputValue('#visitNote'),'旅途笔记 <script>');assert.equal(page.url(),detailURL);assert.equal(await page.inputValue('#visitRating'),'3.5');
-    if(process.env.SCREENSHOT_DIR){await page.screenshot({path:path.join(process.env.SCREENSHOT_DIR,'detail-mobile.png')});await page.locator('.detail-record>summary').click();await page.locator('#starRating').scrollIntoViewIfNeeded();await page.screenshot({path:path.join(process.env.SCREENSHOT_DIR,'rating-mobile.png')});}
+    if(process.env.SCREENSHOT_DIR){await page.screenshot({path:path.join(process.env.SCREENSHOT_DIR,'detail-mobile.png')});assert(await page.locator('.detail-record').evaluate(el=>el.open));await page.locator('#starRating').scrollIntoViewIfNeeded();await page.screenshot({path:path.join(process.env.SCREENSHOT_DIR,'rating-mobile.png')});}
     await page.locator('#detailDlg .close[data-close]').click();
     // An open restaurant freezes the visual background, including gestures at scroll edges.
     const background=await page.evaluate(()=>{window.scrollTo(0,500);return {y:scrollY,top:document.getElementById('list').getBoundingClientRect().top};});
-    await page.evaluate(()=>upOpenDetail(DB.rows[0].u));await page.locator('.detail-record>summary').click();
+    await page.evaluate(()=>upOpenDetail(DB.rows[0].u));assert(await page.locator('.detail-record').evaluate(el=>el.open));
     const assertFrozen=async()=>{const state=await page.evaluate(()=>({fixed:getComputedStyle(document.body).position,top:document.getElementById('list').getBoundingClientRect().top}));assert.equal(state.fixed,'fixed');assert(Math.abs(state.top-background.top)<1,'Background must not move behind the modal');};
     await assertFrozen();
     let detailBox=await page.locator('#detailDlg').boundingBox();await touchSwipe(detailBox.x+8,detailBox.y+detailBox.height-65,-180);
@@ -129,6 +134,7 @@ const {chromium}=require(process.env.PLAYWRIGHT_MODULE||'playwright');
     if(process.env.SCREENSHOT_DIR)await page.screenshot({path:path.join(process.env.SCREENSHOT_DIR,'me-mobile.png'),fullPage:true});
     await page.locator('[data-trip-open]').first().click();await page.fill('#tripName','欧洲觅食');await page.locator('#tripForm button').click();assert((await page.locator('#tripCards').innerText()).includes('欧洲觅食'));
     await page.locator('[data-trip-map]').first().click();await page.waitForFunction(()=>MAP.ready&&MAP.layer);assert.equal(await page.evaluate(()=>MAP.layer.getLayers().length),1);
+    const boundState=await page.evaluate(()=>{MAP.m.panTo([89,600],{animate:false});MAP.m.panInsideBounds(MAP.m.options.maxBounds,{animate:false});const c=MAP.m.getCenter();return {lat:c.lat,lng:c.lng,min:MAP.m.options.minZoom};});assert(Math.abs(boundState.lat)<85);assert(Math.abs(boundState.lng)<=180);assert.equal(boundState.min,0);await page.locator('#fitMap').click();
     // Real touch events: a single-finger swipe over the map must scroll the document.
     async function swipeMap(){
       await page.locator('#map').scrollIntoViewIfNeeded();
@@ -171,6 +177,24 @@ const {chromium}=require(process.env.PLAYWRIGHT_MODULE||'playwright');
     await page.locator('[data-trip-city-map]').last().click();await page.waitForFunction(()=>MAP.ready&&MAP.layer.getLayers().length===1);assert(await page.locator('#travelMapTitle').isVisible());
     await page.waitForFunction(()=>filtered().filter(r=>r.lat!=null).every(r=>MAP.m.getBounds().contains(MAP.amap?[r.glat,r.glng]:[r.lat,r.lng])));
     if(process.env.SCREENSHOT_DIR)await page.screenshot({path:path.join(process.env.SCREENSHOT_DIR,'travel-city-map.png')});
+    // Map exports include unvisited trip members and a separate real-coordinate map + dossier.
+    await page.locator('[data-share-map]').click();await page.waitForFunction(()=>!!PASSPORT_SHARE.file);
+    assert.equal(await page.evaluate(()=>PASSPORT_SHARE.kind),'map');assert.equal(await page.evaluate(()=>PASSPORT_SHARE.rows.length),2);
+    assert((await page.locator('#shareStatus').innerText()).includes('地图已加载'));
+    let png=await page.evaluate(async()=>Array.from(new Uint8Array(await PASSPORT_SHARE.file.arrayBuffer())));let mapPNG=Buffer.from(png);assert.equal(mapPNG.readUInt32BE(16),1080);assert.equal(mapPNG.readUInt32BE(20),1680);
+    if(process.env.SCREENSHOT_DIR)fs.writeFileSync(path.join(process.env.SCREENSHOT_DIR,'travel-map-card.png'),mapPNG);
+    await page.locator('#shareSettings>summary').click();await page.selectOption('#shareCity',String(tripFixture.otherCity));await page.waitForFunction(()=>!!PASSPORT_SHARE.file);assert.equal(await page.evaluate(()=>PASSPORT_SHARE.rows.length),1);
+    await page.locator('#passportShareDlg [data-close]').click();
+    const mapLongFixture=await page.evaluate(()=>{const t=PERSONAL.trips[0],items=t.items.slice(),third=DB.rows.find(r=>!items.includes(r.u));t.items.push(third.u);const names=t.items.map(u=>({u,zh:DB.byU[u].zh}));names.forEach(x=>DB.byU[x.u].zh='Restaurant Maison de la Gastronomie — 旅途中值得多次到访的餐厅与旅行纪念');return {items,names};});
+    await page.locator('[data-share-map]').click();await page.waitForFunction(()=>!!PASSPORT_SHARE.file);await page.locator('#shareSettings>summary').click();await page.fill('#shareTitle','从上海到世界各地的美食旅行记录与难忘相遇珍藏册');await page.waitForFunction(()=>!!PASSPORT_SHARE.file);
+    png=await page.evaluate(async()=>Array.from(new Uint8Array(await PASSPORT_SHARE.file.arrayBuffer())));mapPNG=Buffer.from(png);assert.equal(mapPNG.readUInt32BE(20),1920);if(process.env.SCREENSHOT_DIR)fs.writeFileSync(path.join(process.env.SCREENSHOT_DIR,'travel-map-card-long-text.png'),mapPNG);
+    await page.locator('#passportShareDlg [data-close]').click();await page.evaluate(saved=>{PERSONAL.trips[0].items=saved.items;saved.names.forEach(x=>{if(x.zh===undefined)delete DB.byU[x.u].zh;else DB.byU[x.u].zh=x.zh;});},mapLongFixture);
+    // A failed basemap still produces a clearly labelled geographic schematic, never a broken PNG.
+    await page.evaluate(()=>PASSPORT_SHARE.tiles.forEach((v,k)=>PASSPORT_SHARE.tiles.set(k,Promise.resolve(null))));
+    await page.locator('[data-share-map]').click();await page.waitForFunction(()=>!!PASSPORT_SHARE.file);assert((await page.locator('#shareStatus').innerText()).includes('位置示意图'));
+    if(process.env.SCREENSHOT_DIR){png=await page.evaluate(async()=>Array.from(new Uint8Array(await PASSPORT_SHARE.file.arrayBuffer())));fs.writeFileSync(path.join(process.env.SCREENSHOT_DIR,'travel-map-fallback.png'),Buffer.from(png));}
+    await page.locator('#passportShareDlg [data-close]').click();
+    await page.evaluate(()=>PASSPORT_SHARE.tiles.clear());
     await page.evaluate(id=>{PERSONAL.trips[0].items=PERSONAL.trips[0].items.slice(0,1);upSave(PERSONAL);upApplyTrip(id);render();},tripFixture.id);
     await page.locator('#tabbar [data-tab="list"]').click();await page.locator('#exitJourney').click();
     assert.equal(await page.locator('#budgetPanel').count(),0);await page.evaluate(()=>{S.budget=300;S.currency='EUR';render();});assert.equal(await page.locator('#count').innerText(),'19,721 家');assert(!page.url().includes('budget='));
@@ -181,14 +205,18 @@ const {chromium}=require(process.env.PLAYWRIGHT_MODULE||'playwright');
     if(process.env.SCREENSHOT_DIR)await page.screenshot({path:path.join(process.env.SCREENSHOT_DIR,'me-desktop.png'),fullPage:true});
     // Exercise a full passport with multiple stamp pages, including narrow and dark layouts.
     const savedFavourites=await page.evaluate(()=>JSON.stringify(FAV));
-    await page.evaluate(()=>{const seen=new Set();for(const r of DB.rows){if(!seen.has(r.co)){seen.add(r.co);FAV[r.u]=[2,Date.now()];}if(seen.size===9)break;}PASSPORT.open=true;PASSPORT.tab='stamps';PASSPORT.sheet=0;render();});
+    await page.evaluate(()=>{const seen=new Set();for(const r of DB.rows){if(!seen.has(r.co)){seen.add(r.co);FAV[r.u]=[2,Date.now()];}if(seen.size===9)break;}PASSPORT.open=true;PASSPORT.sheet=0;render();});
     assert(await page.locator('.pp-identity').isVisible());assert(await page.locator('.pp-visas').isVisible());
     assert.equal(await page.locator('.pp-stamp').count(),4);
     if(process.env.SCREENSHOT_DIR)await page.screenshot({path:path.join(process.env.SCREENSHOT_DIR,'passport-spread.png'),fullPage:true});
-    await page.setViewportSize({width:320,height:800});await page.locator('[data-passport-next]').click();assert.equal(await page.locator('.pp-stamp').count(),4);
-    await page.locator('[data-passport-next]').click();assert(await page.locator('[data-passport-next]').isDisabled());assert(await page.locator('.pp-stamp').count()>=1);
+    await page.setViewportSize({width:320,height:800});await page.waitForFunction(()=>!PASSPORT.busy);await page.locator('[data-passport-next]').click();await page.waitForFunction(()=>!PASSPORT.busy);assert.equal(await page.locator('.pp-stamp').count(),4);
+    await page.locator('.pp-book').scrollIntoViewIfNeeded();const spreadBox=await page.locator('.pp-book').boundingBox();
+    await cdp.send('Input.dispatchTouchEvent',{type:'touchStart',touchPoints:[{x:spreadBox.x+spreadBox.width*.85,y:spreadBox.y+spreadBox.height*.5}]});
+    for(let i=1;i<=8;i++){await cdp.send('Input.dispatchTouchEvent',{type:'touchMove',touchPoints:[{x:spreadBox.x+spreadBox.width*.85-i*10,y:spreadBox.y+spreadBox.height*.5}]});await page.waitForTimeout(20);}
+    await cdp.send('Input.dispatchTouchEvent',{type:'touchEnd',touchPoints:[]});await page.waitForFunction(()=>PASSPORT.sheet===2);
+    assert(await page.locator('.pp-turning-leaf').isVisible());if(process.env.SCREENSHOT_DIR)await page.screenshot({path:path.join(process.env.SCREENSHOT_DIR,'passport-page-turn.png')});await page.waitForFunction(()=>!PASSPORT.busy);assert(await page.locator('[data-passport-next]').isDisabled());assert(await page.locator('.pp-stamp').count()>=1);
     assert(!(await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth)));
-    await page.locator('[data-passport-prev]').click();assert.equal(await page.locator('.pp-stamp').count(),4);
+    await page.waitForFunction(()=>!PASSPORT.busy);await page.locator('[data-passport-prev]').click();await page.waitForFunction(()=>!PASSPORT.busy);assert.equal(await page.locator('.pp-stamp').count(),4);
     if(process.env.SCREENSHOT_DIR)await page.screenshot({path:path.join(process.env.SCREENSHOT_DIR,'passport-stamps-mobile.png')});
     await page.evaluate(()=>applyTheme('dark'));
     if(process.env.SCREENSHOT_DIR)await page.screenshot({path:path.join(process.env.SCREENSHOT_DIR,'passport-dark.png')});
@@ -197,21 +225,49 @@ const {chromium}=require(process.env.PLAYWRIGHT_MODULE||'playwright');
     await page.evaluate(saved=>{FAV=JSON.parse(saved);saveFav();S.v='me';applyTheme('light');render();},savedFavourites);
     await page.locator('[data-passport-close]').click();assert(await page.locator('.pp-cover').isVisible());
     // One short pull on the sticky header dismisses a long, scrolled restaurant sheet.
-    await page.evaluate(()=>upOpenDetail(DB.rows[0].u));await page.locator('.detail-record>summary').click();
+    await page.evaluate(()=>upOpenDetail(DB.rows[0].u));assert(await page.locator('.detail-record').evaluate(el=>el.open));
     await page.evaluate(()=>{const d=document.getElementById('detailDlg');d.scrollTop=d.scrollHeight;const target=d.querySelector('.detail-drag');const fire=(type,y)=>{const t=new Touch({identifier:2,target,clientX:120,clientY:y});target.dispatchEvent(new TouchEvent(type,{bubbles:true,cancelable:true,touches:type==='touchend'?[]:[t],changedTouches:[t]}));};fire('touchstart',90);fire('touchmove',128);fire('touchend',128);});
     await page.waitForFunction(()=>!document.getElementById('detailDlg').open);
     // A failed second storage write rolls back both record and visited status.
     const rollback=await page.evaluate(()=>{const u=DB.rows[0].u,old=localStorage.getItem('mg-personal'),fav=localStorage.getItem('mg-fav'),set=Storage.prototype.setItem;let failed=false;Storage.prototype.setItem=function(k,v){if(k==='mg-fav'&&!failed){failed=true;throw new Error('quota');}return set.call(this,k,v);};const ok=upSaveVisit(u,{date:'2020-01-01',rating:1,note:'must roll back'},true);Storage.prototype.setItem=set;return {ok,same:old===localStorage.getItem('mg-personal')&&fav===localStorage.getItem('mg-fav')};});assert.deepEqual(rollback,{ok:false,same:true});
+    // Default-open sections and independent repeated meals: append, edit, delete, reload.
+    const repeatSaved=await page.evaluate(()=>({fav:JSON.stringify(FAV),personal:JSON.stringify(PERSONAL)}));
+    const repeatU=await page.evaluate(()=>DB.rows[0].u);await page.evaluate(u=>upOpenDetail(u),repeatU);
+    assert(await page.locator('.detail-record').evaluate(el=>el.open));
+    if(await page.locator('.detail-history').count())assert(await page.locator('.detail-history').evaluate(el=>el.open));
+    const initialMeals=await page.evaluate(u=>upVisits(u).length,repeatU);
+    await page.locator('#detailDlg [data-add-visit]').click();assert.equal(await page.inputValue('#visitDate'),'');assert.equal(await page.inputValue('#visitRating'),'0');
+    await page.fill('#visitDate','2024-02-03');await page.fill('#visitNote','second meal survives');await page.locator('#starRating').press('End');await page.locator('#visitForm button[type=submit]').click();
+    await page.evaluate(u=>upOpenDetail(u),repeatU);assert.equal(await page.locator('#detailDlg .visit-entry').count(),initialMeals+1);
+    await page.locator('#detailDlg [data-add-visit]').click();await page.fill('#visitDate','2024-05-06');await page.fill('#visitNote','third meal survives');await page.locator('#starRating').press('End');await page.locator('#starRating').press('ArrowLeft');await page.locator('#visitForm button[type=submit]').click();
+    await page.reload();await page.waitForFunction(()=>typeof DB!=='undefined'&&DB&&upLoaded);await page.evaluate(u=>upOpenDetail(u),repeatU);
+    assert.equal(await page.locator('#detailDlg .visit-entry').count(),initialMeals+2);
+    await page.locator('#detailDlg [data-edit-visit]').nth(initialMeals).click();assert.equal(await page.inputValue('#visitNote'),'second meal survives');await page.fill('#visitNote','second meal edited');await page.locator('#visitForm button[type=submit]').click();
+    assert.equal(await page.evaluate(u=>upVisits(u).at(-1).note,repeatU),'third meal survives');
+    await page.evaluate(u=>upOpenDetail(u),repeatU);await page.locator('#detailDlg [data-delete-visit]').nth(initialMeals).click();assert.equal(await page.locator('#detailDlg .visit-entry').count(),initialMeals+1);assert.equal(await page.evaluate(u=>upVisits(u).at(-1).note,repeatU),'third meal survives');
+    for(let i=0;i<8;i++)await page.evaluate(u=>upSaveVisit(u,{date:'2024-06-01',rating:4,note:'repeat'},true,'new'),repeatU);
+    assert.equal(await page.evaluate(u=>upVisits(u).length,repeatU),initialMeals+9);
+    await page.locator('#detailDlg .close[data-close]').click();
+    await page.evaluate(()=>{upOpenShare('');document.getElementById('shareFrom').value='2024-05-01';document.getElementById('shareTo').value='2024-05-31';upRenderShare();});await page.waitForFunction(()=>!!PASSPORT_SHARE.file);
+    assert(await page.evaluate(u=>PASSPORT_SHARE.rows.some(r=>r.u===u),repeatU));assert.equal(await page.evaluate(u=>upShareRecord(DB.byU[u]).date,repeatU),'2024-05-06');assert.equal(await page.evaluate(u=>upShareRecord(DB.byU[u]).rating,repeatU),4.5);
+    await page.locator('#passportShareDlg [data-close]').click();await page.evaluate(saved=>{FAV=JSON.parse(saved.fav);PERSONAL=JSON.parse(saved.personal);saveFav();upSave(PERSONAL);S.v='me';render();},repeatSaved);
     // Generated share cards use all real visits, paginate, export PNG, and scope to a trip.
     const shareSaved=await page.evaluate(()=>({fav:JSON.stringify(FAV),personal:JSON.stringify(PERSONAL)}));
     await page.evaluate(()=>{const rs=DB.rows.slice(0,7);FAV=Object.create(null);PERSONAL.records=Object.create(null);rs.forEach((r,i)=>{FAV[r.u]=[2,Date.now()-i];PERSONAL.records[r.u]={date:'2025-06-'+String(i+1).padStart(2,'0'),rating:i===0?3.5:4,note:'PRIVATE_NOTE_NEVER_ON_CARD'};});upSave(PERSONAL);saveFav();render();});
     await page.locator('[data-passport-share]').click();await page.waitForFunction(()=>!!PASSPORT_SHARE.file);
+    await page.waitForFunction(()=>document.getElementById('sharePreview').complete&&document.getElementById('sharePreview').naturalWidth>0);
+    const previewBox=await page.locator('#sharePreview').boundingBox(),saveBox=await page.locator('#passportShareDlg .share-actions').boundingBox();assert(previewBox.y>=0&&previewBox.y+previewBox.height<=saveBox.y,'Default mobile preview must show the complete exported card above Save');
+    if(process.env.SCREENSHOT_DIR)await page.screenshot({path:path.join(process.env.SCREENSHOT_DIR,'share-mobile-default.png')});
     assert.equal(await page.locator('#sharePage').innerText(),'1 / 2');assert((await page.locator('#shareStatus').innerText()).includes('7 家'));
-    await page.fill('#shareTitle','我的味觉旅行');await page.waitForFunction(()=>!!PASSPORT_SHARE.file);
+    await page.locator('#shareSettings>summary').click();await page.fill('#shareTitle','我的味觉旅行');await page.waitForFunction(()=>!!PASSPORT_SHARE.file);
     if(process.env.SCREENSHOT_DIR){await page.screenshot({path:path.join(process.env.SCREENSHOT_DIR,'share-mobile.png'),fullPage:true});const card=await page.locator('#sharePreview').getAttribute('src');const png=await page.evaluate(async src=>Array.from(new Uint8Array(await (await fetch(src)).arrayBuffer())),card);fs.writeFileSync(path.join(process.env.SCREENSHOT_DIR,'share-card.png'),Buffer.from(png));}
     const shareDownloadPromise=page.waitForEvent('download');await page.locator('#saveShare').click();const shareDownload=await shareDownloadPromise,sharePNG=fs.readFileSync(await shareDownload.path());assert.equal(sharePNG.readUInt32BE(16),1080);assert.equal(sharePNG.readUInt32BE(20),1620);
+    const longOriginal=await page.evaluate(()=>{const rows=PASSPORT_SHARE.rows.slice(0,4);const original=rows.map(r=>({u:r.u,zh:r.zh}));rows.forEach(r=>r.zh='Restaurant Maison de la Gastronomie — 世界各地旅行途中反复到访的餐厅长名称');return original;});
+    await page.fill('#shareTitle','从上海到世界各地的美食旅行记录与难忘相遇珍藏册');await page.waitForFunction(()=>!!PASSPORT_SHARE.file);
+    if(process.env.SCREENSHOT_DIR){const png=await page.evaluate(async()=>Array.from(new Uint8Array(await PASSPORT_SHARE.file.arrayBuffer())));fs.writeFileSync(path.join(process.env.SCREENSHOT_DIR,'share-card-long-text.png'),Buffer.from(png));}
+    await page.evaluate(original=>original.forEach(x=>{if(x.zh===undefined)delete DB.byU[x.u].zh;else DB.byU[x.u].zh=x.zh;}),longOriginal);
     await page.locator('#shareNext').click();await page.waitForFunction(()=>!!PASSPORT_SHARE.file);assert.equal(await page.locator('#sharePage').innerText(),'2 / 2');
-    await page.locator('.share-editor details>summary').click();await page.fill('#shareFrom','2030-01-01');await page.locator('#shareFrom').dispatchEvent('change');
+    await page.locator('#shareDateOptions>summary').click();await page.fill('#shareFrom','2030-01-01');await page.locator('#shareFrom').dispatchEvent('change');
     assert(await page.locator('#saveShare').isDisabled());assert(await page.locator('#sharePreview').isHidden());assert(await page.locator('#shareEmpty').isVisible());
     await page.fill('#shareFrom','');await page.locator('#shareFrom').dispatchEvent('change');await page.waitForFunction(()=>!!PASSPORT_SHARE.file);
     await page.setViewportSize({width:1280,height:900});if(process.env.SCREENSHOT_DIR)await page.screenshot({path:path.join(process.env.SCREENSHOT_DIR,'share-desktop.png'),fullPage:true});assert(!(await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth)));
@@ -222,7 +278,7 @@ const {chromium}=require(process.env.PLAYWRIGHT_MODULE||'playwright');
     await page.setViewportSize({width:1280,height:900});
     await page.locator('#tabsTop [data-tab="list"]').click();
     const desktopBackground=await page.evaluate(()=>{window.scrollTo(0,600);return {y:scrollY,top:document.getElementById('list').getBoundingClientRect().top};});
-    await page.evaluate(()=>upOpenDetail(DB.rows[0].u));await page.locator('.detail-record>summary').click();
+    await page.evaluate(()=>upOpenDetail(DB.rows[0].u));assert(await page.locator('.detail-record').evaluate(el=>el.open));
     detailBox=await page.locator('#detailDlg').boundingBox();await page.mouse.move(detailBox.x+10,detailBox.y+detailBox.height/2);await page.mouse.wheel(0,700);
     await page.waitForFunction(()=>document.getElementById('detailDlg').scrollTop>30);
     assert(Math.abs((await page.locator('#list').boundingBox()).y-desktopBackground.top)<1);
@@ -237,7 +293,7 @@ const {chromium}=require(process.env.PLAYWRIGHT_MODULE||'playwright');
     if(process.env.SCREENSHOT_DIR)await page.screenshot({path:path.join(process.env.SCREENSHOT_DIR,'map-narrow.png'),fullPage:true});
     await page.evaluate(()=>applyTheme('dark'));if(process.env.SCREENSHOT_DIR)await page.screenshot({path:path.join(process.env.SCREENSHOT_DIR,'map-dark.png'),fullPage:true});
     await page.evaluate(()=>applyTheme('light'));await page.locator('#tabbar [data-tab="me"]').click();
-    // Upgrade a seeded v15 cache, keeping the existing data and all personal storage.
+    // Upgrade a seeded v16 cache, keeping the existing data and all personal storage.
     const oldStore=await page.evaluate(()=>localStorage.getItem('mg-personal'));
     await page.evaluate(async previous=>{const c=await caches.open(previous);const req=new Request(new URL('data.json?v='+DATA_VER,location.href));await c.put(req,await fetch(req));await navigator.serviceWorker.register('sw.js');await navigator.serviceWorker.ready;},previousCache);
     await page.waitForFunction(()=>!!navigator.serviceWorker.controller);await page.waitForFunction(async previous=>!(await caches.keys()).includes(previous),previousCache);
@@ -246,6 +302,6 @@ const {chromium}=require(process.env.PLAYWRIGHT_MODULE||'playwright');
     await context.setOffline(true);await page.reload();await page.waitForFunction(()=>typeof DB!=='undefined'&&DB&&upLoaded);assert.equal(await page.evaluate(()=>DB.rows.length),19721);assert.equal(await page.evaluate(()=>PERSONAL.trips[0].name),'欧洲觅食');
     await page.locator('[data-passport-share]').click();await page.waitForFunction(()=>!!PASSPORT_SHARE.file);assert(await page.locator('#sharePreview').isVisible());
     await context.setOffline(false);assert.deepEqual(errors,[]);await context.close();
-    console.log('PASS: generated share PNG/pagination/trip/date/offline export, draft clearing/custom dates/auto-close/storage rollback, sticky-header short swipe, compact directory, touch scroll over passive map, explicit map panning, list jump, desktop wheel scrolling, numbered pins, retina tiles, title focus, narrow/dark layouts, existing search/trips/ratings/backup regression and v15→current offline migration; no browser errors.');
+    console.log('PASS: touch-open passport, simultaneous mobile spread, animated touch page-turn, repeated meals append/edit/delete/reload/backup, bounded world map, map+dossier PNG/long text/fallback/city/planned members, measured share PNG/pagination/historical visit dates/offline export, draft clearing/custom dates/auto-close/storage rollback, sticky-header short swipe, compact directory, touch scroll over passive map, explicit map panning, list jump, desktop wheel scrolling, numbered pins, retina tiles, title focus, narrow/dark layouts, existing search/trips/ratings/backup regression and v16→current offline migration; no browser errors.');
   }finally{await browser.close();server.close();}
 })().catch(e=>{console.error(e);process.exit(1);});
