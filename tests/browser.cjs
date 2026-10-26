@@ -5,7 +5,7 @@ const assert=require('node:assert/strict'),fs=require('node:fs'),path=require('n
 const {chromium}=require(process.env.PLAYWRIGHT_MODULE||'playwright');
 (async()=>{
   const base=path.resolve(__dirname,'..');
-  const previousCache='mg-v13';
+  const previousCache='mg-v14';
   const cacheName=fs.readFileSync(path.join(base,'sw.js'),'utf8').match(/const CACHE = "([^"]+)"/)[1];
   // A new page must never load an old cached script: index.html asset versions must match sw.js.
   const swText=fs.readFileSync(path.join(base,'sw.js'),'utf8'),assetVer=swText.match(/const ASSET_VER = "([^"]+)"/)[1],indexText=fs.readFileSync(path.join(base,'index.html'),'utf8');
@@ -190,7 +190,7 @@ const {chromium}=require(process.env.PLAYWRIGHT_MODULE||'playwright');
     const shareDownloadPromise=page.waitForEvent('download');await page.locator('#saveShare').click();const shareDownload=await shareDownloadPromise,sharePNG=fs.readFileSync(await shareDownload.path());assert.equal(sharePNG.readUInt32BE(16),1080);assert.equal(sharePNG.readUInt32BE(20),1620);
     await page.locator('#shareNext').click();await page.waitForFunction(()=>!!PASSPORT_SHARE.file);assert.equal(await page.locator('#sharePage').innerText(),'2 / 2');
     await page.locator('.share-editor details>summary').click();await page.fill('#shareFrom','2030-01-01');await page.locator('#shareFrom').dispatchEvent('change');
-    assert(await page.locator('#saveShare').isDisabled());assert(await page.locator('#sharePreview').isHidden());
+    assert(await page.locator('#saveShare').isDisabled());assert(await page.locator('#sharePreview').isHidden());assert(await page.locator('#shareEmpty').isVisible());
     await page.fill('#shareFrom','');await page.locator('#shareFrom').dispatchEvent('change');await page.waitForFunction(()=>!!PASSPORT_SHARE.file);
     await page.setViewportSize({width:1280,height:900});if(process.env.SCREENSHOT_DIR)await page.screenshot({path:path.join(process.env.SCREENSHOT_DIR,'share-desktop.png'),fullPage:true});assert(!(await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth)));
     await page.locator('#passportShareDlg [data-close]').click();
@@ -207,7 +207,7 @@ const {chromium}=require(process.env.PLAYWRIGHT_MODULE||'playwright');
     if(process.env.SCREENSHOT_DIR)await page.screenshot({path:path.join(process.env.SCREENSHOT_DIR,'map-narrow.png'),fullPage:true});
     await page.evaluate(()=>applyTheme('dark'));if(process.env.SCREENSHOT_DIR)await page.screenshot({path:path.join(process.env.SCREENSHOT_DIR,'map-dark.png'),fullPage:true});
     await page.evaluate(()=>applyTheme('light'));await page.locator('#tabbar [data-tab="me"]').click();
-    // Upgrade a seeded v13 cache, keeping the existing data and all personal storage.
+    // Upgrade a seeded v14 cache, keeping the existing data and all personal storage.
     const oldStore=await page.evaluate(()=>localStorage.getItem('mg-personal'));
     await page.evaluate(async previous=>{const c=await caches.open(previous);const req=new Request(new URL('data.json?v='+DATA_VER,location.href));await c.put(req,await fetch(req));await navigator.serviceWorker.register('sw.js');await navigator.serviceWorker.ready;},previousCache);
     await page.waitForFunction(()=>!!navigator.serviceWorker.controller);await page.waitForFunction(async previous=>!(await caches.keys()).includes(previous),previousCache);
@@ -216,6 +216,6 @@ const {chromium}=require(process.env.PLAYWRIGHT_MODULE||'playwright');
     await context.setOffline(true);await page.reload();await page.waitForFunction(()=>typeof DB!=='undefined'&&DB&&upLoaded);assert.equal(await page.evaluate(()=>DB.rows.length),19721);assert.equal(await page.evaluate(()=>PERSONAL.trips[0].name),'欧洲觅食');
     await page.locator('[data-passport-share]').click();await page.waitForFunction(()=>!!PASSPORT_SHARE.file);assert(await page.locator('#sharePreview').isVisible());
     await context.setOffline(false);assert.deepEqual(errors,[]);await context.close();
-    console.log('PASS: generated share PNG/pagination/trip/date/offline export, draft clearing/custom dates/auto-close/storage rollback, sticky-header short swipe, compact directory, touch scroll over passive map, explicit map panning, list jump, desktop wheel scrolling, numbered pins, retina tiles, title focus, narrow/dark layouts, existing search/trips/ratings/backup regression and v13→current offline migration; no browser errors.');
+    console.log('PASS: generated share PNG/pagination/trip/date/offline export, draft clearing/custom dates/auto-close/storage rollback, sticky-header short swipe, compact directory, touch scroll over passive map, explicit map panning, list jump, desktop wheel scrolling, numbered pins, retina tiles, title focus, narrow/dark layouts, existing search/trips/ratings/backup regression and v14→current offline migration; no browser errors.');
   }finally{await browser.close();server.close();}
 })().catch(e=>{console.error(e);process.exit(1);});
