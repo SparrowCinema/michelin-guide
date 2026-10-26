@@ -18,7 +18,7 @@
 <meta name="apple-mobile-web-app-title" content="米其林名录">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <!-- ?v= must match ASSET_VER in sw.js: a new page must never run with an old cached script -->
-<link rel="stylesheet" href="upgrade.css?v=15">
+<link rel="stylesheet" href="upgrade.css?v=16">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" href="icon.svg" type="image/svg+xml">
 <link rel="icon" href="icon-192.png" sizes="192x192" type="image/png">
@@ -438,17 +438,17 @@ dialog::backdrop{background:var(--shade)}
 <div id="inappBar" hidden><span>在微信等 App 里无法添加到主屏幕，也可能打不开地图。</span><button type="button" id="inappHow">怎么办</button><button type="button" id="inappX" aria-label="关闭">×</button></div>
 <div id="toast" role="status" aria-live="polite"></div>
 
-<script src="search-aliases.js?v=15"></script>
-<script src="guide-core.js?v=15"></script>
-<script src="upgrade.js?v=15"></script>
-<script src="passport-share.js?v=15"></script>
+<script src="search-aliases.js?v=16"></script>
+<script src="guide-core.js?v=16"></script>
+<script src="upgrade.js?v=16"></script>
+<script src="passport-share.js?v=16"></script>
 <script>
 const CONT=["亚洲","欧洲","北美洲","南美洲","大洋洲"];
 const LVN=["三星","二星","一星","必比登","入选"];
 const LVC=["#7a0d0a","#b3261e","#e0574d","#c98a00","#9a9390"];
 const PIN=["中国内地","中国香港","中国澳门","中国台湾"];
 const REPO="https://github.com/SparrowCinema/michelin-guide";
-const ASSET_VER="15"; // = ?v= on the asset tags above, UPGRADE_VER in upgrade.js and ASSET_VER in sw.js
+const ASSET_VER="16"; // = ?v= on the asset tags above, UPGRADE_VER in upgrade.js and ASSET_VER in sw.js
 const DATA_VER="20261003-2"; // bump whenever data.json changes so browsers skip their cached copy
 const $=id=>document.getElementById(id);
 const esc=s=>String(s).replace(/[&<>"]/g,ch=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[ch]));
@@ -458,6 +458,32 @@ const isPhone=()=>matchMedia("(max-width:700px)").matches;
 // ---- state ----
 const S={v:"list",l:"all",c:"",co:"",ci:"",q:"",cu:"",p:"",f:new Set(),near:false,trip:"",change:"",budget:0,currency:"EUR"};
 let DB=null,page=1,showAllStats=false,ME=null,meTab=1,meOrder="time";
+// Native <dialog> makes the background inert, but does not reliably stop page scrolling
+// (especially touch scrolling in Safari). Freeze the page before focus moves into a modal.
+const MODAL_SCROLL={locked:false,x:0,y:0,body:[],root:[]};
+function modalStyleSnapshot(el,properties){return properties.map(p=>[p,el.style.getPropertyValue(p),el.style.getPropertyPriority(p)]);}
+function modalStyleRestore(el,properties){for(const [p,value,priority] of properties)value?el.style.setProperty(p,value,priority):el.style.removeProperty(p);}
+function lockModalScroll(){
+  if(MODAL_SCROLL.locked)return;
+  const body=document.body,root=document.documentElement,gap=Math.max(0,innerWidth-root.clientWidth),padding=parseFloat(getComputedStyle(body).paddingRight)||0;
+  Object.assign(MODAL_SCROLL,{locked:true,x:scrollX,y:scrollY,body:modalStyleSnapshot(body,['position','top','left','right','width','padding-right']),root:modalStyleSnapshot(root,['overflow','overscroll-behavior'])});
+  root.classList.add('modal-scroll-locked');root.style.setProperty('overflow','hidden');root.style.setProperty('overscroll-behavior','none');
+  body.style.setProperty('position','fixed');body.style.setProperty('top',-MODAL_SCROLL.y+'px');body.style.setProperty('left',-MODAL_SCROLL.x+'px');body.style.setProperty('right','0');body.style.setProperty('width','auto');
+  if(gap)body.style.setProperty('padding-right',padding+gap+'px');
+}
+function syncModalScroll(){
+  if(document.querySelector('dialog[open]')){lockModalScroll();return;}
+  if(!MODAL_SCROLL.locked)return;
+  modalStyleRestore(document.body,MODAL_SCROLL.body);modalStyleRestore(document.documentElement,MODAL_SCROLL.root);
+  document.documentElement.classList.remove('modal-scroll-locked');MODAL_SCROLL.locked=false;
+  window.scrollTo({left:MODAL_SCROLL.x,top:MODAL_SCROLL.y,behavior:'instant'});
+}
+function closeAppDialog(dialog){dialog.close();syncModalScroll();}
+function showAppDialog(dialog){
+  lockModalScroll();try{dialog.showModal();}catch(e){syncModalScroll();throw e;}
+}
+document.addEventListener('close',e=>{if(e.target.tagName==='DIALOG')syncModalScroll();},true);
+new MutationObserver(syncModalScroll).observe(document.body,{subtree:true,attributes:true,attributeFilter:['open'],childList:true});
 // FAV: {michelinPath: [1 想去 | 2 去过, markedAt ms]}
 let FAV={};try{FAV=JSON.parse(localStorage.getItem("mg-fav")||"{}")||{}}catch(e){}
 for(const k in FAV){if(typeof FAV[k]==="number")FAV[k]=[FAV[k],Date.now()]}
@@ -893,8 +919,8 @@ document.addEventListener("click",e=>{const b=e.target.closest(".fav");if(!b)ret
   if(S.v==="me")renderMe()});
 document.querySelectorAll("[data-m]").forEach(b=>b.addEventListener("click",()=>{meTab=+b.dataset.m;renderMe()}));
 document.querySelectorAll("[data-o]").forEach(b=>b.addEventListener("click",()=>{meOrder=b.dataset.o;renderMe()}));
-document.querySelectorAll(".openAbout").forEach(b=>b.addEventListener("click",()=>$("about").showModal()));
-document.querySelectorAll("dialog").forEach(d=>{d.addEventListener("click",e=>{if(e.target===d||e.target.closest("[data-close]"))d.close()})});
+document.querySelectorAll(".openAbout").forEach(b=>b.addEventListener("click",()=>showAppDialog($("about"))));
+document.querySelectorAll("dialog").forEach(d=>{d.addEventListener("click",e=>{if(e.target===d||e.target.closest("[data-close]"))closeAppDialog(d)})});
 window.addEventListener("hashchange",()=>{if(!DB)return;if(readHash()){resolveNames();reset();render()}});
 
 // theme
@@ -912,11 +938,11 @@ $("exportBtn").addEventListener("click",()=>{
   try{const a=document.createElement("a");a.href=URL.createObjectURL(new Blob([txt],{type:"application/json"}));a.download=`米其林清单-${fmtDate(Date.now())}.json`;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(a.href),4000)}catch(e){}
   copyText(txt).then(()=>toast(`已导出 ${data.items.length} 家，同时复制到了剪贴板`),()=>toast(`已导出 ${data.items.length} 家`));
 });
-$("importBtn").addEventListener("click",()=>{$("impText").value="";$("impFile").value="";$("importDlg").showModal()});
+$("importBtn").addEventListener("click",()=>{$("impText").value="";$("impFile").value="";showAppDialog($("importDlg"))});
 $("impFile").addEventListener("change",e=>{const f=e.target.files[0];if(f)f.text().then(t=>$("impText").value=t)});
 $("impGo").addEventListener("click",()=>{
   try{const d=JSON.parse($("impText").value),n=upImportBackup(d);
-    $("importDlg").close();toast(`已导入 ${n} 家，并合并旅行与笔记`);render();}
+    closeAppDialog($("importDlg"));toast(`已导入 ${n} 家，并合并旅行与笔记`);render();}
   catch(e){toast("导入失败："+(e.message||"请确认备份文件格式和存储权限"));}
 });
 
@@ -957,7 +983,7 @@ function showInstall(){
   $("insEnv").textContent="你现在用的是："+e.name;
   $("insSteps").innerHTML=e.steps.map(x=>`<li>${x}</li>`).join("");
   $("insCopyRow").hidden=!(e.inapp||e.copy);
-  $("installDlg").showModal();
+  showAppDialog($("installDlg"));
 }
 $("insCopy").addEventListener("click",()=>copyText(location.origin+location.pathname).then(()=>toast("网址已复制，粘贴到浏览器地址栏打开"),()=>toast("没能复制，请手动复制地址栏里的网址")));
 $("installBtn").addEventListener("click",()=>{if(deferredPrompt){deferredPrompt.prompt();deferredPrompt.userChoice.finally(()=>deferredPrompt=null)}else showInstall()});

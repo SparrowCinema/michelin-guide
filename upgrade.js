@@ -1,6 +1,6 @@
 /* Travel, details, passport and snapshot views. Existing restaurant IDs remain unchanged. */
 // Must equal ASSET_VER in index.html and sw.js; index.html reloads fresh files when they disagree.
-const UPGRADE_VER="15";
+const UPGRADE_VER="16";
 let PERSONAL={version:2,trips:[],records:Object.create(null)},PRICE_DB={items:{}},upSelected='',upPickU='',upLoaded=false,upReadError=false;
 function upSave(next){
   if(upReadError){toast('已有旅行存储无法读取，已阻止覆盖。请先导出原始备份再恢复。');return false;}
@@ -94,19 +94,19 @@ function upApplyTrip(id,city=''){
 }
 function upScopeTrip(id,city=''){
   if(!upTrip(id))return;upApplyTrip(id,city);
-  if($('tripDlg').open)$('tripDlg').close();goTab('map');
+  if($('tripDlg').open)closeAppDialog($('tripDlg'));goTab('map');
 }
 function upOpenTrip(id){
   const t=id?upTrip(id):null;upSelected=id||'';
   $('tripTitle').textContent=t?t.name:'创建旅行清单';$('tripName').value=t?.name||'';
   $('tripDelete').hidden=!t;$('tripMap').hidden=!t;
   const rs=t?upRows(id):[];$('tripItems').innerHTML=rs.length?grouped(rs,rs.length):'<p class="empty">还没有餐厅。在名录中找到感兴趣的餐厅，点“加入旅行”。</p>';
-  $('tripDlg').showModal();
+  showAppDialog($('tripDlg'));
 }
 function upPickTrip(u){
   if(!DB.byU[u])return;upPickU=u;$('tripPickTitle').textContent='加入旅行 · '+(DB.byU[u].zh||DB.byU[u].n);
   $('tripPickChoices').innerHTML=PERSONAL.trips.map(t=>`<label class="check-row"><input type="checkbox" value="${t.id}" ${t.items.includes(u)?'checked':''}>${esc(t.name)}</label>`).join('')||'<p>还没有旅行清单，可以在下方创建。</p>';
-  $('tripQuickName').value='';$('tripPickDlg').showModal();
+  $('tripQuickName').value='';showAppDialog($('tripPickDlg'));
 }
 function upPrice(r){
   const entry=PRICE_DB.items[r.u],items=Array.isArray(entry)?entry:[];
@@ -170,7 +170,7 @@ function upRefreshVisit(u){
 function upOpenVisit(u){
   const r=DB.byU[u];if(!r)return;
   $('visitTitle').textContent=r.zh||r.n;$('visitMeta').textContent=[LVN[r.l],DB.T[r.ci][0],DB.C[r.co][0]].join(' · ');
-  $('visitBody').innerHTML=upVisitHTML(u,'q');$('visitDlg').dataset.u=u;$('visitDlg').showModal();
+  $('visitBody').innerHTML=upVisitHTML(u,'q');$('visitDlg').dataset.u=u;showAppDialog($('visitDlg'));
 }
 function upBindDetailSwipe(id='detailDlg'){
   const dialog=$(id);let gesture=null;
@@ -190,7 +190,7 @@ function upBindDetailSwipe(id='detailDlg'){
       if(e.cancelable)e.preventDefault();dialog.classList.add('is-dragging');dialog.style.setProperty('--drag-y',Math.min(160,gesture.dy*.85)+'px');
     }
   },{passive:false});
-  dialog.addEventListener('touchend',()=>{const close=gesture&&(gesture.dy>=(gesture.handle?32:48)||(gesture.dy>=24&&gesture.dy/Math.max(1,performance.now()-gesture.at)>.55));gesture=null;restore();if(close)dialog.close();});
+  dialog.addEventListener('touchend',()=>{const close=gesture&&(gesture.dy>=(gesture.handle?32:48)||(gesture.dy>=24&&gesture.dy/Math.max(1,performance.now()-gesture.at)>.55));gesture=null;restore();if(close)closeAppDialog(dialog);});
   dialog.addEventListener('touchcancel',()=>{gesture=null;restore();});dialog.addEventListener('close',()=>{gesture=null;restore();});
 }
 function upBindVisitForms(){
@@ -216,7 +216,7 @@ function upBindVisitForms(){
     const u=form.dataset.u,v=upVisitValues(form),been=form.dataset.been==='true',dialog=form.closest('dialog');
     if(!been){v.rating=0;v.date='';}
     if(!upSaveVisit(u,v,been))return;
-    if(dialog?.open)dialog.close();upRefreshVisit(u);toast(been?'✓ 用餐记录已保存':'✓ 已保存，已取消去过与评分');
+    if(dialog?.open)closeAppDialog(dialog);upRefreshVisit(u);toast(been?'✓ 用餐记录已保存':'✓ 已保存，已取消去过与评分');
   });
 }
 
@@ -225,11 +225,11 @@ function upOpenDetail(u,push=true){
   if(push){const url=upDetailURL(u);if(url!==location.href)history.pushState(null,'',url);}
   $('detailDlg').dataset.u=u;const m=mapLink(r);
   $('detailBody').innerHTML=`<h2 class="detail-title" id="detailTitle" tabindex="-1">${esc(r.zh||r.n)}</h2>${r.zh?`<p class="detail-origin">${esc(r.n)}${r.kind===2?' · 参考译名，非官方中文名':''}</p>`:''}<p>${esc(DB.C[r.co][0])} · ${esc(DB.T[r.ci][0])}</p>${badge(r)} ${tagsHTML(r)}<dl class="detail-facts">${r.cu?`<dt>菜系</dt><dd>${esc(r.cu)}</dd>`:''}${r.a?`<dt>地址</dt><dd>${esc(r.a)}</dd>`:''}${r.p?`<dt>价位</dt><dd>${'$'.repeat(r.p)} · 当地价位</dd>`:''}</dl><div class="detail-actions"><a href="https://guide.michelin.com/en/${esc(r.u)}" target="_blank" rel="noopener">米其林页面</a><a href="${esc(m.href)}" target="_blank" rel="noopener">导航</a>${r.w?`<a href="${esc(r.w)}" target="_blank" rel="noopener">官网 / 查询预约</a>`:''}<button class="linkbtn" id="copyRestaurant">复制餐厅链接</button></div><div class="links"><button class="fav" data-u="${esc(u)}" data-v="1" aria-pressed="${favOf(u)===1}">想去</button><button class="linkbtn" data-trip-pick="${esc(u)}">加入旅行</button></div><details class="detail-prices" ${(PRICE_DB.items[r.u]||[]).length?'':'hidden'}><summary>参考消费</summary><div class="price-note">${upPrice(r)}</div></details>${upHistory(r)}<details class="detail-record"><summary id="visitHeading">${favOf(u)===2?'修改用餐记录 · '+esc(upVisitLabel(u)):'记录一次用餐'}<span>评分 · 日期 · 笔记</span></summary>${upVisitHTML(u)}</details><p class="note">只保存在本设备，可在“我的”里导出备份。</p>`;
-  document.title=(r.zh||r.n)+' · 米其林全球名录';if(!$('detailDlg').open)$('detailDlg').showModal();$('detailDlg').scrollTop=0;$('detailTitle').focus({preventScroll:true});
+  document.title=(r.zh||r.n)+' · 米其林全球名录';if(!$('detailDlg').open)showAppDialog($('detailDlg'));$('detailDlg').scrollTop=0;$('detailTitle').focus({preventScroll:true});
 }
 function upRestoreDetail(){
   if(!DB)return;const u=new URL(location.href).searchParams.get('restaurant');
-  if(u)upOpenDetail(u,false);else if($('detailDlg').open)$('detailDlg').close();
+  if(u)upOpenDetail(u,false);else if($('detailDlg').open)closeAppDialog($('detailDlg'));
 }
 function upInit(){
   document.body.insertAdjacentHTML('beforeend',`<dialog id="detailDlg" aria-labelledby="detailTitle"><div class="dlg"><div class="detail-sheet-head"><button type="button" class="detail-drag" tabindex="-1" data-close aria-label="下滑或点击关闭餐厅详情"><span></span></button><button type="button" class="close" data-close>关闭</button></div><div id="detailBody"></div></div></dialog><dialog id="visitDlg" class="visit-sheet" aria-labelledby="visitTitle"><div class="dlg"><div class="detail-sheet-head"><button type="button" class="detail-drag" tabindex="-1" data-close aria-label="下滑或点击关闭用餐记录"><span></span></button><button type="button" class="close" data-close>关闭</button></div><p class="visit-kicker">去过 · 我的评分</p><h2 id="visitTitle"></h2><p class="detail-origin" id="visitMeta"></p><div id="visitBody"></div></div></dialog><dialog id="tripDlg" aria-labelledby="tripTitle"><div class="dlg"><button type="button" class="close" data-close>关闭</button><h2 id="tripTitle"></h2><form id="tripForm" class="upgrade-form"><label>旅行名称<input id="tripName" maxlength="100" required placeholder="例如：2026 欧洲旅行"></label><button class="btn primary" type="submit">保存名称</button></form><div class="row"><button class="btn" id="tripMap">在地图上查看</button><button class="btn danger" id="tripDelete">删除旅行清单</button></div><div id="tripItems" class="trip-content"></div></div></dialog><dialog id="tripPickDlg" aria-labelledby="tripPickTitle"><div class="dlg"><button type="button" class="close" data-close>关闭</button><h2 id="tripPickTitle"></h2><form id="tripPickForm" class="upgrade-form"><div id="tripPickChoices"></div><label>或创建新旅行<input id="tripQuickName" maxlength="100" placeholder="输入旅行名称"></label><button type="submit" class="btn primary">保存到所选旅行</button></form></div></dialog>`);
@@ -245,14 +245,14 @@ function upInit(){
   $('exitJourney').onclick=()=>{S.trip='';S.change='';reset();render();};
   $('tripForm').onsubmit=e=>{e.preventDefault();const name=$('tripName').value.trim();if(!name)return;
     if(upSelected){if(!upSave({...PERSONAL,trips:PERSONAL.trips.map(t=>t.id===upSelected?{...t,name}:t)}))return;}
-    else {const t=upNewTrip(name);if(!t)return;if(S.v==='map')upApplyTrip(t.id);}$('tripDlg').close();render();toast('旅行清单已保存');};
+    else {const t=upNewTrip(name);if(!t)return;if(S.v==='map')upApplyTrip(t.id);}closeAppDialog($('tripDlg'));render();toast('旅行清单已保存');};
   $('tripMap').onclick=()=>upScopeTrip(upSelected);
   $('tripDelete').onclick=()=>{const id=upSelected;if(!confirm('删除这份旅行清单？餐厅的“想去 / 去过”和用餐笔记会保留。'))return;
-    if(!upSave({...PERSONAL,trips:PERSONAL.trips.filter(t=>t.id!==id)}))return;if(S.trip===id)S.trip='';$('tripDlg').close();render();};
+    if(!upSave({...PERSONAL,trips:PERSONAL.trips.filter(t=>t.id!==id)}))return;if(S.trip===id)S.trip='';closeAppDialog($('tripDlg'));render();};
   $('tripPickForm').onsubmit=e=>{e.preventDefault();const u=upPickU,selected=new Set([...$('tripPickChoices').querySelectorAll('input:checked')].map(x=>x.value)),name=$('tripQuickName').value.trim();
     const trips=PERSONAL.trips.map(t=>({...t,items:selected.has(t.id)?[...new Set([...t.items,u])]:t.items.filter(x=>x!==u)}));
     if(name){if(trips.length>=300){toast('最多支持 300 个旅行清单');return;}trips.push({id:upUid(),name:name.slice(0,100),items:[u],created:Date.now()});}
-    if(!upSave({...PERSONAL,trips}))return;$('tripPickDlg').close();if($('tripDlg').open){const rs=upRows(upSelected);$('tripItems').innerHTML=grouped(rs,rs.length)||'<p class="empty">暂无餐厅，可在名录中添加。</p>';}render();toast('已更新旅行清单');};
+    if(!upSave({...PERSONAL,trips}))return;closeAppDialog($('tripPickDlg'));if($('tripDlg').open){const rs=upRows(upSelected);$('tripItems').innerHTML=grouped(rs,rs.length)||'<p class="empty">暂无餐厅，可在名录中添加。</p>';}render();toast('已更新旅行清单');};
   document.addEventListener('click',e=>{
     const control=e.target.closest('[data-passport-open],[data-passport-close],[data-passport-tab],[data-passport-prev],[data-passport-next],[data-passport-browse]');
     if(!control)return;
@@ -278,7 +278,7 @@ function upInit(){
     if(el.hasAttribute('data-change')){S.change=S.change===el.dataset.change?'':el.dataset.change;S.trip='';reset();render();}
     if(el.id==='copyRestaurant')copyText(upDetailURL($('detailDlg').dataset.u)).then(()=>toast('已复制餐厅链接'),()=>toast('无法复制，请从地址栏复制链接'));
   });
-  ['detailDlg','visitDlg','tripDlg','tripPickDlg'].forEach(id=>{const dlg=$(id);dlg.addEventListener('click',e=>{if(e.target===dlg||e.target.closest('[data-close]'))dlg.close();});});
+  ['detailDlg','visitDlg','tripDlg','tripPickDlg'].forEach(id=>{const dlg=$(id);dlg.addEventListener('click',e=>{if(e.target===dlg||e.target.closest('[data-close]'))closeAppDialog(dlg);});});
   $('detailDlg').addEventListener('close',()=>{const url=new URL(location.href);url.searchParams.delete('restaurant');history.replaceState(null,'',url);document.title='米其林全球名录';});
   upBindDetailSwipe();upBindDetailSwipe('visitDlg');upBindVisitForms();upInitShare();
   window.addEventListener('popstate',upRestoreDetail);

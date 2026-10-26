@@ -73,12 +73,12 @@ async function upRenderShare(){
 function upOpenShare(scope=''){
   const sel=$('shareScope');sel.innerHTML='<option value="">全部到访记录</option>'+PERSONAL.trips.map(t=>`<option value="${t.id}">${esc(t.name)}</option>`).join('');sel.value=scope;
   $('shareTitle').value=upTrip(scope)?.name||'我的味觉旅行';$('shareFrom').value='';$('shareTo').value='';PASSPORT_SHARE.page=0;
-  $('passportShareDlg').showModal();upRenderShare();
+  showAppDialog($('passportShareDlg'));upRenderShare();
 }
 function upInitShare(){
   document.body.insertAdjacentHTML('beforeend',`<dialog id="passportShareDlg" aria-labelledby="shareHeading"><div class="share-header"><div><p>PERSONAL TRAVEL JOURNAL</p><h2 id="shareHeading">把旅程，寄给朋友。</h2></div><button type="button" class="close" data-close>关闭</button></div><div class="share-layout"><div class="share-editor"><label>卡片标题<input id="shareTitle" maxlength="32" placeholder="我的味觉旅行"></label><label>分享哪段旅程<select id="shareScope"></select></label><details><summary>选择用餐日期范围</summary><div class="share-dates"><label>开始<input id="shareFrom" type="date"></label><label>结束<input id="shareTo" type="date"></label></div></details><p class="share-note">分享已去过的餐厅、评分和日期。私人笔记留在你的护照里。</p><p id="shareStatus" role="status" aria-live="polite"></p><div class="share-pagination" id="sharePagination" hidden><button type="button" id="sharePrev" aria-label="上一张分享卡">←</button><span id="sharePage"></span><button type="button" id="shareNext" aria-label="下一张分享卡">→</button></div><div class="share-actions"><button type="button" id="saveShare" class="btn primary" disabled>保存图片</button><button type="button" id="nativeShare" class="btn" disabled hidden>分享图片</button></div></div><div class="share-preview"><div id="shareEmpty" class="share-empty"><span>A WORLD OF TASTE</span><b>把下一餐，<br>写进旅程。</b><p>你的味觉旅行，<br>从第一枚到访印记开始。</p></div><img id="sharePreview" alt="个人美食旅行记录分享卡" hidden></div></div></dialog>`);
   document.addEventListener('click',e=>{const b=e.target.closest('[data-passport-share],[data-share-trip]');if(b)upOpenShare(b.dataset.shareTrip||'');});
-  $('passportShareDlg').addEventListener('click',e=>{if(e.target===$('passportShareDlg')||e.target.closest('[data-close]'))$('passportShareDlg').close();});
+  $('passportShareDlg').addEventListener('click',e=>{if(e.target===$('passportShareDlg')||e.target.closest('[data-close]'))closeAppDialog($('passportShareDlg'));});
   ['shareTitle','shareScope','shareFrom','shareTo'].forEach(id=>$(id).addEventListener(id==='shareTitle'?'input':'change',()=>{PASSPORT_SHARE.page=0;upRenderShare();}));
   $('sharePrev').onclick=()=>{PASSPORT_SHARE.page--;upRenderShare();};$('shareNext').onclick=()=>{PASSPORT_SHARE.page++;upRenderShare();};
   $('saveShare').onclick=()=>{if(!PASSPORT_SHARE.file)return;const a=document.createElement('a');a.href=PASSPORT_SHARE.url;a.download=PASSPORT_SHARE.file.name;document.body.appendChild(a);a.click();a.remove();toast('✓ 图片已生成，可保存或发送给朋友');};
