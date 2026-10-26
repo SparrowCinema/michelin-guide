@@ -37,7 +37,7 @@ async function upShareMap(ctx,rows,current,box){
     const ax=bx+p.x*world-left,ay=by+p.y*world-top;let x=ax,y=ay;
     const offsets=[[0,0],...[48,72,96].flatMap(radius=>Array.from({length:8},(_,i)=>[Math.sin(i*Math.PI/4)*radius,Math.cos(i*Math.PI/4)*radius]))];
     for(const [dx,dy] of offsets){const px=Math.max(bx+26,Math.min(bx+bw-26,ax+dx)),py=Math.max(by+26,Math.min(by+bh-60,ay+dy));if(placed.every(q=>Math.hypot(px-q.x,py-q.y)>=46)){x=px;y=py;break;}}
-    placed.push({x,y});if(Math.hypot(x-ax,y-ay)>3){ctx.strokeStyle='#782e3b';ctx.lineWidth=1.5;ctx.beginPath();ctx.moveTo(ax,ay);ctx.lineTo(x,y);ctx.stroke();}
+    placed.push({x,y});if(Math.hypot(x-ax,y-ay)>3){ctx.strokeStyle='#782e3b';ctx.lineWidth=1.5;ctx.beginPath();const distance=Math.hypot(x-ax,y-ay),inset=placed.slice(0,-1).some(q=>Math.hypot(ax-q.x,ay-q.y)<24)?22:0;ctx.moveTo(ax+(x-ax)/distance*inset,ay+(y-ay)/distance*inset);ctx.lineTo(x,y);ctx.stroke();}
     ctx.beginPath();ctx.arc(x,y,19,0,Math.PI*2);ctx.fillStyle='#782e3b';ctx.fill();ctx.strokeStyle='#fff8ec';ctx.lineWidth=3;ctx.stroke();ctx.font='600 19px sans-serif';ctx.textAlign='center';ctx.fillStyle='#fff';ctx.fillText(String(PASSPORT_SHARE.page*3+number+1),x,y+7);ctx.textAlign='left';
     const city=DB.T[p.r.ci][0];if(!cities.has(city)){cities.add(city);ctx.font='18px sans-serif';const width=Math.min(220,ctx.measureText(city).width+18),lx=Math.min(bx+bw-width-8,Math.max(bx+8,x+26)),ly=Math.max(by+28,Math.min(by+bh-42,y-12));ctx.fillStyle='#fffaf0ed';ctx.fillRect(lx-5,ly-22,width,30);upShareText(ctx,city,lx,ly-22,width-10,18,1,'#4d5148');}
   }
