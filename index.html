@@ -11,62 +11,77 @@
 <meta property="og:image" content="https://sparrowcinema.github.io/michelin-guide/og.png">
 <meta property="og:url" content="https://sparrowcinema.github.io/michelin-guide/">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="theme-color" content="#b3261e">
+<meta name="theme-color" content="#faf8f6" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#161312" media="(prefers-color-scheme: dark)">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="米其林名录">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" href="icon.svg" type="image/svg+xml">
 <link rel="icon" href="icon-192.png" sizes="192x192" type="image/png">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
+<script>try{const t=localStorage.getItem("mg-theme");if(t==="light"||t==="dark")document.documentElement.dataset.theme=t}catch(e){}</script>
 <style>
-:root{color-scheme:light;padding:env(safe-area-inset-top,0px) 0 env(safe-area-inset-bottom,0px)}
 body{margin:0}
 [hidden]{display:none!important}
 
-/* Layout: one reading column. Title + data date, scope totals, sticky filter rail
-   (search, level, continent, country/city, more filters, view toggle), then either
-   the stats table + grouped list (list view) or a map with the in-view list (map view). */
+/* Layout: an app shell. A sticky top bar (title, search, level chips, filter button) and,
+   on phones, a fixed bottom tab bar: 名录 / 地图 / 附近 / 我的. Wide screens get the same four
+   tabs as a segmented control and show the filter panel inline instead of as a bottom sheet. */
 :root{
   --bg:#faf8f6; --surface:#ffffff; --fg:#1f1b1a; --muted:#7a716e; --line:#e8e1dd; --hover:#f3eeeb;
   --red:#b3261e; --red-soft:#f6e3e1; --bib:#8a5a00; --bib-soft:#f6ecd6; --green:#2f7a3d; --green-soft:#e2f0e4;
-  --pearl:#3b3f6b; --pearl-soft:#e6e7f2;
+  --pearl:#3b3f6b; --pearl-soft:#e6e7f2; --shade:rgb(0 0 0 / .4);
   --display:"Songti SC","STSong","Noto Serif CJK SC","Source Han Serif SC","SimSun",serif;
   --body:-apple-system,"PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;
+  --tabh:0px;
+  color-scheme:light;
 }
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
   --bg:#161312; --surface:#201c1b; --fg:#f1ebe8; --muted:#a39893; --line:#352f2d; --hover:#2a2523;
   --red:#ef6b60; --red-soft:#3a1d1b; --bib:#e0b35a; --bib-soft:#33291a; --green:#7cc68a; --green-soft:#1d2e20;
-  --pearl:#b6b9e8; --pearl-soft:#262842; color-scheme:dark}}
+  --pearl:#b6b9e8; --pearl-soft:#262842; --shade:rgb(0 0 0 / .6); color-scheme:dark}}
 :root[data-theme="dark"]{
   --bg:#161312; --surface:#201c1b; --fg:#f1ebe8; --muted:#a39893; --line:#352f2d; --hover:#2a2523;
   --red:#ef6b60; --red-soft:#3a1d1b; --bib:#e0b35a; --bib-soft:#33291a; --green:#7cc68a; --green-soft:#1d2e20;
-  --pearl:#b6b9e8; --pearl-soft:#262842; color-scheme:dark}
-body{background:var(--bg);color:var(--fg);font-family:var(--body);font-size:15px;line-height:1.5;-webkit-text-size-adjust:100%}
-body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--bg)}
-.wrap{max-width:860px;margin:0 auto;padding-block:28px 60px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
-h1{font-family:var(--display);font-weight:900;font-size:clamp(28px,7vw,40px);line-height:1.15;margin:0;text-wrap:balance}
+  --pearl:#b6b9e8; --pearl-soft:#262842; --shade:rgb(0 0 0 / .6); color-scheme:dark}
+body{background:var(--bg);color:var(--fg);font-family:var(--body);font-size:15px;line-height:1.5;-webkit-text-size-adjust:100%;-webkit-tap-highlight-color:transparent}
+.wrap{max-width:860px;margin:0 auto;padding-top:max(20px,env(safe-area-inset-top,0px));padding-bottom:calc(60px + var(--tabh));padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+h1{font-family:var(--display);font-weight:900;font-size:clamp(26px,6vw,38px);line-height:1.15;margin:0;text-wrap:balance}
 .sub{color:var(--muted);margin:8px 0 6px;font-size:14px;max-width:62ch}
-.toplinks{display:flex;flex-wrap:wrap;gap:4px 16px;font-size:13px;color:var(--muted);margin-bottom:16px}
-.toplinks a,.toplinks button{color:var(--red);text-decoration:none;background:none;border:0;padding:0;font:inherit;cursor:pointer}
-.toplinks a:hover,.toplinks button:hover{text-decoration:underline}
+.toplinks{display:flex;flex-wrap:wrap;gap:4px 16px;font-size:13px;color:var(--muted);margin-bottom:14px}
+.linkbtn{color:var(--red);text-decoration:none;background:none;border:0;padding:0;font:inherit;cursor:pointer}
+.linkbtn:hover{text-decoration:underline}
 .scope{font-size:13px;color:var(--muted);margin-bottom:8px}
-.totals{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin-bottom:14px}
+.totals{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin:12px 0 4px}
 .tot{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:10px 12px;min-width:0}
 .tot b{display:block;font-family:var(--display);font-size:22px;font-variant-numeric:tabular-nums}
 .tot span{font-size:12px;color:var(--muted);letter-spacing:.04em}
-.controls{position:sticky;top:env(safe-area-inset-top,0px);z-index:1001;background:var(--bg);padding-block:10px;display:flex;flex-direction:column;gap:8px;border-bottom:1px solid var(--line)}
+.controls{position:sticky;top:0;z-index:1001;background:var(--bg);padding-top:max(10px,env(safe-area-inset-top,0px));padding-bottom:10px;display:flex;flex-direction:column;gap:8px;border-bottom:1px solid var(--line)}
 /* 16px on inputs/selects stops iOS Safari from zooming the page when they get focus */
-#q{width:100%;box-sizing:border-box;font:inherit;font-size:16px;padding:9px 14px;border:1px solid var(--line);border-radius:10px;background:var(--surface);color:var(--fg)}
-select{font:inherit;font-size:16px;padding:5px 10px;border-radius:999px;border:1px solid var(--line);background:var(--surface);color:var(--fg);max-width:46vw}
+input[type=search],select,textarea{font:inherit;font-size:16px}
+#q{width:100%;box-sizing:border-box;padding:9px 14px;border:1px solid var(--line);border-radius:10px;background:var(--surface);color:var(--fg)}
+select{padding:5px 10px;border-radius:999px;border:1px solid var(--line);background:var(--surface);color:var(--fg);max-width:46vw}
 #q:focus,select:focus-visible,.chip:focus-visible,button:focus-visible,a:focus-visible{outline:2px solid var(--red);outline-offset:1px}
 .row{display:flex;gap:6px;flex-wrap:wrap;align-items:center}
 .chip{font:inherit;font-size:13px;padding:5px 12px;border-radius:999px;border:1px solid var(--line);background:var(--surface);color:var(--fg);cursor:pointer;white-space:nowrap}
 .chip[aria-pressed="true"]{background:var(--fg);color:var(--bg);border-color:var(--fg)}
 .chip.cont[aria-pressed="true"]{background:var(--red);border-color:var(--red);color:#fff}
 .chip small{opacity:.7;font-size:11px;margin-left:2px}
-.count{font-size:13px;color:var(--muted);margin-left:auto;font-variant-numeric:tabular-nums}
+.count{font-size:13px;color:var(--muted);margin-left:auto;font-variant-numeric:tabular-nums;white-space:nowrap}
 .seg{display:inline-flex;border:1px solid var(--line);border-radius:999px;overflow:hidden;background:var(--surface)}
 .seg button{font:inherit;font-size:13px;padding:5px 14px;border:0;background:none;color:var(--fg);cursor:pointer}
 .seg button[aria-pressed="true"]{background:var(--fg);color:var(--bg)}
 .morebtn{font:inherit;font-size:13px;background:none;border:0;color:var(--red);cursor:pointer;padding:4px 2px}
-#more-f{display:flex;flex-direction:column;gap:8px}
+.searchrow{display:flex;gap:8px;align-items:center}
+.searchrow #q{flex:1;min-width:0}
+#filterBtn{flex:0 0 auto;font:inherit;font-size:14px;padding:8px 12px;border-radius:10px;border:1px solid var(--line);background:var(--surface);color:var(--fg);cursor:pointer;display:none}
+#filterBtn b{display:inline-block;min-width:18px;height:18px;line-height:18px;border-radius:9px;background:var(--red);color:#fff;font-size:11px;text-align:center;margin-left:4px}
+.panel{display:flex;flex-direction:column;gap:8px}
+.sheethead,.sheetfoot{display:none}
+.lbl{font-size:12px;color:var(--muted);margin-top:2px}
+.sheet-only{display:none}
 details.stats{margin-top:18px}
 details.stats summary{cursor:pointer;font-family:var(--display);font-weight:600;font-size:17px}
 .tbl{overflow-x:auto;margin-top:8px;border:1px solid var(--line);border-radius:10px;background:var(--surface)}
@@ -89,9 +104,9 @@ td.st{color:var(--red);font-weight:600}
 .city{margin-top:16px}
 .city h3{font-family:var(--display);font-weight:600;font-size:16px;margin:0;display:flex;gap:8px;align-items:baseline;flex-wrap:wrap}
 .city h3 small{font-family:var(--body);font-weight:400;font-size:12px;color:var(--muted)}
-.flathead{margin-top:22px;font-size:13px;color:var(--muted)}
-ul{list-style:none;margin:6px 0 0;padding:0;border-top:1px solid var(--line)}
-li{display:flex;gap:12px;align-items:flex-start;padding:9px 2px;border-bottom:1px solid var(--line);min-width:0}
+.flathead{margin-top:18px;font-size:13px;color:var(--muted)}
+ul.rl{list-style:none;margin:6px 0 0;padding:0;border-top:1px solid var(--line)}
+ul.rl li{display:flex;gap:12px;align-items:flex-start;padding:10px 2px;border-bottom:1px solid var(--line);min-width:0}
 .lv{flex:0 0 58px;font-size:12px;font-weight:600;text-align:center;border-radius:6px;padding:3px 0;letter-spacing:.05em;margin-top:2px}
 .s{color:var(--red);background:var(--red-soft)}
 .b{color:var(--bib);background:var(--bib-soft)}
@@ -101,26 +116,51 @@ li{display:flex;gap:12px;align-items:flex-start;padding:9px 2px;border-bottom:1p
 .orig{display:block;font-size:13px;opacity:.75}
 .tr{font-size:10px;color:var(--muted);border:1px solid var(--line);border-radius:3px;padding:0 4px;margin-left:6px;vertical-align:1px}
 .meta{display:block;font-size:12px;color:var(--muted)}
-.tags{display:inline}
 .tag{display:inline-block;font-size:11px;line-height:1.5;color:var(--red);border:1px solid var(--red-soft);border-radius:4px;padding:0 5px;margin-left:6px;white-space:nowrap;vertical-align:1px}
 .tag.g{color:var(--green);border-color:var(--green-soft);background:var(--green-soft)}
 .tag.p{color:var(--pearl);border-color:var(--pearl-soft);background:var(--pearl-soft)}
 .tag.h{color:var(--muted);border-color:var(--line)}
-.links{display:flex;flex-wrap:wrap;gap:4px 14px;margin-top:4px;font-size:12px;align-items:center}
+.links{display:flex;flex-wrap:wrap;gap:6px 14px;margin-top:5px;font-size:12px;align-items:center}
 .links a{color:var(--red);text-decoration:none}
 .links a:hover{text-decoration:underline}
-.fav{font:inherit;font-size:12px;padding:1px 9px;border-radius:999px;border:1px solid var(--line);background:none;color:var(--muted);cursor:pointer}
+.fav{font:inherit;font-size:12px;padding:2px 10px;border-radius:999px;border:1px solid var(--line);background:none;color:var(--muted);cursor:pointer}
 .fav[aria-pressed="true"]{background:var(--red);border-color:var(--red);color:#fff}
 .fix{color:var(--muted)!important}
 .pager{margin-top:22px;text-align:center}
-.pager button{font:inherit;padding:9px 18px;border-radius:999px;border:1px solid var(--line);background:var(--surface);color:var(--fg);cursor:pointer}
+.pager button,.btn{font:inherit;font-size:14px;padding:9px 18px;border-radius:999px;border:1px solid var(--line);background:var(--surface);color:var(--fg);cursor:pointer}
+.btn.primary{background:var(--red);border-color:var(--red);color:#fff}
 .empty,.loading{color:var(--muted);text-align:center;padding:40px 0}
 footer{margin-top:40px;font-size:12px;color:var(--muted);line-height:1.7}
 footer a{color:var(--red)}
-#toast{position:fixed;left:50%;bottom:calc(24px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--fg);color:var(--bg);padding:8px 16px;border-radius:999px;font-size:13px;z-index:2000;pointer-events:none;opacity:0;transition:opacity .2s}
+
+/* 我的 */
+#mePage{padding-top:6px}
+.mehead{display:flex;align-items:center;gap:14px;margin-bottom:16px}
+.mehead img{width:52px;height:52px;border-radius:14px}
+.mehead h2{font-family:var(--display);font-size:24px;margin:0}
+.mehead p{margin:0;font-size:13px;color:var(--muted)}
+.mestats{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+.mestats div{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:12px 10px;text-align:center;min-width:0}
+.mestats b{display:block;font-family:var(--display);font-size:24px;font-variant-numeric:tabular-nums}
+.mestats span{font-size:12px;color:var(--muted)}
+.lvbar{display:flex;gap:6px;flex-wrap:wrap;margin-top:10px;font-size:12px;color:var(--muted)}
+.lvbar span{border:1px solid var(--line);border-radius:999px;padding:2px 10px;background:var(--surface)}
+.metabs{display:flex;gap:8px;align-items:center;margin:22px 0 4px;flex-wrap:wrap}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:12px;margin-top:22px}
+.card h3{font-size:13px;color:var(--muted);font-weight:500;margin:0;padding:12px 16px 4px}
+.cell{display:flex;align-items:center;gap:10px;padding:12px 16px;border-top:1px solid var(--line);font-size:15px;color:var(--fg);text-decoration:none;background:none;border-left:0;border-right:0;border-bottom:0;width:100%;box-sizing:border-box;text-align:left;font-family:inherit;cursor:pointer}
+.card h3+.cell{border-top:0}
+.cell .r{margin-left:auto;color:var(--muted);font-size:13px}
+.cell .r::after{content:" ›"}
+.cell.nochev .r::after{content:""}
+.note{font-size:12px;color:var(--muted);padding:0 16px 12px;line-height:1.6}
+
+/* tab bar (phones) */
+.tabbar{display:none}
+#toast{position:fixed;left:50%;bottom:calc(24px + var(--tabh) + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--fg);color:var(--bg);padding:8px 16px;border-radius:999px;font-size:13px;z-index:3000;pointer-events:none;opacity:0;transition:opacity .2s;max-width:86vw;text-align:center}
 #toast.on{opacity:1}
 dialog{border:1px solid var(--line);border-radius:14px;background:var(--surface);color:var(--fg);max-width:min(680px,calc(100vw - 32px));max-height:min(86vh,900px);padding:0;box-sizing:border-box}
-dialog::backdrop{background:rgb(0 0 0 / .45)}
+dialog::backdrop{background:var(--shade)}
 .dlg{padding:22px 22px 26px;font-size:14px;line-height:1.75}
 .dlg h2{font-family:var(--display);font-size:22px;margin:0 0 6px}
 .dlg h3{font-family:var(--display);font-size:16px;margin:20px 0 4px}
@@ -128,34 +168,80 @@ dialog::backdrop{background:rgb(0 0 0 / .45)}
 .dlg dl{margin:6px 0;display:grid;grid-template-columns:auto 1fr;gap:6px 12px}
 .dlg dt{font-weight:600;white-space:nowrap}
 .dlg dd{margin:0}
+.dlg textarea{width:100%;box-sizing:border-box;min-height:140px;border:1px solid var(--line);border-radius:10px;background:var(--bg);color:var(--fg);padding:10px}
 .dlg .close{position:sticky;top:0;float:right;font:inherit;font-size:13px;border:1px solid var(--line);background:var(--surface);color:var(--fg);border-radius:999px;padding:4px 12px;cursor:pointer}
 .leaflet-popup-content{font-family:var(--body);font-size:13px;line-height:1.5;margin:10px 12px;min-width:200px}
 .leaflet-popup-content .t{font-size:14px}
 .leaflet-container{font-family:var(--body)}
-@media (max-width:700px){
-  .controls{position:static}
-  #levels,#conts,#flags{flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none;margin-inline:-16px;padding-inline:16px}
-  #levels::-webkit-scrollbar,#conts::-webkit-scrollbar,#flags::-webkit-scrollbar{display:none}
-  #map{height:62vh}
+#locate{position:absolute;right:10px;top:10px;z-index:500}
+
+@media (min-width:701px){
+  #tabsTop{display:inline-flex}
 }
-@media (max-width:520px){.totals{gap:4px}.tot{padding:7px 6px;text-align:center}.tot b{font-size:16px}.tot span{font-size:11px}.lv{flex-basis:50px}.sub{font-size:13px}}
+@media (max-width:700px){
+  :root{--tabh:58px}
+  .wrap{padding-top:0}
+  .intro{padding-top:max(14px,env(safe-area-inset-top,0px))}
+  .sub,.toplinks,footer{display:none}
+  h1{font-size:24px}
+  #tabsTop,#viewRow{display:none!important}
+  .controls{gap:8px}
+  #filterBtn{display:inline-block}
+  .sheet-only{display:block}
+  #levels{flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none;margin-inline:-16px;padding-inline:16px}
+  #levels::-webkit-scrollbar,#conts::-webkit-scrollbar,#flags::-webkit-scrollbar{display:none}
+  /* the filter panel becomes a bottom sheet */
+  .panel{position:fixed;left:0;right:0;bottom:0;z-index:2500;background:var(--surface);border-radius:16px 16px 0 0;
+    padding:6px 16px calc(14px + env(safe-area-inset-bottom,0px));max-height:82vh;overflow-y:auto;box-shadow:0 -8px 30px rgb(0 0 0 / .18);
+    transform:translateY(105%);transition:transform .25s ease;visibility:hidden}
+  body.sheet .panel{transform:none;visibility:visible}
+  #shade{position:fixed;inset:0;background:var(--shade);z-index:2400;opacity:0;pointer-events:none;transition:opacity .2s}
+  body.sheet #shade{opacity:1;pointer-events:auto}
+  body.sheet{overflow:hidden}
+  body.sheet .controls{z-index:2450}
+  body.sheet .searchrow,body.sheet #levels{opacity:.35;pointer-events:none}
+  .sheethead{display:flex;align-items:center;justify-content:space-between;padding:8px 0 4px;position:sticky;top:-6px;background:var(--surface);z-index:1}
+  .sheethead b{font-size:16px}
+  .sheetfoot{display:flex;gap:10px;position:sticky;bottom:calc(-14px - env(safe-area-inset-bottom,0px));background:var(--surface);padding:10px 0 4px}
+  .sheetfoot .btn{flex:1}
+  .panel select{max-width:none;flex:1;min-width:0}
+  .panel .row{flex-wrap:wrap}
+  .count{margin-left:0}
+  body[data-tab="map"] .totals{display:none}
+  #map{height:calc(100dvh - 250px - var(--tabh) - env(safe-area-inset-bottom,0px));min-height:300px}
+  details.stats{display:none}
+  .tabbar{display:flex;position:fixed;left:0;right:0;bottom:0;z-index:2000;background:color-mix(in srgb,var(--surface) 92%,transparent);
+    -webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);border-top:1px solid var(--line);padding-bottom:env(safe-area-inset-bottom,0px)}
+  .tabbar button{flex:1;height:var(--tabh);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;font:inherit;font-size:11px;
+    background:none;border:0;color:var(--muted);cursor:pointer;padding:0}
+  .tabbar svg{width:24px;height:24px;stroke:currentColor;fill:none;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+  .tabbar button[aria-current="page"]{color:var(--red)}
+  .tabbar button b{position:absolute;margin:-18px 0 0 22px;min-width:16px;height:16px;line-height:16px;border-radius:8px;background:var(--red);color:#fff;font-size:10px;font-weight:600;padding:0 4px;box-sizing:border-box}
+  .mestats{grid-template-columns:repeat(2,1fr)}
+}
+@media (max-width:520px){.totals{gap:4px}.tot{padding:7px 6px;text-align:center}.tot b{font-size:16px}.tot span{font-size:11px}.lv{flex-basis:50px}}
+@media (prefers-reduced-motion:reduce){.panel,#shade,#toast{transition:none}}
 </style>
 </head>
 <body>
 
 <div class="wrap">
-  <h1>米其林全球名录</h1>
-  <p class="sub">全球 50 多个国家和地区、约 2 万家米其林餐厅：三星、二星、一星、必比登推介和入选餐厅。可按大洲、国家、城市筛选，在地图上找附近的店，也能把筛选结果发给朋友。</p>
-  <div class="toplinks">
-    <span id="updated">数据更新至 2026 年 10 月 3 日</span>
-    <button type="button" id="openAbout">等级怎么分、怎么评？</button>
-    <a href="https://github.com/SparrowCinema/michelin-guide/issues/new?title=%E7%BA%A0%E9%94%99%EF%BC%9A" target="_blank" rel="noopener">纠错与反馈</a>
+  <div class="intro" id="intro">
+    <h1>米其林全球名录</h1>
+    <p class="sub">全球 50 多个国家和地区、约 2 万家米其林餐厅：三星、二星、一星、必比登推介和入选餐厅。可按大洲、国家、城市筛选，在地图上找附近的店，也能把筛选结果发给朋友。</p>
+    <div class="toplinks">
+      <span class="updated">数据更新至 2026 年 10 月 3 日</span>
+      <button type="button" class="linkbtn openAbout">等级怎么分、怎么评？</button>
+      <a class="linkbtn" href="https://github.com/SparrowCinema/michelin-guide/issues/new?title=%E7%BA%A0%E9%94%99%EF%BC%9A" target="_blank" rel="noopener">纠错与反馈</a>
+    </div>
+    <div class="totals" id="totals"></div>
   </div>
-  <div class="scope" id="scope">全球</div>
-  <div class="totals" id="totals"></div>
 
-  <div class="controls">
-    <input id="q" type="search" placeholder="搜店名、城市或菜系，如：新荣记、东京、寿司" autocomplete="off" enterkeyhint="search">
+  <div class="controls" id="controls">
+    <div class="searchrow">
+      <input id="q" type="search" placeholder="搜店名、城市或菜系，如：新荣记、东京" autocomplete="off" enterkeyhint="search">
+      <button type="button" id="filterBtn" aria-haspopup="dialog">筛选</button>
+    </div>
     <div class="row" id="levels">
       <button class="chip" data-l="all" aria-pressed="true">全部等级</button>
       <button class="chip" data-l="0" aria-pressed="false">三星</button>
@@ -164,64 +250,111 @@ dialog::backdrop{background:rgb(0 0 0 / .45)}
       <button class="chip" data-l="3" aria-pressed="false">必比登</button>
       <button class="chip" data-l="4" aria-pressed="false">入选</button>
     </div>
-    <div class="row" id="conts"></div>
-    <div class="row">
-      <select id="country" aria-label="国家或地区"></select>
-      <select id="city" aria-label="城市"></select>
-      <span class="count" id="count"></span>
-    </div>
-    <div class="row">
-      <span class="seg" role="group" aria-label="显示方式"><button type="button" data-v="list" aria-pressed="true">列表</button><button type="button" data-v="map" aria-pressed="false">地图</button></span>
-      <button type="button" class="chip" id="near" aria-pressed="false">离我最近</button>
-      <button type="button" class="chip" id="share">复制筛选链接</button>
-      <button type="button" class="morebtn" id="toggleMore" aria-expanded="false">更多筛选</button>
-    </div>
-    <div id="more-f" hidden>
+    <div class="panel" id="panel" role="group" aria-label="筛选">
+      <div class="sheethead"><b>筛选</b><button type="button" class="morebtn" id="clearAll2">清除全部</button></div>
+      <div class="lbl sheet-only">地区</div>
+      <div class="row" id="conts"></div>
       <div class="row">
-        <select id="cuisine" aria-label="菜系"></select>
-        <select id="price" aria-label="价位">
-          <option value="">全部价位</option><option value="1">$</option><option value="2">$$</option><option value="3">$$$</option><option value="4">$$$$</option>
-        </select>
-        <button type="button" class="morebtn" id="clearAll">清除全部筛选</button>
+        <select id="country" aria-label="国家或地区"></select>
+        <select id="city" aria-label="城市"></select>
       </div>
-      <div class="row" id="flags">
-        <button type="button" class="chip" data-f="new" aria-pressed="false">本版新上榜</button>
-        <button type="button" class="chip" data-f="up" aria-pressed="false">今年升级</button>
-        <button type="button" class="chip" data-f="green" aria-pressed="false">绿星</button>
-        <button type="button" class="chip" data-f="bp" aria-pressed="false">也上了黑珍珠</button>
-        <button type="button" class="chip" data-f="want" aria-pressed="false">我想去<small id="nWant"></small></button>
-        <button type="button" class="chip" data-f="been" aria-pressed="false">我去过<small id="nBeen"></small></button>
+      <div class="row" id="viewRow">
+        <span class="seg" id="tabsTop" role="group" aria-label="页面">
+          <button type="button" data-tab="list" aria-pressed="true">名录</button><button type="button" data-tab="map" aria-pressed="false">地图</button><button type="button" data-tab="near" aria-pressed="false">附近</button><button type="button" data-tab="me" aria-pressed="false">我的</button>
+        </span>
+        <button type="button" class="chip" id="share">复制筛选链接</button>
+        <button type="button" class="morebtn" id="toggleMore" aria-expanded="false">更多筛选</button>
+        <span class="count" id="count"></span>
       </div>
+      <div id="more-f" class="panel-more" hidden>
+        <div class="lbl">菜系与价位</div>
+        <div class="row">
+          <select id="cuisine" aria-label="菜系"></select>
+          <select id="price" aria-label="价位">
+            <option value="">全部价位</option><option value="1">$</option><option value="2">$$</option><option value="3">$$$</option><option value="4">$$$$</option>
+          </select>
+          <button type="button" class="morebtn" id="clearAll">清除全部筛选</button>
+        </div>
+        <div class="lbl">标签</div>
+        <div class="row" id="flags">
+          <button type="button" class="chip" data-f="new" aria-pressed="false">本版新上榜</button>
+          <button type="button" class="chip" data-f="up" aria-pressed="false">今年升级</button>
+          <button type="button" class="chip" data-f="green" aria-pressed="false">绿星</button>
+          <button type="button" class="chip" data-f="bp" aria-pressed="false">也上了黑珍珠</button>
+        </div>
+      </div>
+      <div class="sheetfoot"><button type="button" class="btn" id="shareSheet">复制筛选链接</button><button type="button" class="btn primary" id="doneSheet">查看结果</button></div>
     </div>
   </div>
 
-  <div id="mapbox" hidden>
-    <div id="map" role="region" aria-label="餐厅地图"></div>
-    <div class="maptools">
-      <span class="legend"><span><i style="background:#7a0d0a"></i>三星</span><span><i style="background:#b3261e"></i>二星</span><span><i style="background:#e0574d"></i>一星</span><span><i style="background:#c98a00"></i>必比登</span><span><i style="background:#9a9390"></i>入选</span></span>
-      <span id="tileNote"></span>
+  <div id="browse">
+    <div class="scope" id="scope" style="margin-top:12px">全球</div>
+    <div id="mapbox" hidden>
+      <div style="position:relative"><div id="map" role="region" aria-label="餐厅地图"></div><button type="button" class="btn" id="locate">定位到我</button></div>
+      <div class="maptools">
+        <span class="legend"><span><i style="background:#7a0d0a"></i>三星</span><span><i style="background:#b3261e"></i>二星</span><span><i style="background:#e0574d"></i>一星</span><span><i style="background:#c98a00"></i>必比登</span><span><i style="background:#9a9390"></i>入选</span></span>
+        <span id="tileNote"></span>
+      </div>
     </div>
+    <details class="stats" id="statsBox" open>
+      <summary id="statsTitle">各大洲统计</summary>
+      <div class="tbl"><table><thead><tr><th id="statsCol">地区</th><th>三星</th><th>二星</th><th>一星</th><th>必比登</th><th>入选</th><th>合计</th></tr></thead><tbody id="stats"></tbody></table></div>
+      <button class="more-t" id="moreStats" hidden>显示全部</button>
+    </details>
+    <div id="list"><p class="loading" id="loading">正在载入约 2 万家餐厅……</p></div>
+    <div class="pager"><button id="more" hidden>再显示 200 家</button></div>
   </div>
 
-  <details class="stats" id="statsBox" open>
-    <summary id="statsTitle">各大洲统计</summary>
-    <div class="tbl"><table><thead><tr><th id="statsCol">地区</th><th>三星</th><th>二星</th><th>一星</th><th>必比登</th><th>入选</th><th>合计</th></tr></thead><tbody id="stats"></tbody></table></div>
-    <button class="more-t" id="moreStats" hidden>显示全部</button>
-  </details>
-  <div id="list"><p class="loading" id="loading">正在载入约 2 万家餐厅……</p></div>
-  <div class="pager"><button id="more" hidden>再显示 200 家</button></div>
+  <section id="mePage" hidden aria-label="我的">
+    <div class="mehead"><img src="icon-192.png" alt=""><div><h2>我的</h2><p>想去和去过的餐厅，保存在这台设备上</p></div></div>
+    <div class="mestats" id="meStats"></div>
+    <div class="lvbar" id="meLv"></div>
+    <div class="metabs">
+      <span class="seg" role="group" aria-label="清单"><button type="button" data-m="1" aria-pressed="true">想去</button><button type="button" data-m="2" aria-pressed="false">去过</button></span>
+      <span class="seg" role="group" aria-label="排序"><button type="button" data-o="time" aria-pressed="true">最近标记</button><button type="button" data-o="place" aria-pressed="false">按地区</button></span>
+    </div>
+    <div id="meList"></div>
 
-  <footer>
+    <div class="card">
+      <h3>清单备份</h3>
+      <button type="button" class="cell" id="exportBtn">导出清单<span class="r">下载备份文件</span></button>
+      <button type="button" class="cell" id="importBtn">导入清单<span class="r">从备份文件或文本</span></button>
+      <p class="note">清单只存在当前浏览器里。换手机、清除浏览器数据，或者从浏览器改用“添加到主屏幕”的图标打开（iPhone 上两者的存储是分开的）之前，先导出一份。</p>
+    </div>
+    <div class="card">
+      <h3>外观</h3>
+      <div class="cell nochev"><span>主题</span><span class="r"><span class="seg" role="group" aria-label="主题" id="themeSeg"><button type="button" data-th="auto" aria-pressed="true">跟随系统</button><button type="button" data-th="light" aria-pressed="false">浅色</button><button type="button" data-th="dark" aria-pressed="false">深色</button></span></span></div>
+    </div>
+    <div class="card">
+      <h3>关于</h3>
+      <button type="button" class="cell" id="installBtn">添加到手机主屏幕<span class="r" id="installHint">像 App 一样打开</span></button>
+      <button type="button" class="cell openAbout">等级怎么分、怎么评<span class="r"></span></button>
+      <a class="cell" href="https://github.com/SparrowCinema/michelin-guide/issues/new?title=%E7%BA%A0%E9%94%99%EF%BC%9A" target="_blank" rel="noopener">纠错与反馈<span class="r">GitHub</span></a>
+      <a class="cell" href="https://github.com/SparrowCinema/michelin-guide" target="_blank" rel="noopener">项目主页<span class="r">GitHub</span></a>
+      <div class="cell nochev"><span>数据更新</span><span class="r updated">2026 年 10 月 3 日</span></div>
+      <p class="note">餐厅名单、等级、坐标和官网来自米其林指南官网的公开数据，经开源项目 michelin-my-maps 汇总；中国内地、港澳台、新加坡、马来西亚的中文名取自米其林中文官网，其他国家星级餐厅的“译名”是参考译名。“新上榜”“今年升级”是和一年前的名单比出来的，“连续 N 年”根据 2022 至 2026 年每年一份的名单快照统计。黑珍珠对照只做了中国内地。本站与米其林、黑珍珠官方无关。</p>
+    </div>
+  </section>
+
+  <footer id="footer">
     数据来源：餐厅名单、等级、地址、坐标和官网来自米其林指南官网的公开数据，经开源项目 <a href="https://github.com/ngshiheng/michelin-my-maps" target="_blank" rel="noopener">michelin-my-maps</a> 汇总。中国内地、港澳台、新加坡、马来西亚的中文名取自米其林中文官网，是官方名称；其他国家星级餐厅标“译名”的是参考译名，预订和导航请用原名。<br>
     “新上榜”“今年升级”是和一年前（2025 年 10 月）的名单比出来的，中国内地的“新上榜”以米其林发布会公布的名单为准；“连续 N 年”根据 2022 至 2026 年每年一份的名单快照统计。黑珍珠对照只做了中国内地，详见“等级怎么分、怎么评？”。<br>
-    “我想去”“我去过”只保存在你这台设备的这个浏览器里。各国指南发布时间不同，米其林也会随时撤下歇业的店，去之前请在米其林指南 App 核对。本站与米其林、黑珍珠官方无关。
+    “想去”“去过”只保存在你这台设备的这个浏览器里，可在“我的”里导出备份。各国指南发布时间不同，米其林也会随时撤下歇业的店，去之前请在米其林指南 App 核对。本站与米其林、黑珍珠官方无关。
     <a href="https://github.com/SparrowCinema/michelin-guide" target="_blank" rel="noopener">GitHub</a>
   </footer>
 </div>
 
+<div id="shade"></div>
+<nav class="tabbar" id="tabbar" aria-label="主导航">
+  <button type="button" data-tab="list"><svg viewBox="0 0 24 24"><path d="M4 6h16M4 12h16M4 18h10"/></svg>名录</button>
+  <button type="button" data-tab="map"><svg viewBox="0 0 24 24"><path d="M9 4 3 6.5v13.5l6-2.5 6 2.5 6-2.5V4l-6 2.5z"/><path d="M9 4v13.5M15 6.5V20"/></svg>地图</button>
+  <button type="button" data-tab="near"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3"/><circle cx="12" cy="12" r="7"/></svg>附近</button>
+  <button type="button" data-tab="me"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21c1.5-4 4.5-6 8-6s6.5 2 8 6"/></svg>我的<b id="meBadge" hidden></b></button>
+</nav>
+
 <dialog id="about" aria-labelledby="aboutTitle">
   <div class="dlg">
-    <button type="button" class="close" id="closeAbout">关闭</button>
+    <button type="button" class="close" data-close>关闭</button>
     <h2 id="aboutTitle">米其林的等级怎么分、怎么评</h2>
     <h3>五个等级</h3>
     <dl>
@@ -247,6 +380,29 @@ dialog::backdrop{background:rgb(0 0 0 / .45)}
     </dl>
   </div>
 </dialog>
+<dialog id="importDlg" aria-labelledby="impTitle">
+  <div class="dlg">
+    <button type="button" class="close" data-close>关闭</button>
+    <h2 id="impTitle">导入清单</h2>
+    <p>选择之前导出的备份文件，或者把备份内容粘贴到下面。导入的条目会和现有清单合并。</p>
+    <p><input type="file" id="impFile" accept=".json,application/json,text/plain"></p>
+    <textarea id="impText" placeholder="或粘贴备份内容"></textarea>
+    <p style="text-align:right"><button type="button" class="btn primary" id="impGo">导入</button></p>
+  </div>
+</dialog>
+<dialog id="installDlg" aria-labelledby="insTitle">
+  <div class="dlg">
+    <button type="button" class="close" data-close>关闭</button>
+    <h2 id="insTitle">添加到手机主屏幕</h2>
+    <h3>iPhone / iPad（Safari）</h3>
+    <p>点屏幕下方的“分享”按钮，选“添加到主屏幕”，再点“添加”。之后从桌面图标打开，就是全屏的 App 样子。</p>
+    <h3>安卓（Chrome、Edge 等）</h3>
+    <p>点浏览器右上角的菜单，选“安装应用”或“添加到主屏幕”。</p>
+    <h3>微信里打开的</h3>
+    <p>先点右上角“…”，选“在浏览器中打开”，再按上面的步骤添加。</p>
+    <p class="note" style="padding:0">提示：在 iPhone 上，从主屏幕图标打开和在 Safari 里打开，“想去 / 去过”清单是分开保存的。可以先在“我的”里导出，再到另一边导入。</p>
+  </div>
+</dialog>
 <div id="toast" role="status" aria-live="polite"></div>
 
 <script>
@@ -259,12 +415,16 @@ const DATA_VER="20261003-2"; // bump whenever data.json changes so browsers skip
 const $=id=>document.getElementById(id);
 const esc=s=>String(s).replace(/[&<>"]/g,ch=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[ch]));
 const sum=a=>a.reduce((x,y)=>x+y,0);
+const isPhone=()=>matchMedia("(max-width:700px)").matches;
 
 // ---- state ----
 const S={v:"list",l:"all",c:"",co:"",ci:"",q:"",cu:"",p:"",f:new Set(),near:false};
-let DB=null,page=1,showAllStats=false,ME=null;
+let DB=null,page=1,showAllStats=false,ME=null,meTab=1,meOrder="time";
+// FAV: {michelinPath: [1 想去 | 2 去过, markedAt ms]}
 let FAV={};try{FAV=JSON.parse(localStorage.getItem("mg-fav")||"{}")||{}}catch(e){}
-function saveFav(){try{localStorage.setItem("mg-fav",JSON.stringify(FAV))}catch(e){}}
+for(const k in FAV){if(typeof FAV[k]==="number")FAV[k]=[FAV[k],Date.now()]}
+const favOf=u=>FAV[u]?FAV[u][0]:0;
+function saveFav(){try{localStorage.setItem("mg-fav",JSON.stringify(FAV))}catch(e){toast("没能保存，浏览器可能禁用了本地存储")}}
 
 // ---- coordinates: data are WGS-84; AMap tiles in mainland China use GCJ-02 ----
 function tLat(x,y){let r=-100+2*x+3*y+.2*y*y+.1*x*y+.2*Math.sqrt(Math.abs(x));r+=(20*Math.sin(6*x*Math.PI)+20*Math.sin(2*x*Math.PI))*2/3;r+=(20*Math.sin(y*Math.PI)+40*Math.sin(y/3*Math.PI))*2/3;r+=(160*Math.sin(y/12*Math.PI)+320*Math.sin(y*Math.PI/30))*2/3;return r}
@@ -291,7 +451,7 @@ function prep(d){
     const cur=String(o.l),prev=o.h.length===4?o.h[3]:"?";
     o.nw=o.ml?!!(r[2]&4):prev==="-";
     o.up="";
-    if("01234".includes(prev)&&prev!==""&&o.l<+prev){
+    if("01234".includes(prev)&&o.l<+prev){
       if(o.l<=2&&+prev>=3)o.up="新摘星";else if(o.l<=2)o.up="升星";else if(o.l===3)o.up="新晋必比登";}
     o.streak=0;
     if(o.l<=3&&o.h.length===4){let n=1;for(let i=3;i>=0;i--){if(o.h[i]===cur||o.h[i]==="g")n++;else break}o.streak=n}
@@ -299,13 +459,14 @@ function prep(d){
     return o});
   rows.sort((a,b)=>crank[a.co]-crank[b.co]||cityTot[b.ci]-cityTot[a.ci]||(a.ci-b.ci)||a.l-b.l||a.s.localeCompare(b.s,"zh"));
   const coByName={};C.forEach((c,i)=>coByName[c[0]]=i);
-  return {C,T,rows,crank,cityTot,cuisines:d.cuisines,coByName,updated:d.updated};
+  const byU={};rows.forEach(r=>byU[r.u]=r);
+  return {C,T,rows,crank,cityTot,cuisines:d.cuisines,coByName,updated:d.updated,byU};
 }
 
 // ---- URL hash <-> state (country / city stored by Chinese name) ----
 function readHash(){
   const h=new URLSearchParams(location.hash.slice(1));if(![...h.keys()].length)return false;
-  S.v=h.get("v")==="map"?"map":"list";S.l=h.get("l")??"all";S.c=h.get("c")||"";S.q=h.get("q")||"";
+  const v=h.get("v");S.v=v==="map"||v==="me"?v:"list";S.l=h.get("l")??"all";S.c=h.get("c")||"";S.q=h.get("q")||"";
   S.cu=h.get("cu")||"";S.p=h.get("p")||"";S.f=new Set((h.get("f")||"").split(",").filter(x=>["new","up","green","bp"].includes(x)));
   S._co=h.get("co")||"";S._ci=h.get("ci")||"";return true}
 function resolveNames(){
@@ -314,24 +475,28 @@ function resolveNames(){
     delete S._co;delete S._ci}
   if(S.cu&&!DB.cuisines.includes(S.cu))S.cu="";
 }
-function writeHash(){
+function hashString(){
   const h=new URLSearchParams();
-  if(S.v==="map")h.set("v","map");if(S.l!=="all")h.set("l",S.l);if(S.c)h.set("c",S.c);
+  if(S.v!=="list")h.set("v",S.v);if(S.l!=="all")h.set("l",S.l);if(S.c)h.set("c",S.c);
   if(S.co!=="")h.set("co",DB.C[S.co][0]);if(S.ci!=="")h.set("ci",DB.T[S.ci][0]);
   if(S.q)h.set("q",S.q);if(S.cu)h.set("cu",S.cu);if(S.p)h.set("p",S.p);
-  const f=[...S.f].filter(x=>x!=="want"&&x!=="been");if(f.length)h.set("f",f.join(","));
-  const s=h.toString();history.replaceState(null,"",s?"#"+s:location.pathname+location.search);
+  if(S.f.size)h.set("f",[...S.f].join(","));
+  return h.toString();
+}
+function writeHash(){
+  const s=hashString();history.replaceState(null,"",s?"#"+s:location.pathname+location.search);
   try{localStorage.setItem("mg",s)}catch(e){}
 }
+function shareURL(){const v=S.v;if(v==="me")S.v="list";const s=hashString();S.v=v;return location.origin+location.pathname+(s?"#"+s:"")}
 
 // ---- filtering ----
+function activeFilterCount(){return (S.c?1:0)+(S.co!==""?1:0)+(S.ci!==""?1:0)+(S.cu?1:0)+(S.p?1:0)+S.f.size}
 function filtered(ignore){
   const term=S.q.trim().toLowerCase(),cu=S.cu?DB.cuisines.indexOf(S.cu):-1;
   return DB.rows.filter(r=>(ignore==="level"||S.l==="all"||r.l==+S.l)
     &&(!S.c||DB.C[r.co][2]===S.c)&&(S.co===""||r.co==S.co)&&(S.ci===""||r.ci==S.ci)
     &&(!term||r.k.includes(term))&&(ignore==="cuisine"||cu<0||r.cui===cu)&&(!S.p||r.p==+S.p)
-    &&(!S.f.has("new")||r.nw)&&(!S.f.has("up")||r.up)&&(!S.f.has("green")||r.green)&&(!S.f.has("bp")||r.bp)
-    &&(!S.f.has("want")||FAV[r.u]===1)&&(!S.f.has("been")||FAV[r.u]===2));
+    &&(!S.f.has("new")||r.nw)&&(!S.f.has("up")||r.up)&&(!S.f.has("green")||r.green)&&(!S.f.has("bp")||r.bp));
 }
 
 function fillSelects(){
@@ -385,13 +550,16 @@ function tagsHTML(r){
   if(r.bp)t.push(`<span class="tag p">黑珍珠${"一二三"[r.bp-1]}钻</span>`);
   return t.join("");
 }
+function fmtDate(ms){const d=new Date(ms);return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`}
 function itemBody(r,withPlace){
   const title=esc(r.zh||r.n);
   const orig=r.zh?`<span class="orig">${esc(r.n)}${r.kind===2?'<span class="tr" title="参考译名，非餐厅官方中文名">译名</span>':""}</span>`:"";
   const dist=ME&&r.lat!=null?km(ME.lat,ME.lng,r.lat,r.lng):null;
+  const f=favOf(r.u);
   const meta=[withPlace?DB.T[r.ci][0]+(DB.C[r.co][0]!==DB.T[r.ci][0]?" · "+DB.C[r.co][0]:""):"",r.cu,r.p?"$".repeat(r.p):"",
-    dist!=null?"距你 "+(dist<1?Math.round(dist*1000)+" 米":dist<100?dist.toFixed(1)+" 公里":Math.round(dist)+" 公里"):""].filter(Boolean).join(" · ");
-  const m=mapLink(r),f=FAV[r.u]||0;
+    dist!=null?"距你 "+(dist<1?Math.round(dist*1000)+" 米":dist<100?dist.toFixed(1)+" 公里":Math.round(dist)+" 公里"):"",
+    S.v==="me"&&f?(f===1?"加入想去 ":"标记去过 ")+fmtDate(FAV[r.u][1]):""].filter(Boolean).join(" · ");
+  const m=mapLink(r);
   const fix=`${REPO}/issues/new?title=${encodeURIComponent("纠错："+(r.zh||r.n)+"（"+DB.T[r.ci][0]+"）")}&body=${encodeURIComponent("米其林页面：https://guide.michelin.com/en/"+r.u+"\n\n哪里不对：\n")}`;
   const links=[r.u?`<a href="https://guide.michelin.com/en/${esc(r.u)}" target="_blank" rel="noopener">米其林</a>`:"",
     `<a href="${esc(m.href)}" target="_blank" rel="noopener">${m.label}</a>`,
@@ -402,6 +570,18 @@ function itemBody(r,withPlace){
   return `<span class="t">${title}</span>${tagsHTML(r)}${orig}${meta?`<span class="meta">${esc(meta)}</span>`:""}<span class="links">${links}</span>`;
 }
 function badge(r){const cls=r.l<3?"s":r.l===3?"b":"x";return `<span class="lv ${cls}">${r.l<3?"★".repeat(3-r.l):LVN[r.l]}</span>`}
+function grouped(rows,limit){
+  let out="",lastCo=-1,lastCi=-1,open=false;const cityCount={},coCount={};
+  rows.forEach(r=>{cityCount[r.ci]=(cityCount[r.ci]||0)+1;coCount[r.co]=(coCount[r.co]||0)+1});
+  rows.slice(0,limit).forEach(r=>{
+    if(r.co!==lastCo){if(open){out+="</ul></section>";open=false}
+      out+=`<h2 class="ctry">${DB.C[r.co][0]}<small>${DB.C[r.co][1]} · ${DB.C[r.co][2]} · ${coCount[r.co]} 家</small></h2>`;lastCo=r.co;lastCi=-1}
+    if(r.ci!==lastCi){if(open)out+="</ul></section>";
+      out+=`<section class="city"><h3>${esc(DB.T[r.ci][0])}<small>${cityCount[r.ci]} 家</small></h3><ul class="rl">`;open=true;lastCi=r.ci}
+    out+=`<li>${badge(r)}<span class="nm">${itemBody(r,false)}</span></li>`});
+  if(open)out+="</ul></section>";
+  return out;
+}
 
 function listRows(){
   let rs=filtered();
@@ -415,45 +595,84 @@ function renderList(){
   $("count").textContent=`${all.length.toLocaleString()} 家`;
   const tot=[0,0,0,0,0];filtered("level").forEach(r=>tot[r.l]++);
   $("totals").innerHTML=LVN.map((t,i)=>`<div class="tot"><b>${tot[i].toLocaleString()}</b><span>${t}</span></div>`).join("");
-  $("scope").textContent=[S.c||"全球",S.co!==""?DB.C[S.co][0]:"",S.ci!==""?DB.T[S.ci][0]:""].filter(Boolean).join(" › ");
+  $("scope").textContent=[S.c||"全球",S.co!==""?DB.C[S.co][0]:"",S.ci!==""?DB.T[S.ci][0]:""].filter(Boolean).join(" › ")+`　共 ${all.length.toLocaleString()} 家`;
+  const n=activeFilterCount();$("filterBtn").innerHTML="筛选"+(n?`<b>${n}</b>`:"");
   const shown=rs.slice(0,page*200);let out="";
   const flat=S.v==="map"||(S.near&&ME);
   if(flat){
-    out+=`<p class="flathead">${S.v==="map"?"地图范围内 "+rs.length.toLocaleString()+" 家":""}${S.near&&ME?(S.v==="map"?"，":"")+"按离你的距离排序":"，按等级排序"}</p><ul>`;
+    const head=(S.v==="map"?"地图范围内 "+rs.length.toLocaleString()+" 家，":"")+(S.near&&ME?"按离你的距离排序":"按等级排序");
+    out+=`<p class="flathead">${head}</p><ul class="rl">`;
     shown.forEach(r=>{out+=`<li>${badge(r)}<span class="nm">${itemBody(r,true)}</span></li>`});out+="</ul>";
     if(!rs.length)out=`<p class="empty">${S.v==="map"?"地图范围内没有符合条件的餐厅，拖动或缩小地图看看。":"没有符合条件的餐厅。"}</p>`;
   }else{
-    let lastCo=-1,lastCi=-1,open=false;const cityCount={},coCount={};
-    rs.forEach(r=>{cityCount[r.ci]=(cityCount[r.ci]||0)+1;coCount[r.co]=(coCount[r.co]||0)+1});
-    shown.forEach(r=>{
-      if(r.co!==lastCo){if(open){out+="</ul></section>";open=false}
-        out+=`<h2 class="ctry">${DB.C[r.co][0]}<small>${DB.C[r.co][1]} · ${DB.C[r.co][2]} · ${coCount[r.co]} 家</small></h2>`;lastCo=r.co;lastCi=-1}
-      if(r.ci!==lastCi){if(open)out+="</ul></section>";
-        out+=`<section class="city"><h3>${esc(DB.T[r.ci][0])}<small>${cityCount[r.ci]} 家</small></h3><ul>`;open=true;lastCi=r.ci}
-      out+=`<li>${badge(r)}<span class="nm">${itemBody(r,false)}</span></li>`});
-    if(open)out+="</ul></section>";
-    if(!out)out='<p class="empty">没有符合条件的餐厅，换个关键词或放宽筛选试试。</p>';
+    out=grouped(rs,page*200)||'<p class="empty">没有符合条件的餐厅，换个关键词或放宽筛选试试。</p>';
   }
   $("list").innerHTML=out;
   $("more").hidden=shown.length>=rs.length;
   $("more").textContent=`再显示 ${Math.min(200,rs.length-shown.length)} 家（还有 ${(rs.length-shown.length).toLocaleString()} 家）`;
 }
-function updateFavCounts(){const v=Object.values(FAV);$("nWant").textContent=v.filter(x=>x===1).length||"";$("nBeen").textContent=v.filter(x=>x===2).length||""}
 
+// ---- 我的 ----
+function renderMe(){
+  const mine=Object.keys(FAV).map(u=>DB.byU[u]?[DB.byU[u],FAV[u]]:null).filter(Boolean);
+  const want=mine.filter(x=>x[1][0]===1),been=mine.filter(x=>x[1][0]===2);
+  const bc=new Set(been.map(x=>x[0].co)),bt=new Set(been.map(x=>x[0].ci));
+  $("meStats").innerHTML=[[want.length,"想去"],[been.length,"去过"],[bc.size,"去过的国家和地区"],[bt.size,"去过的城市"]]
+    .map(([n,t])=>`<div><b>${n}</b><span>${t}</span></div>`).join("");
+  const lv=[0,0,0,0,0];been.forEach(x=>lv[x[0].l]++);
+  const stars=lv[0]*3+lv[1]*2+lv[2];
+  $("meLv").innerHTML=been.length?LVN.map((t,i)=>lv[i]?`<span>${t} ${lv[i]}</span>`:"").join("")+(stars?`<span>累计 ${stars} 颗星</span>`:""):"";
+  document.querySelectorAll("[data-m]").forEach(b=>b.setAttribute("aria-pressed",+b.dataset.m===meTab));
+  document.querySelectorAll("[data-o]").forEach(b=>b.setAttribute("aria-pressed",b.dataset.o===meOrder));
+  const list=(meTab===1?want:been);
+  if(!list.length){$("meList").innerHTML=`<p class="empty">${meTab===1?"还没有想去的餐厅。<br>在名录或地图里点店名下面的“想去”，就会出现在这里。":"还没有去过的餐厅。<br>吃过之后点“去过”，这里会记下来。"}</p>`;return}
+  if(meOrder==="time"){
+    const rs=list.slice().sort((a,b)=>b[1][1]-a[1][1]).map(x=>x[0]);
+    $("meList").innerHTML=`<ul class="rl">`+rs.map(r=>`<li>${badge(r)}<span class="nm">${itemBody(r,true)}</span></li>`).join("")+"</ul>";
+  }else{
+    const pos=new Map(DB.rows.map((r,i)=>[r,i]));
+    const rs=list.map(x=>x[0]).sort((a,b)=>pos.get(a)-pos.get(b));
+    $("meList").innerHTML=grouped(rs,rs.length);
+  }
+}
+function updateBadge(){const n=Object.values(FAV).filter(x=>x[0]===1).length;$("meBadge").hidden=!n;$("meBadge").textContent=n>99?"99+":n}
+
+// ---- top-level render ----
+function currentTab(){return S.v==="me"?"me":S.v==="map"?"map":S.near?"near":"list"}
 function render(opts={}){
+  const tab=currentTab();
+  document.body.dataset.tab=tab;
   document.querySelectorAll("#levels .chip").forEach(b=>b.setAttribute("aria-pressed",b.dataset.l===S.l));
   document.querySelectorAll("#conts .chip").forEach(b=>b.setAttribute("aria-pressed",b.dataset.c===S.c));
   document.querySelectorAll("#flags .chip").forEach(b=>b.setAttribute("aria-pressed",S.f.has(b.dataset.f)));
-  document.querySelectorAll(".seg button").forEach(b=>b.setAttribute("aria-pressed",b.dataset.v===S.v));
-  $("near").setAttribute("aria-pressed",S.near&&!!ME);
+  document.querySelectorAll("#tabsTop button").forEach(b=>b.setAttribute("aria-pressed",b.dataset.tab===tab));
+  document.querySelectorAll("#tabbar button").forEach(b=>{if(b.dataset.tab===tab)b.setAttribute("aria-current","page");else b.removeAttribute("aria-current")});
   if(S.cu||S.p||S.f.size){$("more-f").hidden=false;$("toggleMore").setAttribute("aria-expanded","true")}
-  $("mapbox").hidden=S.v!=="map";$("statsBox").hidden=S.v==="map";
+  const me=S.v==="me";
+  $("mePage").hidden=!me;$("browse").hidden=me;$("controls").hidden=me&&isPhone();$("intro").hidden=me&&isPhone();
+  $("footer").hidden=me;
+  $("mapbox").hidden=S.v!=="map";$("statsBox").hidden=S.v!=="list"||S.near;
   if($("q").value!==S.q)$("q").value=S.q;
-  fillSelects();renderStats();updateFavCounts();
+  updateBadge();
+  if(me){renderMe();writeHash();return}
+  fillSelects();renderStats();
   if(S.v==="map")showMap(opts.fit!==false);
   renderList();writeHash();
 }
 function reset(){page=1;showAllStats=false}
+function goTab(t){
+  if(t==="near"){
+    if(S.near&&ME&&S.v==="list"){window.scrollTo({top:0,behavior:"smooth"});return}
+    locateMe(()=>{S.v="list";S.near=true;reset();render();window.scrollTo(0,0)});return}
+  if(t==="list"){S.near=false}
+  const changed=S.v!==t;S.v=t;reset();render();if(changed)window.scrollTo(0,0);
+}
+function locateMe(done){
+  if(!navigator.geolocation){toast("这个浏览器不支持定位");return}
+  toast("正在获取你的位置……");
+  navigator.geolocation.getCurrentPosition(p=>{ME={lat:p.coords.latitude,lng:p.coords.longitude};toast("已找到你的位置");done()},
+    ()=>toast("没能获取位置，请在系统设置里允许浏览器定位"),{enableHighAccuracy:false,timeout:12000,maximumAge:300000});
+}
 
 // ---- map (Leaflet loaded on first use) ----
 const MAP={m:null,ready:false,layer:null,amap:null,tiles:null,me:null,loading:null};
@@ -489,8 +708,9 @@ function drawMarkers(){
     .bindPopup(()=>popupHTML(r),{maxWidth:280}))).addTo(MAP.m);
   return rs;
 }
+function mePoint(){return MAP.amap&&inMainland(ME.lat,ME.lng)?gcj(ME.lat,ME.lng):[ME.lat,ME.lng]}
 function fitTo(rs){
-  if(S.near&&ME){MAP.m.setView(MAP.amap&&inMainland(ME.lat,ME.lng)?gcj(ME.lat,ME.lng):[ME.lat,ME.lng],14);return}
+  if(S.near&&ME){MAP.m.setView(mePoint(),14);return}
   const pts=rs.map(r=>MAP.amap?[r.glat,r.glng]:[r.lat,r.lng]);
   if(!pts.length)return;
   if(S.co===""&&S.ci===""&&!S.c&&pts.length>2000){MAP.m.setView([30,15],2);return}
@@ -498,10 +718,13 @@ function fitTo(rs){
   MAP.m.fitBounds(L.latLngBounds(pts),{padding:[24,24],maxZoom:15});
 }
 function wantAmap(){
-  // AMap tiles when the current selection sits in mainland China
   if(S.co!=="")return DB.C[S.co][1]==="Chinese Mainland";
   if(S.near&&ME)return inMainland(ME.lat,ME.lng);
   const c=MAP.m&&MAP.ready?MAP.m.getCenter():null;return c?inMainland(c.lat,c.lng)&&MAP.m.getZoom()>=6:false;
+}
+function drawMe(){
+  if(MAP.me){MAP.me.remove();MAP.me=null}
+  if(ME)MAP.me=L.circleMarker(mePoint(),{radius:8,color:"#fff",weight:3,fillColor:"#1a73e8",fillOpacity:1}).addTo(MAP.m).bindTooltip("你在这里");
 }
 let fitPending=false;
 function showMap(fit){
@@ -511,30 +734,35 @@ function showMap(fit){
       MAP.m=L.map("map",{zoomControl:true,worldCopyJump:true,preferCanvas:true}).setView([30,15],2);
       MAP.canvas=L.canvas({padding:.5});
       MAP.m.on("moveend",()=>{if(!MAP.ready)return;
-        const want=S.co!==""?DB.C[S.co][1]==="Chinese Mainland":(inMainland(MAP.m.getCenter().lat,MAP.m.getCenter().lng)&&MAP.m.getZoom()>=6);
-        if(want!==MAP.amap){const c=MAP.m.getCenter(),z=MAP.m.getZoom();
+        const c=MAP.m.getCenter();
+        const want=S.co!==""?DB.C[S.co][1]==="Chinese Mainland":(inMainland(c.lat,c.lng)&&MAP.m.getZoom()>=6);
+        if(want!==MAP.amap){const z=MAP.m.getZoom();
           // convert the view centre between the two coordinate systems so the map does not jump
           let ll=[c.lat,c.lng];if(want&&inMainland(c.lat,c.lng))ll=gcj(c.lat,c.lng);else if(!want&&inMainland(c.lat,c.lng)){const g=gcj(c.lat,c.lng);ll=[2*c.lat-g[0],2*c.lng-g[1]]}
-          setTiles(want);drawMarkers();MAP.ready=false;MAP.m.setView(ll,z,{animate:false});MAP.ready=true}
+          setTiles(want);drawMarkers();drawMe();MAP.ready=false;MAP.m.setView(ll,z,{animate:false});MAP.ready=true}
         clearTimeout(MAP.t);MAP.t=setTimeout(()=>{page=1;renderList()},150)});
       MAP.ready=true;
     }
     setTiles(wantAmap());
-    const rs=drawMarkers();
-    if(MAP.me){MAP.me.remove();MAP.me=null}
-    if(ME){const p=MAP.amap&&inMainland(ME.lat,ME.lng)?gcj(ME.lat,ME.lng):[ME.lat,ME.lng];
-      MAP.me=L.circleMarker(p,{radius:8,color:"#fff",weight:3,fillColor:"#1a73e8",fillOpacity:1}).addTo(MAP.m).bindTooltip("你在这里")}
+    const rs=drawMarkers();drawMe();
     setTimeout(()=>{MAP.m.invalidateSize();if(fitPending){fitPending=false;MAP.ready=false;fitTo(rs);MAP.ready=true}page=1;renderList()},0);
   }).catch(()=>{$("map").innerHTML='<p class="empty">地图组件没能载入，请检查网络后刷新再试。</p>'});
 }
 
-// ---- toast / share ----
-let toastT;function toast(t){$("toast").textContent=t;$("toast").classList.add("on");clearTimeout(toastT);toastT=setTimeout(()=>$("toast").classList.remove("on"),2200)}
+// ---- toast / share / sheet ----
+let toastT;function toast(t){$("toast").textContent=t;$("toast").classList.add("on");clearTimeout(toastT);toastT=setTimeout(()=>$("toast").classList.remove("on"),2400)}
 function copyText(t){
   if(navigator.clipboard&&window.isSecureContext)return navigator.clipboard.writeText(t);
   return new Promise((ok,no)=>{const ta=document.createElement("textarea");ta.value=t;ta.style.cssText="position:fixed;opacity:0";document.body.appendChild(ta);ta.select();
     try{document.execCommand("copy")?ok():no()}catch(e){no(e)}ta.remove()});
 }
+function share(){
+  const url=shareURL(),title="米其林全球名录 · "+$("scope").textContent.split("　")[0];
+  if(navigator.share&&isPhone()){navigator.share({title,url}).catch(()=>{});return}
+  copyText(url).then(()=>toast("链接已复制，发给朋友打开就是同样的筛选结果"),()=>toast("没能复制，请直接复制地址栏里的链接"));
+}
+function openSheet(){document.body.classList.add("sheet");$("more-f").hidden=false}
+function closeSheet(){document.body.classList.remove("sheet")}
 
 // ---- events ----
 $("conts").innerHTML=['<button class="chip cont" data-c="" aria-pressed="true">全球</button>'].concat(CONT.map(c=>`<button class="chip cont" data-c="${c}" aria-pressed="false">${c}</button>`)).join("");
@@ -552,26 +780,57 @@ $("moreStats").addEventListener("click",()=>{showAllStats=true;renderStats()});
 $("stats").addEventListener("click",e=>{const tr=e.target.closest("tr[data-k]");if(!tr||S.ci!=="")return;const k=tr.dataset.k;
   if(S.co!=="")S.ci=k;else if(S.c)S.co=k;else S.c=k;
   reset();render();$("list").scrollIntoView({behavior:"smooth",block:"start"})});
-document.querySelector(".seg").addEventListener("click",e=>{const b=e.target.closest("button");if(!b||b.dataset.v===S.v)return;S.v=b.dataset.v;reset();render()});
+document.querySelectorAll("#tabsTop button,#tabbar button").forEach(b=>b.addEventListener("click",()=>goTab(b.dataset.tab)));
 $("toggleMore").addEventListener("click",()=>{const o=$("more-f").hidden;$("more-f").hidden=!o;$("toggleMore").setAttribute("aria-expanded",String(o))});
-$("clearAll").addEventListener("click",()=>{Object.assign(S,{l:"all",c:"",co:"",ci:"",q:"",cu:"",p:"",near:false});S.f.clear();reset();render()});
-$("share").addEventListener("click",()=>{writeHash();copyText(location.href).then(()=>toast("链接已复制，发给朋友打开就是同样的筛选结果"),()=>toast("没能复制，请直接复制地址栏里的链接"))});
-$("near").addEventListener("click",()=>{
-  if(S.near){S.near=false;reset();render({fit:false});return}
-  if(!navigator.geolocation){toast("这个浏览器不支持定位");return}
-  toast("正在获取你的位置……");
-  navigator.geolocation.getCurrentPosition(p=>{ME={lat:p.coords.latitude,lng:p.coords.longitude};S.near=true;reset();render();toast("已按离你的距离排序")},
-    ()=>toast("没能获取位置，请在浏览器设置里允许定位"),{enableHighAccuracy:false,timeout:12000,maximumAge:300000});
-});
+const clearAll=()=>{Object.assign(S,{l:"all",c:"",co:"",ci:"",q:"",cu:"",p:""});S.f.clear();reset();render()};
+$("clearAll").addEventListener("click",clearAll);$("clearAll2").addEventListener("click",clearAll);
+$("share").addEventListener("click",share);$("shareSheet").addEventListener("click",share);
+$("filterBtn").addEventListener("click",openSheet);$("doneSheet").addEventListener("click",closeSheet);$("shade").addEventListener("click",closeSheet);
+document.addEventListener("keydown",e=>{if(e.key==="Escape")closeSheet()});
+$("locate").addEventListener("click",()=>locateMe(()=>{drawMe();MAP.m.setView(mePoint(),14)}));
 document.addEventListener("click",e=>{const b=e.target.closest(".fav");if(!b)return;
-  const u=b.dataset.u,v=+b.dataset.v;if(FAV[u]===v)delete FAV[u];else FAV[u]=v;saveFav();updateFavCounts();
-  document.querySelectorAll(`.fav[data-u="${CSS.escape(u)}"]`).forEach(x=>x.setAttribute("aria-pressed",FAV[u]===+x.dataset.v));
-  toast(FAV[u]===1?"已加入“我想去”":FAV[u]===2?"已标为“我去过”":"已取消");
-  if(S.f.has("want")||S.f.has("been")){render({fit:false})}});
-$("openAbout").addEventListener("click",()=>$("about").showModal());
-$("closeAbout").addEventListener("click",()=>$("about").close());
-$("about").addEventListener("click",e=>{if(e.target===$("about"))$("about").close()});
-window.addEventListener("hashchange",()=>{if(!DB)return;const before=location.hash;if(readHash()){resolveNames();reset();render()}});
+  const u=b.dataset.u,v=+b.dataset.v;if(favOf(u)===v)delete FAV[u];else FAV[u]=[v,Date.now()];saveFav();updateBadge();
+  document.querySelectorAll(`.fav[data-u="${CSS.escape(u)}"]`).forEach(x=>x.setAttribute("aria-pressed",favOf(u)===+x.dataset.v));
+  toast(favOf(u)===1?"已加入“想去”，在“我的”里查看":favOf(u)===2?"已标为“去过”":"已取消");
+  if(S.v==="me")renderMe()});
+document.querySelectorAll("[data-m]").forEach(b=>b.addEventListener("click",()=>{meTab=+b.dataset.m;renderMe()}));
+document.querySelectorAll("[data-o]").forEach(b=>b.addEventListener("click",()=>{meOrder=b.dataset.o;renderMe()}));
+document.querySelectorAll(".openAbout").forEach(b=>b.addEventListener("click",()=>$("about").showModal()));
+document.querySelectorAll("dialog").forEach(d=>{d.addEventListener("click",e=>{if(e.target===d||e.target.closest("[data-close]"))d.close()})});
+window.addEventListener("hashchange",()=>{if(!DB)return;if(readHash()){resolveNames();reset();render()}});
+
+// theme
+function applyTheme(t){try{t==="auto"?localStorage.removeItem("mg-theme"):localStorage.setItem("mg-theme",t)}catch(e){}
+  if(t==="auto")delete document.documentElement.dataset.theme;else document.documentElement.dataset.theme=t;
+  document.querySelectorAll("#themeSeg button").forEach(b=>b.setAttribute("aria-pressed",b.dataset.th===t))}
+document.querySelectorAll("#themeSeg button").forEach(b=>b.addEventListener("click",()=>applyTheme(b.dataset.th)));
+applyTheme(document.documentElement.dataset.theme||"auto");
+
+// backup
+$("exportBtn").addEventListener("click",()=>{
+  const data={app:"michelin-guide",version:1,exported:new Date().toISOString(),
+    items:Object.entries(FAV).map(([u,[s,t]])=>({u,state:s===1?"want":"been",at:t,name:DB&&DB.byU[u]?(DB.byU[u].zh||DB.byU[u].n):""}))};
+  const txt=JSON.stringify(data,null,1);
+  try{const a=document.createElement("a");a.href=URL.createObjectURL(new Blob([txt],{type:"application/json"}));a.download=`米其林清单-${fmtDate(Date.now())}.json`;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(a.href),4000)}catch(e){}
+  copyText(txt).then(()=>toast(`已导出 ${data.items.length} 家，同时复制到了剪贴板`),()=>toast(`已导出 ${data.items.length} 家`));
+});
+$("importBtn").addEventListener("click",()=>{$("impText").value="";$("impFile").value="";$("importDlg").showModal()});
+$("impFile").addEventListener("change",e=>{const f=e.target.files[0];if(f)f.text().then(t=>$("impText").value=t)});
+$("impGo").addEventListener("click",()=>{
+  let n=0;try{const d=JSON.parse($("impText").value);
+    (d.items||[]).forEach(x=>{if(!x||!x.u||!DB.byU[x.u])return;const s=x.state==="been"?2:1;
+      if(!FAV[x.u]||FAV[x.u][0]!==2||s===2){FAV[x.u]=[s,+x.at||Date.now()];n++}});
+    saveFav();$("importDlg").close();toast(`已导入 ${n} 家`);render()}
+  catch(e){toast("内容看不懂，请确认是从这里导出的备份")}});
+
+// install
+let deferredPrompt=null;
+window.addEventListener("beforeinstallprompt",e=>{e.preventDefault();deferredPrompt=e;$("installHint").textContent="一键安装"});
+const standalone=matchMedia("(display-mode: standalone)").matches||navigator.standalone;
+if(standalone)$("installHint").textContent="已从主屏幕打开";
+$("installBtn").addEventListener("click",()=>{if(deferredPrompt){deferredPrompt.prompt();deferredPrompt.userChoice.finally(()=>deferredPrompt=null)}else $("installDlg").showModal()});
+if("serviceWorker" in navigator&&location.protocol==="https:")navigator.serviceWorker.register("sw.js").catch(()=>{});
+matchMedia("(max-width:700px)").addEventListener("change",()=>{closeSheet();if(DB)render({fit:false})});
 
 // ---- load ----
 (async()=>{
@@ -588,7 +847,7 @@ window.addEventListener("hashchange",()=>{if(!DB)return;const before=location.ha
       d=JSON.parse(new TextDecoder().decode(all));
     }else d=await res.json();
     DB=prep(d);resolveNames();
-    if(DB.updated){const [y,m,dd]=DB.updated.split("-");$("updated").textContent=`数据更新至 ${y} 年 ${+m} 月 ${+dd} 日`}
+    if(DB.updated){const [y,m,dd]=DB.updated.split("-");document.querySelectorAll(".updated").forEach(e=>e.textContent=e.closest(".cell")?`${y} 年 ${+m} 月 ${+dd} 日`:`数据更新至 ${y} 年 ${+m} 月 ${+dd} 日`)}
     render();
   }catch(e){$("list").innerHTML='<p class="empty">数据没能载入，请刷新页面再试。</p>'}
 })();
