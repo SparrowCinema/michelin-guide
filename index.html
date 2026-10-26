@@ -18,7 +18,7 @@
 <meta name="apple-mobile-web-app-title" content="米其林名录">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <!-- ?v= must match ASSET_VER in sw.js: a new page must never run with an old cached script -->
-<link rel="stylesheet" href="upgrade.css?v=13">
+<link rel="stylesheet" href="upgrade.css?v=14">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" href="icon.svg" type="image/svg+xml">
 <link rel="icon" href="icon-192.png" sizes="192x192" type="image/png">
@@ -269,21 +269,22 @@ dialog::backdrop{background:var(--shade)}
     </div>
     <div class="panel" id="panel" role="group" aria-label="筛选">
       <div class="sheethead"><b>筛选</b><button type="button" class="morebtn" id="clearAll2">清除全部</button></div>
+      <div class="row" id="viewRow">
+        <span class="seg" id="tabsTop" role="group" aria-label="页面">
+          <button type="button" data-tab="list" aria-pressed="true">名录</button><button type="button" data-tab="map" aria-pressed="false">地图</button><button type="button" data-tab="near" aria-pressed="false">附近</button><button type="button" data-tab="me" aria-pressed="false">我的</button>
+        </span>
+        <button type="button" class="chip" id="share">复制筛选链接</button>
+        <button type="button" class="morebtn" id="toggleMore" aria-expanded="false">筛选地区与菜系</button>
+        <span class="count" id="count"></span>
+      </div>
+      <div id="more-f" class="panel-more" hidden>
       <div class="lbl sheet-only">地区</div>
       <div class="row" id="conts"></div>
       <div class="row">
         <select id="country" aria-label="国家或地区"></select>
         <select id="city" aria-label="城市"></select>
       </div>
-      <div class="row" id="viewRow">
-        <span class="seg" id="tabsTop" role="group" aria-label="页面">
-          <button type="button" data-tab="list" aria-pressed="true">名录</button><button type="button" data-tab="map" aria-pressed="false">地图</button><button type="button" data-tab="near" aria-pressed="false">附近</button><button type="button" data-tab="me" aria-pressed="false">我的</button>
-        </span>
-        <button type="button" class="chip" id="share">复制筛选链接</button>
-        <button type="button" class="morebtn" id="toggleMore" aria-expanded="false">更多筛选</button>
-        <span class="count" id="count"></span>
-      </div>
-      <div id="more-f" class="panel-more" hidden>
+
         <div class="lbl">菜系与价位</div>
         <div class="row">
           <select id="cuisine" aria-label="菜系"></select>
@@ -317,7 +318,7 @@ dialog::backdrop{background:var(--shade)}
         <span id="tileNote"></span>
       </div>
     </div>
-    <details class="stats" id="statsBox" open>
+    <details class="stats" id="statsBox">
       <summary id="statsTitle">各大洲统计</summary>
       <div class="tbl"><table><thead><tr><th id="statsCol">地区</th><th>三星</th><th>二星</th><th>一星</th><th>必比登</th><th>入选</th><th>合计</th></tr></thead><tbody id="stats"></tbody></table></div>
       <button class="more-t" id="moreStats" hidden>显示全部</button>
@@ -437,16 +438,17 @@ dialog::backdrop{background:var(--shade)}
 <div id="inappBar" hidden><span>在微信等 App 里无法添加到主屏幕，也可能打不开地图。</span><button type="button" id="inappHow">怎么办</button><button type="button" id="inappX" aria-label="关闭">×</button></div>
 <div id="toast" role="status" aria-live="polite"></div>
 
-<script src="search-aliases.js?v=13"></script>
-<script src="guide-core.js?v=13"></script>
-<script src="upgrade.js?v=13"></script>
+<script src="search-aliases.js?v=14"></script>
+<script src="guide-core.js?v=14"></script>
+<script src="upgrade.js?v=14"></script>
+<script src="passport-share.js?v=14"></script>
 <script>
 const CONT=["亚洲","欧洲","北美洲","南美洲","大洋洲"];
 const LVN=["三星","二星","一星","必比登","入选"];
 const LVC=["#7a0d0a","#b3261e","#e0574d","#c98a00","#9a9390"];
 const PIN=["中国内地","中国香港","中国澳门","中国台湾"];
 const REPO="https://github.com/SparrowCinema/michelin-guide";
-const ASSET_VER="13"; // = ?v= on the asset tags above, UPGRADE_VER in upgrade.js and ASSET_VER in sw.js
+const ASSET_VER="14"; // = ?v= on the asset tags above, UPGRADE_VER in upgrade.js and ASSET_VER in sw.js
 const DATA_VER="20261003-2"; // bump whenever data.json changes so browsers skip their cached copy
 const $=id=>document.getElementById(id);
 const esc=s=>String(s).replace(/[&<>"]/g,ch=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[ch]));
@@ -502,7 +504,7 @@ function prep(d){
 // ---- URL hash <-> state (country / city stored by Chinese name) ----
 function readHash(){
   const h=new URLSearchParams(location.hash.slice(1));if(![...h.keys()].length)return false;
-  S.budget=Math.max(0,+h.get("budget")||0);S.currency=/^[A-Z]{3}$/.test(h.get("currency")||"")?h.get("currency"):"EUR";
+  S.budget=0;S.currency="EUR"; // Retired incomplete budget filters never affect old shared links.
   const v=h.get("v");S.v=v==="map"||v==="me"?v:"list";S.l=h.get("l")??"all";S.c=h.get("c")||"";S.q=h.get("q")||"";
   S.cu=h.get("cu")||"";S.p=h.get("p")||"";S.f=new Set((h.get("f")||"").split(",").filter(x=>["new","up","green","bp"].includes(x)));
   S._co=h.get("co")||"";S._ci=h.get("ci")||"";return true}
@@ -517,7 +519,7 @@ function hashString(){
   if(S.v!=="list")h.set("v",S.v);if(S.l!=="all")h.set("l",S.l);if(S.c)h.set("c",S.c);
   if(S.co!=="")h.set("co",DB.C[S.co][0]);if(S.ci!=="")h.set("ci",DB.T[S.ci][0]);
   if(S.q)h.set("q",S.q);if(S.cu)h.set("cu",S.cu);if(S.p)h.set("p",S.p);
-  if(S.budget){h.set("budget",String(S.budget));h.set("currency",S.currency)}
+
   if(S.f.size)h.set("f",[...S.f].join(","));
   return h.toString();
 }
@@ -528,7 +530,7 @@ function writeHash(){
 function shareURL(){const v=S.v;if(v==="me")S.v="list";const s=hashString();S.v=v;return location.origin+location.pathname+(s?"#"+s:"")}
 
 // ---- filtering ----
-function activeFilterCount(){return (S.c?1:0)+(S.co!==""?1:0)+(S.ci!==""?1:0)+(S.cu?1:0)+(S.p?1:0)+(S.budget?1:0)+S.f.size}
+function activeFilterCount(){return (S.c?1:0)+(S.co!==""?1:0)+(S.ci!==""?1:0)+(S.cu?1:0)+(S.p?1:0)+S.f.size}
 let searchCache={q:null,result:null};
 function filtered(ignore){
   if(searchCache.q!==S.q){searchCache={q:S.q,result:MG.matcher(S.q,DB.rows)}}
@@ -536,7 +538,7 @@ function filtered(ignore){
   const trip=S.trip?upTrip(S.trip):null;
   return DB.rows.filter(r=>(ignore==="level"||S.l==="all"||r.l==+S.l)
     &&(!S.c||DB.C[r.co][2]===S.c)&&(S.co===""||r.co==S.co)&&(S.ci===""||r.ci==S.ci)
-    &&match.test(r)&&(!S.trip||(trip&&trip.items.includes(r.u)))&&(!S.change||upChangeMatch(r,S.change))&&upBudgetMatch(r)&&(ignore==="cuisine"||cu<0||r.cui===cu)&&(!S.p||r.p==+S.p)
+    &&match.test(r)&&(!S.trip||(trip&&trip.items.includes(r.u)))&&(!S.change||upChangeMatch(r,S.change))&&(ignore==="cuisine"||cu<0||r.cui===cu)&&(!S.p||r.p==+S.p)
     &&(!S.f.has("new")||r.nw)&&(!S.f.has("up")||r.up)&&(!S.f.has("green")||r.green)&&(!S.f.has("bp")||r.bp));
 }
 
@@ -599,16 +601,12 @@ function itemBody(r,withPlace){
   const f=favOf(r.u);
   const meta=[withPlace?DB.T[r.ci][0]+(DB.C[r.co][0]!==DB.T[r.ci][0]?" · "+DB.C[r.co][0]:""):"",r.cu,r.p?"$".repeat(r.p):"",
     dist!=null?"距你 "+(dist<1?Math.round(dist*1000)+" 米":dist<100?dist.toFixed(1)+" 公里":Math.round(dist)+" 公里"):"",
-    S.v==="me"&&f?(f===1?"加入想去 "+fmtDate(FAV[r.u][1]):"去过 "+upVisitDate(r.u)):""].filter(Boolean).join(" · ");
+    S.v==="me"&&f?(f===1?"加入想去 "+fmtDate(FAV[r.u][1]):"去过"+(upVisitDate(r.u)?" "+upVisitDate(r.u):"")):""].filter(Boolean).join(" · ");
   const m=mapLink(r);
-  const fix=`${REPO}/issues/new?title=${encodeURIComponent("纠错："+(r.zh||r.n)+"（"+DB.T[r.ci][0]+"）")}&body=${encodeURIComponent("米其林页面：https://guide.michelin.com/en/"+r.u+"\n\n哪里不对：\n")}`;
-  const links=[r.u?`<a href="https://guide.michelin.com/en/${esc(r.u)}" target="_blank" rel="noopener">米其林</a>`:"",
-    `<a href="${esc(m.href)}" target="_blank" rel="noopener">${m.label}</a>`,
-    r.w?`<a href="${esc(r.w)}" target="_blank" rel="noopener">官网</a>`:"",
+  const links=[
     `<button type="button" class="fav" data-u="${esc(r.u)}" data-v="1" aria-pressed="${f===1}">想去</button>`,
     `<button type="button" class="fav" data-u="${esc(r.u)}" data-v="2" aria-pressed="${f===2}">${esc(upVisitLabel(r.u))}</button>`,
-    `<button type="button" class="linkbtn" data-trip-pick="${esc(r.u)}">加入旅行</button>`,
-    `<a class="fix" href="${esc(fix)}" target="_blank" rel="noopener">纠错</a>`].filter(Boolean).join("");
+    `<a class="row-navigation" href="${esc(m.href)}" target="_blank" rel="noopener">导航 ↗</a>`].join("");
   return `<span class="t">${title}</span>${tagsHTML(r)}${orig}${meta?`<span class="meta">${esc(meta)}</span>`:""}<span class="links">${links}</span>`;
 }
 function badge(r){const cls=r.l<3?"s":r.l===3?"b":"x";return `<span class="lv ${cls}">${r.l<3?"★".repeat(3-r.l):LVN[r.l]}</span>`}
@@ -703,7 +701,7 @@ function render(opts={}){
   document.querySelectorAll("#flags .chip").forEach(b=>b.setAttribute("aria-pressed",S.f.has(b.dataset.f)));
   document.querySelectorAll("#tabsTop button").forEach(b=>b.setAttribute("aria-pressed",b.dataset.tab===tab));
   document.querySelectorAll("#tabbar button").forEach(b=>{if(b.dataset.tab===tab)b.setAttribute("aria-current","page");else b.removeAttribute("aria-current")});
-  if(S.cu||S.p||S.f.size||S.budget){$("more-f").hidden=false;$("toggleMore").setAttribute("aria-expanded","true")}
+
   const me=S.v==="me";
   $("mePage").hidden=!me;$("browse").hidden=me;$("controls").hidden=me&&isPhone();$("intro").hidden=me&&isPhone();
   $("footer").hidden=me;
@@ -976,7 +974,7 @@ matchMedia("(max-width:700px)").addEventListener("change",()=>{closeSheet();if(D
 async function healMismatch(){
   const got=typeof UPGRADE_VER==="undefined"?"none":UPGRADE_VER;if(got===ASSET_VER)return false;
   const key=ASSET_VER+"|"+got;try{if(sessionStorage.getItem("mg-heal")===key)return false;sessionStorage.setItem("mg-heal",key)}catch(e){return false}
-  const files=["./","index.html","upgrade.js","upgrade.css","guide-core.js","search-aliases.js","sw.js"];
+  const files=["./","index.html","upgrade.js","passport-share.js","upgrade.css","guide-core.js","search-aliases.js","sw.js"];
   await Promise.all(files.flatMap(f=>[f,f+"?v="+got,f+"?v="+ASSET_VER]).map(u=>fetch(u,{cache:"reload"}).catch(()=>{})));
   try{const reg=await navigator.serviceWorker?.getRegistration();await reg?.update()}catch(e){}
   location.reload();return true;
