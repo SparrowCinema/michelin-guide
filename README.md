@@ -76,7 +76,7 @@ python3 tools/build.py michelin_my_maps.csv tools/cn_mainland_curated.json data.
 - GitHub Actions 的 **Check upstream data** 每周一 02:15 UTC（北京时间 10:15）检查一次，也可手动运行。报告保留为 30 天的工作流附件，并列出摘要；不会自动覆盖 `data.json` 或绕过 PR。
 - 更新名单仍需人工核实候选差异，按原流程重建、修改 `DATA_VER`，通过 PR 发布；更新价格需核对官方来源和日期。暂未自动抓取官方菜单。
 - **Validate guide** 在 PR 和 main 提交时执行数据与逻辑检查。只有实际成功运行后，才应把该检查加入仓库必需状态检查。
-- `sw.js` 的 v7 更新保留旧版已缓存数据，补充新脚本的离线缓存，不清除收藏。地图底图和 Leaflet 仍需联网。
+- `sw.js` 的 v8 更新保留旧版已缓存数据，补充新脚本的离线缓存，不清除收藏。地图底图和 Leaflet 仍需联网。
 
 ```sh
 node --test tests/core.test.js
@@ -84,4 +84,8 @@ python -m unittest discover -s tests -p 'test_*.py'
 python tools/check_updates.py --validate-only
 ```
 
-可选浏览器回归：安装 Playwright 与 Leaflet 后，运行 `node tests/browser.cjs`。覆盖移动端 / 桌面、旅行、分享链接、笔记、v1/v2 备份、预算、快照筛选，以及 v6 → v7 离线缓存迁移。测试使用本地 Leaflet 和占位底图，不依赖地图供应商网络；真实 iPhone Safari 与外部底图连通性仍需设备验证。
+可选浏览器回归：安装 Playwright 与 Leaflet 后，运行 `node tests/browser.cjs`。覆盖移动端 / 桌面、旅行、分享链接、笔记、v1/v2 备份、预算、快照筛选，以及 旧版 → 当前版 离线缓存迁移。测试使用本地 Leaflet 和占位底图，不依赖地图供应商网络；真实 iPhone Safari 与外部底图连通性仍需设备验证。
+
+### 护照册 UI
+
+「我的美食护照」以酒红皮纹封面、金色纹样和纸质内页呈现。轻触封面翻开；手机端可切换资料页与签章页，桌面端显示双页。按到访国家 / 地区生成签章，每页四枚，可翻页；点签章查看当地足迹地图。签章上的日期仅使用已填写的用餐日期，没有日期时显示“已记录”。这次更新只调整展示与交互，不改变收藏、旅行或备份结构。
