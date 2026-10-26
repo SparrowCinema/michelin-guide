@@ -5,7 +5,7 @@ const assert=require('node:assert/strict'),fs=require('node:fs'),path=require('n
 const {chromium}=require(process.env.PLAYWRIGHT_MODULE||'playwright');
 (async()=>{
   const base=path.resolve(__dirname,'..');
-  const previousCache='mg-v9';
+  const previousCache='mg-v12';
   const cacheName=fs.readFileSync(path.join(base,'sw.js'),'utf8').match(/const CACHE = "([^"]+)"/)[1];
   // A new page must never load an old cached script: index.html asset versions must match sw.js.
   const swText=fs.readFileSync(path.join(base,'sw.js'),'utf8'),assetVer=swText.match(/const ASSET_VER = "([^"]+)"/)[1],indexText=fs.readFileSync(path.join(base,'index.html'),'utf8');
@@ -25,7 +25,7 @@ const {chromium}=require(process.env.PLAYWRIGHT_MODULE||'playwright');
   const args=process.env.CHROMIUM_EXECUTABLE?['--no-sandbox','--disable-dev-shm-usage','--use-gl=angle','--use-angle=swiftshader','--enable-unsafe-swiftshader']:[];
   const browser=await chromium.launch({headless:true,args,executablePath:process.env.CHROMIUM_EXECUTABLE||undefined});
   try{
-    const context=await browser.newContext({viewport:{width:390,height:844}}),page=await context.newPage(),errors=[];
+    const context=await browser.newContext({viewport:{width:390,height:844},hasTouch:true,isMobile:true,deviceScaleFactor:2}),page=await context.newPage(),errors=[];
     page.on('pageerror',e=>errors.push(e.message));
     // Only Leaflet assets/tiles are stubbed, so assertions do not depend on external map services.
     const leaflet=path.dirname(require.resolve(process.env.LEAFLET_MODULE||'leaflet'));
@@ -52,6 +52,7 @@ const {chromium}=require(process.env.PLAYWRIGHT_MODULE||'playwright');
     await page.locator('#tabbar [data-tab="list"]').click();await page.locator('[data-trip-pick]').first().click();await page.locator('#tripPickChoices input').check();await page.locator('#tripPickForm button').click();
     const trip=await page.evaluate(()=>PERSONAL.trips[0]);assert.equal(trip.items.length,1);
     await page.locator('.restaurant-title').first().click();assert(new URL(page.url()).searchParams.get('restaurant'));
+    assert.equal(await page.locator('#detailTitle').evaluate(el=>getComputedStyle(el).outlineStyle),'none');
     assert(!(await page.locator('#detailBody').innerText()).includes('快照'));
     await page.fill('#visitDate','2026-11-26');await page.locator('[data-rating-star="4"]').click({position:{x:6,y:18}});assert.equal(await page.inputValue('#visitRating'),'3.5');await page.locator('#starRating').press('ArrowRight');assert.equal(await page.inputValue('#visitRating'),'4');await page.locator('#starRating').press('ArrowLeft');await page.fill('#visitNote','旅途笔记 <script>');await page.locator('#visitForm button[type="submit"]').click();
     assert.equal(await page.evaluate(()=>favOf(document.getElementById('detailDlg').dataset.u)),2); // saving the rating marks 去过
@@ -98,6 +99,36 @@ const {chromium}=require(process.env.PLAYWRIGHT_MODULE||'playwright');
     if(process.env.SCREENSHOT_DIR)await page.screenshot({path:path.join(process.env.SCREENSHOT_DIR,'me-mobile.png'),fullPage:true});
     await page.locator('[data-trip-open]').first().click();await page.fill('#tripName','欧洲觅食');await page.locator('#tripForm button').click();assert((await page.locator('#tripCards').innerText()).includes('欧洲觅食'));
     await page.locator('[data-trip-map]').first().click();await page.waitForFunction(()=>MAP.ready&&MAP.layer);assert.equal(await page.evaluate(()=>MAP.layer.getLayers().length),1);
+    // Real touch events: a single-finger swipe over the map must scroll the document.
+    const cdp=await context.newCDPSession(page);
+    async function swipeMap(){
+      await page.locator('#map').scrollIntoViewIfNeeded();
+      const box=await page.locator('#map').boundingBox(),x=box.x+box.width*.4,y=Math.min(box.y+box.height-30,700);
+      await cdp.send('Input.dispatchTouchEvent',{type:'touchStart',touchPoints:[{x,y}]});
+      await page.waitForTimeout(80);
+      for(let step=1;step<=8;step++){
+        await cdp.send('Input.dispatchTouchEvent',{type:'touchMove',touchPoints:[{x,y:y-step*20}]});
+        await page.waitForTimeout(20);
+      }
+      await page.waitForTimeout(150); // End without momentum spilling into the next interaction.
+      await cdp.send('Input.dispatchTouchEvent',{type:'touchEnd',touchPoints:[]});
+    }
+    assert.equal(await page.locator('.restaurant-pin').count(),1);
+    assert.equal(await page.locator('#list .map-index').first().innerText(),'1');
+    assert(await page.evaluate(()=>L.Browser.retina&&MAP.tiles.options.detectRetina));
+    await page.locator('#map').scrollIntoViewIfNeeded();
+    let scrollBefore=await page.evaluate(()=>scrollY),centerBefore=await page.evaluate(()=>MAP.m.getCenter());
+    await swipeMap();await page.waitForFunction(y=>scrollY>y+40,scrollBefore);
+    assert.deepEqual(await page.evaluate(()=>MAP.m.getCenter()),centerBefore);
+    await page.locator('#mapInteract').click();assert.equal(await page.locator('#mapInteract').getAttribute('aria-pressed'),'true');
+    await page.waitForTimeout(200); // Let the compositor apply the new touch-action before a trusted touch gesture.
+    await page.locator('#map').scrollIntoViewIfNeeded();scrollBefore=await page.evaluate(()=>scrollY);centerBefore=await page.evaluate(()=>MAP.m.getCenter());
+    await swipeMap();
+    await page.waitForFunction(ll=>Math.abs(MAP.m.getCenter().lat-ll.lat)>.00001,centerBefore);
+    assert(Math.abs((await page.evaluate(()=>scrollY))-scrollBefore)<10,'Moving the map must not scroll the page');
+    await page.locator('#mapListJump').click();assert.equal(await page.locator('#mapInteract').getAttribute('aria-pressed'),'false');
+    await page.waitForFunction(()=>{const r=document.getElementById('mapResults').getBoundingClientRect();return r.top>=document.getElementById('controls').getBoundingClientRect().bottom&&r.bottom<innerHeight;});
+    await page.locator('#fitMap').click();await page.waitForFunction(()=>MAP.m.getBounds().contains(MAP.layer.getLayers()[0].getLatLng()));
     assert(!(await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth)));
     if(process.env.SCREENSHOT_DIR)await page.screenshot({path:path.join(process.env.SCREENSHOT_DIR,'trip-map-mobile.png')});
     // One trip spanning multiple cities includes all members, regardless of visited status.
@@ -136,7 +167,18 @@ const {chromium}=require(process.env.PLAYWRIGHT_MODULE||'playwright');
     assert.equal(await page.locator('button.pp-stamp').count(),0);
     await page.evaluate(saved=>{FAV=JSON.parse(saved);saveFav();S.v='me';applyTheme('light');render();},savedFavourites);
     await page.locator('[data-passport-close]').click();assert(await page.locator('.pp-cover').isVisible());
-    // Upgrade a seeded v9 cache, keeping the existing data and all personal storage.
+    // Desktop wheel scrolling over the map also reaches the list without changing zoom.
+    await page.setViewportSize({width:1280,height:900});
+    await page.locator('#tabsTop [data-tab="map"]').click();await page.waitForFunction(()=>MAP.ready);
+    await page.locator('#map').scrollIntoViewIfNeeded();
+    const desktopMap=await page.locator('#map').boundingBox(),zoomBefore=await page.evaluate(()=>MAP.m.getZoom());scrollBefore=await page.evaluate(()=>scrollY);
+    await page.mouse.move(desktopMap.x+desktopMap.width/2,desktopMap.y+desktopMap.height/2);await page.mouse.wheel(0,350);
+    await page.waitForFunction(y=>scrollY>y+40,scrollBefore);assert.equal(await page.evaluate(()=>MAP.m.getZoom()),zoomBefore);
+    await page.setViewportSize({width:320,height:800});assert(!(await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth)));
+    if(process.env.SCREENSHOT_DIR)await page.screenshot({path:path.join(process.env.SCREENSHOT_DIR,'map-narrow.png'),fullPage:true});
+    await page.evaluate(()=>applyTheme('dark'));if(process.env.SCREENSHOT_DIR)await page.screenshot({path:path.join(process.env.SCREENSHOT_DIR,'map-dark.png'),fullPage:true});
+    await page.evaluate(()=>applyTheme('light'));await page.locator('#tabbar [data-tab="me"]').click();
+    // Upgrade a seeded v12 cache, keeping the existing data and all personal storage.
     const oldStore=await page.evaluate(()=>localStorage.getItem('mg-personal'));
     await page.evaluate(async previous=>{const c=await caches.open(previous);const req=new Request(new URL('data.json?v='+DATA_VER,location.href));await c.put(req,await fetch(req));await navigator.serviceWorker.register('sw.js');await navigator.serviceWorker.ready;},previousCache);
     await page.waitForFunction(()=>!!navigator.serviceWorker.controller);await page.waitForFunction(async previous=>!(await caches.keys()).includes(previous),previousCache);
@@ -144,6 +186,6 @@ const {chromium}=require(process.env.PLAYWRIGHT_MODULE||'playwright');
     assert(await page.evaluate(async name=>!!await (await caches.open(name)).match(new URL('data.json?v='+DATA_VER,location.href).href),cacheName));
     await context.setOffline(true);await page.reload();await page.waitForFunction(()=>typeof DB!=='undefined'&&DB&&upLoaded);assert.equal(await page.evaluate(()=>DB.rows.length),19721);assert.equal(await page.evaluate(()=>PERSONAL.trips[0].name),'欧洲觅食');
     await context.setOffline(false);assert.deepEqual(errors,[]);await context.close();
-    console.log('PASS: versioned assets match sw.js, merged 去过 + rating sheet (mark, edit, unvisit keeps rating, note-only, score sort), mobile/desktop, search, trips, detail deep link, notes, v1/v2 backup, map markers, budget, snapshot filtering, passport cover/spread/pagination/empty state, v9→current offline migration; half stars and swipe dismissal; no browser errors.');
+    console.log('PASS: touch scroll over passive map, explicit map panning, list jump, desktop wheel scrolling, numbered pins, retina tiles, title focus, narrow/dark layouts, existing search/trips/ratings/backup regression and v12→current offline migration; no browser errors.');
   }finally{await browser.close();server.close();}
 })().catch(e=>{console.error(e);process.exit(1);});
