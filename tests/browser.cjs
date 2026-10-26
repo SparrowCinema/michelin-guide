@@ -7,6 +7,12 @@ const {chromium}=require(process.env.PLAYWRIGHT_MODULE||'playwright');
   const base=path.resolve(__dirname,'..');
   const previousCache='mg-v9';
   const cacheName=fs.readFileSync(path.join(base,'sw.js'),'utf8').match(/const CACHE = "([^"]+)"/)[1];
+  // A new page must never load an old cached script: index.html asset versions must match sw.js.
+  const swText=fs.readFileSync(path.join(base,'sw.js'),'utf8'),assetVer=swText.match(/const ASSET_VER = "([^"]+)"/)[1],indexText=fs.readFileSync(path.join(base,'index.html'),'utf8');
+  for(const f of ['upgrade.css','search-aliases.js','guide-core.js','upgrade.js'])assert(indexText.includes(f+'?v='+assetVer),f+' must be referenced as '+f+'?v='+assetVer);
+  assert.equal(cacheName,'mg-v'+assetVer);
+  assert(indexText.includes('const ASSET_VER="'+assetVer+'"'),'index.html ASSET_VER');
+  assert(fs.readFileSync(path.join(base,'upgrade.js'),'utf8').includes('const UPGRADE_VER="'+assetVer+'"'),'upgrade.js UPGRADE_VER');
   const server=http.createServer((req,res)=>{
     let file=path.resolve(base,'.'+decodeURIComponent(new URL(req.url,'http://localhost').pathname));
     if(file===base)file=path.join(base,'index.html');
@@ -138,6 +144,6 @@ const {chromium}=require(process.env.PLAYWRIGHT_MODULE||'playwright');
     assert(await page.evaluate(async name=>!!await (await caches.open(name)).match(new URL('data.json?v='+DATA_VER,location.href).href),cacheName));
     await context.setOffline(true);await page.reload();await page.waitForFunction(()=>typeof DB!=='undefined'&&DB&&upLoaded);assert.equal(await page.evaluate(()=>DB.rows.length),19721);assert.equal(await page.evaluate(()=>PERSONAL.trips[0].name),'欧洲觅食');
     await context.setOffline(false);assert.deepEqual(errors,[]);await context.close();
-    console.log('PASS: merged 去过 + rating sheet (mark, edit, unvisit keeps rating, note-only, score sort), mobile/desktop, search, trips, detail deep link, notes, v1/v2 backup, map markers, budget, snapshot filtering, passport cover/spread/pagination/empty state, v9→current offline migration; half stars and swipe dismissal; no browser errors.');
+    console.log('PASS: versioned assets match sw.js, merged 去过 + rating sheet (mark, edit, unvisit keeps rating, note-only, score sort), mobile/desktop, search, trips, detail deep link, notes, v1/v2 backup, map markers, budget, snapshot filtering, passport cover/spread/pagination/empty state, v9→current offline migration; half stars and swipe dismissal; no browser errors.');
   }finally{await browser.close();server.close();}
 })().catch(e=>{console.error(e);process.exit(1);});

@@ -33,6 +33,16 @@
 
 保存后核对规则已启用。上述配置尚未由本次文档提交自动启用。
 
+## 修改页面脚本或样式时
+
+`index.html` 里引用 `upgrade.css`、`upgrade.js`、`guide-core.js`、`search-aliases.js` 时带 `?v=版本号`。改动这些文件时，以下几处要一起加 1，否则老用户的浏览器可能用新页面配旧脚本：
+
+- `index.html`：`ASSET_VER` 和各个 `?v=`
+- `upgrade.js`：`UPGRADE_VER`
+- `sw.js`：`ASSET_VER` 和 `CACHE`（`mg-v版本号`）
+
+`tests/browser.cjs` 会检查这几处是否一致。页面启动时如果发现页面和脚本版本不一致，会跳过缓存重新下载一次，再自动刷新。
+
 ## 发布与回退
 
 继续使用现有 GitHub Pages 发布配置。发现问题时，通过新的任务分支和回退 PR 修复，不重写 main 历史。
