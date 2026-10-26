@@ -327,7 +327,7 @@ dialog::backdrop{background:var(--shade)}
     <div class="lvbar" id="meLv"></div>
     <div class="metabs">
       <span class="seg" role="group" aria-label="清单"><button type="button" data-m="1" aria-pressed="true">想去</button><button type="button" data-m="2" aria-pressed="false">去过</button></span>
-      <span class="seg" role="group" aria-label="排序"><button type="button" data-o="time" aria-pressed="true">最近标记</button><button type="button" data-o="place" aria-pressed="false">按地区</button></span>
+      <span class="seg" role="group" aria-label="排序"><button type="button" data-o="time" aria-pressed="true">最近标记</button><button type="button" data-o="place" aria-pressed="false">按地区</button><button type="button" data-o="score" aria-pressed="false" id="orderScore">按评分</button></span>
     </div>
     <div id="meList"></div>
 
@@ -592,14 +592,14 @@ function itemBody(r,withPlace){
   const f=favOf(r.u);
   const meta=[withPlace?DB.T[r.ci][0]+(DB.C[r.co][0]!==DB.T[r.ci][0]?" · "+DB.C[r.co][0]:""):"",r.cu,r.p?"$".repeat(r.p):"",
     dist!=null?"距你 "+(dist<1?Math.round(dist*1000)+" 米":dist<100?dist.toFixed(1)+" 公里":Math.round(dist)+" 公里"):"",
-    S.v==="me"&&f?(f===1?"加入想去 ":"标记去过 ")+fmtDate(FAV[r.u][1]):""].filter(Boolean).join(" · ");
+    S.v==="me"&&f?(f===1?"加入想去 "+fmtDate(FAV[r.u][1]):"去过 "+upVisitDate(r.u)):""].filter(Boolean).join(" · ");
   const m=mapLink(r);
   const fix=`${REPO}/issues/new?title=${encodeURIComponent("纠错："+(r.zh||r.n)+"（"+DB.T[r.ci][0]+"）")}&body=${encodeURIComponent("米其林页面：https://guide.michelin.com/en/"+r.u+"\n\n哪里不对：\n")}`;
   const links=[r.u?`<a href="https://guide.michelin.com/en/${esc(r.u)}" target="_blank" rel="noopener">米其林</a>`:"",
     `<a href="${esc(m.href)}" target="_blank" rel="noopener">${m.label}</a>`,
     r.w?`<a href="${esc(r.w)}" target="_blank" rel="noopener">官网</a>`:"",
     `<button type="button" class="fav" data-u="${esc(r.u)}" data-v="1" aria-pressed="${f===1}">想去</button>`,
-    `<button type="button" class="fav" data-u="${esc(r.u)}" data-v="2" aria-pressed="${f===2}">去过</button>`,
+    `<button type="button" class="fav" data-u="${esc(r.u)}" data-v="2" aria-pressed="${f===2}">${esc(upVisitLabel(r.u))}</button>`,
     `<button type="button" class="linkbtn" data-trip-pick="${esc(r.u)}">加入旅行</button>`,
     `<a class="fix" href="${esc(fix)}" target="_blank" rel="noopener">纠错</a>`].filter(Boolean).join("");
   return `<span class="t">${title}</span>${tagsHTML(r)}${orig}${meta?`<span class="meta">${esc(meta)}</span>`:""}<span class="links">${links}</span>`;
@@ -662,8 +662,13 @@ function renderMe(){
   document.querySelectorAll("[data-m]").forEach(b=>b.setAttribute("aria-pressed",+b.dataset.m===meTab));
   document.querySelectorAll("[data-o]").forEach(b=>b.setAttribute("aria-pressed",b.dataset.o===meOrder));
   const list=(meTab===1?want:been);
-  if(!list.length){$("meList").innerHTML=`<p class="empty">${meTab===1?"还没有想去的餐厅。<br>在名录或地图里点店名下面的“想去”，就会出现在这里。":"还没有去过的餐厅。<br>吃过之后点“去过”，这里会记下来。"}</p>`;return}
-  if(meOrder==="time"){
+  $("orderScore").hidden=meTab!==2;if(meTab!==2&&meOrder==="score")meOrder="time";
+  if(!list.length){$("meList").innerHTML=`<p class="empty">${meTab===1?"还没有想去的餐厅。<br>在名录或地图里点店名下面的“想去”，就会出现在这里。":"还没有去过的餐厅。<br>吃过之后点“去过”打个分，这里会记下来。"}</p>`;return}
+  if(meOrder==="score"){
+    const score=x=>PERSONAL.records[x[0].u]?.rating||0;
+    const rs=list.slice().sort((a,b)=>score(b)-score(a)||b[1][1]-a[1][1]).map(x=>x[0]);
+    $("meList").innerHTML=`<ul class="rl">`+rs.map(r=>`<li>${badge(r)}<span class="nm">${itemBody(r,true)}</span></li>`).join("")+"</ul>";
+  }else if(meOrder==="time"){
     const rs=list.slice().sort((a,b)=>b[1][1]-a[1][1]).map(x=>x[0]);
     $("meList").innerHTML=`<ul class="rl">`+rs.map(r=>`<li>${badge(r)}<span class="nm">${itemBody(r,true)}</span></li>`).join("")+"</ul>";
   }else{
@@ -838,8 +843,9 @@ $("filterBtn").addEventListener("click",openSheet);$("doneSheet").addEventListen
 document.addEventListener("keydown",e=>{if(e.key==="Escape")closeSheet()});
 $("locate").addEventListener("click",()=>locateMe(()=>{drawMe();MAP.m.setView(mePoint(),14)}));
 document.addEventListener("click",e=>{const b=e.target.closest(".fav");if(!b)return;
+  if(b.dataset.v==="2"){upOpenVisit(b.dataset.u);return}
   const u=b.dataset.u,v=+b.dataset.v,previous=FAV[u];if(favOf(u)===v)delete FAV[u];else FAV[u]=[v,Date.now()];if(!saveFav()){if(previous)FAV[u]=previous;else delete FAV[u];return;}updateBadge();
-  document.querySelectorAll(`.fav[data-u="${CSS.escape(u)}"]`).forEach(x=>x.setAttribute("aria-pressed",favOf(u)===+x.dataset.v));
+  document.querySelectorAll(`.fav[data-u="${CSS.escape(u)}"]`).forEach(x=>{x.setAttribute("aria-pressed",favOf(u)===+x.dataset.v);if(x.dataset.v==="2")x.textContent=upVisitLabel(u)});
   toast(favOf(u)===1?"已加入“想去”，在“我的”里查看":favOf(u)===2?"已标为“去过”":"已取消");
   if(S.v==="me")renderMe()});
 document.querySelectorAll("[data-m]").forEach(b=>b.addEventListener("click",()=>{meTab=+b.dataset.m;renderMe()}));

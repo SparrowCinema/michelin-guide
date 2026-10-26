@@ -83,5 +83,24 @@ a.restaurant-title{color:inherit;text-decoration:none}a.restaurant-title:hover{t
 .rating-fill{fill:currentColor;stroke:none}
 .rating-caption{display:flex;align-items:center;gap:18px;font-size:11px;min-height:20px}
 .rating-caption output{color:var(--muted)}
-#clearRating{background:none;border:0;color:var(--muted);padding:3px 0;font:inherit;cursor:pointer;text-decoration:underline;text-underline-offset:3px}
+#clearRating,[data-clear-rating]{background:none;border:0;color:var(--muted);padding:3px 0;font:inherit;cursor:pointer;text-decoration:underline;text-underline-offset:3px}
 @media(min-width:701px){.detail-drag{display:none}}
+
+/* One "去过" record: status, half-star rating, date and note in the same form (detail sheet and quick sheet). */
+.visit-form{grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+.visit-form label{font-size:12px;color:var(--muted)}
+.visit-form>label:nth-of-type(1){grid-column:1/-1;max-width:220px}
+.visit-form>label:nth-of-type(2){grid-column:1/-1}
+.visit-form input,.visit-form textarea{font-size:16px;border-radius:5px}
+.visit-form textarea{min-height:90px}
+.visit-status{grid-column:1/-1;margin:0;font-size:13px;color:var(--muted)}
+.visit-status.is-been{color:var(--green);font-weight:600}
+.visit-actions{grid-column:1/-1;display:flex;justify-content:flex-end;align-items:center;gap:14px;flex-wrap:wrap}
+.visit-actions .btn{font-size:14px;padding:8px 20px}
+.visit-actions .linkbtn{font-size:13px;color:var(--muted);margin-right:auto}
+.visit-kicker{margin:0 0 2px;font-size:12px;letter-spacing:.06em;color:var(--red)}
+#visitDlg h2{margin:0}
+#visitDlg .detail-origin{margin:2px 0 12px}
+@media (max-width:700px){
+  dialog.visit-sheet{margin:auto 0 0;width:100%;max-width:100%;max-height:88vh;border-radius:16px 16px 0 0;border-bottom:0;padding-bottom:env(safe-area-inset-bottom,0px)}
+}
