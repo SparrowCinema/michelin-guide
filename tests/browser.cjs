@@ -5,7 +5,7 @@ const assert=require('node:assert/strict'),fs=require('node:fs'),path=require('n
 const {chromium}=require(process.env.PLAYWRIGHT_MODULE||'playwright');
 (async()=>{
   const base=path.resolve(__dirname,'..');
-  const previousCache='mg-v7';
+  const previousCache='mg-v8';
   const cacheName=fs.readFileSync(path.join(base,'sw.js'),'utf8').match(/const CACHE = "([^"]+)"/)[1];
   const server=http.createServer((req,res)=>{
     let file=path.resolve(base,'.'+decodeURIComponent(new URL(req.url,'http://localhost').pathname));
@@ -30,7 +30,7 @@ const {chromium}=require(process.env.PLAYWRIGHT_MODULE||'playwright');
     assert(await page.locator('.pp-cover').isVisible());
     if(process.env.SCREENSHOT_DIR)await page.screenshot({path:path.join(process.env.SCREENSHOT_DIR,'passport-cover.png')});
     await page.locator('[data-passport-open]').click();assert(await page.locator('.pp-identity').isVisible());
-    await page.locator('[data-passport-tab="stamps"]').click();assert(await page.locator('.pp-blank-stamp').isVisible());assert(await page.locator('#passportMap').isDisabled());
+    await page.locator('[data-passport-tab="stamps"]').click();assert(await page.locator('.pp-blank-stamp').isVisible());assert.equal(await page.locator('#passportMap').count(),0);
     await page.locator('[data-passport-browse]').click();
     const u=await page.evaluate(()=>DB.rows.find(r=>r.n==='Arpège').u);
     await page.evaluate(u=>{FAV[u]=[2,1700000000000];saveFav();},u);
@@ -57,6 +57,18 @@ const {chromium}=require(process.env.PLAYWRIGHT_MODULE||'playwright');
     await page.locator('[data-trip-map]').first().click();await page.waitForFunction(()=>MAP.ready&&MAP.layer);assert.equal(await page.evaluate(()=>MAP.layer.getLayers().length),1);
     assert(!(await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth)));
     if(process.env.SCREENSHOT_DIR)await page.screenshot({path:path.join(process.env.SCREENSHOT_DIR,'trip-map-mobile.png')});
+    // One trip spanning multiple cities includes all members, regardless of visited status.
+    const tripFixture=await page.evaluate(()=>{const t=PERSONAL.trips[0],first=DB.byU[t.items[0]],other=DB.rows.find(r=>r.ci!==first.ci);t.items.push(other.u);FAV[first.u]=[2,Date.now()];saveFav();upSave(PERSONAL);render();return {id:t.id,firstCity:first.ci,otherCity:other.ci};});
+    await page.selectOption('#tripCityFilter',String(tripFixture.otherCity));
+    await page.waitForFunction(ci=>S.ci===String(ci)&&MAP.layer.getLayers().length===1,tripFixture.otherCity);
+    assert(await page.evaluate(ci=>filtered().every(r=>r.ci===ci),tripFixture.otherCity));
+    await page.selectOption('#tripCityFilter','');await page.waitForFunction(()=>MAP.layer.getLayers().length===2);
+    await page.locator('#tabbar [data-tab="me"]').click();assert.equal(await page.locator('[data-trip-city-map]').count(),2);
+    await page.locator('[data-trip-open]').first().click();assert.equal(await page.locator('#tripItems .city').count(),2);await page.locator('#tripDlg [data-close]').click();
+    await page.locator('[data-trip-city-map]').last().click();await page.waitForFunction(()=>MAP.ready&&MAP.layer.getLayers().length===1);assert(await page.locator('#travelMapTitle').isVisible());
+    await page.waitForFunction(()=>filtered().filter(r=>r.lat!=null).every(r=>MAP.m.getBounds().contains(MAP.amap?[r.glat,r.glng]:[r.lat,r.lng])));
+    if(process.env.SCREENSHOT_DIR)await page.screenshot({path:path.join(process.env.SCREENSHOT_DIR,'travel-city-map.png')});
+    await page.evaluate(id=>{PERSONAL.trips[0].items=PERSONAL.trips[0].items.slice(0,1);upSave(PERSONAL);upApplyTrip(id);render();},tripFixture.id);
     await page.locator('#tabbar [data-tab="list"]').click();await page.locator('#exitJourney').click();
     await page.evaluate(()=>{S.budget=300;S.currency='EUR';render();});await page.waitForTimeout(200);assert.equal(await page.locator('#count').innerText(),'1 家');
     await page.evaluate(()=>{S.budget=0;S.change='streak';render();});assert(await page.evaluate(()=>filtered().every(r=>r.h==='0000'&&r.l===0)));
@@ -77,10 +89,11 @@ const {chromium}=require(process.env.PLAYWRIGHT_MODULE||'playwright');
     if(process.env.SCREENSHOT_DIR)await page.screenshot({path:path.join(process.env.SCREENSHOT_DIR,'passport-stamps-mobile.png')});
     await page.evaluate(()=>applyTheme('dark'));
     if(process.env.SCREENSHOT_DIR)await page.screenshot({path:path.join(process.env.SCREENSHOT_DIR,'passport-dark.png')});
-    await page.locator('[data-passport-country]').first().click();await page.waitForFunction(()=>MAP.ready&&MAP.layer);assert(await page.evaluate(()=>S.passport&&S.co!==''&&filtered().every(r=>favOf(r.u)===2&&r.co==S.co)));
+    assert.equal(await page.locator('[data-passport-country],#passportMap').count(),0);
+    assert.equal(await page.locator('button.pp-stamp').count(),0);
     await page.evaluate(saved=>{FAV=JSON.parse(saved);saveFav();S.v='me';applyTheme('light');render();},savedFavourites);
     await page.locator('[data-passport-close]').click();assert(await page.locator('.pp-cover').isVisible());
-    // Upgrade a seeded v7 cache, keeping the existing data and all personal storage.
+    // Upgrade a seeded v8 cache, keeping the existing data and all personal storage.
     const oldStore=await page.evaluate(()=>localStorage.getItem('mg-personal'));
     await page.evaluate(async previous=>{const c=await caches.open(previous);const req=new Request(new URL('data.json?v='+DATA_VER,location.href));await c.put(req,await fetch(req));await navigator.serviceWorker.register('sw.js');await navigator.serviceWorker.ready;},previousCache);
     await page.waitForFunction(()=>!!navigator.serviceWorker.controller);await page.waitForFunction(async previous=>!(await caches.keys()).includes(previous),previousCache);
@@ -88,6 +101,6 @@ const {chromium}=require(process.env.PLAYWRIGHT_MODULE||'playwright');
     assert(await page.evaluate(async name=>!!await (await caches.open(name)).match(new URL('data.json?v='+DATA_VER,location.href).href),cacheName));
     await context.setOffline(true);await page.reload();await page.waitForFunction(()=>typeof DB!=='undefined'&&DB&&upLoaded);assert.equal(await page.evaluate(()=>DB.rows.length),19721);assert.equal(await page.evaluate(()=>PERSONAL.trips[0].name),'欧洲觅食');
     await context.setOffline(false);assert.deepEqual(errors,[]);await context.close();
-    console.log('PASS: mobile/desktop, search, trips, detail deep link, notes, v1/v2 backup, map markers, budget, snapshot filtering, passport cover/spread/pagination/empty state, v7→current offline migration; no browser errors.');
+    console.log('PASS: mobile/desktop, search, trips, detail deep link, notes, v1/v2 backup, map markers, budget, snapshot filtering, passport cover/spread/pagination/empty state, v8→current offline migration; no browser errors.');
   }finally{await browser.close();server.close();}
 })().catch(e=>{console.error(e);process.exit(1);});

@@ -448,7 +448,7 @@ const sum=a=>a.reduce((x,y)=>x+y,0);
 const isPhone=()=>matchMedia("(max-width:700px)").matches;
 
 // ---- state ----
-const S={v:"list",l:"all",c:"",co:"",ci:"",q:"",cu:"",p:"",f:new Set(),near:false,trip:"",passport:false,change:"",budget:0,currency:"EUR"};
+const S={v:"list",l:"all",c:"",co:"",ci:"",q:"",cu:"",p:"",f:new Set(),near:false,trip:"",change:"",budget:0,currency:"EUR"};
 let DB=null,page=1,showAllStats=false,ME=null,meTab=1,meOrder="time";
 // FAV: {michelinPath: [1 想去 | 2 去过, markedAt ms]}
 let FAV={};try{FAV=JSON.parse(localStorage.getItem("mg-fav")||"{}")||{}}catch(e){}
@@ -530,7 +530,7 @@ function filtered(ignore){
   const trip=S.trip?upTrip(S.trip):null;
   return DB.rows.filter(r=>(ignore==="level"||S.l==="all"||r.l==+S.l)
     &&(!S.c||DB.C[r.co][2]===S.c)&&(S.co===""||r.co==S.co)&&(S.ci===""||r.ci==S.ci)
-    &&match.test(r)&&(!S.trip||(trip&&trip.items.includes(r.u)))&&(!S.passport||favOf(r.u)===2)&&(!S.change||upChangeMatch(r,S.change))&&upBudgetMatch(r)&&(ignore==="cuisine"||cu<0||r.cui===cu)&&(!S.p||r.p==+S.p)
+    &&match.test(r)&&(!S.trip||(trip&&trip.items.includes(r.u)))&&(!S.change||upChangeMatch(r,S.change))&&upBudgetMatch(r)&&(ignore==="cuisine"||cu<0||r.cui===cu)&&(!S.p||r.p==+S.p)
     &&(!S.f.has("new")||r.nw)&&(!S.f.has("up")||r.up)&&(!S.f.has("green")||r.green)&&(!S.f.has("bp")||r.bp));
 }
 
@@ -832,7 +832,7 @@ $("stats").addEventListener("click",e=>{const tr=e.target.closest("tr[data-k]");
   reset();render();$("list").scrollIntoView({behavior:"smooth",block:"start"})});
 document.querySelectorAll("#tabsTop button,#tabbar button").forEach(b=>b.addEventListener("click",()=>goTab(b.dataset.tab)));
 $("toggleMore").addEventListener("click",()=>{const o=$("more-f").hidden;$("more-f").hidden=!o;$("toggleMore").setAttribute("aria-expanded",String(o))});
-const clearAll=()=>{Object.assign(S,{l:"all",c:"",co:"",ci:"",q:"",cu:"",p:"",trip:"",passport:false,change:"",budget:0});if($("budgetMax"))$("budgetMax").value="";S.f.clear();reset();render()};
+const clearAll=()=>{Object.assign(S,{l:"all",c:"",co:"",ci:"",q:"",cu:"",p:"",trip:"",change:"",budget:0});if($("budgetMax"))$("budgetMax").value="";S.f.clear();reset();render()};
 $("clearAll").addEventListener("click",clearAll);$("clearAll2").addEventListener("click",clearAll);
 $("share").addEventListener("click",share);$("shareSheet").addEventListener("click",share);
 $("filterBtn").addEventListener("click",openSheet);$("doneSheet").addEventListener("click",closeSheet);$("shade").addEventListener("click",closeSheet);
