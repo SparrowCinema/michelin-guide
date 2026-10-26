@@ -1,6 +1,6 @@
 // Offline support: the page and its data are cached so the directory opens without a network.
 // Map tiles and the map library come from other sites and are not cached here.
-const CACHE = "mg-v3";
+const CACHE = "mg-v4";
 const SHELL = ["./", "index.html", "manifest.webmanifest", "icon.svg", "icon-192.png", "icon-512.png", "icon-maskable.png", "apple-touch-icon.png"];
 self.addEventListener("install", e => {
   e.waitUntil(caches.open(CACHE).then(c => c.addAll(SHELL)).then(() => self.skipWaiting()));

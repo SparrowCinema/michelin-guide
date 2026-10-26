@@ -693,10 +693,21 @@ function setTiles(amap){
   if(MAP.tiles)MAP.m.removeLayer(MAP.tiles);
   MAP.amap=amap;
   MAP.tiles=amap?L.tileLayer("https://webrd0{s}.is.autonavi.com/appmaptile?lang=zh_cn&size=1&scale=1&style=8&x={x}&y={y}&z={z}",{subdomains:"1234",maxZoom:18,attribution:"© 高德地图"})
-    :L.tileLayer("https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png",{subdomains:"abcd",maxZoom:19,attribution:"© OpenStreetMap © CARTO"});
+    :overseasLayer();
   MAP.tiles.addTo(MAP.m);
-  $("tileNote").textContent=amap?"底图：高德（中国境内）":"底图：OpenStreetMap / CARTO";
+  $("tileNote").textContent=amap?"底图：高德（中国境内）":"底图："+MAP.tiles.options.label;
   return true;
+}
+// Overseas tiles: Esri street map (no key, reachable from mainland China); if it keeps failing, fall back to OpenStreetMap.
+function overseasLayer(){
+  const osm=()=>L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png",{maxZoom:19,label:"OpenStreetMap",attribution:"© OpenStreetMap"});
+  if(MAP.useOsm)return osm();
+  const esri=L.tileLayer("https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}",
+    {maxZoom:19,label:"Esri 街道图",attribution:"© Esri, HERE, Garmin, OpenStreetMap"});
+  let bad=0;
+  esri.on("tileerror",()=>{if(++bad===6&&MAP.tiles===esri){MAP.useOsm=true;MAP.m.removeLayer(esri);MAP.tiles=osm().addTo(MAP.m);$("tileNote").textContent="底图：OpenStreetMap"}});
+  esri.on("tileload",()=>{bad=0});
+  return esri;
 }
 function popupHTML(r){return `<div>${badge(r).replace('class="lv','style="display:inline-block;width:52px;margin:0 6px 4px 0" class="lv')}<br>${itemBody(r,true)}</div>`}
 function drawMarkers(){
