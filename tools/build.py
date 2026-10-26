@@ -2,11 +2,18 @@
 
 Usage:
   python3 tools/build.py michelin_my_maps.csv tools/cn_mainland_curated.json data.json \
-      tools/zh_official_names.json tools/reference_translations.tsv
+      tools/zh_official_names.json tools/reference_translations.tsv \
+      tools/history.json tools/black_pearl_2026.json 2026-10-03
+
+history.json comes from tools/history.py (yearly snapshots of the same CSV);
+the last argument is the date of the CSV snapshot, shown on the page.
+Row layout: [name, zh, flags, cityIdx, award, cuisineIdx, price, urlPath, website, address,
+             lat, lon, greenStar, history, blackPearl]
 
 michelin_my_maps.csv comes from https://github.com/ngshiheng/michelin-my-maps (data/).
 """
 import csv, json, collections, sys
+from urllib.parse import unquote
 SRC = sys.argv[1]; CUR = sys.argv[2]; OUT = sys.argv[3]
 
 COUNTRY = {  # en: (中文, 大洲)
@@ -48,6 +55,7 @@ CITY = {
 CUISINE = {
  "Modern Cuisine":"现代菜","Contemporary":"时尚菜","Creative":"创意菜","Traditional Cuisine":"传统菜","Japanese":"日本菜","Italian":"意大利菜","Fish and Seafood":"鱼鲜海鲜","French":"法国菜","Mediterranean Cuisine":"地中海菜","Regional Cuisine":"地方菜","Farm to table":"农场到餐桌","Classic Cuisine":"经典菜","Modern British":"现代英国菜","Mexican":"墨西哥菜","Country cooking":"乡村菜","Street Food":"街头小吃","Modern French":"现代法国菜","Thai":"泰国菜","Cantonese":"粤菜","International":"国际菜","Noodles":"面食","Chinese":"中国菜","Italian Contemporary":"时尚意大利菜","Seasonal Cuisine":"时令菜","American":"美国菜","French Contemporary":"时尚法国菜","Indian":"印度菜","Sushi":"寿司","Fusion":"融合菜","Small eats":"小吃","Meats and Grills":"烤肉","Classic French":"经典法国菜","Innovative":"创新菜","Vietnamese":"越南菜","Asian":"亚洲菜","Taiwanese":"台湾菜","Vegetarian":"素食","Steakhouse":"扒房","Korean":"韩国菜","Spanish":"西班牙菜","Piedmontese":"皮埃蒙特菜","European Contemporary":"时尚欧陆菜","Barbecue":"烧烤","Seafood":"海鲜","Sichuan":"川菜","Traditional British":"传统英国菜","Japanese Contemporary":"时尚日本菜","Turkish":"土耳其菜","Tuscan":"托斯卡纳菜","Middle Eastern":"中东菜","Grills":"烧烤","Californian":"加州菜","Fujian":"闽菜","Creative French":"创意法国菜","Emilian":"艾米利亚菜","Austrian":"奥地利菜","Pizza":"披萨","Zhejiang":"浙江菜","Tempura":"天妇罗","European":"欧陆菜","Ramen":"拉面","Sicilian":"西西里菜","Filipino":"菲律宾菜","Vegan":"纯素","Yakitori":"烧鸟","Greek":"希腊菜","Southern Thai":"泰南菜","Peruvian":"秘鲁菜","Huaiyang":"淮扬菜","Soba":"荞麦面","New Zealand":"新西兰菜","Thai contemporary":"时尚泰国菜","Izakaya":"居酒屋","Malaysian":"马来西亚菜","Dim Sum":"点心","Shanghainese":"上海菜","Chao Zhou":"潮州菜","Campanian":"坎帕尼亚菜","Lebanese":"黎巴嫩菜","Provençal":"普罗旺斯菜","Venetian":"威尼斯菜","Portuguese":"葡萄牙菜","Italian-American":"意式美国菜","British Contemporary":"时尚英国菜","Asian Contemporary":"时尚亚洲菜","Jiangsu Cuisine":"江苏菜","Latin American":"拉丁美洲菜","Taizhou":"台州菜","Jiangzhe":"江浙菜","Alpine":"阿尔卑斯菜","Kaiseki":"怀石料理","Korean Contemporary":"时尚韩国菜","Hunanese":"湘菜","Beijing Cuisine":"京菜","Shandong":"鲁菜","Hang Zhou":"杭州菜","Teppanyaki":"铁板烧","Tonkatsu":"炸猪排","Unagi / Freshwater eel":"鳗鱼","Hot Pot":"火锅","Hotpot":"火锅","Dumplings":"饺子","Peranakan":"娘惹菜","Singaporean":"新加坡菜","Hong Kong Style":"港式","Basque":"巴斯克菜","Catalan":"加泰罗尼亚菜","Bistro":"小酒馆","Classic":"经典菜","Market Cuisine":"市场菜","Scandinavian":"北欧菜","Nordic":"北欧菜","German":"德国菜","Swiss":"瑞士菜","Belgian":"比利时菜","Dutch":"荷兰菜","Irish":"爱尔兰菜","Polish":"波兰菜","Brazilian":"巴西菜","Argentinian":"阿根廷菜","Southern":"美国南方菜","Cajun":"卡津菜","Creole":"克里奥尔菜",
 }
+CUISINE.update({'Lombardian': '伦巴第菜', 'Ligurian': '利古里亚菜', 'World Cuisine': '世界料理', 'Isan': '伊善菜', 'Chinese Contemporary': '中式创意菜', 'Apulian': '普利亚菜', 'Asian Influences': '亚洲风味', 'Northern Thai': '泰北菜', 'Unagi / Freshwater Eel': '鳗鱼', 'Cuisine from Abruzzo': '阿布鲁佐菜', 'Vietnamese Contemporary': '越南创意菜', 'Organic': '有机菜', 'Hakkanese': '客家菜', 'Thai-Chinese': '泰式中菜', 'Deli': '熟食店', 'Roman': '罗马菜', 'Taiwanese contemporary': '台湾创意菜', 'Spanish Contemporary': '西班牙创意菜', 'Umbrian': '翁布里亚菜', 'South East Asian': '东南亚菜', 'Sharing': '分享菜', 'African': '非洲菜', 'Galician': '加利西亚菜', 'Sardinian': '撒丁岛菜', 'Indonesian': '印度尼西亚菜', 'Saudi Cuisine': '沙特菜', 'Israeli': '以色列菜', 'Ningbo': '宁波菜', 'Naengmyeon': '冷面', 'Alsatian': '阿尔萨斯菜', 'Croatian': '克罗地亚菜', 'Czech': '捷克菜', 'Lyonnaise': '里昂菜', 'Cuisine from Lazio': '拉齐奥菜', 'Ethiopian': '埃塞俄比亚菜', 'Noodles and Congee': '粥面', 'Rice Dishes': '饭类', 'Moroccan': '摩洛哥菜', 'Home Cooking': '家常菜', 'Regional European': '欧洲地方菜', 'Cuisine from the Marches': '马尔凯菜', 'Meats and Seafood': '肉类与海鲜', 'Cuisine from the Aosta Valley': '奥斯塔谷菜', 'Persian': '波斯菜', 'South American': '南美菜', 'Gastropub': '美食酒馆', 'Cuisine from Romagna': '罗马涅菜', 'Dwaeji-gukbap': '猪肉汤饭', 'Yunnanese': '云南菜', 'Hungarian': '匈牙利菜', 'American Contemporary': '美式创意菜', 'Sri Lankan': '斯里兰卡菜', 'Udon': '乌冬面', 'Breton': '布列塔尼菜', 'Caribbean': '加勒比菜', 'Calabrian': '卡拉布里亚菜', 'Gomtang': '牛骨汤', 'Yoshoku': '日式洋食', 'Kushiage': '串炸', 'Tex-Mex': '得州墨西哥菜', 'Colombian': '哥伦比亚菜', 'Cuban': '古巴菜', 'Beef': '牛肉料理', 'Balkan': '巴尔干菜', 'Corsican': '科西嘉菜', 'Cuisine from Basilicata': '巴西利卡塔菜', 'Creative British': '英式创意菜', 'Hui Cuisine': '徽菜', 'Asian and Western': '中西合璧', 'Shun Tak': '顺德菜', 'Congee': '粥品', 'Emirati Cuisine': '阿联酋菜', 'Cuisine from Valtellina': '瓦尔泰利纳菜', 'Swedish': '瑞典菜', 'Mandu': '韩式饺子', 'Mantuan': '曼托瓦菜', 'Kalguksu': '刀切面', 'Central Asian': '中亚菜', 'Burmese': '缅甸菜', 'Memil-guksu': '荞麦面（韩式）', 'Danish': '丹麦菜', 'Smørrebrød': '丹麦开放三明治', 'Eastern European': '东欧菜', 'Bavarian': '巴伐利亚菜', 'Teochew': '潮州菜', 'Cantonese Roast Meats': '粤式烧味', 'Indian Vegetarian': '印度素菜', 'Pork': '猪肉料理', 'Friulian': '弗留利菜', 'Chiu Chow': '潮州菜', 'Oden': '关东煮', 'Japanese Tempura': '天妇罗', 'Shojin': '精进料理', 'Australian Contemporary': '澳式创意菜', 'Dongbei': '东北菜', 'Fugu / Pufferfish': '河豚', 'Norwegian': '挪威菜', 'Gejang': '酱蟹', 'Andalusian': '安达卢西亚菜', 'Italian and Japanese': '意日融合', 'Seolleongtang': '雪浓汤', 'Bakery': '烘焙', 'Savoyard': '萨瓦菜', 'Jamaican': '牙买加菜', 'Milanese': '米兰菜', 'Sukiyaki': '寿喜烧', 'Armenian': '亚美尼亚菜', 'Lao': '老挝菜', 'Samoan Cuisine': '萨摩亚菜', 'Samgyetang': '参鸡汤', 'Venezuelan': '委内瑞拉菜', 'Crêpe': '可丽饼', 'Nepali': '尼泊尔菜', 'Hubei': '湖北菜', 'Afghan': '阿富汗菜', 'South Tyrolean': '南蒂罗尔菜', 'Macanese': '澳门土生葡人菜', 'North African': '北非菜', 'Uzbek': '乌兹别克菜', 'Bulgogi': '韩式烤肉', 'Russian': '俄罗斯菜', 'Japanese Steakhouse': '日式牛排馆', 'Chicken Specialities': '鸡肉料理', 'South African': '南非菜', 'Finnish': '芬兰菜', 'Flemish': '佛兰德菜', 'Crab Specialities': '蟹料理', 'Xinjiang': '新疆菜', 'Bibimbap': '拌饭', 'Doganitang': '牛膝骨汤', 'South Indian': '南印度菜', 'Dubu': '豆腐料理', 'Pakistani': '巴基斯坦菜', 'Onigiri': '饭团', 'Tibetan': '藏菜', 'Xibei': '西北菜', 'Sujebi': '面片汤', 'Scottish': '苏格兰菜', 'Curry': '咖喱', 'Chueotang': '泥鳅汤', 'Cambodian': '柬埔寨菜', 'Polynesian': '波利尼西亚菜', 'Swabian': '施瓦本菜', 'Castilian': '卡斯蒂利亚菜', 'Duck Specialities': '鸭肉料理', 'Cheese, Fondue and Raclette': '奶酪火锅与烤奶酪', 'Asturian': '阿斯图里亚斯菜', 'Burgundian': '勃艮第菜', 'Cuisine from South West France': '法国西南菜', 'English': '英国菜', 'Egyptian': '埃及菜', 'Chilean': '智利菜', 'Obanzai': '京都家常菜', 'Shabu-shabu': '涮涮锅', 'Hainanese': '海南菜'})
 LV = {"3 Stars":0,"2 Stars":1,"1 Star":2,"Bib Gourmand":3,"Selected Restaurants":4}
 PRICE = {"$":1,"$$":2,"$$$":3,"$$$$":4,"€":1,"€€":2,"€€€":3,"€€€€":4,"¥¥":2,"¥¥¥":3,"฿฿":2}
 CNCITY = {"Beijing":"北京","Shanghai":"上海","Nanjing":"南京","Yangzhou":"扬州","Changzhou":"常州","Wenzhou":"温州","Taizhou":"台州","Fuzhou":"福州","Xiamen":"厦门","Quanzhou":"泉州","Ningde":"宁德","Hangzhou":"杭州","Suzhou":"苏州"}
@@ -66,9 +74,10 @@ def city(name,en_country):
     return tidx[k]
 def cuisine(c):
     if not c: return -1
-    if c not in cuidx:
-        cuidx[c]=len(cuis); cuis.append(CUISINE.get(c,c))
-    return cuidx[c]
+    k=CUISINE.get(c,c)  # several English labels can share one Chinese name
+    if k not in cuidx:
+        cuidx[k]=len(cuis); cuis.append(k)
+    return cuidx[k]
 
 
 import re
@@ -82,6 +91,12 @@ for c,g,l,sx in json.load(open(CUR,encoding="utf8")):
     for n in sx.split("|"):
         if n.endswith("*"): NEW.add(norm(n[:-1]))
 MAN={"Bei Men Niu Xie Geng":"北门牛血羹","Guoping Seafood":"国平海鲜","He Wei Xiao Chao":"何炜小炒","Hui Pu Pai Dang":"回浦排档","Lao Huang Chao Ma Ci":"老黄炒麻糍","Rong Cun (Gucheng Street)":"荣村 (古城街道)","Rong Jia Xiao Chi (Ziyang Street)":"荣家小吃 (紫阳街)","Shen Ji Mai Xia Mian Pi Dian":"沈记麦虾面皮店","Tang A Yi Bian Shi":"汤阿姨扁食","Wang Lu (Pudong)":"望庐 (浦东)","Du Ji Mai Bing":"杜记麦饼","Chanyue Vegetarian":"禅悦素食","Xin Rong Ji (Linhai)":"新荣记 (临海)"}
+HIST=json.load(open(sys.argv[6])) if len(sys.argv)>6 else {}
+BP=json.load(open(sys.argv[7])) if len(sys.argv)>7 else {}
+UPDATED=sys.argv[8] if len(sys.argv)>8 else ""
+def coord(v):
+    try: return round(float(v),5)
+    except ValueError: return None
 rows=[]; unknown=collections.Counter(); stats=collections.Counter()
 for x in csv.DictReader(open(SRC,encoding="utf8")):
     loc=[p.strip() for p in x["Location"].split(",")]
@@ -102,8 +117,10 @@ for x in csv.DictReader(open(SRC,encoding="utf8")):
     new = 1 if ctry=="Chinese Mainland" and zh and norm(zh) in NEW else 0
     stats[kind]+=1
     web=x["WebsiteUrl"].strip()
-    rows.append([name, zh, kind+(4 if new else 0), city(cname,ctry), LV[x["Award"]], cuisine(x["Cuisine"]), PRICE.get(x["Price"],0), url, web, x["Address"]])
-json.dump({"countries":countries,"cities":cities,"cuisines":cuis,"r":rows},open(OUT,"w",encoding="utf8"),ensure_ascii=False,separators=(",",":"))
+    rows.append([name, zh, kind+(4 if new else 0), city(cname,ctry), LV[x["Award"]], cuisine(x["Cuisine"]), PRICE.get(x["Price"],0), url, web, x["Address"],
+                 coord(x["Latitude"]), coord(x["Longitude"]), 1 if x.get("GreenStar","0").strip()=="1" else 0,
+                 HIST.get(unquote(url).lower(),""), BP.get(url,0)])
+json.dump({"updated":UPDATED,"countries":countries,"cities":cities,"cuisines":cuis,"r":rows},open(OUT,"w",encoding="utf8"),ensure_ascii=False,separators=(",",":"))
 print("rows",len(rows),"unknown",unknown,"kinds",stats)
 print(collections.Counter(r[4] for r in rows))
 mc=collections.Counter(r[4] for r in rows if countries[cities[r[3]][1]][1]=="Chinese Mainland"); print("mainland",mc, "new",sum(1 for r in rows if r[2]&4))
