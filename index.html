@@ -255,6 +255,7 @@ const LVN=["三星","二星","一星","必比登","入选"];
 const LVC=["#7a0d0a","#b3261e","#e0574d","#c98a00","#9a9390"];
 const PIN=["中国内地","中国香港","中国澳门","中国台湾"];
 const REPO="https://github.com/SparrowCinema/michelin-guide";
+const DATA_VER="20261003-2"; // bump whenever data.json changes so browsers skip their cached copy
 const $=id=>document.getElementById(id);
 const esc=s=>String(s).replace(/[&<>"]/g,ch=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[ch]));
 const sum=a=>a.reduce((x,y)=>x+y,0);
@@ -577,7 +578,7 @@ window.addEventListener("hashchange",()=>{if(!DB)return;const before=location.ha
   const fromHash=readHash();
   if(!fromHash){try{const s=localStorage.getItem("mg");if(s&&!s.startsWith("{")){history.replaceState(null,"","#"+s);readHash()}}catch(e){}}
   try{
-    const res=await fetch("data.json");if(!res.ok)throw new Error(res.status);
+    const res=await fetch("data.json?v="+DATA_VER);if(!res.ok)throw new Error(res.status);
     let d;
     if(res.body&&window.TextDecoder){
       const rd=res.body.getReader(),parts=[];let got=0;
