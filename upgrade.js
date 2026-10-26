@@ -1,6 +1,6 @@
 /* Travel, details, passport and snapshot views. Existing restaurant IDs remain unchanged. */
 // Must equal ASSET_VER in index.html and sw.js; index.html reloads fresh files when they disagree.
-const UPGRADE_VER="20";
+const UPGRADE_VER="21";
 let PERSONAL={version:2,trips:[],records:Object.create(null)},PRICE_DB={items:{}},upSelected='',upPickU='',upLoaded=false,upReadError=false;
 function upSave(next){
   if(upReadError){toast('已有旅行存储无法读取，已阻止覆盖。请先导出原始备份再恢复。');return false;}
@@ -37,22 +37,51 @@ function upNewTrip(name,u){
 // Passport presentation state is intentionally separate from saved travel data.
 const PASSPORT={open:false,sheet:0,busy:false,observer:null};
 const passportEmblem=`<svg viewBox="0 0 120 120" fill="none" aria-hidden="true"><circle cx="60" cy="60" r="43"/><ellipse cx="60" cy="60" rx="22" ry="43"/><path d="M17 60h86M24 37h72M24 83h72M60 17v86"/><circle cx="60" cy="60" r="51" stroke-dasharray="1 5"/><path d="m60 45 4 10 11 1-8 7 2 11-9-6-9 6 2-11-8-7 11-1z" fill="currentColor" stroke="none"/></svg>`;
+// Landmark drawings are deliberately small monochrome passport engravings.
+const CITY_LANDMARKS=[
+ ['上海|Shanghai','东方明珠','pearl'],['北京|Beijing','天坛','temple'],['广州|Guangzhou','广州塔','tower'],['深圳|Shenzhen','平安金融中心','spire'],['香港|Hong Kong','中银大厦','spire'],['澳门|Macau','大三巴牌坊','arch'],['台北|Taipei','台北101','pagoda'],['杭州|Hangzhou','雷峰塔','pagoda'],['南京|Nanjing','紫峰大厦','spire'],['成都|Chengdu','安顺廊桥','bridge'],['重庆|Chongqing','洪崖洞','pagoda'],['西安|Xi’an|Xian','大雁塔','pagoda'],['武汉|Wuhan','黄鹤楼','temple'],['苏州|Suzhou','北寺塔','pagoda'],['天津|Tianjin','天津之眼','wheel'],
+ ['巴黎|Paris','埃菲尔铁塔','eiffel'],['伦敦|London','伊丽莎白塔','clock'],['罗马|Rome|Roma','罗马斗兽场','colosseum'],['米兰|Milan|Milano','米兰大教堂','cathedral'],['佛罗伦萨|Florence|Firenze','圣母百花大教堂','dome'],['威尼斯|Venice|Venezia','圣马可钟楼','clock'],['比萨|Pisa','比萨斜塔','leaning'],['巴塞罗那|Barcelona','圣家堂','cathedral'],['马德里|Madrid','阿尔卡拉门','arch'],['里斯本|Lisbon','贝伦塔','castle'],['维也纳|Vienna','圣斯蒂芬大教堂','cathedral'],['布拉格|Prague','查理大桥','bridge'],['柏林|Berlin','勃兰登堡门','arch'],['阿姆斯特丹|Amsterdam','运河拱桥','bridge'],['哥本哈根|Copenhagen','圆塔','roundtower'],['斯德哥尔摩|Stockholm','斯德哥尔摩市政厅','clock'],
+ ['东京|Tokyo','东京塔','eiffel'],['京都|Kyoto','东寺五重塔','pagoda'],['大阪|Osaka','大阪城','castle'],['首尔|Seoul','南山首尔塔','tower'],['新加坡|Singapore','滨海湾金沙','marina'],['曼谷|Bangkok','郑王庙','temple'],['吉隆坡|Kuala Lumpur','双子塔','twin'],['迪拜|Dubai','哈利法塔','spire'],['悉尼|Sydney','悉尼歌剧院','opera'],['纽约|New York','帝国大厦','spire'],['旧金山|San Francisco','金门大桥','bridge'],['洛杉矶|Los Angeles','格里菲斯天文台','dome'],['芝加哥|Chicago','威利斯大厦','twin'],['多伦多|Toronto','加拿大国家电视塔','tower'],['温哥华|Vancouver','加拿大广场','opera']
+];
+CITY_LANDMARKS.push(['上海|Shanghai','外滩海关大楼','clock'],['上海|Shanghai','上海环球金融中心','spire'],['巴黎|Paris','凯旋门','arch'],['巴黎|Paris','巴黎圣母院','cathedral'],['伦敦|London','伦敦眼','wheel'],['伦敦|London','伦敦塔桥','bridge'],['北京|Beijing','故宫角楼','temple'],['北京|Beijing','中央广播电视塔','tower'],['东京|Tokyo','东京晴空塔','tower'],['东京|Tokyo','浅草寺五重塔','pagoda'],['香港|Hong Kong','尖沙咀钟楼','clock'],['香港|Hong Kong','国际金融中心','tower'],['新加坡|Singapore','摩天观景轮','wheel'],['新加坡|Singapore','苏丹回教堂','dome'],['纽约|New York','布鲁克林大桥','bridge'],['纽约|New York','克莱斯勒大厦','spire'],['京都|Kyoto','京都塔','tower'],['大阪|Osaka','通天阁','tower'],['罗马|Rome|Roma','万神殿','dome'],['巴塞罗那|Barcelona','巴塞罗那大教堂','cathedral'],['旧金山|San Francisco','科伊特塔','roundtower'],['悉尼|Sydney','悉尼海港大桥','bridge']);
+const CITY_ENGRAVINGS={
+ pearl:'M60 8v12m0 0-13 20h26L60 20ZM60 40v15m-18 0a18 18 0 1 0 36 0 18 18 0 1 0-36 0M51 72l-8 27m26-27 8 27M60 73v26',
+ tower:'M60 7v27M45 35h30l-5 12H50ZM55 48l-5 51m15-51 5 51M42 99h36',
+ spire:'M40 99V55h8V33h7V15h10v18h7v22h8v44M48 99V63h24v36M60 5v10M53 71h14m-14 10h14',
+ eiffel:'M60 8 48 52 30 99m30-91 12 44 18 47M44 62h32M37 81h46M50 99a10 15 0 0 1 20 0M48 52h24M55 30h10',
+ clock:'M43 99V37h34v62M39 37h42L60 15 39 37ZM60 5v10M49 99V70h22v29M50 51a10 10 0 1 0 20 0 10 10 0 1 0-20 0M60 45v7l5 3',
+ temple:'M28 99V77h64v22M23 77h74L60 60 23 77ZM35 60h50L60 43 35 60ZM43 43h34L60 28 43 43ZM60 16v12M40 82v17m20-17v17m20-17v17',
+ pagoda:'M35 99h50M40 99V81h40v18M33 81h54L60 68 33 81ZM39 66h42L60 54 39 66ZM44 51h32L60 39 44 51ZM49 36h22L60 25 49 36ZM60 12v13',
+ arch:'M18 99h84M24 99V49h72v50M18 49h84V35H18ZM28 35l32-15 32 15M35 99V68a8 8 0 0 1 16 0v31m18 0V68a8 8 0 0 1 16 0v31M57 99V60h6v39',
+ colosseum:'M20 99V52q40-28 80 0v47ZM20 71q40-28 80 0M20 87q40-28 80 0M32 99V48m14 51V42m14 57V40m14 59V42m14 57V48',
+ cathedral:'M20 99V65h80v34M30 65V36l7-20 7 20v29m12 0V26l7-20 7 20v39m10 0V36l7-20 7 20v29M52 99V82a8 8 0 0 1 16 0v17',
+ dome:'M20 99h80M28 99V67h64v32M25 67h70M35 62a25 30 0 0 1 50 0ZM60 12v19M38 75v24m15-24v24m15-24v24m15-24v24',
+ bridge:'M12 89h96M27 99V29h8v70m50 0V29h8v70M12 60q20 35 48 0 28 35 48 0M40 70v19m12-17v17m16-17v17m12-19v19',
+ wheel:'M25 47a35 35 0 1 0 70 0 35 35 0 1 0-70 0M60 12v70M25 47h70M35 22l50 50m0-50L35 72M60 60 40 99m20-39 20 39',
+ leaning:'M40 99 24 31l46-10 16 68ZM28 46l46-10M32 61l46-10M36 76l46-10M40 90l46-10M23 31l-2-9 46-10 3 9',
+ castle:'M27 99V52h66v47M24 52h72V39H84V27H72v12H48V27H36v12H24ZM50 99V78a10 10 0 0 1 20 0v21',
+ roundtower:'M37 99V35q23-12 46 0v64M33 35h54V25H33ZM60 13v12M47 49h7m13 0h7m-27 15h7m13 0h7M54 99V83h12v16',
+ marina:'M22 99V47h17v52m13 0V47h17v52m13 0V47h17v52M14 41q45 8 90-12l-6 16q-39 17-80 6Z',
+ twin:'M26 99V41h24v58m20 0V41h24v58M29 41V25h18v16m26 0V25h18v16M38 10v15m44-15v15M50 64h20v8H50',
+ opera:'M12 99h96M20 91l5-46q28 6 35 46ZM40 91l17-69q35 15 32 69ZM65 91l34-45q4 27 2 45Z'
+};
+function upCityLandmark(ci,variant=0){const name=DB.T[ci][0];const options=CITY_LANDMARKS.filter(x=>x[0].split('|').some(n=>name.toLowerCase()===n.toLowerCase())),item=options[variant%options.length];return item?{label:item[1],svg:`<svg viewBox="0 0 120 110" aria-hidden="true"><path d="${CITY_ENGRAVINGS[item[2]]}"/></svg>`}:{label:'城市纪念章',svg:`<span class="pp-city-monogram" aria-hidden="true">${esc(Array.from(name).slice(0,2).join(''))}</span>`};}
+function upStampDate(date){if(!date)return '日期未填写';const [y,m,d]=date.split('-');return `${d} ${['JAN','FEB','MAR','APR','MAY','JUN','JUL','AUG','SEP','OCT','NOV','DEC'][+m-1]||m} ${y}`;}
 function upPassport(visit){
-  const groups=new Map();
-  visit.slice().sort((a,b)=>(FAV[b.u]?.[1]||0)-(FAV[a.u]?.[1]||0)).forEach(r=>{if(!groups.has(r.co))groups.set(r.co,[]);groups.get(r.co).push(r);});
-  const countries=[...groups],cities=new Set(visit.map(r=>r.ci)),want=Object.values(FAV).filter(f=>f[0]===1).length;
-  const pages=Math.max(1,Math.ceil(countries.length/4));PASSPORT.sheet=Math.min(PASSPORT.sheet,pages-1);
+  const groups=new Map();visit.forEach(r=>{if(!groups.has(r.ci))groups.set(r.ci,[]);groups.get(r.ci).push(r);});
+  const countries=[...new Set(visit.map(r=>r.co))],cities=new Set(groups.keys()),want=Object.values(FAV).filter(f=>f[0]===1).length;
+  const entries=[...groups].flatMap(([ci,rows])=>{const dates=[...new Set(rows.flatMap(r=>upVisits(r.u).map(v=>v.date)).filter(Boolean))].sort();return (dates.length?dates:['']).map((date,variant)=>({ci,rows,date,variant}));}).sort((a,b)=>b.date.localeCompare(a.date)||a.ci-b.ci);
+  const pages=Math.max(1,Math.ceil(entries.length/4));PASSPORT.sheet=Math.min(PASSPORT.sheet,pages-1);
   const lv=LVN.map((name,l)=>({name,n:visit.filter(r=>r.l===l).length})).filter(x=>x.n);
   const stats=`<div class="pp-tallies"><span><b>${String(countries.length).padStart(2,'0')}</b>国家 / 地区</span><span><b>${String(cities.size).padStart(2,'0')}</b>到访城市</span><span><b>${String(visit.length).padStart(2,'0')}</b>去过的餐厅</span></div>`;
-  const stamps=countries.slice(PASSPORT.sheet*4,PASSPORT.sheet*4+4).map(([co,rows],i)=>{
-    const names=[...new Set(rows.map(r=>DB.T[r.ci][0]))],dates=rows.map(r=>PERSONAL.records[r.u]?.date).filter(Boolean).sort();
-    const time=dates.length?dates[dates.length-1].replaceAll('-','.'):'味觉足迹 · 已记录';
-    return `<div class="pp-stamp pp-ink-${(co%3)} pp-shape-${i%2}" style="--tilt:${[-5,4,3,-4][i]}deg" role="img" aria-label="${esc(DB.C[co][0])}：已到访 ${rows.length} 家餐厅"><span class="pp-stamp-top">TASTE EXPLORER · 已到访</span><strong>${esc(DB.C[co][0])}</strong><span class="pp-stamp-en">${esc(DB.C[co][1])}</span><span class="pp-stamp-count">${rows.length} 家餐厅 · ${names.length} 座城市</span><span class="pp-stamp-date">${esc(time)}</span></div>`;
+  const stamps=entries.slice(PASSPORT.sheet*4,PASSPORT.sheet*4+4).map(({ci,rows,date,variant},i)=>{
+    const co=rows[0].co,landmark=upCityLandmark(ci,variant),city=DB.T[ci][0];
+    return `<div class="pp-stamp pp-city-stamp pp-ink-${ci%3} pp-shape-${i%2}" style="--tilt:${[-5,4,3,-4][i]}deg" role="img" aria-label="${esc(city)} · ${esc(landmark.label)} · ${esc(date||'日期未填写')}"><span class="pp-stamp-top">FOOD PASSPORT · CITY VISIT</span><span class="pp-landmark" title="${esc(landmark.label)}">${landmark.svg}</span><strong>${esc(city)}</strong><span class="pp-stamp-en">${esc(DB.C[co][1])} · ${esc(landmark.label)}</span><time class="pp-stamp-date" ${date?`datetime="${date}"`:''}>${upStampDate(date)}</time></div>`;
   }).join('');
   const empty=`<div class="pp-blank-stamp"><span>YOUR FIRST STAMP</span><b>下一站，吃点什么？</b><p>在餐厅下点“去过”，<br>为护照盖下第一枚签章。</p><button type="button" data-passport-browse>去发现餐厅 ↗</button></div>`;
   const cover=`<button type="button" class="pp-cover" data-passport-open aria-label="翻开我的美食护照" aria-expanded="false"><span class="pp-cover-border"></span><span class="pp-cover-publisher">米其林全球名录<br><small>PERSONAL COLLECTION</small></span><span class="pp-cover-emblem">${passportEmblem}</span><span class="pp-cover-name">美食护照</span><span class="pp-cover-en">FOOD PASSPORT</span><span class="pp-cover-motto">A WORLD OF TASTE</span><span class="pp-cover-bottom"><svg viewBox="0 0 36 24" aria-hidden="true"><rect x="1" y="1" width="34" height="22" rx="2"/><circle cx="18" cy="12" r="6"/><path d="M1 12h11m12 0h11"/></svg>私人珍藏 · 每一餐都值得记住</span></button>`;
   const identity=`<section class="pp-page pp-identity" aria-label="护照资料页"><div class="pp-page-header"><span>FOOD PASSPORT / 资料页</span><span>01</span></div><div class="pp-identity-head"><div class="pp-portrait">${passportEmblem}</div><div><span class="pp-field-label">持有人 / HOLDER</span><h4>美食旅行者</h4><span class="pp-holder-en">THE FOOD EXPLORER</span><span class="pp-field-label pp-type">护照类型 / PERSONAL</span></div></div><p class="pp-intro">以一餐为起点，<br>收集与世界相遇的证据。</p>${stats}<div class="pp-document-row"><span>已收藏目的地 / WISHLIST</span><b>${want} 家想去</b></div><div class="pp-ratings">${lv.length?lv.map(x=>`<span>${x.name} <b>${x.n}</b></span>`).join(''):'尚未留下到访记录'}</div><p class="pp-dataset-note">星级以现有名单为准。</p><div class="pp-signature"><span>签名 / SIGNATURE</span><b>Bon appétit.</b></div><div class="pp-machine" aria-hidden="true">P&lt;FOOD&lt;EXPLORER&lt;&lt;A&lt;WORLD&lt;OF&lt;TASTE<br>JOURNEYS&lt;&lt;${String(countries.length).padStart(3,'0')}&lt;CITIES&lt;&lt;${String(cities.size).padStart(3,'0')}&lt;&lt;${String(visit.length).padStart(4,'0')}</div></section>`;
-  const visas=`<section class="pp-page pp-visas" aria-label="护照签章页"><div class="pp-page-header"><span>VISAS / 味觉签章</span><span>${String(PASSPORT.sheet+2).padStart(2,'0')}</span></div><h4>世界的味道，逐页收藏。</h4><p class="pp-visa-sub">每到访一个国家或地区，留下属于你的印记。</p><div class="pp-stamp-grid">${stamps||empty}</div><p class="pp-stamp-hint">${visit.length?'每一枚签章，都记录一次与世界的相遇。':'真正的旅程，从你喜欢的那一家开始。'}</p><div class="pp-page-nav"><span>签章 ${PASSPORT.sheet+1} / ${pages}</span><span>FOOD PASSPORT</span></div></section>`;
+  const visas=`<section class="pp-page pp-visas" aria-label="护照签章页"><div class="pp-page-header"><span>VISAS / 味觉签章</span><span>${String(PASSPORT.sheet+2).padStart(2,'0')}</span></div><h4>世界的味道，逐页收藏。</h4><p class="pp-visa-sub">一座城市，一枚地标；每个到访日期，单独盖章。</p><div class="pp-stamp-grid">${stamps||empty}</div><p class="pp-stamp-hint">${visit.length?'每一枚签章，都记录一次与世界的相遇。':'真正的旅程，从你喜欢的那一家开始。'}</p><div class="pp-page-nav"><span>签章 ${PASSPORT.sheet+1} / ${pages}</span><span>FOOD PASSPORT</span></div></section>`;
   $('passportContent').innerHTML=`<div class="pp ${PASSPORT.open?'is-open':''}"><div class="pp-heading"><div><span class="pp-kicker">THE TASTE OF EVERY JOURNEY</span><h3>我的美食护照</h3></div></div><button type="button" class="passport-share-trigger" data-passport-share><span>生成我的米其林结算地图<small>一张长图 · 足迹地图 · 到访清单 · 我的评分</small></span><b>↗</b></button>${PASSPORT.open?`<div class="pp-toolbar"><span>资料与签章 · 左右滑动翻页</span><button type="button" data-passport-close>合上护照</button></div><div class="pp-spread-stage"><div class="pp-book">${identity}${visas}</div></div><div class="pp-navigation"><button type="button" data-passport-prev ${PASSPORT.sheet===0?'disabled':''} aria-label="上一页签章">← 上一页</button><span>${PASSPORT.sheet+1} / ${pages}</span><button type="button" data-passport-next ${PASSPORT.sheet===pages-1?'disabled':''} aria-label="下一页签章">下一页 →</button></div><div class="pp-footer"><span>${visit.length?`已到访 ${visit.length} 家餐厅 · ${countries.length} 个国家和地区`:'这本护照，等待你的第一枚签章。'}</span></div>`:`<div class="pp-cover-stage">${cover}<div class="pp-cover-caption"><span>世界很大，值得一口一口去认识。</span><span>向左滑动或轻触封面，翻开护照 →</span></div></div><div class="pp-cover-summary">${stats}</div>`}</div>`;
   PASSPORT.observer?.disconnect();
   const stage=$('passportContent').querySelector('.pp-spread-stage');

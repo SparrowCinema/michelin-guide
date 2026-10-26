@@ -5,7 +5,7 @@ const assert=require('node:assert/strict'),fs=require('node:fs'),path=require('n
 const {chromium}=require(process.env.PLAYWRIGHT_MODULE||'playwright');
 (async()=>{
   const base=path.resolve(__dirname,'..');
-  const previousCache='mg-v19';
+  const previousCache='mg-v20';
   const cacheName=fs.readFileSync(path.join(base,'sw.js'),'utf8').match(/const CACHE = "([^"]+)"/)[1];
   // A new page must never load an old cached script: index.html asset versions must match sw.js.
   const swText=fs.readFileSync(path.join(base,'sw.js'),'utf8'),assetVer=swText.match(/const ASSET_VER = "([^"]+)"/)[1],indexText=fs.readFileSync(path.join(base,'index.html'),'utf8');
@@ -192,6 +192,15 @@ const {chromium}=require(process.env.PLAYWRIGHT_MODULE||'playwright');
     await page.setViewportSize({width:1280,height:900});await page.locator('#tabsTop [data-tab="me"]').click();
     assert(!(await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth)));
     if(process.env.SCREENSHOT_DIR)await page.screenshot({path:path.join(process.env.SCREENSHOT_DIR,'me-desktop.png'),fullPage:true});
+    // One city gets separate actual date stamps and distinct local landmark engravings.
+    const cityStampSaved=await page.evaluate(()=>({fav:JSON.stringify(FAV),personal:JSON.stringify(PERSONAL)}));
+    await page.evaluate(()=>{const r=DB.rows.find(r=>DB.T[r.ci][0]==='上海');PERSONAL.records[r.u]={visits:['2023-01-02','2024-03-04','2025-05-06'].map((date,i)=>({id:'city-test-'+i,date,rating:4,note:''}))};FAV[r.u]=[2,1];PASSPORT.open=true;PASSPORT.sheet=0;upPassport([r]);});
+    assert.equal(await page.locator('.pp-city-stamp').count(),3);assert.deepEqual(await page.locator('.pp-stamp-date').allTextContents(),['06 MAY 2025','04 MAR 2024','02 JAN 2023']);
+    assert.equal(new Set(await page.locator('.pp-landmark').evaluateAll(nodes=>nodes.map(n=>n.title))).size,3);assert.equal(await page.locator('.pp-landmark svg').count(),3);
+    if(process.env.SCREENSHOT_DIR)await page.screenshot({path:path.join(process.env.SCREENSHOT_DIR,'city-stamps-desktop.png')});
+    await page.setViewportSize({width:320,height:800});assert(await page.locator('.pp-identity').isVisible());assert(await page.locator('.pp-visas').isVisible());assert(!(await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth)));
+    if(process.env.SCREENSHOT_DIR)await page.screenshot({path:path.join(process.env.SCREENSHOT_DIR,'city-stamps-mobile.png')});
+    await page.evaluate(saved=>{FAV=JSON.parse(saved.fav);PERSONAL=JSON.parse(saved.personal);render();},cityStampSaved);await page.setViewportSize({width:1280,height:900});
     // Exercise a full passport with multiple stamp pages, including narrow and dark layouts.
     const savedFavourites=await page.evaluate(()=>JSON.stringify(FAV));
     await page.evaluate(()=>{const seen=new Set();for(const r of DB.rows){if(!seen.has(r.co)){seen.add(r.co);FAV[r.u]=[2,Date.now()];}if(seen.size===9)break;}PASSPORT.open=true;PASSPORT.sheet=0;render();});
