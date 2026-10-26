@@ -21,6 +21,12 @@
 <link rel="icon" href="icon.svg" type="image/svg+xml">
 <link rel="icon" href="icon-192.png" sizes="192x192" type="image/png">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
+<script>
+// iPhone/iPad zoom into a text box when it gets focus. maximum-scale=1 stops that auto-zoom;
+// iOS still lets people pinch-zoom by hand. Android does not auto-zoom and would lose pinch-zoom, so it is left alone.
+(function(){var ua=navigator.userAgent;if(/iPhone|iPad|iPod/.test(ua)||(/Macintosh/.test(ua)&&navigator.maxTouchPoints>1)){
+  var m=document.querySelector('meta[name=viewport]');if(m)m.setAttribute("content","width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover")}})();
+</script>
 <script>try{const t=localStorage.getItem("mg-theme");if(t==="light"||t==="dark")document.documentElement.dataset.theme=t}catch(e){}</script>
 <style>
 body{margin:0}
@@ -60,7 +66,7 @@ h1{font-family:var(--display);font-weight:900;font-size:clamp(26px,6vw,38px);lin
 .tot span{font-size:12px;color:var(--muted);letter-spacing:.04em}
 .controls{position:sticky;top:0;z-index:1001;background:var(--bg);padding-top:max(10px,env(safe-area-inset-top,0px));padding-bottom:10px;display:flex;flex-direction:column;gap:8px;border-bottom:1px solid var(--line)}
 /* 16px on inputs/selects stops iOS Safari from zooming the page when they get focus */
-input[type=search],select,textarea{font:inherit;font-size:16px}
+input,select,textarea{font:inherit;font-size:16px}
 #q{width:100%;box-sizing:border-box;padding:9px 14px;border:1px solid var(--line);border-radius:10px;background:var(--surface);color:var(--fg)}
 select{padding:5px 10px;border-radius:999px;border:1px solid var(--line);background:var(--surface);color:var(--fg);max-width:46vw}
 #q:focus,select:focus-visible,.chip:focus-visible,button:focus-visible,a:focus-visible{outline:2px solid var(--red);outline-offset:1px}
