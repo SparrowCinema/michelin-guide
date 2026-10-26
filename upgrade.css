@@ -222,3 +222,7 @@ ul.rl li{padding:17px 0;gap:12px}.links{margin-top:9px;gap:8px 16px;font-size:11
 
 .share-empty{box-sizing:border-box;aspect-ratio:2/3;width:100%;padding:9%;background:#f8f0e3 url("assets/passport-share-art.webp") center/cover;box-shadow:0 8px 22px #432d2c25;color:#572e28}
 .share-empty>span{font:9px Georgia,serif;letter-spacing:.14em;color:#8e383e}.share-empty>b{display:block;font:700 clamp(24px,3vw,36px)/1.55 var(--display);margin:28px 0 18px}.share-empty>p{font-size:12px;line-height:1.9;color:#937d69}
+
+/* Prevent scroll chaining out of any modal while its own content remains scrollable. */
+dialog{overscroll-behavior:contain}
+html.modal-scroll-locked{overscroll-behavior:none}

@@ -5,7 +5,7 @@ const assert=require('node:assert/strict'),fs=require('node:fs'),path=require('n
 const {chromium}=require(process.env.PLAYWRIGHT_MODULE||'playwright');
 (async()=>{
   const base=path.resolve(__dirname,'..');
-  const previousCache='mg-v14';
+  const previousCache='mg-v15';
   const cacheName=fs.readFileSync(path.join(base,'sw.js'),'utf8').match(/const CACHE = "([^"]+)"/)[1];
   // A new page must never load an old cached script: index.html asset versions must match sw.js.
   const swText=fs.readFileSync(path.join(base,'sw.js'),'utf8'),assetVer=swText.match(/const ASSET_VER = "([^"]+)"/)[1],indexText=fs.readFileSync(path.join(base,'index.html'),'utf8');
@@ -26,6 +26,13 @@ const {chromium}=require(process.env.PLAYWRIGHT_MODULE||'playwright');
   const browser=await chromium.launch({headless:true,args,executablePath:process.env.CHROMIUM_EXECUTABLE||undefined});
   try{
     const context=await browser.newContext({viewport:{width:390,height:844},hasTouch:true,isMobile:true,deviceScaleFactor:2}),page=await context.newPage(),errors=[];
+    const cdp=await context.newCDPSession(page);
+    async function touchSwipe(x,y,dy){
+      await cdp.send('Input.dispatchTouchEvent',{type:'touchStart',touchPoints:[{x,y}]});
+      await page.waitForTimeout(80);
+      for(let i=1;i<=8;i++){await cdp.send('Input.dispatchTouchEvent',{type:'touchMove',touchPoints:[{x,y:y+dy*i/8}]});await page.waitForTimeout(20);}
+      await page.waitForTimeout(150);await cdp.send('Input.dispatchTouchEvent',{type:'touchEnd',touchPoints:[]});
+    }
     page.on('pageerror',e=>errors.push(e.message));
     // Only Leaflet assets/tiles are stubbed, so assertions do not depend on external map services.
     const leaflet=path.dirname(require.resolve(process.env.LEAFLET_MODULE||'leaflet'));
@@ -70,6 +77,22 @@ const {chromium}=require(process.env.PLAYWRIGHT_MODULE||'playwright');
     const detailURL=page.url();await page.reload();await page.waitForSelector('#detailDlg[open]');assert.equal(await page.inputValue('#visitNote'),'旅途笔记 <script>');assert.equal(page.url(),detailURL);assert.equal(await page.inputValue('#visitRating'),'3.5');
     if(process.env.SCREENSHOT_DIR){await page.screenshot({path:path.join(process.env.SCREENSHOT_DIR,'detail-mobile.png')});await page.locator('.detail-record>summary').click();await page.locator('#starRating').scrollIntoViewIfNeeded();await page.screenshot({path:path.join(process.env.SCREENSHOT_DIR,'rating-mobile.png')});}
     await page.locator('#detailDlg .close[data-close]').click();
+    // An open restaurant freezes the visual background, including gestures at scroll edges.
+    const background=await page.evaluate(()=>{window.scrollTo(0,500);return {y:scrollY,top:document.getElementById('list').getBoundingClientRect().top};});
+    await page.evaluate(()=>upOpenDetail(DB.rows[0].u));await page.locator('.detail-record>summary').click();
+    const assertFrozen=async()=>{const state=await page.evaluate(()=>({fixed:getComputedStyle(document.body).position,top:document.getElementById('list').getBoundingClientRect().top}));assert.equal(state.fixed,'fixed');assert(Math.abs(state.top-background.top)<1,'Background must not move behind the modal');};
+    await assertFrozen();
+    let detailBox=await page.locator('#detailDlg').boundingBox();await touchSwipe(detailBox.x+8,detailBox.y+detailBox.height-65,-180);
+    await page.waitForFunction(()=>document.getElementById('detailDlg').scrollTop>30);await assertFrozen();
+    await page.evaluate(()=>{const d=document.getElementById('detailDlg');d.scrollTop=d.scrollHeight;});
+    await touchSwipe(detailBox.x+8,detailBox.y+detailBox.height-65,-130);await assertFrozen();
+    await touchSwipe(3,550,-160);await assertFrozen();assert(await page.locator('#detailDlg').evaluate(d=>d.open));
+    // Closing a nested picker must keep the outer restaurant and background lock intact.
+    await page.evaluate(()=>upPickTrip(DB.rows[0].u));await page.locator('#tripPickDlg [data-close]').click();
+    assert(await page.locator('#detailDlg').evaluate(d=>d.open));await assertFrozen();
+    await page.keyboard.press('Escape');await page.waitForFunction(()=>!document.querySelector('dialog[open]'));
+    await page.waitForFunction(y=>scrollY===y,background.y);assert.equal(await page.evaluate(()=>getComputedStyle(document.body).position),'static');
+    await page.evaluate(()=>window.scrollTo(0,0));
     // "去过" and the rating are one record: the list button opens the same form, and saving marks the visit.
     await page.locator('#tabbar [data-tab="list"]').click();
     const [quick,noteOnly]=await page.evaluate(()=>[...new Set([...document.querySelectorAll('.fav[data-v="2"]')].map(x=>x.dataset.u))].filter(u=>!favOf(u)&&!PERSONAL.records[u]).slice(0,2));
@@ -107,7 +130,6 @@ const {chromium}=require(process.env.PLAYWRIGHT_MODULE||'playwright');
     await page.locator('[data-trip-open]').first().click();await page.fill('#tripName','欧洲觅食');await page.locator('#tripForm button').click();assert((await page.locator('#tripCards').innerText()).includes('欧洲觅食'));
     await page.locator('[data-trip-map]').first().click();await page.waitForFunction(()=>MAP.ready&&MAP.layer);assert.equal(await page.evaluate(()=>MAP.layer.getLayers().length),1);
     // Real touch events: a single-finger swipe over the map must scroll the document.
-    const cdp=await context.newCDPSession(page);
     async function swipeMap(){
       await page.locator('#map').scrollIntoViewIfNeeded();
       const box=await page.locator('#map').boundingBox(),x=box.x+box.width*.4,y=Math.min(box.y+box.height-30,700);
@@ -198,6 +220,14 @@ const {chromium}=require(process.env.PLAYWRIGHT_MODULE||'playwright');
     await page.locator('[data-share-trip]').first().click();await page.waitForFunction(()=>!!PASSPORT_SHARE.file);assert.equal(await page.evaluate(()=>PASSPORT_SHARE.rows.length),1);await page.locator('#passportShareDlg [data-close]').click();
     // Desktop wheel scrolling over the map also reaches the list without changing zoom.
     await page.setViewportSize({width:1280,height:900});
+    await page.locator('#tabsTop [data-tab="list"]').click();
+    const desktopBackground=await page.evaluate(()=>{window.scrollTo(0,600);return {y:scrollY,top:document.getElementById('list').getBoundingClientRect().top};});
+    await page.evaluate(()=>upOpenDetail(DB.rows[0].u));await page.locator('.detail-record>summary').click();
+    detailBox=await page.locator('#detailDlg').boundingBox();await page.mouse.move(detailBox.x+10,detailBox.y+detailBox.height/2);await page.mouse.wheel(0,700);
+    await page.waitForFunction(()=>document.getElementById('detailDlg').scrollTop>30);
+    assert(Math.abs((await page.locator('#list').boundingBox()).y-desktopBackground.top)<1);
+    await page.locator('#detailDlg .close[data-close]').click();await page.waitForFunction(y=>scrollY===y,desktopBackground.y);
+    assert.equal(await page.evaluate(()=>document.documentElement.classList.contains('modal-scroll-locked')),false);
     await page.locator('#tabsTop [data-tab="map"]').click();await page.waitForFunction(()=>MAP.ready);
     await page.locator('#map').scrollIntoViewIfNeeded();
     const desktopMap=await page.locator('#map').boundingBox(),zoomBefore=await page.evaluate(()=>MAP.m.getZoom());scrollBefore=await page.evaluate(()=>scrollY);
@@ -207,7 +237,7 @@ const {chromium}=require(process.env.PLAYWRIGHT_MODULE||'playwright');
     if(process.env.SCREENSHOT_DIR)await page.screenshot({path:path.join(process.env.SCREENSHOT_DIR,'map-narrow.png'),fullPage:true});
     await page.evaluate(()=>applyTheme('dark'));if(process.env.SCREENSHOT_DIR)await page.screenshot({path:path.join(process.env.SCREENSHOT_DIR,'map-dark.png'),fullPage:true});
     await page.evaluate(()=>applyTheme('light'));await page.locator('#tabbar [data-tab="me"]').click();
-    // Upgrade a seeded v14 cache, keeping the existing data and all personal storage.
+    // Upgrade a seeded v15 cache, keeping the existing data and all personal storage.
     const oldStore=await page.evaluate(()=>localStorage.getItem('mg-personal'));
     await page.evaluate(async previous=>{const c=await caches.open(previous);const req=new Request(new URL('data.json?v='+DATA_VER,location.href));await c.put(req,await fetch(req));await navigator.serviceWorker.register('sw.js');await navigator.serviceWorker.ready;},previousCache);
     await page.waitForFunction(()=>!!navigator.serviceWorker.controller);await page.waitForFunction(async previous=>!(await caches.keys()).includes(previous),previousCache);
@@ -216,6 +246,6 @@ const {chromium}=require(process.env.PLAYWRIGHT_MODULE||'playwright');
     await context.setOffline(true);await page.reload();await page.waitForFunction(()=>typeof DB!=='undefined'&&DB&&upLoaded);assert.equal(await page.evaluate(()=>DB.rows.length),19721);assert.equal(await page.evaluate(()=>PERSONAL.trips[0].name),'欧洲觅食');
     await page.locator('[data-passport-share]').click();await page.waitForFunction(()=>!!PASSPORT_SHARE.file);assert(await page.locator('#sharePreview').isVisible());
     await context.setOffline(false);assert.deepEqual(errors,[]);await context.close();
-    console.log('PASS: generated share PNG/pagination/trip/date/offline export, draft clearing/custom dates/auto-close/storage rollback, sticky-header short swipe, compact directory, touch scroll over passive map, explicit map panning, list jump, desktop wheel scrolling, numbered pins, retina tiles, title focus, narrow/dark layouts, existing search/trips/ratings/backup regression and v14→current offline migration; no browser errors.');
+    console.log('PASS: generated share PNG/pagination/trip/date/offline export, draft clearing/custom dates/auto-close/storage rollback, sticky-header short swipe, compact directory, touch scroll over passive map, explicit map panning, list jump, desktop wheel scrolling, numbered pins, retina tiles, title focus, narrow/dark layouts, existing search/trips/ratings/backup regression and v15→current offline migration; no browser errors.');
   }finally{await browser.close();server.close();}
 })().catch(e=>{console.error(e);process.exit(1);});
