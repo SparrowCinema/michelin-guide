@@ -155,6 +155,16 @@ footer a{color:var(--red)}
 .cell.nochev .r::after{content:""}
 .note{font-size:12px;color:var(--muted);padding:0 16px 12px;line-height:1.6}
 
+.envline{margin:4px 0 2px;font-size:13px;color:var(--muted)}
+.steps{margin:6px 0 10px;padding-left:22px}
+.steps li{margin:6px 0}
+.steps b{color:var(--red);font-weight:600}
+details.others{margin-top:10px;border-top:1px solid var(--line);padding-top:8px}
+details.others summary{cursor:pointer;color:var(--red);font-size:14px}
+#inappBar{position:fixed;left:12px;right:12px;top:calc(8px + env(safe-area-inset-top,0px));z-index:2600;background:var(--fg);color:var(--bg);border-radius:12px;padding:10px 12px;font-size:13px;display:flex;gap:10px;align-items:center;box-shadow:0 6px 20px rgb(0 0 0 / .2)}
+#inappBar span{flex:1}
+#inappBar button{font:inherit;font-size:13px;border:0;border-radius:999px;background:var(--bg);color:var(--fg);padding:4px 10px;cursor:pointer}
+#inappBar #inappX{background:none;color:var(--bg);font-size:18px;padding:0 4px}
 /* tab bar (phones) */
 .tabbar{display:none}
 #toast{position:fixed;left:50%;bottom:calc(24px + var(--tabh) + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--fg);color:var(--bg);padding:8px 16px;border-radius:999px;font-size:13px;z-index:3000;pointer-events:none;opacity:0;transition:opacity .2s;max-width:86vw;text-align:center}
@@ -394,15 +404,25 @@ dialog::backdrop{background:var(--shade)}
   <div class="dlg">
     <button type="button" class="close" data-close>关闭</button>
     <h2 id="insTitle">添加到手机主屏幕</h2>
-    <h3>iPhone / iPad（Safari）</h3>
-    <p>点屏幕下方的“分享”按钮，选“添加到主屏幕”，再点“添加”。之后从桌面图标打开，就是全屏的 App 样子。</p>
-    <h3>安卓（Chrome、Edge 等）</h3>
-    <p>点浏览器右上角的菜单，选“安装应用”或“添加到主屏幕”。</p>
-    <h3>微信里打开的</h3>
-    <p>先点右上角“…”，选“在浏览器中打开”，再按上面的步骤添加。</p>
-    <p class="note" style="padding:0">提示：在 iPhone 上，从主屏幕图标打开和在 Safari 里打开，“想去 / 去过”清单是分开保存的。可以先在“我的”里导出，再到另一边导入。</p>
+    <p class="envline" id="insEnv"></p>
+    <ol class="steps" id="insSteps"></ol>
+    <p id="insCopyRow" hidden><button type="button" class="btn primary" id="insCopy">复制网址</button></p>
+    <details class="others"><summary>其他手机和浏览器</summary>
+      <h3>iPhone · Safari</h3>
+      <p>iOS 26 及以后：点地址栏右边的“…”，再点“分享”，往下找到“添加到主屏幕”（看不到就点“查看更多”），然后点“添加”。<br>更早的系统：点屏幕底部中间的“分享”图标（方框加向上箭头），选“添加到主屏幕”。<br>如果底部没有工具栏，先轻点一下屏幕底部或往上滑一下页面，工具栏就会出来。</p>
+      <h3>iPhone · Chrome、Edge</h3>
+      <p>点地址栏右边的“分享”图标，选“添加到主屏幕”。系统太旧不支持时，请改用 Safari 打开。</p>
+      <h3>微信、QQ、微博里打开的</h3>
+      <p>这些 App 里的网页不能添加到主屏幕。点右上角“…”，选“在浏览器中打开”（iPhone 上叫“在 Safari 中打开”），再按上面的步骤。也可以复制网址，粘贴到浏览器里打开。</p>
+      <h3>安卓 · Chrome、Edge</h3>
+      <p>点右上角“⋮”菜单，选“安装应用”或“添加到主屏幕”。</p>
+      <h3>华为、小米、OPPO、vivo 自带浏览器，UC、QQ 浏览器</h3>
+      <p>点底部或右上角的菜单（“≡”或“⋯”），找“添加到桌面”“添加快捷方式”或“发送到桌面”。如果点了没反应，到手机“设置 → 应用 → 这个浏览器 → 权限”里打开“创建桌面快捷方式”。</p>
+    </details>
+    <p class="note" style="padding:0;margin-top:12px">提示：在 iPhone 上，从主屏幕图标打开和在浏览器里打开，“想去 / 去过”清单是分开保存的。可以先在“我的”里导出，再到另一边导入。</p>
   </div>
 </dialog>
+<div id="inappBar" hidden><span>在微信等 App 里无法添加到主屏幕，也可能打不开地图。</span><button type="button" id="inappHow">怎么办</button><button type="button" id="inappX" aria-label="关闭">×</button></div>
 <div id="toast" role="status" aria-live="polite"></div>
 
 <script>
@@ -839,7 +859,46 @@ let deferredPrompt=null;
 window.addEventListener("beforeinstallprompt",e=>{e.preventDefault();deferredPrompt=e;$("installHint").textContent="一键安装"});
 const standalone=matchMedia("(display-mode: standalone)").matches||navigator.standalone;
 if(standalone)$("installHint").textContent="已从主屏幕打开";
-$("installBtn").addEventListener("click",()=>{if(deferredPrompt){deferredPrompt.prompt();deferredPrompt.userChoice.finally(()=>deferredPrompt=null)}else $("installDlg").showModal()});
+// figure out which phone / browser this is, and show the matching steps
+function envInfo(){
+  const ua=navigator.userAgent;
+  const ios=/iPhone|iPad|iPod/.test(ua)||(/Macintosh/.test(ua)&&navigator.maxTouchPoints>1);
+  const android=/Android/.test(ua);
+  const inapp=/MicroMessenger/i.test(ua)?"微信":/\bQQ\//.test(ua)&&!/MQQBrowser/.test(ua)?"QQ":/Weibo/i.test(ua)?"微博":/DingTalk/i.test(ua)?"钉钉":/Lark|Feishu/i.test(ua)?"飞书":/AlipayClient/i.test(ua)?"支付宝":/XiaoHongShu|discover/i.test(ua)?"小红书":/aweme|Douyin/i.test(ua)?"抖音":"";
+  // iOS 26 Safari still reports "OS 18_6" in the system part; its own Version/ number is the real one
+  const iosVer=((ua.match(/Version\/(\d+)/)||[])[1]|0)||((ua.match(/OS (\d+)_/)||[])[1]|0);
+  if(inapp)return{name:inapp+"里的网页",inapp:true,steps:[
+    `点右上角的 <b>…</b>`,ios?`选 <b>在 Safari 中打开</b>（或“在浏览器中打开”）`:`选 <b>在浏览器中打开</b>`,
+    `在打开的浏览器里，再点“我的 → 添加到手机主屏幕”看步骤`,`如果找不到这个选项：点下面的“复制网址”，打开${ios?" Safari ":"手机浏览器"}，粘贴到地址栏`]};
+  if(ios){
+    if(/CriOS|EdgiOS|FxiOS/.test(ua))return{name:"iPhone 上的 "+(/CriOS/.test(ua)?"Chrome":/EdgiOS/.test(ua)?"Edge":"Firefox"),steps:[
+      `点地址栏右边的 <b>分享</b> 图标（方框加向上箭头）`,`往下找到 <b>添加到主屏幕</b>`,`点 <b>添加</b>`,`找不到的话，复制网址改用 <b>Safari</b> 打开`],copy:true};
+    if(!/Safari/.test(ua)||/ (MQQBrowser|UCBrowser|Quark|baiduboxapp|SogouMobile)/.test(ua))return{name:"iPhone 上的第三方浏览器",inapp:true,steps:[
+      `这个浏览器多半不支持添加到主屏幕`,`点下面的“复制网址”`,`打开 <b>Safari</b>，粘贴到地址栏打开`,`再回到“我的 → 添加到手机主屏幕”`]};
+    return{name:"iPhone 上的 Safari"+(iosVer?`（iOS ${iosVer}）`:""),steps:iosVer>=26?[
+      `点地址栏右边的 <b>…</b>（三个点）`,`点 <b>分享</b>`,`往下找到 <b>添加到主屏幕</b>，看不到就点“查看更多”`,`打开“作为网页 App 打开”（如有），点 <b>添加</b>`]:[
+      `先轻点屏幕底部，让底部工具栏出现`,`点中间的 <b>分享</b> 图标（方框加向上箭头）`,`往下滑，找到 <b>添加到主屏幕</b>`,`点右上角 <b>添加</b>`]};
+  }
+  if(android){
+    if(/HuaweiBrowser|HONOR|MiuiBrowser|XiaoMi|HeyTapBrowser|VivoBrowser|UCBrowser|MQQBrowser|Quark|baidu/i.test(ua))return{name:"安卓手机自带或国产浏览器",steps:[
+      `点底部或右上角的 <b>菜单</b>（“≡”或“⋯”）`,`找 <b>添加到桌面</b>、<b>添加快捷方式</b> 或 <b>发送到桌面</b>`,`点了没反应：到手机“设置 → 应用 → 这个浏览器 → 权限”，打开 <b>创建桌面快捷方式</b>`]};
+    return{name:"安卓上的 Chrome / Edge",steps:[`点右上角 <b>⋮</b> 菜单`,`选 <b>安装应用</b> 或 <b>添加到主屏幕</b>`,`点 <b>安装</b> 或 <b>添加</b>`]};
+  }
+  return{name:"电脑浏览器",steps:[`用手机打开这个网址，再按页面提示添加`,`Chrome、Edge 也可以点地址栏右边的“安装”图标，装成电脑上的应用`]};
+}
+function showInstall(){
+  const e=envInfo();
+  $("insEnv").textContent="你现在用的是："+e.name;
+  $("insSteps").innerHTML=e.steps.map(x=>`<li>${x}</li>`).join("");
+  $("insCopyRow").hidden=!(e.inapp||e.copy);
+  $("installDlg").showModal();
+}
+$("insCopy").addEventListener("click",()=>copyText(location.origin+location.pathname).then(()=>toast("网址已复制，粘贴到浏览器地址栏打开"),()=>toast("没能复制，请手动复制地址栏里的网址")));
+$("installBtn").addEventListener("click",()=>{if(deferredPrompt){deferredPrompt.prompt();deferredPrompt.userChoice.finally(()=>deferredPrompt=null)}else showInstall()});
+(()=>{const e=envInfo();let off=false;try{off=sessionStorage.getItem("mg-inapp")==="1"}catch(x){}
+  if(e.inapp&&!standalone&&!off)$("inappBar").hidden=false;
+  $("inappHow").addEventListener("click",showInstall);
+  $("inappX").addEventListener("click",()=>{$("inappBar").hidden=true;try{sessionStorage.setItem("mg-inapp","1")}catch(x){}});})();
 if("serviceWorker" in navigator&&location.protocol==="https:")navigator.serviceWorker.register("sw.js").catch(()=>{});
 matchMedia("(max-width:700px)").addEventListener("change",()=>{closeSheet();if(DB)render({fit:false})});
 
