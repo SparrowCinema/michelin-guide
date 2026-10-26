@@ -1,0 +1,258 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="description" content="全球约2万家米其林餐厅（三星、二星、一星、必比登、入选），中文店名、地图和官网链接，按大洲、国家、城市筛选。">
+<title>米其林全球名录</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@600;900&display=swap">
+<style>
+:root{color-scheme:light;padding:env(safe-area-inset-top,0px) 0 env(safe-area-inset-bottom,0px)}
+body{margin:0;font-size:14px}
+img{max-width:100%}
+[hidden]{display:none!important}
+
+/* Layout: one reading column — title, scope totals, sticky filter rail (level / continent / country / city),
+   a drill-down statistics table, then the guide-book list grouped country → city, paged */
+:root{
+  --bg:#faf8f6; --surface:#ffffff; --fg:#1f1b1a; --muted:#7a716e; --line:#e8e1dd; --hover:#f3eeeb;
+  --red:#b3261e; --red-soft:#f6e3e1; --bib:#8a5a00; --bib-soft:#f6ecd6;
+  --display:"Noto Serif SC","Songti SC","STSong",serif;
+  --body:-apple-system,"PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#161312; --surface:#201c1b; --fg:#f1ebe8; --muted:#a39893; --line:#352f2d; --hover:#2a2523;
+  --red:#ef6b60; --red-soft:#3a1d1b; --bib:#e0b35a; --bib-soft:#33291a; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#161312; --surface:#201c1b; --fg:#f1ebe8; --muted:#a39893; --line:#352f2d; --hover:#2a2523;
+  --red:#ef6b60; --red-soft:#3a1d1b; --bib:#e0b35a; --bib-soft:#33291a; color-scheme:dark}
+body{background:var(--bg);color:var(--fg);font-family:var(--body);font-size:15px;line-height:1.5}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--bg)}
+.wrap{max-width:820px;margin:0 auto;padding-block:28px 60px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+h1{font-family:var(--display);font-weight:900;font-size:clamp(28px,7vw,40px);line-height:1.15;margin:0;text-wrap:balance}
+.sub{color:var(--muted);margin:8px 0 18px;font-size:14px;max-width:62ch}
+.scope{font-size:13px;color:var(--muted);margin-bottom:8px}
+.totals{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin-bottom:18px}
+.tot{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:10px 12px;min-width:0}
+.tot b{display:block;font-family:var(--display);font-size:22px;font-variant-numeric:tabular-nums}
+.tot span{font-size:12px;color:var(--muted);letter-spacing:.04em}
+.controls{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--bg);padding-block:10px;display:flex;flex-direction:column;gap:8px;border-bottom:1px solid var(--line)}
+#q{width:100%;box-sizing:border-box;font:inherit;padding:10px 14px;border:1px solid var(--line);border-radius:10px;background:var(--surface);color:var(--fg)}
+#q:focus,select:focus-visible,.chip:focus-visible,button:focus-visible,a:focus-visible{outline:2px solid var(--red);outline-offset:1px}
+.row{display:flex;gap:6px;flex-wrap:wrap;align-items:center}
+.chip{font:inherit;font-size:13px;padding:5px 12px;border-radius:999px;border:1px solid var(--line);background:var(--surface);color:var(--fg);cursor:pointer}
+.chip[aria-pressed="true"]{background:var(--fg);color:var(--bg);border-color:var(--fg)}
+.chip.cont[aria-pressed="true"]{background:var(--red);border-color:var(--red);color:#fff}
+select{font:inherit;font-size:13px;padding:6px 10px;border-radius:999px;border:1px solid var(--line);background:var(--surface);color:var(--fg);max-width:46vw}
+.count{font-size:13px;color:var(--muted);margin-left:auto;font-variant-numeric:tabular-nums}
+details.stats{margin-top:18px}
+details.stats summary{cursor:pointer;font-family:var(--display);font-weight:600;font-size:17px}
+.tbl{overflow-x:auto;margin-top:8px;border:1px solid var(--line);border-radius:10px;background:var(--surface)}
+table{border-collapse:collapse;width:100%;font-size:13px;font-variant-numeric:tabular-nums}
+th,td{padding:7px 10px;text-align:right;border-bottom:1px solid var(--line);white-space:nowrap}
+th:first-child,td:first-child{text-align:left}
+th{color:var(--muted);font-weight:500;font-size:12px}
+tbody tr{cursor:pointer}
+tbody tr:hover{background:var(--hover)}
+td.z{color:var(--line)}
+td.st{color:var(--red);font-weight:600}
+.more-t{font:inherit;font-size:13px;margin-top:6px;background:none;border:0;color:var(--red);cursor:pointer;padding:4px 0}
+.ctry{margin-top:30px;font-family:var(--display);font-weight:900;font-size:22px;display:flex;gap:10px;align-items:baseline;flex-wrap:wrap}
+.ctry small{font-family:var(--body);font-weight:400;font-size:12px;color:var(--muted)}
+.city{margin-top:16px}
+.city h3{font-family:var(--display);font-weight:600;font-size:16px;margin:0;display:flex;gap:8px;align-items:baseline;flex-wrap:wrap}
+.city h3 small{font-family:var(--body);font-weight:400;font-size:12px;color:var(--muted)}
+ul{list-style:none;margin:6px 0 0;padding:0;border-top:1px solid var(--line)}
+li{display:flex;gap:12px;align-items:center;padding:8px 2px;border-bottom:1px solid var(--line);min-width:0}
+.lv{flex:0 0 58px;font-size:12px;font-weight:600;text-align:center;border-radius:6px;padding:3px 0;letter-spacing:.05em}
+.s{color:var(--red);background:var(--red-soft)}
+.b{color:var(--bib);background:var(--bib-soft)}
+.x{color:var(--muted);border:1px solid var(--line)}
+.nm{min-width:0;flex:1;overflow-wrap:anywhere}
+.nm a{color:inherit;text-decoration:none;border-bottom:1px solid var(--line)}
+.nm a:hover{border-bottom-color:var(--red)}
+.t{font-weight:500}
+.orig{display:block;font-size:13px;color:var(--fg);opacity:.75}
+.tr{font-size:10px;color:var(--muted);border:1px solid var(--line);border-radius:3px;padding:0 4px;margin-left:6px;vertical-align:1px;opacity:1}
+.meta{display:block;font-size:12px;color:var(--muted)}
+.links{display:flex;flex-wrap:wrap;gap:4px 14px;margin-top:3px;font-size:12px}
+.links a{color:var(--red);text-decoration:none}
+.links a:hover{text-decoration:underline}
+.tag{font-size:11px;color:var(--red);border:1px solid var(--red-soft);border-radius:4px;padding:0 5px;margin-left:6px;white-space:nowrap}
+.pager{margin-top:22px;text-align:center}
+.pager button{font:inherit;padding:9px 18px;border-radius:999px;border:1px solid var(--line);background:var(--surface);color:var(--fg);cursor:pointer}
+.empty,.loading{color:var(--muted);text-align:center;padding:40px 0}
+footer{margin-top:40px;font-size:12px;color:var(--muted);line-height:1.7}
+@media (max-width:520px){.totals{gap:4px}.tot{padding:7px 6px;text-align:center}.tot b{font-size:16px}.tot span{font-size:11px}.lv{flex-basis:50px}}
+@media (prefers-reduced-motion:no-preference){li{transition:background .15s}}
+</style>
+</head>
+<body>
+
+<div class="wrap">
+  <h1>米其林全球名录</h1>
+  <p class="sub">全球 50 多个国家和地区、约 2 万家米其林餐厅：三星、二星、一星、必比登推介和入选餐厅。按大洲、国家、城市逐级筛选，也可直接搜索店名、城市或菜系。</p>
+  <div class="scope" id="scope">全球</div>
+  <div class="totals" id="totals"></div>
+  <div class="controls">
+    <input id="q" type="search" placeholder="搜店名、城市或菜系，如：新荣记、东京、寿司、Geranium" autocomplete="off">
+    <div class="row" id="levels">
+      <button class="chip" data-l="all" aria-pressed="true">全部等级</button>
+      <button class="chip" data-l="0" aria-pressed="false">三星</button>
+      <button class="chip" data-l="1" aria-pressed="false">二星</button>
+      <button class="chip" data-l="2" aria-pressed="false">一星</button>
+      <button class="chip" data-l="3" aria-pressed="false">必比登</button>
+      <button class="chip" data-l="4" aria-pressed="false">入选</button>
+    </div>
+    <div class="row" id="conts"></div>
+    <div class="row">
+      <select id="country" aria-label="国家或地区"></select>
+      <select id="city" aria-label="城市"></select>
+      <span class="count" id="count"></span>
+    </div>
+  </div>
+  <details class="stats" open>
+    <summary id="statsTitle">各大洲统计</summary>
+    <div class="tbl"><table><thead><tr><th id="statsCol">地区</th><th>三星</th><th>二星</th><th>一星</th><th>必比登</th><th>入选</th><th>合计</th></tr></thead><tbody id="stats"></tbody></table></div>
+    <button class="more-t" id="moreStats" hidden>显示全部</button>
+  </details>
+  <div id="list"><p class="loading">正在载入约 2 万家餐厅……</p></div>
+  <div class="pager"><button id="more" hidden>再显示 200 家</button></div>
+  <footer>
+    数据来源：餐厅名单来自米其林指南官网的公开数据，经开源项目 michelin-my-maps 汇总，更新至 2026 年 10 月 11 日。中文店名有两种：中国内地、港澳台、新加坡、马来西亚的中文名取自米其林中文官网，是官方名称（港澳台保留繁体）；其他国家的星级餐厅标了“译名”，是为方便阅读给的参考译名，不是餐厅自己的中文名，预订和导航请用原名。必比登和入选餐厅只有原名。<br>
+    每家店下面的链接：米其林官网介绍页、地图（中国内地用高德，其他地区用谷歌地图，按店名和地址搜索）、餐厅官网（米其林收录了官网的才有，多数可在官网预订）。中国内地标“新”的为本版新上榜。<br>
+    阿联酋（迪拜、阿布扎比）、沙特、卡塔尔归入亚洲，土耳其归入欧洲，墨西哥归入北美洲。各国指南发布时间不同，部分名单已是 2026 或 2027 版。米其林会随时撤下歇业的店，去之前请在米其林指南 App 核对。
+  </footer>
+</div>
+
+<script>
+const CONT=["亚洲","欧洲","北美洲","南美洲","大洋洲"];
+const LVN=["三星","二星","一星","必比登","入选"];
+const PIN=["中国内地","中国香港","中国澳门","中国台湾"];
+let DB=null, level="all", cont="", country="", city="", page=1, showAllStats=false;
+const $=id=>document.getElementById(id);
+const esc=s=>s.replace(/[&<>"]/g,ch=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[ch]));
+try{const s=JSON.parse(localStorage.getItem("mg")||"{}");level=s.level||"all";cont=s.cont||"";country=s.country??"";city=s.city??""}catch(e){}
+
+function prep(d){
+  const C=d.countries, T=d.cities;
+  const ctryTot=C.map(()=>0), cityTot=T.map(()=>0);
+  d.r.forEach(r=>{cityTot[r[3]]++;ctryTot[T[r[3]][1]]++});
+  // country order: continent, then pinned Chinese regions, then size
+  const corder=C.map((c,i)=>i).sort((a,b)=>CONT.indexOf(C[a][2])-CONT.indexOf(C[b][2])
+    ||((PIN.indexOf(C[a][0])+1||99)-(PIN.indexOf(C[b][0])+1||99))||ctryTot[b]-ctryTot[a]);
+  const crank={};corder.forEach((c,i)=>crank[c]=i);
+  const rows=d.r.map(r=>{const t=T[r[3]],c=C[t[1]],cu=r[5]>=0?d.cuisines[r[5]]:"";
+    return {n:r[0],zh:r[1],kind:r[2]&3,nw:!!(r[2]&4),ci:r[3],co:t[1],l:r[4],cu,p:r[6],u:r[7],w:r[8],a:r[9],
+      s:r[1]||r[0],k:(r[0]+" "+r[1]+" "+t[0]+" "+c[0]+" "+c[1]+" "+cu).toLowerCase()}});
+  rows.sort((a,b)=>crank[a.co]-crank[b.co]||cityTot[b.ci]-cityTot[a.ci]||(a.ci-b.ci)||a.l-b.l||a.s.localeCompare(b.s,"zh"));
+  return {C,T,rows,crank,cityTot};
+}
+
+function filtered(ignore){
+  const term=$("q").value.trim().toLowerCase();
+  return DB.rows.filter(r=>(ignore==="level"||level==="all"||r.l==+level)
+    &&(!cont||DB.C[r.co][2]===cont)&&(country===""||r.co==country)&&(city===""||r.ci==city)
+    &&(!term||r.k.includes(term)));
+}
+function counts(rs){const c=[0,0,0,0,0];rs.forEach(r=>c[r.l]++);return c}
+
+function fillSelects(){
+  const base=filtered("level");
+  const byC={};DB.rows.filter(r=>!cont||DB.C[r.co][2]===cont).forEach(r=>byC[r.co]=(byC[r.co]||0)+1);
+  const cs=Object.keys(byC).map(Number).sort((a,b)=>DB.crank[a]-DB.crank[b]);
+  $("country").innerHTML=`<option value="">${cont||"全部"}国家和地区（${cs.length}）</option>`+
+    cs.map(c=>`<option value="${c}">${DB.C[c][0]}　${byC[c]}</option>`).join("");
+  $("country").value=country;
+  if(country===""){$("city").innerHTML='<option value="">先选国家再选城市</option>';$("city").disabled=true;return}
+  const byT={};DB.rows.filter(r=>r.co==country).forEach(r=>byT[r.ci]=(byT[r.ci]||0)+1);
+  const ts=Object.keys(byT).map(Number).sort((a,b)=>byT[b]-byT[a]);
+  $("city").disabled=false;
+  $("city").innerHTML=`<option value="">全部城市（${ts.length}）</option>`+ts.map(t=>`<option value="${t}">${esc(DB.T[t][0])}　${byT[t]}</option>`).join("");
+  $("city").value=city;
+}
+
+function renderStats(){
+  const rs=filtered("level");
+  let key,label,title,col;
+  if(city!==""){$("statsTitle").textContent="当前城市";key=r=>r.ci;label=k=>DB.T[k][0];col="城市"}
+  else if(country!==""){$("statsTitle").textContent=DB.C[country][0]+" · 各城市统计";key=r=>r.ci;label=k=>DB.T[k][0];col="城市"}
+  else if(cont){$("statsTitle").textContent=cont+" · 各国家和地区统计";key=r=>r.co;label=k=>DB.C[k][0];col="国家/地区"}
+  else{$("statsTitle").textContent="各大洲统计";key=r=>DB.C[r.co][2];label=k=>k;col="大洲"}
+  $("statsCol").textContent=col;
+  const g=new Map();rs.forEach(r=>{const k=key(r);if(!g.has(k))g.set(k,[0,0,0,0,0]);g.get(k)[r.l]++});
+  let ks=[...g.keys()];
+  if(!country&&!cont)ks.sort((a,b)=>CONT.indexOf(a)-CONT.indexOf(b));
+  else if(!country)ks.sort((a,b)=>DB.crank[a]-DB.crank[b]);
+  else ks.sort((a,b)=>sum(g.get(b))-sum(g.get(a))||g.get(a)[0]-g.get(b)[0]);
+  const lim=showAllStats?ks.length:15;
+  $("moreStats").hidden=ks.length<=15||showAllStats;
+  $("moreStats").textContent=`显示全部 ${ks.length} 个`;
+  $("stats").innerHTML=ks.slice(0,lim).map(k=>{const c=g.get(k);
+    return `<tr data-k="${esc(String(k))}"><td>${esc(label(k))}</td>${c.map((v,i)=>`<td class="${v?(i<3?"st":""):"z"}">${v||"·"}</td>`).join("")}<td>${sum(c)}</td></tr>`}).join("")
+    ||'<tr><td colspan="7" class="z">没有数据</td></tr>';
+}
+const sum=a=>a.reduce((x,y)=>x+y,0);
+
+function renderList(){
+  const rs=filtered();
+  $("count").textContent=`${rs.length.toLocaleString()} 家`;
+  const tot=counts(filtered("level"));
+  $("totals").innerHTML=LVN.map((t,i)=>`<div class="tot"><b>${tot[i].toLocaleString()}</b><span>${t}</span></div>`).join("");
+  $("scope").textContent=[cont||"全球",country!==""?DB.C[country][0]:"",city!==""?DB.T[city][0]:""].filter(Boolean).join(" › ");
+  const shown=rs.slice(0,page*200);
+  let out="",lastCo=-1,lastCi=-1,open=false;
+  const cityCount={},coCount={};rs.forEach(r=>{cityCount[r.ci]=(cityCount[r.ci]||0)+1;coCount[r.co]=(coCount[r.co]||0)+1});
+  shown.forEach(r=>{
+    if(r.co!==lastCo){if(open){out+="</ul></section>";open=false}
+      out+=`<h2 class="ctry">${DB.C[r.co][0]}<small>${DB.C[r.co][1]} · ${DB.C[r.co][2]} · ${coCount[r.co]} 家</small></h2>`;lastCo=r.co;lastCi=-1}
+    if(r.ci!==lastCi){if(open)out+="</ul></section>";
+      out+=`<section class="city"><h3>${esc(DB.T[r.ci][0])}<small>${cityCount[r.ci]} 家</small></h3><ul>`;open=true;lastCi=r.ci}
+    const cls=r.l<3?"s":r.l===3?"b":"x", badge=r.l<3?"★".repeat(3-r.l):LVN[r.l];
+    const title=esc(r.zh||r.n);
+    const orig=r.zh?`<span class="orig">${esc(r.n)}${r.kind===2?'<span class="tr" title="参考译名，非餐厅官方中文名">译名</span>':""}</span>`:"";
+    const meta=[r.cu,r.p?"$".repeat(r.p):""].filter(Boolean).join(" · ");
+    const mainland=DB.C[r.co][1]==="Chinese Mainland";
+    const map=mainland?`https://uri.amap.com/search?keyword=${encodeURIComponent(r.zh||r.n)}&city=${encodeURIComponent(DB.T[r.ci][0])}`
+      :`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(r.n+", "+(r.a||DB.T[r.ci][0]))}`;
+    const links=[r.u?`<a href="https://guide.michelin.com/en/${esc(r.u)}" target="_blank" rel="noopener">米其林</a>`:"",
+      `<a href="${esc(map)}" target="_blank" rel="noopener">${mainland?"高德地图":"谷歌地图"}</a>`,
+      r.w?`<a href="${esc(r.w)}" target="_blank" rel="noopener">官网</a>`:""].filter(Boolean).join("");
+    out+=`<li><span class="lv ${cls}">${badge}</span><span class="nm"><span class="t">${title}</span>${r.nw?'<span class="tag">新</span>':""}${orig}${meta?`<span class="meta">${esc(meta)}</span>`:""}<span class="links">${links}</span></span></li>`;
+  });
+  if(open)out+="</ul></section>";
+  $("list").innerHTML=out||'<p class="empty">没有符合条件的餐厅，换个关键词或放宽筛选试试。</p>';
+  $("more").hidden=shown.length>=rs.length;
+  $("more").textContent=`再显示 ${Math.min(200,rs.length-shown.length)} 家（还有 ${(rs.length-shown.length).toLocaleString()} 家）`;
+}
+
+function render(){
+  document.querySelectorAll("#levels .chip").forEach(b=>b.setAttribute("aria-pressed",b.dataset.l===level));
+  document.querySelectorAll("#conts .chip").forEach(b=>b.setAttribute("aria-pressed",b.dataset.c===cont));
+  fillSelects();renderStats();renderList();
+  try{localStorage.setItem("mg",JSON.stringify({level,cont,country,city}))}catch(e){}
+}
+function reset(){page=1;showAllStats=false}
+
+$("conts").innerHTML=['<button class="chip cont" data-c="" aria-pressed="true">全球</button>'].concat(CONT.map(c=>`<button class="chip cont" data-c="${c}" aria-pressed="false">${c}</button>`)).join("");
+$("levels").addEventListener("click",e=>{const b=e.target.closest(".chip");if(!b)return;level=b.dataset.l;reset();render()});
+$("conts").addEventListener("click",e=>{const b=e.target.closest(".chip");if(!b)return;cont=b.dataset.c;country="";city="";reset();render()});
+$("country").addEventListener("change",e=>{country=e.target.value;city="";reset();render()});
+$("city").addEventListener("change",e=>{city=e.target.value;reset();render()});
+let qt;$("q").addEventListener("input",()=>{clearTimeout(qt);qt=setTimeout(()=>{reset();render()},180)});
+$("more").addEventListener("click",()=>{page++;renderList()});
+$("moreStats").addEventListener("click",()=>{showAllStats=true;renderStats()});
+$("stats").addEventListener("click",e=>{const tr=e.target.closest("tr[data-k]");if(!tr)return;const k=tr.dataset.k;
+  if(city!=="")return;
+  if(country!==""){city=k}else if(cont){country=k}else{cont=k}
+  reset();render();$("list").scrollIntoView({behavior:"smooth",block:"start"})});
+
+fetch("data.json").then(r=>{if(!r.ok)throw new Error(r.status);return r.json()}).then(d=>{
+  DB=prep(d);
+  if(country!==""&&!DB.C[country])country="";if(city!==""&&!DB.T[city])city="";
+  render();
+}).catch(()=>{$("list").innerHTML='<p class="empty">数据没能载入，请刷新页面再试。</p>'});
+</script>
+
+</body>
+</html>
