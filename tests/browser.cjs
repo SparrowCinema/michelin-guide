@@ -5,7 +5,7 @@ const assert=require('node:assert/strict'),fs=require('node:fs'),path=require('n
 const {chromium}=require(process.env.PLAYWRIGHT_MODULE||'playwright');
 (async()=>{
   const base=path.resolve(__dirname,'..');
-  const previousCache='mg-v8';
+  const previousCache='mg-v9';
   const cacheName=fs.readFileSync(path.join(base,'sw.js'),'utf8').match(/const CACHE = "([^"]+)"/)[1];
   const server=http.createServer((req,res)=>{
     let file=path.resolve(base,'.'+decodeURIComponent(new URL(req.url,'http://localhost').pathname));
@@ -32,6 +32,10 @@ const {chromium}=require(process.env.PLAYWRIGHT_MODULE||'playwright');
     await page.locator('[data-passport-open]').click();assert(await page.locator('.pp-identity').isVisible());
     await page.locator('[data-passport-tab="stamps"]').click();assert(await page.locator('.pp-blank-stamp').isVisible());assert.equal(await page.locator('#passportMap').count(),0);
     await page.locator('[data-passport-browse]').click();
+    assert(!(await page.locator('#browse').innerText()).includes('快照'));
+    assert(!(await page.locator('#browse').innerText()).includes('数据更新'));
+    assert(!(await page.locator('#travelControls').isVisible()));
+    if(process.env.SCREENSHOT_DIR)await page.screenshot({path:path.join(process.env.SCREENSHOT_DIR,'directory-mobile.png')});
     const u=await page.evaluate(()=>DB.rows.find(r=>r.n==='Arpège').u);
     await page.evaluate(u=>{FAV[u]=[2,1700000000000];saveFav();},u);
     await page.fill('#q','Paris 法式');await page.waitForTimeout(300);assert((await page.locator('.restaurant-title').count())>0);
@@ -42,13 +46,22 @@ const {chromium}=require(process.env.PLAYWRIGHT_MODULE||'playwright');
     await page.locator('#tabbar [data-tab="list"]').click();await page.locator('[data-trip-pick]').first().click();await page.locator('#tripPickChoices input').check();await page.locator('#tripPickForm button').click();
     const trip=await page.evaluate(()=>PERSONAL.trips[0]);assert.equal(trip.items.length,1);
     await page.locator('.restaurant-title').first().click();assert(new URL(page.url()).searchParams.get('restaurant'));
-    await page.fill('#visitDate','2026-11-26');await page.selectOption('#visitRating','5');await page.fill('#visitNote','旅途笔记 <script>');await page.locator('#visitForm button').click();await page.locator('#detailDlg [data-close]').click();
+    assert(!(await page.locator('#detailBody').innerText()).includes('快照'));
+    await page.fill('#visitDate','2026-11-26');await page.locator('[data-rating-star="4"]').click({position:{x:6,y:18}});assert.equal(await page.inputValue('#visitRating'),'3.5');await page.locator('#starRating').press('ArrowRight');assert.equal(await page.inputValue('#visitRating'),'4');await page.locator('#starRating').press('ArrowLeft');await page.fill('#visitNote','旅途笔记 <script>');await page.locator('#visitForm button[type="submit"]').click();await page.locator('#detailDlg .close[data-close]').click();
     await page.locator('.restaurant-title').first().click();assert.equal(await page.inputValue('#visitNote'),'旅途笔记 <script>');
-    const detailURL=page.url();await page.reload();await page.waitForSelector('#detailDlg[open]');assert.equal(await page.inputValue('#visitNote'),'旅途笔记 <script>');assert.equal(page.url(),detailURL);
-    if(process.env.SCREENSHOT_DIR)await page.screenshot({path:path.join(process.env.SCREENSHOT_DIR,'detail-mobile.png')});
-    await page.locator('#detailDlg [data-close]').click();
+    assert.equal(await page.inputValue('#visitRating'),'3.5');
+    const historyHTML=await page.evaluate(()=>upHistory({h:'--g2',l:1}));assert(!/2022|2023|2024|暂无记录/.test(historyHTML));assert(historyHTML.includes('2025')&&historyHTML.includes('2026'));
+    // Downward swipe closes at the top, but not while scrolling inside the sheet.
+    await page.evaluate(()=>{const d=document.getElementById('detailDlg'),target=document.getElementById('detailTitle');
+      const swipe=()=>{const fire=(type,y)=>{const t=new Touch({identifier:1,target,clientX:100,clientY:y});target.dispatchEvent(new TouchEvent(type,{bubbles:true,cancelable:true,touches:type==='touchend'?[]:[t],changedTouches:[t]}));};fire('touchstart',100);fire('touchmove',230);fire('touchend',230);};
+      d.scrollTop=150;swipe();if(!d.open)throw new Error('Closed during inner scroll');d.scrollTop=0;swipe();});
+    await page.waitForFunction(()=>!document.getElementById('detailDlg').open&&!new URL(location.href).searchParams.has('restaurant'));
+    await page.locator('.restaurant-title').first().click();
+    const detailURL=page.url();await page.reload();await page.waitForSelector('#detailDlg[open]');assert.equal(await page.inputValue('#visitNote'),'旅途笔记 <script>');assert.equal(page.url(),detailURL);assert.equal(await page.inputValue('#visitRating'),'3.5');
+    if(process.env.SCREENSHOT_DIR){await page.screenshot({path:path.join(process.env.SCREENSHOT_DIR,'detail-mobile.png')});await page.locator('#starRating').scrollIntoViewIfNeeded();await page.screenshot({path:path.join(process.env.SCREENSHOT_DIR,'rating-mobile.png')});}
+    await page.locator('#detailDlg .close[data-close]').click();
     await page.locator('#tabbar [data-tab="me"]').click();
-    const downloadPromise=page.waitForEvent('download');await page.locator('#exportBtn').click();const download=await downloadPromise;const backup=JSON.parse(fs.readFileSync(await download.path(),'utf8'));assert.equal(backup.version,2);assert.equal(backup.personal.trips[0].items.length,1);
+    const downloadPromise=page.waitForEvent('download');await page.locator('#exportBtn').click();const download=await downloadPromise;const backup=JSON.parse(fs.readFileSync(await download.path(),'utf8'));assert.equal(backup.version,2);assert.equal(backup.personal.trips[0].items.length,1);assert.equal(Object.values(backup.personal.records)[0].rating,3.5);
     await page.evaluate(()=>{PERSONAL={version:2,trips:[],records:{}};upSave(PERSONAL);FAV={};saveFav();});
     await page.locator('#importBtn').click();await page.fill('#impText',JSON.stringify(backup));await page.locator('#impGo').click();assert.equal(await page.evaluate(()=>PERSONAL.trips.length),1);assert.equal(await page.evaluate(u=>favOf(u),u),2);
     await page.locator('#importBtn').click();await page.fill('#impText',JSON.stringify({app:'michelin-guide',version:1,items:[{u,state:'want',at:1}]}));await page.locator('#impGo').click();assert.equal(await page.evaluate(u=>favOf(u),u),2); // v1 must not downgrade been.
@@ -71,7 +84,7 @@ const {chromium}=require(process.env.PLAYWRIGHT_MODULE||'playwright');
     await page.evaluate(id=>{PERSONAL.trips[0].items=PERSONAL.trips[0].items.slice(0,1);upSave(PERSONAL);upApplyTrip(id);render();},tripFixture.id);
     await page.locator('#tabbar [data-tab="list"]').click();await page.locator('#exitJourney').click();
     await page.evaluate(()=>{S.budget=300;S.currency='EUR';render();});await page.waitForTimeout(200);assert.equal(await page.locator('#count').innerText(),'1 家');
-    await page.evaluate(()=>{S.budget=0;S.change='streak';render();});assert(await page.evaluate(()=>filtered().every(r=>r.h==='0000'&&r.l===0)));
+    await page.evaluate(()=>{S.budget=0;S.change='streak';render();});assert(await page.locator('#annualCard').evaluate(el=>el.open));assert(await page.evaluate(()=>filtered().every(r=>r.h==='0000'&&r.l===0)));
     await page.evaluate(()=>{S.change='';render();});
     await page.setViewportSize({width:1280,height:900});await page.locator('#tabsTop [data-tab="me"]').click();
     assert(!(await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth)));
@@ -93,7 +106,7 @@ const {chromium}=require(process.env.PLAYWRIGHT_MODULE||'playwright');
     assert.equal(await page.locator('button.pp-stamp').count(),0);
     await page.evaluate(saved=>{FAV=JSON.parse(saved);saveFav();S.v='me';applyTheme('light');render();},savedFavourites);
     await page.locator('[data-passport-close]').click();assert(await page.locator('.pp-cover').isVisible());
-    // Upgrade a seeded v8 cache, keeping the existing data and all personal storage.
+    // Upgrade a seeded v9 cache, keeping the existing data and all personal storage.
     const oldStore=await page.evaluate(()=>localStorage.getItem('mg-personal'));
     await page.evaluate(async previous=>{const c=await caches.open(previous);const req=new Request(new URL('data.json?v='+DATA_VER,location.href));await c.put(req,await fetch(req));await navigator.serviceWorker.register('sw.js');await navigator.serviceWorker.ready;},previousCache);
     await page.waitForFunction(()=>!!navigator.serviceWorker.controller);await page.waitForFunction(async previous=>!(await caches.keys()).includes(previous),previousCache);
@@ -101,6 +114,6 @@ const {chromium}=require(process.env.PLAYWRIGHT_MODULE||'playwright');
     assert(await page.evaluate(async name=>!!await (await caches.open(name)).match(new URL('data.json?v='+DATA_VER,location.href).href),cacheName));
     await context.setOffline(true);await page.reload();await page.waitForFunction(()=>typeof DB!=='undefined'&&DB&&upLoaded);assert.equal(await page.evaluate(()=>DB.rows.length),19721);assert.equal(await page.evaluate(()=>PERSONAL.trips[0].name),'欧洲觅食');
     await context.setOffline(false);assert.deepEqual(errors,[]);await context.close();
-    console.log('PASS: mobile/desktop, search, trips, detail deep link, notes, v1/v2 backup, map markers, budget, snapshot filtering, passport cover/spread/pagination/empty state, v8→current offline migration; no browser errors.');
+    console.log('PASS: mobile/desktop, search, trips, detail deep link, notes, v1/v2 backup, map markers, budget, snapshot filtering, passport cover/spread/pagination/empty state, v9→current offline migration; half stars and swipe dismissal; no browser errors.');
   }finally{await browser.close();server.close();}
 })().catch(e=>{console.error(e);process.exit(1);});

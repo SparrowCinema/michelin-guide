@@ -23,3 +23,65 @@ a.restaurant-title{color:inherit;text-decoration:none}a.restaurant-title:hover{t
 /* Travel maps belong to planned trips; passport stamps are display-only. */
 .pp-stamp{cursor:default}.pp-stamp:hover{transform:rotate(var(--tilt))}.trip-city-chips{display:flex;flex-wrap:wrap;gap:7px;margin-top:13px}.travel-map-title{font:800 24px var(--display);margin:18px 0 12px}.journey-tools #tripCityFilter{max-width:100%}.trip-city-chips .chip{font-size:12px}
 @media(max-width:700px){.journey-tools{gap:8px}.journey-tools #tripFilter{flex:1 1 65%}.journey-tools #tripCityFilter{flex:1 1 65%}.journey-tools #newTripFromMap{margin-left:auto}}
+
+/* Quiet editorial hierarchy: content first, secondary tools disclosed on demand. */
+.travel-section{margin:30px 0 26px;padding-top:24px;border-top:1px solid var(--line)}
+.section-heading{display:flex;align-items:baseline;justify-content:space-between;gap:16px;margin-bottom:12px}
+.section-heading h3{font:700 22px/1.35 var(--display);margin:0;letter-spacing:.02em}
+.section-heading>.linkbtn{font-size:12px;white-space:nowrap}
+.travel-section>.note{padding:0;margin:12px 0;color:var(--muted);font-size:13px}
+.travel-section .trip-card{display:grid;grid-template-columns:1fr auto;column-gap:20px;padding:20px 0;border-top:1px solid var(--line)}
+.travel-section .trip-card:first-child{border-top:0}
+.travel-section .trip-card h4{font:600 19px/1.4 var(--display);margin:0 0 5px;grid-column:1}
+.travel-section .trip-card>p{font-size:12px;line-height:1.6;margin:0;grid-column:1}
+.trip-actions{display:flex;align-items:center;gap:18px;grid-column:2;grid-row:1/3}
+.trip-actions .linkbtn{font-size:12px;white-space:nowrap;color:var(--muted)}
+.trip-actions .linkbtn:last-child{color:var(--red)}
+.travel-section .trip-city-chips{grid-column:1/-1;margin-top:12px;gap:6px 16px}
+.trip-city-link{font:inherit;font-size:12px;background:none;border:0;border-bottom:1px solid var(--line);border-radius:0;color:var(--muted);padding:3px 0;cursor:pointer}
+.trip-city-link:hover{color:var(--red);border-color:var(--red)}
+.travel-map-title{font:700 22px/1.4 var(--display);margin:22px 0 14px}
+#travelControls{display:flex;flex-wrap:wrap;gap:12px 20px;align-items:end;margin:0 0 18px;padding:0 0 16px;border-bottom:1px solid var(--line)}
+.travel-field{display:flex;flex:1 1 150px;min-width:0;flex-direction:column;gap:4px}
+.travel-field label{color:var(--muted);font-size:11px}
+#travelControls select{box-sizing:border-box;width:100%;min-width:0;max-width:100%;border:0;border-radius:0;padding:6px 22px 6px 0;background:transparent;color:var(--fg);font-size:14px;line-height:1.5}
+#travelControls #newTripFromMap{font-size:12px;margin-left:0;padding:7px 0;white-space:nowrap}
+.journey-banner{border:0;border-left:2px solid var(--red);border-radius:0;background:var(--hover);padding:8px 12px;margin:12px 0;font-size:12px;gap:16px}
+.journey-banner .linkbtn{font-size:11px;white-space:nowrap}
+.refine-fold{margin-top:16px;border-top:1px solid var(--line);padding-top:10px}
+.refine-fold>summary,.detail-history>summary,.detail-prices>summary{display:flex;align-items:center;justify-content:space-between;gap:12px;list-style:none;font-size:13px;cursor:pointer;padding:6px 0;color:var(--fg)}
+.refine-fold>summary::-webkit-details-marker,.detail-history>summary::-webkit-details-marker,.detail-prices>summary::-webkit-details-marker{display:none}
+.refine-fold>summary:after,.detail-history>summary:after,.detail-prices>summary:after{content:"＋";font:14px var(--body);color:var(--muted)}
+.refine-fold[open]>summary:after,.detail-history[open]>summary:after,.detail-prices[open]>summary:after{content:"−"}
+.refine-fold>summary>span,.detail-history>summary>span{margin-left:auto;font-size:11px;color:var(--muted)}
+.refine-fold>.row{margin:12px 0 8px;gap:8px}.refine-fold .note{font-size:11px;margin:8px 0 0;padding:0;color:var(--muted);line-height:1.65}
+.annual-chips{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:0;margin:10px 0 8px}
+.annual-chips .chip{display:flex;justify-content:space-between;align-items:baseline;text-align:left;border:0;border-radius:0;background:none;color:var(--muted);font-size:12px;padding:9px 12px 9px 0;white-space:normal}
+.annual-chips .chip b{font-size:11px;font-weight:400;font-variant-numeric:tabular-nums}
+.annual-chips .chip[aria-pressed=true]{color:var(--red);background:none;text-decoration:underline;text-underline-offset:4px}
+.method-note{font-size:10px;line-height:1.7;color:var(--muted);margin:6px 0 0}.method-note summary{cursor:pointer}.method-note p{max-width:60ch;margin:7px 0 0}
+.detail-title{letter-spacing:.01em}.detail-facts{font-size:13px;margin:22px 0;row-gap:12px}.detail-actions{gap:8px 18px;font-size:12px;padding:14px 0;border-block:1px solid var(--line)}
+.detail-history,.detail-prices{margin:18px 0;border-block:1px solid var(--line);padding:8px 0}.detail-history>summary,.detail-prices>summary{font-size:14px;font-weight:500}
+.detail-history .timeline{margin-top:14px;gap:4px}.detail-history .timeline span{padding:9px 6px;text-align:center;font-size:10px;background:var(--hover);border-radius:3px;min-width:42px}.detail-history .timeline b{font-size:12px;font-weight:500}.detail-history .note{font-size:11px;line-height:1.65;margin:12px 0 4px}
+.price-note{background:none;padding:10px 0 4px;border-radius:0;font-size:13px}.price-note .note{font-size:11px;line-height:1.7}
+#visitForm{grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}#visitForm label{font-size:12px;color:var(--muted)}#visitForm label:nth-child(3){grid-column:1/-1}#visitForm .btn{grid-column:1/-1;justify-self:end;font-size:13px;padding:8px 18px}#visitForm input,#visitForm select,#visitForm textarea{font-size:16px;border-radius:5px}#visitForm textarea{min-height:110px}
+.pp-heading .pp-kicker,.pp-heading .pp-edition,.pp-cover-summary{display:none}.pp-heading h3{font-size:23px;font-weight:700}.pp-heading{margin-bottom:10px}.pp-cover-stage{border-radius:0;background:none;padding:18px 20px 20px}.pp-cover{transform:rotate(-1.5deg)}.pp-cover-caption{margin-top:26px;gap:0}.pp-cover-caption span:first-child{display:none}.pp-cover-caption span:last-child{font-size:11px;opacity:1}.pp-cover:hover{transform:rotate(0deg) translateY(-2px)}
+@media(min-width:701px){body[data-tab="me"] .searchrow,body[data-tab="me"] #levels,body[data-tab="me"] #panel>.row:not(#viewRow),body[data-tab="me"] #more-f,body[data-tab="me"] #viewRow>#share,body[data-tab="me"] #viewRow>#toggleMore,body[data-tab="me"] #viewRow>#count,body[data-tab="me"] #intro .sub,body[data-tab="me"] #intro .toplinks,body[data-tab="me"] #totals{display:none!important}body[data-tab="me"] #controls{padding-block:12px;position:static}body[data-tab="me"] #mePage{padding-top:12px}.pp-cover{width:265px;min-height:375px}.pp-cover-stage{padding-block:18px 24px}}
+@media(max-width:700px){.travel-section{padding-top:22px;margin-top:26px}.section-heading{gap:8px}.section-heading h3{font-size:21px}.travel-section .trip-card{column-gap:12px}.trip-actions{gap:12px}.trip-actions .linkbtn{font-size:11px}.travel-section .trip-card h4{font-size:18px}.travel-section .trip-card>p{font-size:11px}#travelControls{gap:10px 14px}.travel-field{flex-basis:125px}.travel-map-title{font-size:21px;margin-top:18px}#travelControls #newTripFromMap{padding:3px 0;margin-left:auto}.refine-fold>summary>span{font-size:10px}.pp-heading h3{font-size:22px}}
+
+/* Tactile detail-sheet dismissal and half-star ratings. */
+.detail-drag{display:block;width:76px;height:24px;padding:10px 20px;margin:-12px auto 3px;border:0;background:none;cursor:pointer}
+.detail-drag span{display:block;height:3px;width:36px;background:var(--line);border-radius:3px}
+#detailDlg.is-dragging{transform:translateY(var(--drag-y,0));transition:none;will-change:transform}
+.rating-field{grid-column:1/-1;min-width:0;display:grid;gap:7px;color:var(--muted);font-size:12px}
+#visitForm>label:first-child{grid-column:1/-1;max-width:220px}
+.star-rating{display:inline-flex;width:max-content;align-items:center;gap:3px;outline-offset:4px;border-radius:3px;color:var(--red)}
+.star-rating:focus-visible{outline:2px solid var(--red)}
+.star-rating button{border:0;background:none;padding:4px 2px;width:37px;height:42px;cursor:pointer;color:inherit;touch-action:manipulation}
+.star-rating svg{display:block;width:100%;height:100%;overflow:visible}
+.rating-outline{fill:none;stroke:var(--line);stroke-width:1.25;stroke-linejoin:round}
+.rating-fill{fill:currentColor;stroke:none}
+.rating-caption{display:flex;align-items:center;gap:18px;font-size:11px;min-height:20px}
+.rating-caption output{color:var(--muted)}
+#clearRating{background:none;border:0;color:var(--muted);padding:3px 0;font:inherit;cursor:pointer;text-decoration:underline;text-underline-offset:3px}
+@media(min-width:701px){.detail-drag{display:none}}
