@@ -5,6 +5,8 @@ const assert=require('node:assert/strict'),fs=require('node:fs'),path=require('n
 const {chromium}=require(process.env.PLAYWRIGHT_MODULE||'playwright');
 (async()=>{
   const base=path.resolve(__dirname,'..');
+  const previousCache='mg-v7';
+  const cacheName=fs.readFileSync(path.join(base,'sw.js'),'utf8').match(/const CACHE = "([^"]+)"/)[1];
   const server=http.createServer((req,res)=>{
     let file=path.resolve(base,'.'+decodeURIComponent(new URL(req.url,'http://localhost').pathname));
     if(file===base)file=path.join(base,'index.html');
@@ -24,6 +26,12 @@ const {chromium}=require(process.env.PLAYWRIGHT_MODULE||'playwright');
     await page.route(/https:\/\/.*leaflet.*\.(js|css)$/,route=>route.fulfill({path:path.join(leaflet,route.request().url().endsWith('.css')?'leaflet.css':'leaflet.js'),contentType:route.request().url().endsWith('.css')?'text/css':'text/javascript'}));
     await page.route(/https:\/\/.*(autonavi|arcgisonline|tile\.openstreetmap).*$/,route=>route.fulfill({status:200,contentType:'image/png',body:Buffer.from('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+aN1sAAAAASUVORK5CYII=','base64')}));
     await page.goto(url);await page.waitForFunction(()=>typeof DB!=='undefined'&&DB&&upLoaded);
+    await page.locator('#tabbar [data-tab="me"]').click();
+    assert(await page.locator('.pp-cover').isVisible());
+    if(process.env.SCREENSHOT_DIR)await page.screenshot({path:path.join(process.env.SCREENSHOT_DIR,'passport-cover.png')});
+    await page.locator('[data-passport-open]').click();assert(await page.locator('.pp-identity').isVisible());
+    await page.locator('[data-passport-tab="stamps"]').click();assert(await page.locator('.pp-blank-stamp').isVisible());assert(await page.locator('#passportMap').isDisabled());
+    await page.locator('[data-passport-browse]').click();
     const u=await page.evaluate(()=>DB.rows.find(r=>r.n==='Arpège').u);
     await page.evaluate(u=>{FAV[u]=[2,1700000000000];saveFav();},u);
     await page.fill('#q','Paris 法式');await page.waitForTimeout(300);assert((await page.locator('.restaurant-title').count())>0);
@@ -56,14 +64,30 @@ const {chromium}=require(process.env.PLAYWRIGHT_MODULE||'playwright');
     await page.setViewportSize({width:1280,height:900});await page.locator('#tabsTop [data-tab="me"]').click();
     assert(!(await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth)));
     if(process.env.SCREENSHOT_DIR)await page.screenshot({path:path.join(process.env.SCREENSHOT_DIR,'me-desktop.png'),fullPage:true});
-    // Upgrade a seeded v6 cache, keeping the existing data and all personal storage.
+    // Exercise a full passport with multiple stamp pages, including narrow and dark layouts.
+    const savedFavourites=await page.evaluate(()=>JSON.stringify(FAV));
+    await page.evaluate(()=>{const seen=new Set();for(const r of DB.rows){if(!seen.has(r.co)){seen.add(r.co);FAV[r.u]=[2,Date.now()];}if(seen.size===9)break;}PASSPORT.open=true;PASSPORT.tab='stamps';PASSPORT.sheet=0;render();});
+    assert(await page.locator('.pp-identity').isVisible());assert(await page.locator('.pp-visas').isVisible());
+    assert.equal(await page.locator('.pp-stamp').count(),4);
+    if(process.env.SCREENSHOT_DIR)await page.screenshot({path:path.join(process.env.SCREENSHOT_DIR,'passport-spread.png'),fullPage:true});
+    await page.setViewportSize({width:320,height:800});await page.locator('[data-passport-next]').click();assert.equal(await page.locator('.pp-stamp').count(),4);
+    await page.locator('[data-passport-next]').click();assert(await page.locator('[data-passport-next]').isDisabled());assert(await page.locator('.pp-stamp').count()>=1);
+    assert(!(await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth)));
+    await page.locator('[data-passport-prev]').click();assert.equal(await page.locator('.pp-stamp').count(),4);
+    if(process.env.SCREENSHOT_DIR)await page.screenshot({path:path.join(process.env.SCREENSHOT_DIR,'passport-stamps-mobile.png')});
+    await page.evaluate(()=>applyTheme('dark'));
+    if(process.env.SCREENSHOT_DIR)await page.screenshot({path:path.join(process.env.SCREENSHOT_DIR,'passport-dark.png')});
+    await page.locator('[data-passport-country]').first().click();await page.waitForFunction(()=>MAP.ready&&MAP.layer);assert(await page.evaluate(()=>S.passport&&S.co!==''&&filtered().every(r=>favOf(r.u)===2&&r.co==S.co)));
+    await page.evaluate(saved=>{FAV=JSON.parse(saved);saveFav();S.v='me';applyTheme('light');render();},savedFavourites);
+    await page.locator('[data-passport-close]').click();assert(await page.locator('.pp-cover').isVisible());
+    // Upgrade a seeded v7 cache, keeping the existing data and all personal storage.
     const oldStore=await page.evaluate(()=>localStorage.getItem('mg-personal'));
-    await page.evaluate(async()=>{const c=await caches.open('mg-v6');const req=new Request(new URL('data.json?v='+DATA_VER,location.href));await c.put(req,await fetch(req));await navigator.serviceWorker.register('sw.js');await navigator.serviceWorker.ready;});
-    await page.waitForFunction(()=>!!navigator.serviceWorker.controller);await page.waitForFunction(async()=>!(await caches.keys()).includes('mg-v6'));
+    await page.evaluate(async previous=>{const c=await caches.open(previous);const req=new Request(new URL('data.json?v='+DATA_VER,location.href));await c.put(req,await fetch(req));await navigator.serviceWorker.register('sw.js');await navigator.serviceWorker.ready;},previousCache);
+    await page.waitForFunction(()=>!!navigator.serviceWorker.controller);await page.waitForFunction(async previous=>!(await caches.keys()).includes(previous),previousCache);
     assert.equal(await page.evaluate(()=>localStorage.getItem('mg-personal')),oldStore);
-    assert(await page.evaluate(async()=>!!await (await caches.open('mg-v7')).match(new URL('data.json?v='+DATA_VER,location.href).href)));
+    assert(await page.evaluate(async name=>!!await (await caches.open(name)).match(new URL('data.json?v='+DATA_VER,location.href).href),cacheName));
     await context.setOffline(true);await page.reload();await page.waitForFunction(()=>typeof DB!=='undefined'&&DB&&upLoaded);assert.equal(await page.evaluate(()=>DB.rows.length),19721);assert.equal(await page.evaluate(()=>PERSONAL.trips[0].name),'欧洲觅食');
     await context.setOffline(false);assert.deepEqual(errors,[]);await context.close();
-    console.log('PASS: mobile/desktop, search, trips, detail deep link, notes, v1/v2 backup, map markers, budget, snapshot filtering, v6→v7 offline migration; no browser errors.');
+    console.log('PASS: mobile/desktop, search, trips, detail deep link, notes, v1/v2 backup, map markers, budget, snapshot filtering, passport cover/spread/pagination/empty state, v7→current offline migration; no browser errors.');
   }finally{await browser.close();server.close();}
 })().catch(e=>{console.error(e);process.exit(1);});
