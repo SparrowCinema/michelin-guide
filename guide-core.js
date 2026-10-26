@@ -35,7 +35,7 @@
     if(raw.records&&typeof raw.records==='object')for(const [u,r] of Object.entries(raw.records)){
       if(!validID(u)||!r||typeof r!=='object')continue;
       const date=typeof r.date==='string'&&/^\d{4}-\d{2}-\d{2}$/.test(r.date)?r.date:'';
-      records[u]={date,rating:[1,2,3,4,5].includes(r.rating)?r.rating:0,note:typeof r.note==='string'?r.note.slice(0,3000):''};
+      records[u]={date,rating:Number.isFinite(r.rating)&&r.rating>=0&&r.rating<=5&&Number.isInteger(r.rating*2)?r.rating:0,note:typeof r.note==='string'?r.note.slice(0,3000):''};
     }
     return {version:2,trips,records};
   }

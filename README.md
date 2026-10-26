@@ -22,9 +22,9 @@
 
 ## 数据来源
 
-- 餐厅名单、等级、地址、坐标、官网：米其林指南官网的公开数据，经开源项目 [michelin-my-maps](https://github.com/ngshiheng/michelin-my-maps) 汇总，这一版取自 2026 年 10 月 3 日的快照。
+- 餐厅名单、等级、地址、坐标、官网：米其林指南官网的公开数据，经开源项目 [michelin-my-maps](https://github.com/ngshiheng/michelin-my-maps) 汇总，这一版取自 2026 年 10 月 3 日的名单版本。
 - 官方中文名：米其林指南中文官网（简体、香港繁体、台湾繁体版）。其他国家星级餐厅的“译名”是参考译名。
-- 历年记录：michelin-my-maps 每年一份的历史快照（2022 至 2025 年，各取一份完整的），和当前名单逐家对比。
+- 历年记录：michelin-my-maps 每年一份的历史名单版本（2022 至 2025 年，各取一份完整的），和当前名单逐家对比。
 - 黑珍珠：2026 黑珍珠餐厅指南的公开报道和名单，只对照了中国内地、而且必须是同一家分店。二钻、三钻是完整的；一钻没有公开的完整名单，目前只覆盖了杭州、深圳的完整名单、全国新上榜的店和报道里提到的店。
 - 各国指南发布时间不同，米其林也会随时撤下歇业的店，去之前请在米其林指南 App 核对。
 
@@ -35,7 +35,7 @@
 - `og.png`、`icon.svg`、`icon-192.png`、`icon-512.png`、`icon-maskable.png`、`apple-touch-icon.png`：分享卡片图和图标。
 - `manifest.webmanifest`、`sw.js`：添加到主屏幕所需的应用信息，以及离线缓存。
 - `tools/build.py`：从 michelin-my-maps 的 CSV 生成 `data.json`，用法见文件开头。
-- `tools/history.py`：从历年快照生成 `tools/history.json`（每家店每年的等级）。
+- `tools/history.py`：从历年名单版本生成 `tools/history.json`（每家店每年的等级）。
 - `tools/zh_official_names.json`：米其林中文官网的官方中文名（按米其林网址里的餐厅标识对应）。
 - `tools/reference_translations.tsv`：星级餐厅的参考译名。
 - `tools/cn_mainland_curated.json`：中国内地各指南发布时的中文名单，用来标出本版新上榜的餐厅。
@@ -44,7 +44,7 @@
 ## 更新数据
 
 ```sh
-# 1. 取最新的 michelin_my_maps.csv，以及一年前的快照（用 git 历史）
+# 1. 取最新的 michelin_my_maps.csv，以及一年前的名单版本（用 git 历史）
 # 2. 生成历年记录
 python3 tools/history.py michelin_my_maps.csv tools/history.json snap2022.csv snap2023.csv snap2024.csv snap2025.csv
 # 3. 生成 data.json
@@ -60,11 +60,11 @@ python3 tools/build.py michelin_my_maps.csv tools/cn_mainland_curated.json data.
 保留「名录 / 地图 / 附近 / 我的」导航：
 
 - **旅行清单**：在「我的」创建和重命名旅行，在每家餐厅下点「加入旅行」多选分组；清单按城市展示，可按整份旅行或单个旅行城市在地图上查看。分组独立于「想去 / 去过」，删除旅行不会删除收藏和笔记。
-- **餐厅档案**：点店名打开详情。`?restaurant=米其林路径` 可分享并直接打开，支持用餐日期、评分、私人笔记和逐年快照记录。静态托管下这不是单独生成的 SEO 页面。
+- **餐厅档案**：点店名打开详情。`?restaurant=米其林路径` 可分享并直接打开，支持用餐日期、评分、私人笔记和逐年名单版本记录。静态托管下这不是单独生成的 SEO 页面。
 - **美食护照**：根据本设备的「去过」统计国家、城市和餐厅，保留资料页与到访签章展示，不提供足迹地图。评级按当前数据，不推断到访年份的星级。
 - **搜索**：中英文城市 / 菜系别名、混合关键词、重音归一；没有精确结果时，支持较长拉丁单词的一次编辑或相邻字母交换。不会对短词或汉字进行随意纠错。
 - **参考价格**：`prices.json` 按固定餐厅 ID 保存官方菜单参考价、币种、餐别、计价口径、费用说明、来源和核实日期。初始仅覆盖 Arpège 与 Geranium 两家，不是全球人均价格库。预算只筛选对应币种已核实的套餐价格，不进行汇率换算；未知价格不会进入预算结果。
-- **2026 快照变化**：比较 2025 年 10 月与当前快照的新增 / 升级星级，以及 2022–2026 连续五份快照三星。各地指南发布时间不一，不应称为完整官方年度名单。现有历史文件没有保存已移除餐厅的完整档案，暂不展示历史撤榜名单；缺失不代表停业。
+- **星级变化**：比较 2025 年 10 月与当前名单版本的新增 / 升级星级，以及 2022–2026 连续五份名单版本三星。各地指南发布时间不一，不应称为完整官方年度名单。现有历史文件没有保存已移除餐厅的完整档案，暂不展示历史撤榜名单；缺失不代表停业。
 
 个人数据仍保存在浏览器。v2 备份包含原有收藏、旅行和笔记，仍可导入旧 v1 收藏文件；合并时保留本机已有笔记。更换手机前请先导出。私人旅行 ID 和笔记不会写进分享链接。
 
@@ -72,11 +72,11 @@ python3 tools/build.py michelin_my_maps.csv tools/cn_mainland_curated.json data.
 
 - `python tools/check_updates.py --validate-only`：离线校验餐厅字段、稳定标识、坐标、历史编码及价格来源。
 - `python tools/check_updates.py --candidate candidate.csv --out update-report.json`：比较候选 CSV，生成新增、移除、评级变化报告。
-- 不传 `--candidate` 时，从 michelin-my-maps 的上游 CSV 获取候选。报告记录检查时间、候选 SHA-256、基准快照日期及被跳过的评级。
+- 不传 `--candidate` 时，从 michelin-my-maps 的上游 CSV 获取候选。报告记录检查时间、候选 SHA-256、基准名单版本日期及被跳过的评级。
 - GitHub Actions 的 **Check upstream data** 每周一 02:15 UTC（北京时间 10:15）检查一次，也可手动运行。报告保留为 30 天的工作流附件，并列出摘要；不会自动覆盖 `data.json` 或绕过 PR。
 - 更新名单仍需人工核实候选差异，按原流程重建、修改 `DATA_VER`，通过 PR 发布；更新价格需核对官方来源和日期。暂未自动抓取官方菜单。
 - **Validate guide** 在 PR 和 main 提交时执行数据与逻辑检查。只有实际成功运行后，才应把该检查加入仓库必需状态检查。
-- `sw.js` 的 v9 更新保留旧版已缓存数据，补充新脚本的离线缓存，不清除收藏。地图底图和 Leaflet 仍需联网。
+- `sw.js` 的 v10 更新保留旧版已缓存数据，补充新脚本的离线缓存，不清除收藏。地图底图和 Leaflet 仍需联网。
 
 ```sh
 node --test tests/core.test.js
@@ -84,7 +84,7 @@ python -m unittest discover -s tests -p 'test_*.py'
 python tools/check_updates.py --validate-only
 ```
 
-可选浏览器回归：安装 Playwright 与 Leaflet 后，运行 `node tests/browser.cjs`。覆盖移动端 / 桌面、旅行、分享链接、笔记、v1/v2 备份、预算、快照筛选，以及 旧版 → 当前版 离线缓存迁移。测试使用本地 Leaflet 和占位底图，不依赖地图供应商网络；真实 iPhone Safari 与外部底图连通性仍需设备验证。
+可选浏览器回归：安装 Playwright 与 Leaflet 后，运行 `node tests/browser.cjs`。覆盖移动端 / 桌面、旅行、分享链接、笔记、v1/v2 备份、预算、星级筛选，以及 旧版 → 当前版 离线缓存迁移。测试使用本地 Leaflet 和占位底图，不依赖地图供应商网络；真实 iPhone Safari 与外部底图连通性仍需设备验证。
 
 ### 护照册 UI
 
@@ -93,3 +93,5 @@ python tools/check_updates.py --validate-only
 ### 旅行美食地图
 
 地图规划统一以旅行清单为单位。在「我的 → 旅行美食地图」创建旅行，在餐厅下点「加入旅行」收藏；餐厅按所在城市自动分组。可查看整份旅行地图，或点城市标签只查看该城市；地图上方可切换旅行和城市，也可直接创建新旅行。地图包含该旅行的全部餐厅，不限于已去过。护照的足迹地图入口与相关过滤已移除，原有收藏、笔记、旅行和护照签章保留。
+
+界面将技术性的版本说明收至「关于」；星级变化与预算位于更多筛选，历史评级只展示已有记录的年份。餐厅详情支持在顶部向下滑动关闭，评分为五颗星，支持半星与键盘方向键调整；半星评分同样随 v2 备份保存。

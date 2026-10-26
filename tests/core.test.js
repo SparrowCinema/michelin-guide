@@ -24,3 +24,9 @@ test('preserve retired restaurant IDs and reject corrupt personal containers',()
   assert.equal(parsed.trips[0].items[0],u);assert.equal(parsed.records[u].note,'保留回忆');
   assert.throws(()=>MG.personal('corrupt',{}));assert.throws(()=>MG.personal([],{}));
 });
+
+test('half-star ratings persist with existing integer scores',()=>{
+ const byU={a:{},b:{},c:{},d:{}};const p=MG.personal({records:{a:{rating:3.5},b:{rating:5},c:{rating:.5},d:{rating:3.7}}},byU);
+ assert.equal(p.records.a.rating,3.5);assert.equal(p.records.b.rating,5);assert.equal(p.records.c.rating,.5);assert.equal(p.records.d.rating,0);
+ const restored=MG.personal(JSON.parse(JSON.stringify(p)),byU);assert.equal(restored.records.a.rating,3.5);
+});
