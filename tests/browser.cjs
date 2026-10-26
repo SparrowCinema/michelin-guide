@@ -47,7 +47,10 @@ const {chromium}=require(process.env.PLAYWRIGHT_MODULE||'playwright');
     const trip=await page.evaluate(()=>PERSONAL.trips[0]);assert.equal(trip.items.length,1);
     await page.locator('.restaurant-title').first().click();assert(new URL(page.url()).searchParams.get('restaurant'));
     assert(!(await page.locator('#detailBody').innerText()).includes('快照'));
-    await page.fill('#visitDate','2026-11-26');await page.locator('[data-rating-star="4"]').click({position:{x:6,y:18}});assert.equal(await page.inputValue('#visitRating'),'3.5');await page.locator('#starRating').press('ArrowRight');assert.equal(await page.inputValue('#visitRating'),'4');await page.locator('#starRating').press('ArrowLeft');await page.fill('#visitNote','旅途笔记 <script>');await page.locator('#visitForm button[type="submit"]').click();await page.locator('#detailDlg .close[data-close]').click();
+    await page.fill('#visitDate','2026-11-26');await page.locator('[data-rating-star="4"]').click({position:{x:6,y:18}});assert.equal(await page.inputValue('#visitRating'),'3.5');await page.locator('#starRating').press('ArrowRight');assert.equal(await page.inputValue('#visitRating'),'4');await page.locator('#starRating').press('ArrowLeft');await page.fill('#visitNote','旅途笔记 <script>');await page.locator('#visitForm button[type="submit"]').click();
+    assert.equal(await page.evaluate(()=>favOf(document.getElementById('detailDlg').dataset.u)),2); // saving the rating marks 去过
+    assert(await page.locator('#visitForm .visit-status.is-been').isVisible());
+    await page.locator('#detailDlg .close[data-close]').click();
     await page.locator('.restaurant-title').first().click();assert.equal(await page.inputValue('#visitNote'),'旅途笔记 <script>');
     assert.equal(await page.inputValue('#visitRating'),'3.5');
     const historyHTML=await page.evaluate(()=>upHistory({h:'--g2',l:1}));assert(!/2022|2023|2024|暂无记录/.test(historyHTML));assert(historyHTML.includes('2025')&&historyHTML.includes('2026'));
@@ -60,7 +63,28 @@ const {chromium}=require(process.env.PLAYWRIGHT_MODULE||'playwright');
     const detailURL=page.url();await page.reload();await page.waitForSelector('#detailDlg[open]');assert.equal(await page.inputValue('#visitNote'),'旅途笔记 <script>');assert.equal(page.url(),detailURL);assert.equal(await page.inputValue('#visitRating'),'3.5');
     if(process.env.SCREENSHOT_DIR){await page.screenshot({path:path.join(process.env.SCREENSHOT_DIR,'detail-mobile.png')});await page.locator('#starRating').scrollIntoViewIfNeeded();await page.screenshot({path:path.join(process.env.SCREENSHOT_DIR,'rating-mobile.png')});}
     await page.locator('#detailDlg .close[data-close]').click();
-    await page.locator('#tabbar [data-tab="me"]').click();
+    // "去过" and the rating are one record: the list button opens the same form, and saving marks the visit.
+    await page.locator('#tabbar [data-tab="list"]').click();
+    const [quick,noteOnly]=await page.evaluate(()=>[...new Set([...document.querySelectorAll('.fav[data-v="2"]')].map(x=>x.dataset.u))].filter(u=>!favOf(u)&&!PERSONAL.records[u]).slice(0,2));
+    const visitBtn=u=>page.locator(`.fav[data-v="2"][data-u="${u}"]`).first();
+    await visitBtn(quick).click();assert(await page.locator('#visitDlg').evaluate(d=>d.open));
+    assert.equal(await page.inputValue('#qvisitDate'),await page.evaluate(()=>upToday()));
+    await page.locator('#visitDlg [data-rating-star="5"]').click({position:{x:30,y:18}});assert.equal(await page.inputValue('#qvisitRating'),'5');
+    await page.locator('#visitDlg button[type="submit"]').click();
+    assert(!(await page.locator('#visitDlg').evaluate(d=>d.open)));
+    assert.equal(await page.evaluate(u=>favOf(u),quick),2);assert.equal(await page.evaluate(u=>PERSONAL.records[u].rating,quick),5);
+    assert.equal(await visitBtn(quick).innerText(),'去过 ★5');
+    await visitBtn(quick).click();assert(await page.locator('#visitDlg .visit-status.is-been').isVisible());
+    await page.locator('#visitDlg [data-unvisit]').click();
+    assert.equal(await page.evaluate(u=>favOf(u),quick),0);assert.equal(await page.evaluate(u=>PERSONAL.records[u].rating,quick),5);
+    assert.equal(await visitBtn(quick).innerText(),'去过');
+    await visitBtn(noteOnly).click();await page.fill('#qvisitNote','先存个预约提示');await page.locator('#visitDlg [data-note-only]').click();
+    assert.equal(await page.evaluate(u=>favOf(u),noteOnly),0);assert.equal(await page.evaluate(u=>PERSONAL.records[u].note,noteOnly),'先存个预约提示');
+    await visitBtn(quick).click();await page.locator('#visitDlg button[type="submit"]').click();
+    if(process.env.SCREENSHOT_DIR){await visitBtn(quick).click();await page.screenshot({path:path.join(process.env.SCREENSHOT_DIR,'visit-sheet-mobile.png')});await page.locator('#visitDlg .close[data-close]').click();}
+    await page.locator('#tabbar [data-tab="me"]').click();await page.locator('[data-m="2"]').click();await page.locator('#orderScore').click();
+    assert.equal(await page.locator('#meList .restaurant-title').first().getAttribute('data-restaurant'),quick); // 5 stars ranks first
+    await page.locator('[data-m="1"]').click();assert(await page.locator('#orderScore').isHidden());
     const downloadPromise=page.waitForEvent('download');await page.locator('#exportBtn').click();const download=await downloadPromise;const backup=JSON.parse(fs.readFileSync(await download.path(),'utf8'));assert.equal(backup.version,2);assert.equal(backup.personal.trips[0].items.length,1);assert.equal(Object.values(backup.personal.records)[0].rating,3.5);
     await page.evaluate(()=>{PERSONAL={version:2,trips:[],records:{}};upSave(PERSONAL);FAV={};saveFav();});
     await page.locator('#importBtn').click();await page.fill('#impText',JSON.stringify(backup));await page.locator('#impGo').click();assert.equal(await page.evaluate(()=>PERSONAL.trips.length),1);assert.equal(await page.evaluate(u=>favOf(u),u),2);
@@ -114,6 +138,6 @@ const {chromium}=require(process.env.PLAYWRIGHT_MODULE||'playwright');
     assert(await page.evaluate(async name=>!!await (await caches.open(name)).match(new URL('data.json?v='+DATA_VER,location.href).href),cacheName));
     await context.setOffline(true);await page.reload();await page.waitForFunction(()=>typeof DB!=='undefined'&&DB&&upLoaded);assert.equal(await page.evaluate(()=>DB.rows.length),19721);assert.equal(await page.evaluate(()=>PERSONAL.trips[0].name),'欧洲觅食');
     await context.setOffline(false);assert.deepEqual(errors,[]);await context.close();
-    console.log('PASS: mobile/desktop, search, trips, detail deep link, notes, v1/v2 backup, map markers, budget, snapshot filtering, passport cover/spread/pagination/empty state, v9→current offline migration; half stars and swipe dismissal; no browser errors.');
+    console.log('PASS: merged 去过 + rating sheet (mark, edit, unvisit keeps rating, note-only, score sort), mobile/desktop, search, trips, detail deep link, notes, v1/v2 backup, map markers, budget, snapshot filtering, passport cover/spread/pagination/empty state, v9→current offline migration; half stars and swipe dismissal; no browser errors.');
   }finally{await browser.close();server.close();}
 })().catch(e=>{console.error(e);process.exit(1);});

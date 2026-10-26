@@ -123,14 +123,44 @@ function upHistory(r){
   return `<details class="detail-history"><summary>历年评级<span>${entries[0].year}—${entries[entries.length-1].year}</span></summary><div class="timeline">${entries.map(x=>`<span>${x.year}<b>${LVN[+x.code]}</b></span>`).join('')}</div><p class="note">依据历年保存的名单整理。</p></details>`;
 }
 const ratingStarPath='M12 2.5 14.9 8.4 21.4 9.4 16.7 14 17.8 20.5 12 17.4 6.2 20.5 7.3 14 2.6 9.4 9.1 8.4Z';
-function upRatingHTML(value){
-  return `<div class="rating-field"><span>我的评分</span><input type="hidden" id="visitRating" value="${value||0}"><div id="starRating" class="star-rating" role="slider" tabindex="0" aria-label="我的评分，支持半星" aria-valuemin="0" aria-valuemax="5" aria-valuenow="${value||0}" aria-valuetext="${value?value+' 星':'未评分'}">${[1,2,3,4,5].map(n=>`<button type="button" data-rating-star="${n}" tabindex="-1" aria-hidden="true"><svg viewBox="0 0 24 24" aria-hidden="true"><path class="rating-outline" d="${ratingStarPath}"/><path class="rating-fill" style="clip-path:inset(0 ${100-Math.max(0,Math.min(1,(value||0)-n+1))*100}% 0 0)" d="${ratingStarPath}"/></svg></button>`).join('')}</div><div class="rating-caption"><output id="ratingValue">${value?value+' 星':'轻点打分，支持半星'}</output><button type="button" id="clearRating">清除评分</button></div></div>`;
+function upRatingHTML(value,p=''){
+  return `<div class="rating-field"><span>我的评分</span><input type="hidden" id="${p}visitRating" data-rating-input value="${value||0}"><div id="${p}starRating" class="star-rating" role="slider" tabindex="0" aria-label="我的评分，支持半星" aria-valuemin="0" aria-valuemax="5" aria-valuenow="${value||0}" aria-valuetext="${value?value+' 星':'未评分'}">${[1,2,3,4,5].map(n=>`<button type="button" data-rating-star="${n}" tabindex="-1" aria-hidden="true"><svg viewBox="0 0 24 24" aria-hidden="true"><path class="rating-outline" d="${ratingStarPath}"/><path class="rating-fill" style="clip-path:inset(0 ${100-Math.max(0,Math.min(1,(value||0)-n+1))*100}% 0 0)" d="${ratingStarPath}"/></svg></button>`).join('')}</div><div class="rating-caption"><output id="${p}ratingValue" data-rating-output>${value?value+' 星':'轻点打分，支持半星（可不打）'}</output><button type="button" id="${p}clearRating" data-clear-rating>清除评分</button></div></div>`;
 }
-function upSetRating(value){
-  value=Math.max(0,Math.min(5,Math.round(value*2)/2));$('visitRating').value=value;
-  $('starRating').setAttribute('aria-valuenow',value);$('starRating').setAttribute('aria-valuetext',value?value+' 星':'未评分');
-  $('ratingValue').textContent=value?value+' 星':'轻点打分，支持半星';
-  $('starRating').querySelectorAll('[data-rating-star]').forEach(b=>{b.querySelector('.rating-fill').style.clipPath=`inset(0 ${100-Math.max(0,Math.min(1,value-(+b.dataset.ratingStar)+1))*100}% 0 0)`;});
+function upSetRating(value,root){
+  root=root||$('detailDlg');const input=root.querySelector('[data-rating-input]'),stars=root.querySelector('.star-rating');if(!input||!stars)return;
+  value=Math.max(0,Math.min(5,Math.round(value*2)/2));input.value=value;
+  stars.setAttribute('aria-valuenow',value);stars.setAttribute('aria-valuetext',value?value+' 星':'未评分');
+  root.querySelector('[data-rating-output]').textContent=value?value+' 星':'轻点打分，支持半星（可不打）';
+  stars.querySelectorAll('[data-rating-star]').forEach(b=>{b.querySelector('.rating-fill').style.clipPath=`inset(0 ${100-Math.max(0,Math.min(1,value-(+b.dataset.ratingStar)+1))*100}% 0 0)`;});
+}
+// "去过" and the personal rating are one record: saving the form marks the restaurant as visited.
+function upToday(){return fmtDate(Date.now());}
+function upVisitDate(u){const rec=PERSONAL.records[u];if(rec&&rec.date)return rec.date;return favOf(u)===2&&FAV[u]?fmtDate(FAV[u][1]):upToday();}
+function upVisitLabel(u){if(favOf(u)!==2)return '去过';const r=PERSONAL.records[u]?.rating;return r?`去过 ★${r}`:'去过 ✓';}
+function upVisitHTML(u,p=''){
+  const rec=PERSONAL.records[u]||{},been=favOf(u)===2;
+  return `<form id="${p}visitForm" class="upgrade-form visit-form" data-u="${esc(u)}"><p class="visit-status ${been?'is-been':''}">${been?'✓ 已标记去过'+(FAV[u]?' · '+fmtDate(FAV[u][1]):''):'吃过了？打个分，保存后就算“去过”。'}</p>${upRatingHTML(rec.rating||0,p)}<label>用餐日期<input id="${p}visitDate" type="date" value="${esc(upVisitDate(u))}"></label><label>笔记<textarea id="${p}visitNote" maxlength="3000" placeholder="点了什么、味道怎样、下次想试什么">${esc(rec.note||'')}</textarea></label><div class="visit-actions">${been?'<button type="button" class="btn" data-unvisit>取消去过</button>':'<button type="button" class="linkbtn" data-note-only>只存笔记，不算去过</button>'}<button class="btn primary" type="submit">${been?'保存':'标记去过'}</button></div></form>`;
+}
+function upVisitValues(form){
+  return {date:/^\d{4}-\d{2}-\d{2}$/.test(form.querySelector('input[type=date]').value)?form.querySelector('input[type=date]').value:'',
+    rating:+form.querySelector('[data-rating-input]').value||0,note:form.querySelector('textarea').value.trim().slice(0,3000)};
+}
+function upSaveVisit(u,values,markBeen){
+  const records=Object.assign(Object.create(null),PERSONAL.records,{[u]:values});
+  if(!upSave({...PERSONAL,records}))return false;
+  if(markBeen&&favOf(u)!==2){const previous=FAV[u];FAV[u]=[2,Date.now()];if(!saveFav()){if(previous)FAV[u]=previous;else delete FAV[u];return false;}}
+  return true;
+}
+function upRefreshVisit(u){
+  // keep every visible "去过" button, the detail sheet and the 我的 page in step
+  document.querySelectorAll(`.fav[data-u="${CSS.escape(u)}"]`).forEach(x=>{x.setAttribute('aria-pressed',favOf(u)===+x.dataset.v);if(x.dataset.v==='2')x.textContent=upVisitLabel(u);});
+  if($('detailDlg').open&&$('detailDlg').dataset.u===u){const old=$('detailBody').querySelector('#visitForm');if(old)old.outerHTML=upVisitHTML(u);}
+  updateBadge();if(S.v==='me')renderMe();else upRender();
+}
+function upOpenVisit(u){
+  const r=DB.byU[u];if(!r)return;
+  $('visitTitle').textContent=r.zh||r.n;$('visitMeta').textContent=[LVN[r.l],DB.T[r.ci][0],DB.C[r.co][0]].join(' · ');
+  $('visitBody').innerHTML=upVisitHTML(u,'q');$('visitDlg').dataset.u=u;$('visitDlg').showModal();
 }
 function upBindDetailSwipe(){
   const dialog=$('detailDlg');let gesture=null;
@@ -151,24 +181,40 @@ function upBindDetailSwipe(){
   dialog.addEventListener('touchend',()=>{const close=gesture&&gesture.dy>=85;gesture=null;restore();if(close)dialog.close();});
   dialog.addEventListener('touchcancel',()=>{gesture=null;restore();});
   dialog.addEventListener('close',()=>{gesture=null;restore();});
-  dialog.addEventListener('click',e=>{
+}
+function upBindVisitForms(){
+  document.addEventListener('click',e=>{
+    const form=e.target.closest('.visit-form');if(!form)return;
     const star=e.target.closest('[data-rating-star]');
-    if(star){const rect=star.getBoundingClientRect(),value=+star.dataset.ratingStar-(e.clientX<rect.x+rect.width/2?.5:0);upSetRating(value);$('starRating').focus({preventScroll:true});}
-    if(e.target.closest('#clearRating'))upSetRating(0);
+    if(star){const rect=star.getBoundingClientRect(),value=+star.dataset.ratingStar-(e.clientX<rect.x+rect.width/2?.5:0);upSetRating(value,form);form.querySelector('.star-rating').focus({preventScroll:true});}
+    if(e.target.closest('[data-clear-rating]'))upSetRating(0,form);
+    const u=form.dataset.u;
+    if(e.target.closest('[data-note-only]')){if(upSaveVisit(u,upVisitValues(form),false)){toast('笔记已保存，没有标记去过');if($('visitDlg').open)$('visitDlg').close();upRefreshVisit(u);}}
+    if(e.target.closest('[data-unvisit]')){
+      const previous=FAV[u];delete FAV[u];if(!saveFav()){FAV[u]=previous;return;}
+      toast('已取消去过，评分和笔记仍然保留');if($('visitDlg').open)$('visitDlg').close();upRefreshVisit(u);}
   });
-  dialog.addEventListener('keydown',e=>{
-    if(e.target.id!=='starRating')return;
-    const current=+$('visitRating').value;
+  document.addEventListener('keydown',e=>{
+    const stars=e.target.closest?.('.visit-form .star-rating');if(!stars)return;
+    const form=stars.closest('.visit-form'),current=+form.querySelector('[data-rating-input]').value;
     const values={ArrowRight:current+.5,ArrowUp:current+.5,ArrowLeft:current-.5,ArrowDown:current-.5,Home:0,End:5};
-    if(Object.hasOwn(values,e.key)){e.preventDefault();upSetRating(values[e.key]);}
+    if(Object.hasOwn(values,e.key)){e.preventDefault();upSetRating(values[e.key],form);}
+  });
+  document.addEventListener('submit',e=>{
+    const form=e.target.closest('.visit-form');if(!form)return;e.preventDefault();
+    const u=form.dataset.u,first=favOf(u)!==2,v=upVisitValues(form);
+    if(!upSaveVisit(u,v,true))return;
+    toast(first?(v.rating?`已标记去过 · ${v.rating} 星`:'已标记去过'):'已保存');
+    if($('visitDlg').open&&form.closest('#visitDlg'))$('visitDlg').close();
+    upRefreshVisit(u);
   });
 }
 
 function upOpenDetail(u,push=true){
   const r=DB.byU[u];if(!r){toast('这家餐厅不在现有名单中，请核对链接');return;}
   if(push){const url=upDetailURL(u);if(url!==location.href)history.pushState(null,'',url);}
-  $('detailDlg').dataset.u=u;const rec=PERSONAL.records[u]||{},m=mapLink(r);
-  $('detailBody').innerHTML=`<h2 class="detail-title" id="detailTitle" tabindex="-1">${esc(r.zh||r.n)}</h2>${r.zh?`<p class="detail-origin">${esc(r.n)}${r.kind===2?' · 参考译名，非官方中文名':''}</p>`:''}<p>${esc(DB.C[r.co][0])} · ${esc(DB.T[r.ci][0])}</p>${badge(r)} ${tagsHTML(r)}<dl class="detail-facts">${r.cu?`<dt>菜系</dt><dd>${esc(r.cu)}</dd>`:''}${r.a?`<dt>地址</dt><dd>${esc(r.a)}</dd>`:''}${r.p?`<dt>价位</dt><dd>${'$'.repeat(r.p)} · 当地价位</dd>`:''}</dl><div class="detail-actions"><a href="https://guide.michelin.com/en/${esc(r.u)}" target="_blank" rel="noopener">米其林页面</a><a href="${esc(m.href)}" target="_blank" rel="noopener">导航</a>${r.w?`<a href="${esc(r.w)}" target="_blank" rel="noopener">官网 / 查询预约</a>`:''}<button class="linkbtn" id="copyRestaurant">复制餐厅链接</button></div><div class="links"><button class="fav" data-u="${esc(u)}" data-v="1" aria-pressed="${favOf(u)===1}">想去</button><button class="fav" data-u="${esc(u)}" data-v="2" aria-pressed="${favOf(u)===2}">去过</button><button class="linkbtn" data-trip-pick="${esc(u)}">加入旅行</button></div><details class="detail-prices" ${(PRICE_DB.items[r.u]||[]).length?'':'hidden'}><summary>参考消费</summary><div class="price-note">${upPrice(r)}</div></details>${upHistory(r)}<h3>我的用餐记录</h3><form id="visitForm" class="upgrade-form"><label>用餐日期<input id="visitDate" type="date" value="${esc(rec.date||'')}"></label>${upRatingHTML(rec.rating||0)}<label>个人笔记<textarea id="visitNote" maxlength="3000" placeholder="想吃什么、预约注意事项，或这次用餐的记忆">${esc(rec.note||'')}</textarea></label><button class="btn primary" type="submit">保存记录</button></form><p class="note">记录仅保存在本设备；可随旅行清单一起导出备份。保存笔记不会自动标记“去过”。</p>`;
+  $('detailDlg').dataset.u=u;const m=mapLink(r);
+  $('detailBody').innerHTML=`<h2 class="detail-title" id="detailTitle" tabindex="-1">${esc(r.zh||r.n)}</h2>${r.zh?`<p class="detail-origin">${esc(r.n)}${r.kind===2?' · 参考译名，非官方中文名':''}</p>`:''}<p>${esc(DB.C[r.co][0])} · ${esc(DB.T[r.ci][0])}</p>${badge(r)} ${tagsHTML(r)}<dl class="detail-facts">${r.cu?`<dt>菜系</dt><dd>${esc(r.cu)}</dd>`:''}${r.a?`<dt>地址</dt><dd>${esc(r.a)}</dd>`:''}${r.p?`<dt>价位</dt><dd>${'$'.repeat(r.p)} · 当地价位</dd>`:''}</dl><div class="detail-actions"><a href="https://guide.michelin.com/en/${esc(r.u)}" target="_blank" rel="noopener">米其林页面</a><a href="${esc(m.href)}" target="_blank" rel="noopener">导航</a>${r.w?`<a href="${esc(r.w)}" target="_blank" rel="noopener">官网 / 查询预约</a>`:''}<button class="linkbtn" id="copyRestaurant">复制餐厅链接</button></div><div class="links"><button class="fav" data-u="${esc(u)}" data-v="1" aria-pressed="${favOf(u)===1}">想去</button><button class="linkbtn" data-trip-pick="${esc(u)}">加入旅行</button></div><details class="detail-prices" ${(PRICE_DB.items[r.u]||[]).length?'':'hidden'}><summary>参考消费</summary><div class="price-note">${upPrice(r)}</div></details>${upHistory(r)}<h3 id="visitHeading">去过 · 我的评分</h3>${upVisitHTML(u)}<p class="note">只保存在本设备，可在“我的”里导出备份。</p>`;
   document.title=(r.zh||r.n)+' · 米其林全球名录';if(!$('detailDlg').open)$('detailDlg').showModal();$('detailDlg').scrollTop=0;$('detailTitle').focus({preventScroll:true});
 }
 function upRestoreDetail(){
@@ -176,7 +222,7 @@ function upRestoreDetail(){
   if(u)upOpenDetail(u,false);else if($('detailDlg').open)$('detailDlg').close();
 }
 function upInit(){
-  document.body.insertAdjacentHTML('beforeend',`<dialog id="detailDlg" aria-labelledby="detailTitle"><div class="dlg"><button type="button" class="detail-drag" tabindex="-1" data-close aria-label="关闭餐厅详情"><span></span></button><button type="button" class="close" data-close>关闭</button><div id="detailBody"></div></div></dialog><dialog id="tripDlg" aria-labelledby="tripTitle"><div class="dlg"><button type="button" class="close" data-close>关闭</button><h2 id="tripTitle"></h2><form id="tripForm" class="upgrade-form"><label>旅行名称<input id="tripName" maxlength="100" required placeholder="例如：2026 欧洲旅行"></label><button class="btn primary" type="submit">保存名称</button></form><div class="row"><button class="btn" id="tripMap">在地图上查看</button><button class="btn danger" id="tripDelete">删除旅行清单</button></div><div id="tripItems" class="trip-content"></div></div></dialog><dialog id="tripPickDlg" aria-labelledby="tripPickTitle"><div class="dlg"><button type="button" class="close" data-close>关闭</button><h2 id="tripPickTitle"></h2><form id="tripPickForm" class="upgrade-form"><div id="tripPickChoices"></div><label>或创建新旅行<input id="tripQuickName" maxlength="100" placeholder="输入旅行名称"></label><button type="submit" class="btn primary">保存到所选旅行</button></form></div></dialog>`);
+  document.body.insertAdjacentHTML('beforeend',`<dialog id="detailDlg" aria-labelledby="detailTitle"><div class="dlg"><button type="button" class="detail-drag" tabindex="-1" data-close aria-label="关闭餐厅详情"><span></span></button><button type="button" class="close" data-close>关闭</button><div id="detailBody"></div></div></dialog><dialog id="visitDlg" class="visit-sheet" aria-labelledby="visitTitle"><div class="dlg"><button type="button" class="close" data-close>关闭</button><p class="visit-kicker">去过 · 我的评分</p><h2 id="visitTitle"></h2><p class="detail-origin" id="visitMeta"></p><div id="visitBody"></div></div></dialog><dialog id="tripDlg" aria-labelledby="tripTitle"><div class="dlg"><button type="button" class="close" data-close>关闭</button><h2 id="tripTitle"></h2><form id="tripForm" class="upgrade-form"><label>旅行名称<input id="tripName" maxlength="100" required placeholder="例如：2026 欧洲旅行"></label><button class="btn primary" type="submit">保存名称</button></form><div class="row"><button class="btn" id="tripMap">在地图上查看</button><button class="btn danger" id="tripDelete">删除旅行清单</button></div><div id="tripItems" class="trip-content"></div></div></dialog><dialog id="tripPickDlg" aria-labelledby="tripPickTitle"><div class="dlg"><button type="button" class="close" data-close>关闭</button><h2 id="tripPickTitle"></h2><form id="tripPickForm" class="upgrade-form"><div id="tripPickChoices"></div><label>或创建新旅行<input id="tripQuickName" maxlength="100" placeholder="输入旅行名称"></label><button type="submit" class="btn primary">保存到所选旅行</button></form></div></dialog>`);
   $('meStats').insertAdjacentHTML('beforebegin',`<section class="passport-feature" aria-label="我的美食护照"><div id="passportContent"></div></section><section class="travel-section"><div class="section-heading"><h3>旅行美食地图</h3><button class="linkbtn" id="newTrip">＋ 新建旅行</button></div><p class="note" id="tripIntro">为下一段旅程，收藏想去的餐厅。</p><div id="tripCards"></div></section>`);
   $('browse').insertAdjacentHTML('afterbegin',`<h2 id="travelMapTitle" class="travel-map-title" hidden>旅行美食地图</h2><div class="journey-tools" id="travelControls" hidden><div class="travel-field"><label for="tripFilter">旅行</label><select id="tripFilter" aria-label="按旅行清单筛选"></select></div><div class="travel-field" id="tripCityField" hidden><label id="tripCityLabel" for="tripCityFilter">城市</label><select id="tripCityFilter" aria-label="按旅行城市筛选"></select></div><button type="button" class="linkbtn" id="newTripFromMap">＋ 新建旅行</button></div><div class="journey-banner" id="journeyBanner" hidden><span id="journeyLabel"></span><button class="linkbtn" id="exitJourney">清除</button></div><p class="search-note" id="searchNote" hidden>以下为拼写相近的结果。</p>`);
   $('more-f').insertAdjacentHTML('beforeend',`<details class="refine-fold" id="annualCard"><summary>星级变化<span>新增星级 · 历年记录</span></summary><div class="annual-chips" id="annualChoices"></div><details class="method-note"><summary>统计说明</summary><p>依据 2025 年 10 月与 ${esc(DB.updated)} 保存的名单对比，不等同于各地区官方年度发布名单。“连续五年三星”表示 2022—2026 年五份记录均为三星。</p></details></details>`);
@@ -227,12 +273,9 @@ function upInit(){
     if(el.hasAttribute('data-change')){S.change=S.change===el.dataset.change?'':el.dataset.change;S.trip='';reset();render();}
     if(el.id==='copyRestaurant')copyText(upDetailURL($('detailDlg').dataset.u)).then(()=>toast('已复制餐厅链接'),()=>toast('无法复制，请从地址栏复制链接'));
   });
-  document.addEventListener('submit',e=>{if(e.target.id!=='visitForm')return;e.preventDefault();const u=$('detailDlg').dataset.u;
-    const records=Object.assign(Object.create(null),PERSONAL.records,{[u]:{date:$('visitDate').value,rating:+$('visitRating').value,note:$('visitNote').value.trim().slice(0,3000)}});
-    if(upSave({...PERSONAL,records}))toast('用餐记录已保存');});
-  ['detailDlg','tripDlg','tripPickDlg'].forEach(id=>{const dlg=$(id);dlg.addEventListener('click',e=>{if(e.target===dlg||e.target.closest('[data-close]'))dlg.close();});});
+  ['detailDlg','visitDlg','tripDlg','tripPickDlg'].forEach(id=>{const dlg=$(id);dlg.addEventListener('click',e=>{if(e.target===dlg||e.target.closest('[data-close]'))dlg.close();});});
   $('detailDlg').addEventListener('close',()=>{const url=new URL(location.href);url.searchParams.delete('restaurant');history.replaceState(null,'',url);document.title='米其林全球名录';});
-  upBindDetailSwipe();
+  upBindDetailSwipe();upBindVisitForms();
   window.addEventListener('popstate',upRestoreDetail);
 
   upRender();upRestoreDetail();
