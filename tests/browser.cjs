@@ -5,7 +5,7 @@ const assert=require('node:assert/strict'),fs=require('node:fs'),path=require('n
 const {chromium}=require(process.env.PLAYWRIGHT_MODULE||'playwright');
 (async()=>{
   const base=path.resolve(__dirname,'..');
-  const previousCache='mg-v16';
+  const previousCache='mg-v17';
   const cacheName=fs.readFileSync(path.join(base,'sw.js'),'utf8').match(/const CACHE = "([^"]+)"/)[1];
   // A new page must never load an old cached script: index.html asset versions must match sw.js.
   const swText=fs.readFileSync(path.join(base,'sw.js'),'utf8'),assetVer=swText.match(/const ASSET_VER = "([^"]+)"/)[1],indexText=fs.readFileSync(path.join(base,'index.html'),'utf8');
@@ -177,15 +177,21 @@ const {chromium}=require(process.env.PLAYWRIGHT_MODULE||'playwright');
     await page.locator('[data-trip-city-map]').last().click();await page.waitForFunction(()=>MAP.ready&&MAP.layer.getLayers().length===1);assert(await page.locator('#travelMapTitle').isVisible());
     await page.waitForFunction(()=>filtered().filter(r=>r.lat!=null).every(r=>MAP.m.getBounds().contains(MAP.amap?[r.glat,r.glng]:[r.lat,r.lng])));
     if(process.env.SCREENSHOT_DIR)await page.screenshot({path:path.join(process.env.SCREENSHOT_DIR,'travel-city-map.png')});
-    // Map exports include unvisited trip members and a separate real-coordinate map + dossier.
+    // Footprint map exports show only restaurants I have visited; planned trip members never appear on the card.
+    const favBeforeMapShare=await page.evaluate(()=>JSON.stringify(FAV));
     await page.locator('[data-share-map]').click();await page.waitForFunction(()=>!!PASSPORT_SHARE.file);
-    assert.equal(await page.evaluate(()=>PASSPORT_SHARE.kind),'map');assert.equal(await page.evaluate(()=>PASSPORT_SHARE.rows.length),2);
+    assert.equal(await page.evaluate(()=>PASSPORT_SHARE.kind),'map');assert.equal(await page.evaluate(()=>PASSPORT_SHARE.rows.length),1);
+    assert(await page.evaluate(()=>PASSPORT_SHARE.rows.every(r=>favOf(r.u)===2)));
     assert((await page.locator('#shareStatus').innerText()).includes('地图已加载'));
-    let png=await page.evaluate(async()=>Array.from(new Uint8Array(await PASSPORT_SHARE.file.arrayBuffer())));let mapPNG=Buffer.from(png);assert.equal(mapPNG.readUInt32BE(16),1080);assert.equal(mapPNG.readUInt32BE(20),1680);
+    let png=await page.evaluate(async()=>Array.from(new Uint8Array(await PASSPORT_SHARE.file.arrayBuffer())));let mapPNG=Buffer.from(png);assert.equal(mapPNG.readUInt32BE(16),1080);assert.equal(mapPNG.readUInt32BE(20),1440);
+    await page.locator('#passportShareDlg [data-close]').click();
+    await page.evaluate(u=>{FAV[u]=[2,Date.now()];saveFav();render();},await page.evaluate(()=>PERSONAL.trips[0].items[1]));
+    await page.locator('[data-share-map]').click();await page.waitForFunction(()=>!!PASSPORT_SHARE.file);assert.equal(await page.evaluate(()=>PASSPORT_SHARE.rows.length),2);
+    png=await page.evaluate(async()=>Array.from(new Uint8Array(await PASSPORT_SHARE.file.arrayBuffer())));mapPNG=Buffer.from(png);assert.equal(mapPNG.readUInt32BE(20),1680);
     if(process.env.SCREENSHOT_DIR)fs.writeFileSync(path.join(process.env.SCREENSHOT_DIR,'travel-map-card.png'),mapPNG);
     await page.locator('#shareSettings>summary').click();await page.selectOption('#shareCity',String(tripFixture.otherCity));await page.waitForFunction(()=>!!PASSPORT_SHARE.file);assert.equal(await page.evaluate(()=>PASSPORT_SHARE.rows.length),1);
     await page.locator('#passportShareDlg [data-close]').click();
-    const mapLongFixture=await page.evaluate(()=>{const t=PERSONAL.trips[0],items=t.items.slice(),third=DB.rows.find(r=>!items.includes(r.u));t.items.push(third.u);const names=t.items.map(u=>({u,zh:DB.byU[u].zh}));names.forEach(x=>DB.byU[x.u].zh='Restaurant Maison de la Gastronomie — 旅途中值得多次到访的餐厅与旅行纪念');return {items,names};});
+    const mapLongFixture=await page.evaluate(()=>{const t=PERSONAL.trips[0],items=t.items.slice(),third=DB.rows.find(r=>!items.includes(r.u));t.items.push(third.u);FAV[third.u]=[2,Date.now()];saveFav();const names=t.items.map(u=>({u,zh:DB.byU[u].zh}));names.forEach(x=>DB.byU[x.u].zh='Restaurant Maison de la Gastronomie — 旅途中值得多次到访的餐厅与旅行纪念');return {items,names};});
     await page.locator('[data-share-map]').click();await page.waitForFunction(()=>!!PASSPORT_SHARE.file);await page.locator('#shareSettings>summary').click();await page.fill('#shareTitle','从上海到世界各地的美食旅行记录与难忘相遇珍藏册');await page.waitForFunction(()=>!!PASSPORT_SHARE.file);
     png=await page.evaluate(async()=>Array.from(new Uint8Array(await PASSPORT_SHARE.file.arrayBuffer())));mapPNG=Buffer.from(png);assert.equal(mapPNG.readUInt32BE(20),1920);if(process.env.SCREENSHOT_DIR)fs.writeFileSync(path.join(process.env.SCREENSHOT_DIR,'travel-map-card-long-text.png'),mapPNG);
     await page.locator('#passportShareDlg [data-close]').click();await page.evaluate(saved=>{PERSONAL.trips[0].items=saved.items;saved.names.forEach(x=>{if(x.zh===undefined)delete DB.byU[x.u].zh;else DB.byU[x.u].zh=x.zh;});},mapLongFixture);
@@ -195,6 +201,7 @@ const {chromium}=require(process.env.PLAYWRIGHT_MODULE||'playwright');
     if(process.env.SCREENSHOT_DIR){png=await page.evaluate(async()=>Array.from(new Uint8Array(await PASSPORT_SHARE.file.arrayBuffer())));fs.writeFileSync(path.join(process.env.SCREENSHOT_DIR,'travel-map-fallback.png'),Buffer.from(png));}
     await page.locator('#passportShareDlg [data-close]').click();
     await page.evaluate(()=>PASSPORT_SHARE.tiles.clear());
+    await page.evaluate(saved=>{FAV=JSON.parse(saved);saveFav();render();},favBeforeMapShare);
     await page.evaluate(id=>{PERSONAL.trips[0].items=PERSONAL.trips[0].items.slice(0,1);upSave(PERSONAL);upApplyTrip(id);render();},tripFixture.id);
     await page.locator('#tabbar [data-tab="list"]').click();await page.locator('#exitJourney').click();
     assert.equal(await page.locator('#budgetPanel').count(),0);await page.evaluate(()=>{S.budget=300;S.currency='EUR';render();});assert.equal(await page.locator('#count').innerText(),'19,721 家');assert(!page.url().includes('budget='));
@@ -258,10 +265,10 @@ const {chromium}=require(process.env.PLAYWRIGHT_MODULE||'playwright');
     await page.waitForFunction(()=>document.getElementById('sharePreview').complete&&document.getElementById('sharePreview').naturalWidth>0);
     const previewBox=await page.locator('#sharePreview').boundingBox(),saveBox=await page.locator('#passportShareDlg .share-actions').boundingBox();assert(previewBox.y>=0&&previewBox.y+previewBox.height<=saveBox.y,'Default mobile preview must show the complete exported card above Save');
     if(process.env.SCREENSHOT_DIR)await page.screenshot({path:path.join(process.env.SCREENSHOT_DIR,'share-mobile-default.png')});
-    assert.equal(await page.locator('#sharePage').innerText(),'1 / 2');assert((await page.locator('#shareStatus').innerText()).includes('7 家'));
+    assert.equal(await page.locator('#sharePage').innerText(),'1 / 2');assert((await page.locator('#shareStatus').innerText()).includes('7 家'));assert(/地图已加载|位置示意图/.test(await page.locator('#shareStatus').innerText()));
     await page.locator('#shareSettings>summary').click();await page.fill('#shareTitle','我的味觉旅行');await page.waitForFunction(()=>!!PASSPORT_SHARE.file);
     if(process.env.SCREENSHOT_DIR){await page.screenshot({path:path.join(process.env.SCREENSHOT_DIR,'share-mobile.png'),fullPage:true});const card=await page.locator('#sharePreview').getAttribute('src');const png=await page.evaluate(async src=>Array.from(new Uint8Array(await (await fetch(src)).arrayBuffer())),card);fs.writeFileSync(path.join(process.env.SCREENSHOT_DIR,'share-card.png'),Buffer.from(png));}
-    const shareDownloadPromise=page.waitForEvent('download');await page.locator('#saveShare').click();const shareDownload=await shareDownloadPromise,sharePNG=fs.readFileSync(await shareDownload.path());assert.equal(sharePNG.readUInt32BE(16),1080);assert.equal(sharePNG.readUInt32BE(20),1620);
+    const shareDownloadPromise=page.waitForEvent('download');await page.locator('#saveShare').click();const shareDownload=await shareDownloadPromise,sharePNG=fs.readFileSync(await shareDownload.path());assert.equal(sharePNG.readUInt32BE(16),1080);assert.equal(sharePNG.readUInt32BE(20),2052); // passport card now carries the footprint map
     const longOriginal=await page.evaluate(()=>{const rows=PASSPORT_SHARE.rows.slice(0,4);const original=rows.map(r=>({u:r.u,zh:r.zh}));rows.forEach(r=>r.zh='Restaurant Maison de la Gastronomie — 世界各地旅行途中反复到访的餐厅长名称');return original;});
     await page.fill('#shareTitle','从上海到世界各地的美食旅行记录与难忘相遇珍藏册');await page.waitForFunction(()=>!!PASSPORT_SHARE.file);
     if(process.env.SCREENSHOT_DIR){const png=await page.evaluate(async()=>Array.from(new Uint8Array(await PASSPORT_SHARE.file.arrayBuffer())));fs.writeFileSync(path.join(process.env.SCREENSHOT_DIR,'share-card-long-text.png'),Buffer.from(png));}
@@ -302,6 +309,6 @@ const {chromium}=require(process.env.PLAYWRIGHT_MODULE||'playwright');
     await context.setOffline(true);await page.reload();await page.waitForFunction(()=>typeof DB!=='undefined'&&DB&&upLoaded);assert.equal(await page.evaluate(()=>DB.rows.length),19721);assert.equal(await page.evaluate(()=>PERSONAL.trips[0].name),'欧洲觅食');
     await page.locator('[data-passport-share]').click();await page.waitForFunction(()=>!!PASSPORT_SHARE.file);assert(await page.locator('#sharePreview').isVisible());
     await context.setOffline(false);assert.deepEqual(errors,[]);await context.close();
-    console.log('PASS: touch-open passport, simultaneous mobile spread, animated touch page-turn, repeated meals append/edit/delete/reload/backup, bounded world map, map+dossier PNG/long text/fallback/city/planned members, measured share PNG/pagination/historical visit dates/offline export, draft clearing/custom dates/auto-close/storage rollback, sticky-header short swipe, compact directory, touch scroll over passive map, explicit map panning, list jump, desktop wheel scrolling, numbered pins, retina tiles, title focus, narrow/dark layouts, existing search/trips/ratings/backup regression and v16→current offline migration; no browser errors.');
+    console.log('PASS: share cards map only my visited restaurants (passport + footprint map, trip/city scope), touch-open passport, simultaneous mobile spread, animated touch page-turn, repeated meals append/edit/delete/reload/backup, bounded world map, map+dossier PNG/long text/fallback/city/planned members, measured share PNG/pagination/historical visit dates/offline export, draft clearing/custom dates/auto-close/storage rollback, sticky-header short swipe, compact directory, touch scroll over passive map, explicit map panning, list jump, desktop wheel scrolling, numbered pins, retina tiles, title focus, narrow/dark layouts, existing search/trips/ratings/backup regression and v16→current offline migration; no browser errors.');
   }finally{await browser.close();server.close();}
 })().catch(e=>{console.error(e);process.exit(1);});
