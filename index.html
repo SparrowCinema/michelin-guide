@@ -17,6 +17,7 @@
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="米其林名录">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
+<link rel="stylesheet" href="upgrade.css">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" href="icon.svg" type="image/svg+xml">
 <link rel="icon" href="icon-192.png" sizes="192x192" type="image/png">
@@ -431,6 +432,9 @@ dialog::backdrop{background:var(--shade)}
 <div id="inappBar" hidden><span>在微信等 App 里无法添加到主屏幕，也可能打不开地图。</span><button type="button" id="inappHow">怎么办</button><button type="button" id="inappX" aria-label="关闭">×</button></div>
 <div id="toast" role="status" aria-live="polite"></div>
 
+<script src="search-aliases.js"></script>
+<script src="guide-core.js"></script>
+<script src="upgrade.js"></script>
 <script>
 const CONT=["亚洲","欧洲","北美洲","南美洲","大洋洲"];
 const LVN=["三星","二星","一星","必比登","入选"];
@@ -444,13 +448,13 @@ const sum=a=>a.reduce((x,y)=>x+y,0);
 const isPhone=()=>matchMedia("(max-width:700px)").matches;
 
 // ---- state ----
-const S={v:"list",l:"all",c:"",co:"",ci:"",q:"",cu:"",p:"",f:new Set(),near:false};
+const S={v:"list",l:"all",c:"",co:"",ci:"",q:"",cu:"",p:"",f:new Set(),near:false,trip:"",passport:false,change:"",budget:0,currency:"EUR"};
 let DB=null,page=1,showAllStats=false,ME=null,meTab=1,meOrder="time";
 // FAV: {michelinPath: [1 想去 | 2 去过, markedAt ms]}
 let FAV={};try{FAV=JSON.parse(localStorage.getItem("mg-fav")||"{}")||{}}catch(e){}
 for(const k in FAV){if(typeof FAV[k]==="number")FAV[k]=[FAV[k],Date.now()]}
 const favOf=u=>FAV[u]?FAV[u][0]:0;
-function saveFav(){try{localStorage.setItem("mg-fav",JSON.stringify(FAV))}catch(e){toast("没能保存，浏览器可能禁用了本地存储")}}
+function saveFav(){try{localStorage.setItem("mg-fav",JSON.stringify(FAV));return true}catch(e){toast("没能保存，浏览器可能禁用了本地存储");return false}}
 
 // ---- coordinates: data are WGS-84; AMap tiles in mainland China use GCJ-02 ----
 function tLat(x,y){let r=-100+2*x+3*y+.2*y*y+.1*x*y+.2*Math.sqrt(Math.abs(x));r+=(20*Math.sin(6*x*Math.PI)+20*Math.sin(2*x*Math.PI))*2/3;r+=(20*Math.sin(y*Math.PI)+40*Math.sin(y/3*Math.PI))*2/3;r+=(160*Math.sin(y/12*Math.PI)+320*Math.sin(y*Math.PI/30))*2/3;return r}
@@ -472,7 +476,7 @@ function prep(d){
   const rows=d.r.map(r=>{const t=T[r[3]],c=C[t[1]],cu=r[5]>=0?d.cuisines[r[5]]:"";
     const o={n:r[0],zh:r[1],kind:r[2]&3,ci:r[3],co:t[1],l:r[4],cu,cui:r[5],p:r[6],u:r[7],w:r[8],a:r[9],
       lat:r[10],lng:r[11],green:!!r[12],h:r[13]||"",bp:r[14]||0,ml:c[1]==="Chinese Mainland",
-      s:r[1]||r[0],k:(r[0]+" "+r[1]+" "+t[0]+" "+c[0]+" "+c[1]+" "+cu).toLowerCase()};
+      s:r[1]||r[0],k:MG.index([r[0],r[1],t[0],c[0],c[1],cu,r[9]],window.MG_ALIASES)};
     // history: one char per yearly snapshot 2022..2025; current award is o.l
     const cur=String(o.l),prev=o.h.length===4?o.h[3]:"?";
     o.nw=o.ml?!!(r[2]&4):prev==="-";
@@ -480,7 +484,7 @@ function prep(d){
     if("01234".includes(prev)&&o.l<+prev){
       if(o.l<=2&&+prev>=3)o.up="新摘星";else if(o.l<=2)o.up="升星";else if(o.l===3)o.up="新晋必比登";}
     o.streak=0;
-    if(o.l<=3&&o.h.length===4){let n=1;for(let i=3;i>=0;i--){if(o.h[i]===cur||o.h[i]==="g")n++;else break}o.streak=n}
+    if(o.l<=3&&o.h.length===4){let n=1;for(let i=3;i>=0;i--){if(o.h[i]===cur)n++;else break}o.streak=n}
     if(o.lat!=null&&o.ml){const g=gcj(o.lat,o.lng);o.glat=g[0];o.glng=g[1]}else{o.glat=o.lat;o.glng=o.lng}
     return o});
   rows.sort((a,b)=>crank[a.co]-crank[b.co]||cityTot[b.ci]-cityTot[a.ci]||(a.ci-b.ci)||a.l-b.l||a.s.localeCompare(b.s,"zh"));
@@ -492,6 +496,7 @@ function prep(d){
 // ---- URL hash <-> state (country / city stored by Chinese name) ----
 function readHash(){
   const h=new URLSearchParams(location.hash.slice(1));if(![...h.keys()].length)return false;
+  S.budget=Math.max(0,+h.get("budget")||0);S.currency=/^[A-Z]{3}$/.test(h.get("currency")||"")?h.get("currency"):"EUR";
   const v=h.get("v");S.v=v==="map"||v==="me"?v:"list";S.l=h.get("l")??"all";S.c=h.get("c")||"";S.q=h.get("q")||"";
   S.cu=h.get("cu")||"";S.p=h.get("p")||"";S.f=new Set((h.get("f")||"").split(",").filter(x=>["new","up","green","bp"].includes(x)));
   S._co=h.get("co")||"";S._ci=h.get("ci")||"";return true}
@@ -506,6 +511,7 @@ function hashString(){
   if(S.v!=="list")h.set("v",S.v);if(S.l!=="all")h.set("l",S.l);if(S.c)h.set("c",S.c);
   if(S.co!=="")h.set("co",DB.C[S.co][0]);if(S.ci!=="")h.set("ci",DB.T[S.ci][0]);
   if(S.q)h.set("q",S.q);if(S.cu)h.set("cu",S.cu);if(S.p)h.set("p",S.p);
+  if(S.budget){h.set("budget",String(S.budget));h.set("currency",S.currency)}
   if(S.f.size)h.set("f",[...S.f].join(","));
   return h.toString();
 }
@@ -516,12 +522,15 @@ function writeHash(){
 function shareURL(){const v=S.v;if(v==="me")S.v="list";const s=hashString();S.v=v;return location.origin+location.pathname+(s?"#"+s:"")}
 
 // ---- filtering ----
-function activeFilterCount(){return (S.c?1:0)+(S.co!==""?1:0)+(S.ci!==""?1:0)+(S.cu?1:0)+(S.p?1:0)+S.f.size}
+function activeFilterCount(){return (S.c?1:0)+(S.co!==""?1:0)+(S.ci!==""?1:0)+(S.cu?1:0)+(S.p?1:0)+(S.budget?1:0)+S.f.size}
+let searchCache={q:null,result:null};
 function filtered(ignore){
-  const term=S.q.trim().toLowerCase(),cu=S.cu?DB.cuisines.indexOf(S.cu):-1;
+  if(searchCache.q!==S.q){searchCache={q:S.q,result:MG.matcher(S.q,DB.rows)}}
+  const match=searchCache.result,cu=S.cu?DB.cuisines.indexOf(S.cu):-1;
+  const trip=S.trip?upTrip(S.trip):null;
   return DB.rows.filter(r=>(ignore==="level"||S.l==="all"||r.l==+S.l)
     &&(!S.c||DB.C[r.co][2]===S.c)&&(S.co===""||r.co==S.co)&&(S.ci===""||r.ci==S.ci)
-    &&(!term||r.k.includes(term))&&(ignore==="cuisine"||cu<0||r.cui===cu)&&(!S.p||r.p==+S.p)
+    &&match.test(r)&&(!S.trip||(trip&&trip.items.includes(r.u)))&&(!S.passport||favOf(r.u)===2)&&(!S.change||upChangeMatch(r,S.change))&&upBudgetMatch(r)&&(ignore==="cuisine"||cu<0||r.cui===cu)&&(!S.p||r.p==+S.p)
     &&(!S.f.has("new")||r.nw)&&(!S.f.has("up")||r.up)&&(!S.f.has("green")||r.green)&&(!S.f.has("bp")||r.bp));
 }
 
@@ -578,7 +587,7 @@ function tagsHTML(r){
 }
 function fmtDate(ms){const d=new Date(ms);return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`}
 function itemBody(r,withPlace){
-  const title=esc(r.zh||r.n);
+  const title=`<a class="restaurant-title" data-restaurant="${esc(r.u)}" href="${esc(upDetailURL(r.u))}">${esc(r.zh||r.n)}</a>`;
   const orig=r.zh?`<span class="orig">${esc(r.n)}${r.kind===2?'<span class="tr" title="参考译名，非餐厅官方中文名">译名</span>':""}</span>`:"";
   const dist=ME&&r.lat!=null?km(ME.lat,ME.lng,r.lat,r.lng):null;
   const f=favOf(r.u);
@@ -592,6 +601,7 @@ function itemBody(r,withPlace){
     r.w?`<a href="${esc(r.w)}" target="_blank" rel="noopener">官网</a>`:"",
     `<button type="button" class="fav" data-u="${esc(r.u)}" data-v="1" aria-pressed="${f===1}">想去</button>`,
     `<button type="button" class="fav" data-u="${esc(r.u)}" data-v="2" aria-pressed="${f===2}">去过</button>`,
+    `<button type="button" class="linkbtn" data-trip-pick="${esc(r.u)}">加入旅行</button>`,
     `<a class="fix" href="${esc(fix)}" target="_blank" rel="noopener">纠错</a>`].filter(Boolean).join("");
   return `<span class="t">${title}</span>${tagsHTML(r)}${orig}${meta?`<span class="meta">${esc(meta)}</span>`:""}<span class="links">${links}</span>`;
 }
@@ -618,6 +628,7 @@ function listRows(){
 }
 function renderList(){
   const all=filtered(),rs=listRows();
+  if($("searchNote"))$("searchNote").hidden=!searchCache.result?.fuzzy||!S.q.trim()||!all.length;
   $("count").textContent=`${all.length.toLocaleString()} 家`;
   const tot=[0,0,0,0,0];filtered("level").forEach(r=>tot[r.l]++);
   $("totals").innerHTML=LVN.map((t,i)=>`<div class="tot"><b>${tot[i].toLocaleString()}</b><span>${t}</span></div>`).join("");
@@ -640,6 +651,7 @@ function renderList(){
 
 // ---- 我的 ----
 function renderMe(){
+  upRender();
   const mine=Object.keys(FAV).map(u=>DB.byU[u]?[DB.byU[u],FAV[u]]:null).filter(Boolean);
   const want=mine.filter(x=>x[1][0]===1),been=mine.filter(x=>x[1][0]===2);
   const bc=new Set(been.map(x=>x[0].co)),bt=new Set(been.map(x=>x[0].ci));
@@ -666,6 +678,7 @@ function updateBadge(){const n=Object.values(FAV).filter(x=>x[0]===1).length;$("
 // ---- top-level render ----
 function currentTab(){return S.v==="me"?"me":S.v==="map"?"map":S.near?"near":"list"}
 function render(opts={}){
+  upRender();
   const tab=currentTab();
   document.body.dataset.tab=tab;
   document.querySelectorAll("#levels .chip").forEach(b=>b.setAttribute("aria-pressed",b.dataset.l===S.l));
@@ -673,7 +686,7 @@ function render(opts={}){
   document.querySelectorAll("#flags .chip").forEach(b=>b.setAttribute("aria-pressed",S.f.has(b.dataset.f)));
   document.querySelectorAll("#tabsTop button").forEach(b=>b.setAttribute("aria-pressed",b.dataset.tab===tab));
   document.querySelectorAll("#tabbar button").forEach(b=>{if(b.dataset.tab===tab)b.setAttribute("aria-current","page");else b.removeAttribute("aria-current")});
-  if(S.cu||S.p||S.f.size){$("more-f").hidden=false;$("toggleMore").setAttribute("aria-expanded","true")}
+  if(S.cu||S.p||S.f.size||S.budget){$("more-f").hidden=false;$("toggleMore").setAttribute("aria-expanded","true")}
   const me=S.v==="me";
   $("mePage").hidden=!me;$("browse").hidden=me;$("controls").hidden=me&&isPhone();$("intro").hidden=me&&isPhone();
   $("footer").hidden=me;
@@ -819,14 +832,14 @@ $("stats").addEventListener("click",e=>{const tr=e.target.closest("tr[data-k]");
   reset();render();$("list").scrollIntoView({behavior:"smooth",block:"start"})});
 document.querySelectorAll("#tabsTop button,#tabbar button").forEach(b=>b.addEventListener("click",()=>goTab(b.dataset.tab)));
 $("toggleMore").addEventListener("click",()=>{const o=$("more-f").hidden;$("more-f").hidden=!o;$("toggleMore").setAttribute("aria-expanded",String(o))});
-const clearAll=()=>{Object.assign(S,{l:"all",c:"",co:"",ci:"",q:"",cu:"",p:""});S.f.clear();reset();render()};
+const clearAll=()=>{Object.assign(S,{l:"all",c:"",co:"",ci:"",q:"",cu:"",p:"",trip:"",passport:false,change:"",budget:0});if($("budgetMax"))$("budgetMax").value="";S.f.clear();reset();render()};
 $("clearAll").addEventListener("click",clearAll);$("clearAll2").addEventListener("click",clearAll);
 $("share").addEventListener("click",share);$("shareSheet").addEventListener("click",share);
 $("filterBtn").addEventListener("click",openSheet);$("doneSheet").addEventListener("click",closeSheet);$("shade").addEventListener("click",closeSheet);
 document.addEventListener("keydown",e=>{if(e.key==="Escape")closeSheet()});
 $("locate").addEventListener("click",()=>locateMe(()=>{drawMe();MAP.m.setView(mePoint(),14)}));
 document.addEventListener("click",e=>{const b=e.target.closest(".fav");if(!b)return;
-  const u=b.dataset.u,v=+b.dataset.v;if(favOf(u)===v)delete FAV[u];else FAV[u]=[v,Date.now()];saveFav();updateBadge();
+  const u=b.dataset.u,v=+b.dataset.v,previous=FAV[u];if(favOf(u)===v)delete FAV[u];else FAV[u]=[v,Date.now()];if(!saveFav()){if(previous)FAV[u]=previous;else delete FAV[u];return;}updateBadge();
   document.querySelectorAll(`.fav[data-u="${CSS.escape(u)}"]`).forEach(x=>x.setAttribute("aria-pressed",favOf(u)===+x.dataset.v));
   toast(favOf(u)===1?"已加入“想去”，在“我的”里查看":favOf(u)===2?"已标为“去过”":"已取消");
   if(S.v==="me")renderMe()});
@@ -845,7 +858,7 @@ applyTheme(document.documentElement.dataset.theme||"auto");
 
 // backup
 $("exportBtn").addEventListener("click",()=>{
-  const data={app:"michelin-guide",version:1,exported:new Date().toISOString(),
+  const data={app:"michelin-guide",version:2,personal:PERSONAL,personalRecovery:upReadError?localStorage.getItem("mg-personal"):undefined,exported:new Date().toISOString(),
     items:Object.entries(FAV).map(([u,[s,t]])=>({u,state:s===1?"want":"been",at:t,name:DB&&DB.byU[u]?(DB.byU[u].zh||DB.byU[u].n):""}))};
   const txt=JSON.stringify(data,null,1);
   try{const a=document.createElement("a");a.href=URL.createObjectURL(new Blob([txt],{type:"application/json"}));a.download=`米其林清单-${fmtDate(Date.now())}.json`;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(a.href),4000)}catch(e){}
@@ -854,11 +867,10 @@ $("exportBtn").addEventListener("click",()=>{
 $("importBtn").addEventListener("click",()=>{$("impText").value="";$("impFile").value="";$("importDlg").showModal()});
 $("impFile").addEventListener("change",e=>{const f=e.target.files[0];if(f)f.text().then(t=>$("impText").value=t)});
 $("impGo").addEventListener("click",()=>{
-  let n=0;try{const d=JSON.parse($("impText").value);
-    (d.items||[]).forEach(x=>{if(!x||!x.u||!DB.byU[x.u])return;const s=x.state==="been"?2:1;
-      if(!FAV[x.u]||FAV[x.u][0]!==2||s===2){FAV[x.u]=[s,+x.at||Date.now()];n++}});
-    saveFav();$("importDlg").close();toast(`已导入 ${n} 家`);render()}
-  catch(e){toast("内容看不懂，请确认是从这里导出的备份")}});
+  try{const d=JSON.parse($("impText").value),n=upImportBackup(d);
+    $("importDlg").close();toast(`已导入 ${n} 家，并合并旅行与笔记`);render();}
+  catch(e){toast("导入失败："+(e.message||"请确认备份文件格式和存储权限"));}
+});
 
 // install
 let deferredPrompt=null;
@@ -922,7 +934,7 @@ matchMedia("(max-width:700px)").addEventListener("change",()=>{closeSheet();if(D
       const all=new Uint8Array(got);let o=0;for(const p of parts){all.set(p,o);o+=p.length}
       d=JSON.parse(new TextDecoder().decode(all));
     }else d=await res.json();
-    DB=prep(d);resolveNames();
+    DB=prep(d);resolveNames();upInit();
     if(DB.updated){const [y,m,dd]=DB.updated.split("-");document.querySelectorAll(".updated").forEach(e=>e.textContent=e.closest(".cell")?`${y} 年 ${+m} 月 ${+dd} 日`:`数据更新至 ${y} 年 ${+m} 月 ${+dd} 日`)}
     render();
   }catch(e){$("list").innerHTML='<p class="empty">数据没能载入，请刷新页面再试。</p>'}
