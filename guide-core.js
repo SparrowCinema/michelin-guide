@@ -35,9 +35,9 @@
     if(raw.records&&typeof raw.records==='object')for(const [u,r] of Object.entries(raw.records)){
       if(!validID(u)||!r||typeof r!=='object')continue;
       const date=typeof r.date==='string'&&/^\d{4}-\d{2}-\d{2}$/.test(r.date)?r.date:'';
-      const clean=v=>({date:typeof v.date==='string'&&/^\d{4}-\d{2}-\d{2}$/.test(v.date)?v.date:'',rating:Number.isFinite(v.rating)&&v.rating>=0&&v.rating<=5&&Number.isInteger(v.rating*2)?v.rating:0,note:typeof v.note==='string'?v.note.slice(0,3000):''});
-      const record=clean(r);
-      if(Array.isArray(r.visits)){const seen=new Set();record.visits=r.visits.filter(v=>v&&typeof v==='object').map((v,i)=>({...clean(v),id:typeof v.id==='string'&&/^[a-zA-Z0-9_-]{1,100}$/.test(v.id)?v.id:'legacy-'+i})).filter(v=>{if(seen.has(v.id))return false;seen.add(v.id);return true;});if(record.visits.length)Object.assign(record,clean(record.visits[record.visits.length-1]));}
+      const clean=v=>({date:typeof v.date==='string'&&/^\d{4}-\d{2}-\d{2}$/.test(v.date)?v.date:'',rating:Number.isFinite(v.rating)&&v.rating>=0&&v.rating<=5&&Number.isInteger(v.rating*2)?v.rating:0,note:typeof v.note==='string'?v.note.slice(0,3000):'',...(Array.isArray(v.photos)&&v.photos.length?{photos:[...new Set(v.photos.filter(x=>typeof x==='string'&&/^p-[a-z0-9-]{4,60}$/.test(x)))].slice(0,9)}:{})});
+      const record=clean(r);delete record.photos;
+      if(Array.isArray(r.visits)){const seen=new Set();record.visits=r.visits.filter(v=>v&&typeof v==='object').map((v,i)=>({...clean(v),id:typeof v.id==='string'&&/^[a-zA-Z0-9_-]{1,100}$/.test(v.id)?v.id:'legacy-'+i})).filter(v=>{if(seen.has(v.id))return false;seen.add(v.id);return true;});if(record.visits.length){const last=clean(record.visits[record.visits.length-1]);delete last.photos;Object.assign(record,last);}}
       records[u]=record;
     }
     return {version:2,trips,records};

@@ -311,3 +311,54 @@ html.modal-scroll-locked{overscroll-behavior:none}
 /* The restaurant's own MICHELIN photo, kept behind the title rather than the form. */
 .detail-hero{position:relative;isolation:isolate;overflow:hidden;box-sizing:border-box;min-height:265px;padding:30px 24px 24px;border-radius:14px;background:radial-gradient(ellipse at 85% 0,#c5a56c24,transparent 65%),var(--hover);display:flex;align-items:flex-end;margin:4px 0 18px}.detail-photo{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center;z-index:-2}.detail-hero:after{content:'';position:absolute;inset:0;z-index:-1;background:linear-gradient(90deg,#10100d99,transparent 100%),linear-gradient(180deg,#10100d08 0%,#10100d66 34%,#10100de8 100%);opacity:0;transition:opacity .25s}.detail-hero.has-photo:after{opacity:1}.detail-hero-content{position:relative;width:100%;min-width:0}.detail-hero-kicker{font-size:9px;letter-spacing:.16em;color:var(--muted)}.detail-hero .detail-title{margin:10px 0 6px}.detail-hero .detail-origin{font-size:12px;margin:0 0 9px}.detail-hero-content>p{margin:6px 0;font-size:12px}.detail-hero.has-photo .detail-title,.detail-hero.has-photo .detail-origin,.detail-hero.has-photo .detail-hero-kicker,.detail-hero.has-photo .detail-hero-content>p{color:#fff8eb;text-shadow:0 1px 8px #0006}.detail-hero.has-photo .lv{color:#ffe6a8!important;background:transparent!important;border:0;padding:0;font-size:18px;width:auto;text-shadow:0 1px 4px #0009}.detail-hero.has-photo .tag{background:#fff2;color:#fff8eb;border-color:#fff3;backdrop-filter:blur(5px)}.detail-photo-credit{display:flex;justify-content:space-between;flex-wrap:wrap;gap:4px 14px;font-size:9px;color:var(--muted);margin:-8px 2px 18px!important}.detail-photo-credit a{color:var(--muted);text-decoration:none}.detail-photo-credit a:hover{text-decoration:underline}
 @media(max-width:700px){.detail-hero{min-height:250px;padding:26px 18px 20px;border-radius:11px}.detail-hero .detail-title{font-size:29px}.detail-photo-credit{font-size:8px}.detail-hero-content>p{line-height:1.5}}@media(prefers-reduced-motion:reduce){.detail-hero:after{transition:none}}
+
+/* Meal photos — editor grid, card strip, full-screen viewer */
+.mp-edit{display:grid;gap:10px}
+.mp-head{display:flex;align-items:baseline;justify-content:space-between;font-size:13px;color:var(--fg)}
+.mp-head small{font-size:11px;color:var(--muted);letter-spacing:.04em}.mp-head small b{color:var(--red);font-weight:600}
+.mp-grid,.mp-strip{list-style:none;margin:0;padding:0;display:grid;gap:8px}
+.mp-grid{grid-template-columns:repeat(4,minmax(0,1fr))}
+.mp-tile{position:relative;aspect-ratio:1;border-radius:12px;overflow:hidden;background:linear-gradient(110deg,var(--hover) 30%,color-mix(in srgb,var(--hover) 55%,var(--surface)) 50%,var(--hover) 70%) 0 0/250% 100%;animation:mp-shimmer 1.4s linear infinite;box-shadow:0 1px 2px rgb(40 20 20 / .08),0 6px 16px -8px rgb(40 20 20 / .25)}
+.mp-tile.is-loaded,.mp-tile.is-missing{animation:none;background:var(--hover)}
+.mp-tile.is-missing::after{content:"照片缺失";position:absolute;inset:0;display:grid;place-items:center;font-size:10px;color:var(--muted)}
+@keyframes mp-shimmer{to{background-position:-150% 0}}
+.mp-open{all:unset;display:block;width:100%;height:100%;cursor:zoom-in;position:relative}
+.mp-open:focus-visible{outline:2px solid var(--red);outline-offset:-2px;border-radius:12px}
+.mp-tile img{width:100%;height:100%;object-fit:cover;display:block;opacity:0;transform:scale(1.03);transition:opacity .35s ease,transform .5s ease}
+.mp-tile.is-loaded img{opacity:1;transform:none}
+.mp-remove{position:absolute;top:5px;right:5px;width:24px;height:24px;border-radius:50%;border:0;padding:0;display:grid;place-items:center;font:600 16px/1 system-ui,sans-serif;color:#fff;background:rgb(20 14 13 / .55);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);cursor:pointer;box-shadow:0 0 0 1px rgb(255 255 255 / .35)}
+.mp-cover{position:absolute;left:0;right:0;bottom:0;padding:14px 7px 5px;font-size:10px;letter-spacing:.12em;color:#fff;background:linear-gradient(transparent,rgb(0 0 0 / .55));pointer-events:none}
+.mp-add-tile{aspect-ratio:1}
+.mp-add{height:100%;box-sizing:border-box;display:grid;place-content:center;justify-items:center;gap:5px;border-radius:12px;border:1px dashed color-mix(in srgb,var(--red) 50%,var(--line));background:color-mix(in srgb,var(--red-soft) 45%,transparent);color:var(--red);font-size:11px;letter-spacing:.04em;cursor:pointer;transition:background .2s,transform .15s}
+.mp-add:active{transform:scale(.96)}
+.mp-add svg{width:24px;height:24px;fill:none;stroke:currentColor;stroke-width:1.6;stroke-linejoin:round}
+.mp-add input{position:absolute;width:1px;height:1px;opacity:0;pointer-events:none}
+.mp-add:has(input:focus-visible){outline:2px solid var(--red);outline-offset:2px}
+.mp-tile.is-pending{display:grid;place-items:center}
+.mp-spin{width:20px;height:20px;border-radius:50%;border:2px solid color-mix(in srgb,var(--red) 25%,transparent);border-top-color:var(--red);animation:mp-rot .8s linear infinite}
+@keyframes mp-rot{to{transform:rotate(1turn)}}
+.mp-hint{margin:0;font-size:11px;color:var(--muted)}
+.mp-strip{margin-top:4px}
+.mp-strip.mp-n1{grid-template-columns:minmax(0,1fr);max-width:280px}.mp-strip.mp-n1 .mp-tile{aspect-ratio:4/3}
+.mp-strip.mp-n2{grid-template-columns:repeat(2,minmax(0,1fr));max-width:280px}
+.mp-strip.mp-n3{grid-template-columns:repeat(3,minmax(0,1fr))}
+.mp-strip .mp-tile{border-radius:10px}
+.mp-more{position:absolute;inset:0;display:grid;place-items:center;font:600 18px/1 var(--serif,Georgia,serif);color:#fff;background:rgb(20 14 13 / .5);backdrop-filter:blur(2px);-webkit-backdrop-filter:blur(2px);letter-spacing:.04em}
+dialog.mp-viewer{width:100vw;height:100dvh;max-width:none;max-height:none;margin:0;border:0;border-radius:0;background:rgb(10 8 8 / .96);color:#fff;padding:0;overflow:hidden}
+dialog.mp-viewer[open]{display:grid;grid-template-rows:minmax(0,1fr) auto}
+dialog.mp-viewer::backdrop{background:rgb(0 0 0 / .7)}
+.mp-stage{position:relative;display:grid;place-items:center;min-height:0;padding:max(16px,env(safe-area-inset-top)) 12px 0}
+.mp-stage img{max-width:100%;max-height:100%;object-fit:contain;border-radius:4px;box-shadow:0 20px 60px rgb(0 0 0 / .5);transition:opacity .25s}
+.mp-stage img.is-loading{opacity:.25}
+.mp-nav{position:absolute;top:50%;translate:0 -50%;width:42px;height:42px;border-radius:50%;border:0;font:300 30px/1 system-ui,sans-serif;color:#fff;background:rgb(255 255 255 / .12);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);cursor:pointer;padding:0 0 4px}
+.mp-prev{left:12px}.mp-next{right:12px}
+@media (hover:none){.mp-nav{opacity:.55}}
+.mp-bar{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:16px 20px calc(16px + env(safe-area-inset-bottom,0px))}
+.mp-bar div{display:grid;gap:3px;min-width:0}.mp-bar b{font-weight:500;font-size:14px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.mp-bar span{font-size:11px;letter-spacing:.14em;color:rgb(255 255 255 / .6);font-variant-numeric:tabular-nums}
+.mp-close{font:inherit;font-size:13px;padding:8px 18px;border-radius:999px;border:1px solid rgb(255 255 255 / .3);background:none;color:#fff;cursor:pointer}
+@media (prefers-reduced-motion:reduce){.mp-tile,.mp-spin{animation:none}.mp-tile img{transition:none}}
+.visit-form .mp-edit{grid-column:1/-1;padding-top:2px}
+.visit-form .mp-add{color:var(--red);font-size:11px;gap:5px;position:relative}
+.visit-form .mp-add input[type=file]{position:absolute;inset:0;width:100%;height:100%;padding:0;border:0;opacity:0;pointer-events:none}
+dialog.mp-viewer{background:#0b0909}

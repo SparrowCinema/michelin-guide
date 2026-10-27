@@ -1,6 +1,6 @@
 /* Travel, details, passport and snapshot views. Existing restaurant IDs remain unchanged. */
 // Must equal ASSET_VER in index.html and sw.js; index.html reloads fresh files when they disagree.
-const UPGRADE_VER="24";
+const UPGRADE_VER="25";
 let PERSONAL={version:2,trips:[],records:Object.create(null)},PRICE_DB={items:{}},upSelected='',upPickU='',upLoaded=false,upReadError=false;
 function upSave(next){
   if(upReadError){toast('已有旅行存储无法读取，已阻止覆盖。请先导出原始备份再恢复。');return false;}
@@ -199,8 +199,8 @@ function upVisitHTML(u,p='',editing){
   const visits=upVisits(u);if(editing===undefined)editing=visits.length?null:'new';
   const order=visits.map((v,i)=>({v,i})).sort((a,b)=>(b.v.date||'').localeCompare(a.v.date||'')||b.i-a.i);
   const rated=visits.filter(v=>v.rating),avg=rated.length?Math.round(rated.reduce((t,v)=>t+v.rating,0)/rated.length*10)/10:0,latest=visits.map(v=>v.date).filter(Boolean).sort().at(-1);
-  const editor=(entry,i)=>{const rec=entry||{};return `<form id="${p}visitForm" class="upgrade-form visit-form meal-editor" data-u="${esc(u)}" data-prefix="${p}" data-entry="${esc(entry?.id||'new')}" data-been="true"><div class="meal-editor-head"><b>${entry?`修改第 ${i+1} 次用餐`:visits.length?`记录第 ${visits.length+1} 次用餐`:'记录第一次用餐'}</b>${entry||visits.length?'<button type="button" class="linkbtn" data-cancel-edit>取消</button>':''}</div>${upRatingHTML(rec.rating||0,p)}<label class="visit-date-label">用餐日期<span class="visit-date-row"><input id="${p}visitDate" type="date" value="${esc(rec.date||'')}" aria-label="用餐日期"><button type="button" class="meal-chip" data-today>今天</button></span></label><label>笔记<textarea id="${p}visitNote" maxlength="3000" placeholder="点了什么、味道怎样、下次想试什么">${esc(rec.note||'')}</textarea></label><p class="visit-feedback" role="status" aria-live="polite">${entry?'':visits.length?'':'保存后，这家店会标记为“去过”'}</p><div class="visit-actions">${entry?`<button type="button" class="linkbtn meal-delete" data-delete-visit="${esc(entry.id)}">删除这次</button>`:''}<button class="btn primary" type="submit">${entry?'保存修改':'保存'}</button></div></form>`;};
-  const card=(v,i)=>`<li class="visit-entry meal-card" data-entry-id="${esc(v.id)}"><div class="meal-date">${v.date?`<b>${v.date.slice(5).replace('-','.')}</b><span>${v.date.slice(0,4)}</span>`:'<b>—</b><span>未填日期</span>'}</div><div class="meal-main"><span class="meal-index">第 ${i+1} 次用餐</span>${upMealStars(v.rating||0)}${v.note?`<p class="meal-note">${esc(v.note)}</p>`:''}</div><button type="button" class="meal-edit" data-edit-visit="${esc(v.id)}" aria-label="修改第 ${i+1} 次用餐">修改</button></li>`;
+  const editor=(entry,i)=>{const rec=entry||{};return `<form id="${p}visitForm" class="upgrade-form visit-form meal-editor" data-u="${esc(u)}" data-prefix="${p}" data-entry="${esc(entry?.id||'new')}" data-been="true"><div class="meal-editor-head"><b>${entry?`修改第 ${i+1} 次用餐`:visits.length?`记录第 ${visits.length+1} 次用餐`:'记录第一次用餐'}</b>${entry||visits.length?'<button type="button" class="linkbtn" data-cancel-edit>取消</button>':''}</div>${upRatingHTML(rec.rating||0,p)}<label class="visit-date-label">用餐日期<span class="visit-date-row"><input id="${p}visitDate" type="date" value="${esc(rec.date||'')}" aria-label="用餐日期"><button type="button" class="meal-chip" data-today>今天</button></span></label><label>笔记<textarea id="${p}visitNote" maxlength="3000" placeholder="点了什么、味道怎样、下次想试什么">${esc(rec.note||'')}</textarea></label>${typeof MP!=='undefined'?MP.editorHTML(rec.photos):''}<p class="visit-feedback" role="status" aria-live="polite">${entry?'':visits.length?'':'保存后，这家店会标记为“去过”'}</p><div class="visit-actions">${entry?`<button type="button" class="linkbtn meal-delete" data-delete-visit="${esc(entry.id)}">删除这次</button>`:''}<button class="btn primary" type="submit">${entry?'保存修改':'保存'}</button></div></form>`;};
+  const card=(v,i)=>`<li class="visit-entry meal-card" data-entry-id="${esc(v.id)}"><div class="meal-date">${v.date?`<b>${v.date.slice(5).replace('-','.')}</b><span>${v.date.slice(0,4)}</span>`:'<b>—</b><span>未填日期</span>'}</div><div class="meal-main"><span class="meal-index">第 ${i+1} 次用餐</span>${upMealStars(v.rating||0)}${v.note?`<p class="meal-note">${esc(v.note)}</p>`:''}${typeof MP!=='undefined'?MP.cardHTML(v.photos):''}</div><button type="button" class="meal-edit" data-edit-visit="${esc(v.id)}" aria-label="修改第 ${i+1} 次用餐">修改</button></li>`;
   const timeline=visits.length?`<ol class="meal-timeline">${order.map(({v,i})=>editing===v.id?`<li class="visit-entry meal-card is-editing">${editor(v,i)}</li>`:card(v,i)).join('')}</ol>`:'';
   const summary=visits.length?`<div class="meal-summary"><div><b>${visits.length}</b><span>次用餐</span></div><div><b>${avg?avg.toFixed(1):'—'}</b><span>平均评分</span></div><div><b>${latest?upFmtDate(latest):'—'}</b><span>最近一次</span></div></div>`:'';
   return `<section class="meal-log" id="${p}mealLog" data-u="${esc(u)}" data-prefix="${p}">${summary}${editing==='new'?`<div class="meal-new">${editor(null,visits.length)}</div>`:''}${timeline}${editing?'':`<button type="button" class="meal-add" data-add-visit>＋ 记录一次用餐</button>`}${visits.length?'<p class="meal-hint">删除最后一次用餐后，这家店会取消“去过”。</p>':''}</section>`;
@@ -212,7 +212,8 @@ function upRenderMealLog(log,editing){
 function upVisitDirty(form){if(form?.querySelector('.visit-feedback'))form.querySelector('.visit-feedback').textContent='有修改尚未保存';}
 function upVisitValues(form){
   return {date:/^\d{4}-\d{2}-\d{2}$/.test(form.querySelector('input[type=date]').value)?form.querySelector('input[type=date]').value:'',
-    rating:+form.querySelector('[data-rating-input]').value||0,note:form.querySelector('textarea').value.trim().slice(0,3000)};
+    rating:+form.querySelector('[data-rating-input]').value||0,note:form.querySelector('textarea').value.trim().slice(0,3000),
+    photos:typeof MP!=='undefined'&&form.querySelector('.mp-edit')?MP.clean(MP.editIDs(form.querySelector('.mp-edit'))):[]};
 }
 function upSaveVisit(u,values,markBeen,entryID){
   if(upReadError){toast('旅行记录暂时无法读取，请先备份');return false;}
@@ -226,7 +227,7 @@ function upSaveVisit(u,values,markBeen,entryID){
     oldPersonal=localStorage.getItem('mg-personal');oldFav=localStorage.getItem('mg-fav');
     localStorage.setItem('mg-personal',JSON.stringify(nextPersonal));localStorage.setItem('mg-fav',JSON.stringify(nextFav));
   }catch(e){try{if(oldPersonal!==undefined)oldPersonal===null?localStorage.removeItem('mg-personal'):localStorage.setItem('mg-personal',oldPersonal);if(oldFav!==undefined)oldFav===null?localStorage.removeItem('mg-fav'):localStorage.setItem('mg-fav',oldFav);}catch(rollback){}toast('保存失败，更改未生效，请检查存储空间');return false;}
-  PERSONAL=nextPersonal;FAV=nextFav;return true;
+  PERSONAL=nextPersonal;FAV=nextFav;if(typeof MP!=='undefined')MP.gc();return true;
 }
 function upRefreshVisit(u){
   // keep every visible "去过" button, the detail sheet and the 我的 page in step
@@ -265,7 +266,7 @@ function upBindVisitForms(){
     const log=e.target.closest('.meal-log');if(!log)return;const u=log.dataset.u;
     if(e.target.closest('[data-add-visit]')){const next=upRenderMealLog(log,'new');next.querySelector('.meal-new')?.scrollIntoView({block:'nearest',behavior:'smooth'});return;}
     const edit=e.target.closest('[data-edit-visit]');if(edit){const next=upRenderMealLog(log,edit.dataset.editVisit);next.querySelector('.is-editing')?.scrollIntoView({block:'nearest',behavior:'smooth'});return;}
-    if(e.target.closest('[data-cancel-edit]')){upRenderMealLog(log,null);return;}
+    if(e.target.closest('[data-cancel-edit]')){upRenderMealLog(log,null);if(typeof MP!=='undefined')MP.gc();return;}
     const del=e.target.closest('[data-delete-visit]');
     if(del){ // two taps: the first arms the button, the second deletes
       if(!del.classList.contains('is-armed')){del.classList.add('is-armed');del.textContent=upVisits(u).length>1?'确认删除这次？':'确认删除？将取消“去过”';clearTimeout(del._t);del._t=setTimeout(()=>{del.classList.remove('is-armed');del.textContent='删除这次';},4000);return;}
