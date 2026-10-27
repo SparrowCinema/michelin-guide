@@ -18,7 +18,7 @@
 <meta name="apple-mobile-web-app-title" content="米其林名录">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <!-- ?v= must match ASSET_VER in sw.js: a new page must never run with an old cached script -->
-<link rel="stylesheet" href="upgrade.css?v=22">
+<link rel="stylesheet" href="upgrade.css?v=23">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" href="icon.svg" type="image/svg+xml">
 <link rel="icon" href="icon-192.png" sizes="192x192" type="image/png">
@@ -438,19 +438,19 @@ dialog::backdrop{background:var(--shade)}
 <div id="inappBar" hidden><span>在微信等 App 里无法添加到主屏幕，也可能打不开地图。</span><button type="button" id="inappHow">怎么办</button><button type="button" id="inappX" aria-label="关闭">×</button></div>
 <div id="toast" role="status" aria-live="polite"></div>
 
-<script src="search-aliases.js?v=22"></script>
-<script src="guide-core.js?v=22"></script>
-<script src="address-localization.js?v=22"></script>
-<script src="upgrade.js?v=22"></script>
-<script src="passport-share.js?v=22"></script>
+<script src="search-aliases.js?v=23"></script>
+<script src="guide-core.js?v=23"></script>
+<script src="address-localization.js?v=23"></script>
+<script src="upgrade.js?v=23"></script>
+<script src="passport-share.js?v=23"></script>
 <script>
 const CONT=["亚洲","欧洲","北美洲","南美洲","大洋洲"];
 const LVN=["三星","二星","一星","必比登","入选"];
 const LVC=["#7a0d0a","#b3261e","#e0574d","#c98a00","#9a9390"];
 const PIN=["中国内地","中国香港","中国澳门","中国台湾"];
 const REPO="https://github.com/SparrowCinema/michelin-guide";
-const ASSET_VER="22"; // = ?v= on the asset tags above, UPGRADE_VER in upgrade.js and ASSET_VER in sw.js
-const DATA_VER="20261003-2"; // bump whenever data.json changes so browsers skip their cached copy
+const ASSET_VER="23"; // = ?v= on the asset tags above, UPGRADE_VER in upgrade.js and ASSET_VER in sw.js
+const DATA_VER="20261003-3"; // bump whenever data.json changes so browsers skip their cached copy
 const $=id=>document.getElementById(id);
 const esc=s=>String(s).replace(/[&<>"]/g,ch=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[ch]));
 const sum=a=>a.reduce((x,y)=>x+y,0);
@@ -510,8 +510,8 @@ function prep(d){
   const crank={};corder.forEach((c,i)=>crank[c]=i);
   const rows=d.r.map(r=>{const t=T[r[3]],c=C[t[1]],cu=r[5]>=0?d.cuisines[r[5]]:"";
     const o={n:r[0],zh:r[1],kind:r[2]&3,ci:r[3],co:t[1],l:r[4],cu,cui:r[5],p:r[6],u:r[7],w:r[8],a:r[9],
-      lat:r[10],lng:r[11],green:!!r[12],h:r[13]||"",bp:r[14]||0,ml:c[1]==="Chinese Mainland",
-      s:r[1]||r[0],k:MG.index([r[0],r[1],t[0],c[0],c[1],cu,r[9]],window.MG_ALIASES)};
+      lat:r[10],lng:r[11],green:!!r[12],h:r[13]||"",bp:r[14]||0,la:r[15]||"",ml:c[1]==="Chinese Mainland",
+      s:r[1]||r[0],k:MG.index([r[0],r[1],t[0],c[0],c[1],cu,r[9],r[15]||""],window.MG_ALIASES)};
     // history: one char per yearly snapshot 2022..2025; current award is o.l
     const cur=String(o.l),prev=o.h.length===4?o.h[3]:"?";
     o.nw=o.ml?!!(r[2]&4):prev==="-";
