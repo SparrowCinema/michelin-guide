@@ -9,7 +9,7 @@ const assert=require('node:assert/strict'),http=require('http'),fs=require('fs')
   await new Promise(ok=>server.listen(0,'127.0.0.1',ok));const url='http://127.0.0.1:'+server.address().port,shots=process.env.SCREENSHOT_DIR;
   const browser=await chromium.launch({headless:true});
   try{
-    const ctx=await browser.newContext({viewport:{width:390,height:844},hasTouch:true,isMobile:true,deviceScaleFactor:2,permissions:['geolocation','clipboard-read','clipboard-write'],geolocation:{latitude:31.2304,longitude:121.4737}});
+    const ctx=await browser.newContext({locale:'zh-CN',viewport:{width:390,height:844},hasTouch:true,isMobile:true,deviceScaleFactor:2,permissions:['geolocation','clipboard-read','clipboard-write'],geolocation:{latitude:31.2304,longitude:121.4737}});
     const page=await ctx.newPage(),errors=[];page.on('pageerror',e=>errors.push(e.message));
     await page.route(/^https:\/\/(?!127\.0\.0\.1).*/,r=>r.fulfill({status:404,body:''}));
     await page.goto(url+'/#v=me');await page.waitForFunction(()=>typeof DB!=='undefined'&&DB&&DB.rows.length>1000&&typeof MGRouteUI!=='undefined');

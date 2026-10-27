@@ -427,3 +427,15 @@ dialog.route-sheet{margin:auto 0 0;width:100%;max-width:100%;max-height:92vh;bor
 .share-photo-toggle input{width:20px;height:20px;accent-color:var(--red);flex:none}
 .share-photo-toggle span{display:grid;gap:2px;font-size:14px;color:var(--fg)}
 .share-photo-toggle small{font-size:11.5px;color:var(--muted)}
+
+/* Language */
+.lang-switch{font-weight:600}
+html:not(.lang-en) .lang-en-only,html.lang-en .lang-zh-only{display:none}
+html.lang-en .intro-zh{display:none}
+html.lang-en .intro-head h3 span{display:none}
+html.lang-en .intro-en{margin:0;padding:0;border:0;font-style:normal;font-size:14.5px;line-height:1.8;color:var(--fg)}
+html.lang-en .address-display{display:flex;flex-direction:column}
+html.lang-en .address-en{order:-1;border:0;padding:0 0 6px;font-size:14px;color:var(--fg)}
+html.lang-en .address-en span{display:none}
+html.lang-en .address-zh{font-size:13px;font-weight:400;color:var(--muted)}
+#langSeg button[aria-pressed="true"]{background:var(--fg);color:var(--surface)}

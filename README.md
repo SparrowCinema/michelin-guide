@@ -88,6 +88,8 @@ python tools/check_updates.py --validate-only
 
 可选浏览器回归：安装 Playwright 与 Leaflet 后，运行 `node tests/browser.cjs`。覆盖移动端 / 桌面、旅行、分享链接、笔记、v1/v2 备份、预算、星级筛选，以及 旧版 → 当前版 离线缓存迁移。测试使用本地 Leaflet 和占位底图，不依赖地图供应商网络；真实 iPhone Safari 与外部底图连通性仍需设备验证。
 
+英文界面回归：`node tests/english.cjs`（以 ?lang=en 逐页打开，残留中文即失败；用户自己的文字和官方中文地址除外）。
+
 旅行路线回归：`node tests/route.cjs`（城市切换、跳过去过、按天拆分、导航链接、从我的位置出发、复制行程）。
 
 用餐照片回归：`node tests/photos.cjs`。覆盖添加 / 压缩（≤1600px JPEG + 缩略图）、每次最多 9 张、封面、卡片 +N、全屏查看与左右滑动、删除后 IndexedDB 清理、取消清理、刷新保留，以及含照片的备份导出 / 导入。

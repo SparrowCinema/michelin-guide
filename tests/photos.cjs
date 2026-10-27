@@ -13,7 +13,7 @@ const {chromium}=require('playwright');
   await new Promise(ok=>server.listen(0,'127.0.0.1',ok));const url='http://127.0.0.1:'+server.address().port;
   const browser=await chromium.launch({headless:true});const shots=process.env.SCREENSHOT_DIR;
   let page;try{
-    const ctx=await browser.newContext({viewport:{width:390,height:844},hasTouch:true,isMobile:true,deviceScaleFactor:2,acceptDownloads:true});page=await ctx.newPage();const errors=[];
+    const ctx=await browser.newContext({locale:'zh-CN',viewport:{width:390,height:844},hasTouch:true,isMobile:true,deviceScaleFactor:2,acceptDownloads:true});page=await ctx.newPage();const errors=[];
     page.on('pageerror',e=>errors.push(e.message));
     const leaflet=path.dirname(require.resolve(process.env.LEAFLET_MODULE||'leaflet'));
     await page.route(/https:\/\/.*leaflet.*\.(js|css)$/,r=>r.fulfill({path:path.join(leaflet,r.request().url().endsWith('.css')?'leaflet.css':'leaflet.js')}));
@@ -73,7 +73,7 @@ const {chromium}=require('playwright');
     const [dl]=await Promise.all([page.waitForEvent('download'),page.evaluate(()=>document.getElementById('exportBtn').click())]);
     const backup=JSON.parse(fs.readFileSync(await dl.path(),'utf8'));
     assert.equal(Object.keys(backup.photos).length,3);assert(Object.values(backup.photos).every(p=>p.data.startsWith('data:image/jpeg;base64,')));
-    const ctx2=await browser.newContext({viewport:{width:390,height:844}}),p2=await ctx2.newPage();p2.on('pageerror',e=>errors.push(e.message));
+    const ctx2=await browser.newContext({locale:'zh-CN',viewport:{width:390,height:844}}),p2=await ctx2.newPage();p2.on('pageerror',e=>errors.push(e.message));
     await p2.route(/https:\/\/(?!127\.0\.0\.1).*$/,r=>r.fulfill({status:404,body:''}));
     await p2.goto(url+'/#v=list');await p2.waitForFunction(()=>typeof DB!=='undefined'&&DB&&DB.rows.length>1000&&typeof MP!=='undefined');
     const tmp=path.join(require('os').tmpdir(),'mg-photo-backup.json');fs.writeFileSync(tmp,JSON.stringify({...backup,pad:'x'.repeat(500000)})); // big file path: kept out of the textarea
