@@ -1,8 +1,8 @@
 // Offline support: the page and its data are cached so the directory opens without a network.
 // Map tiles and the map library come from other sites and are not cached here.
-const CACHE = "mg-v30";
+const CACHE = "mg-v31";
 // Bump together with CACHE and the ?v= on upgrade.css / *.js in index.html.
-const ASSET_VER = "30";
+const ASSET_VER = "31";
 const SHELL = ["./", "index.html", "upgrade.css?v=" + ASSET_VER, "i18n.js?v=" + ASSET_VER, "search-aliases.js?v=" + ASSET_VER, "guide-core.js?v=" + ASSET_VER, "upgrade.js?v=" + ASSET_VER, "passport-share.js?v=" + ASSET_VER, "restaurant-intro.js?v=" + ASSET_VER, "meal-photos.js?v=" + ASSET_VER, "trip-route.js?v=" + ASSET_VER, "cloud-sync.js?v=" + ASSET_VER, "assets/passport-share-art.webp", "prices.json", "address-localization.js?v=" + ASSET_VER, "manifest.webmanifest", "icon.svg", "icon-192.png", "icon-512.png", "icon-maskable.png", "apple-touch-icon.png"];
 self.addEventListener("install", e => {
   // cache:"reload" skips the browser HTTP cache, which can still hold the previous release for ~10 minutes

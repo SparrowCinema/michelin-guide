@@ -20,7 +20,7 @@ const MGI18n=(()=>{
     '日期未填写':'No date','未填日期':'No date','—':'—','导航':'Directions','最近':'Latest','约':'about','步行':'Walk','车程':'Drive',
     '高德地图':'AMap','谷歌地图':'Google Maps','黑珍珠':'Black Pearl','绿星':'Green Star','译名':'Transl.','新上榜':'New','升星':'Promoted',
     '新摘星':'New star','新晋必比登':'New Bib','官方':'Official','封面':'Cover','晚餐':'Dinner','午餐':'Lunch','早午餐':'Brunch','下午':'Afternoon',
-    '米其林全球名录':'MICHELIN Global Directory','高德地图 AMap ↗':'AMap ↗','复制地址 Copy':'Copy address','英文版 English ↗':'English ↗',
+    '米其林全球名录':'MICHELIN Global Directory','长按识别 · 扫码打开':'Scan or long-press to open','MICHELIN GUIDE · 米其林全球名录':'MICHELIN GUIDE · GLOBAL DIRECTORY','扫一扫，找到你的下一家米其林':'Scan to find your next MICHELIN table','全球约 2 万家米其林餐厅 · 中文店名 · 一键导航':'About 20,000 MICHELIN restaurants · maps & directions','标记想去，记下每一餐，也生成一张你的结算长图':'Save places to try, log every meal, and make your own recap','高德地图 AMap ↗':'AMap ↗','复制地址 Copy':'Copy address','英文版 English ↗':'English ↗',
     '米其林指南中文官网地址 · Official Chinese address':'From MICHELIN’s Chinese site','米其林指南繁体中文官网地址 · Official Chinese address':'From MICHELIN’s Chinese site',
     '米其林指南日文官网地址 · Official Japanese address':'From MICHELIN’s Japanese site','中文参考地址 · 未核实专名保留原文 · Reference translation':'Chinese reference translation','米其林名录':'MICHELIN Directory','合计':'Total','大洲':'Continent','国家':'Country',
   };

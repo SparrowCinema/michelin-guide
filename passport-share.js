@@ -59,13 +59,15 @@ async function upRecapPhotos(rows){
   for(const [u,p] of wall)p.full=await load(p.id,true)||p.thumb;
   out.wall=wall.map(([u])=>u);return out;
 }
+// The footer still-life (assets/passport-share-art.webp, made for this project); cached after the first recap.
+function upRecapArt(){if(PASSPORT_SHARE.art!==undefined)return Promise.resolve(PASSPORT_SHARE.art);return new Promise(res=>{const img=new Image();img.onload=()=>{PASSPORT_SHARE.art=img;res(img);};img.onerror=()=>{PASSPORT_SHARE.art=null;res(null);};img.src='assets/passport-share-art.webp';});}
 function upCover(ctx,img,x,y,w,h){const iw=img.width,ih=img.height,s=Math.max(w/iw,h/ih),sw=w/s,sh=h/s;ctx.drawImage(img,(iw-sw)/2,(ih-sh)/2,sw,sh,x,y,w,h);}
 // Two passes like the IDF recap: measure the full height first, then draw once — one long image, no pages.
 async function upDrawRecap(rows){
   const W=1080,P=72,C=RECAP_C,MAPW=W-2*P,MAPH=Math.min(760,Math.max(560,Math.round(MAPW*.66)));
   const st=upRecapStats(rows),hl=upRecapHighlights(rows),trip=upTrip($('shareScope').value),from=$('shareFrom').value,to=$('shareTo').value;
   const title=($('shareTitle').value.trim()||(typeof MGI18n!=='undefined'?MGI18n.tr('我的米其林结算'):'我的米其林结算')).slice(0,24);
-  const frame=upRecapFrame(rows,MAPW,MAPH),[tiles,photos]=await Promise.all([upRecapTiles(frame,MAPW,MAPH),upRecapPhotos(rows)]);
+  const frame=upRecapFrame(rows,MAPW,MAPH),[tiles,photos]=await Promise.all([upRecapTiles(frame,MAPW,MAPH),upRecapPhotos(rows),upRecapArt()]);
   const number=new Map(rows.map((r,i)=>[r.u,i+1]));
   const cv=document.createElement('canvas'),ctx=cv.getContext('2d');
   const run=draw=>{
@@ -166,15 +168,24 @@ async function upDrawRecap(rows){
       rr(W-P-pw,y0+6,pw,78,18,on?C.wash:C.paper,on?'#e8c4bf':C.line);F(19,500);tx('我的评分',W-P-pw/2,y0+34,C.ink3,'center');F(30,700,RECAP_NUM);tx(val,W-P-pw/2,y0+70,on?C.red:C.ink3,'center');
       y=Math.max(y,y0+(pic?TH+12:92))+14;rule(P+76,y,W-2*P-76);y+=16;
     });
-    // footer: QR + credits, same as the IDF recap
-    y+=50;rule(P,y,W-2*P);y+=44;
-    const QS=196,qn=RECAP_QR.length,cell=Math.floor((QS-24)/qn),qw=cell*qn,qx=W-P-QS,qy=y,lw=W-2*P-QS-36;
-    rr(qx,qy,QS,QS,18,'#ffffff',C.line);if(draw){ctx.fillStyle=C.ink;const o=(QS-qw)/2;for(let i=0;i<qn;i++)for(let j=0;j<qn;j++)if(RECAP_QR[i][j]==='1')ctx.fillRect(qx+o+j*cell,qy+o+i*cell,cell,cell);}
-    F(20,500);tx('扫码打开米其林名录',qx+QS/2,qy+QS+32,C.ink3,'center');
-    let ly=y+30;F(30,700);tx('麻雀映画 × Claude',P,ly,C.ink);ly+=42;F(26,600);tx('米其林全球名录',P,ly,C.ink2);ly+=40;
-    F(22,500,'ui-monospace,"SF Mono",Menlo,monospace');tx('sparrowcinema.github.io/michelin-guide',P,ly,C.red);ly+=46;
-    F(20,400);upShareLines(ctx,`星级以 ${DB.updated||''} 的米其林名单为准 · 我的评分满分 5 星${photos.size?' · 照片为本人拍摄':''} · 私人笔记不会出现在图中 · 与米其林官方无关`,lw,3).forEach(l=>{tx(l,P,ly,C.ink3);ly+=30;});
-    return Math.max(ly,qy+QS+32)+P-10;
+    // footer: an invitation to scan, the QR code, and the still-life illustration as a full-bleed band
+    y+=40;rule(P,y,W-2*P);y+=56;
+    const QS=232,qn=RECAP_QR.length,cell=Math.floor((QS-36)/qn),qw=cell*qn,qx=W-P-QS,qy=y,lw=W-2*P-QS-48;
+    if(draw){ctx.save();ctx.shadowColor='rgba(80,40,30,.18)';ctx.shadowBlur=30;ctx.shadowOffsetY=12;rr(qx,qy,QS,QS,24,'#ffffff');ctx.restore();ctx.strokeStyle='#ead9cf';ctx.lineWidth=2;ctx.beginPath();ctx.roundRect?ctx.roundRect(qx,qy,QS,QS,24):ctx.rect(qx,qy,QS,QS);ctx.stroke();
+      ctx.fillStyle=C.ink;const o=(QS-qw)/2;for(let i=0;i<qn;i++)for(let j=0;j<qn;j++)if(RECAP_QR[i][j]==='1')ctx.fillRect(qx+o+j*cell,qy+o+i*cell,cell,cell);}
+    F(19,500);tx('长按识别 · 扫码打开',qx+QS/2,qy+QS+36,C.ink3,'center');
+    let ly=y+24;F(20,700);tx('MICHELIN GUIDE · 米其林全球名录',P,ly,C.red);ly+=62;
+    F(44,700,RECAP_SERIF);upShareLines(ctx,'扫一扫，找到你的下一家米其林',lw,2).forEach(l=>{tx(l,P,ly,C.ink);ly+=58;});ly+=8;
+    F(23,400);['全球约 2 万家米其林餐厅 · 中文店名 · 一键导航','标记想去，记下每一餐，也生成一张你的结算长图'].forEach(t=>upShareLines(ctx,t,lw,2).forEach(l=>{tx(l,P,ly,C.ink2);ly+=36;}));ly+=10;
+    F(21,500,'ui-monospace,"SF Mono",Menlo,monospace');tx('sparrowcinema.github.io/michelin-guide',P,ly,C.red);ly+=24;
+    y=Math.max(ly,qy+QS+46)+40;
+    F(18,400);upShareLines(ctx,`星级以 ${DB.updated||''} 的米其林名单为准 · 我的评分满分 5 星${photos.size?' · 照片为本人拍摄':''} · 私人笔记不会出现在图中 · 与米其林官方无关`,W-2*P,2).forEach(l=>{tx(l,W/2,y,C.ink3,'center');y+=28;});
+    // illustration band: bottom of the art (plate, linen, glass, stamps), fading in from the page colour
+    const art=PASSPORT_SHARE.art,BH=art?Math.round(W*.72):0;
+    if(art){if(draw){const sh=BH*art.width/W,sy=art.height-sh;ctx.drawImage(art,0,sy,art.width,sh,0,y,W,BH);
+      const g=ctx.createLinearGradient(0,y,0,y+BH*.42);g.addColorStop(0,C.bg);g.addColorStop(1,'rgba(247,242,234,0)');ctx.fillStyle=g;ctx.fillRect(0,y-1,W,BH*.42+1);}
+      y+=BH;return y;}
+    let ly2=y;    return ly2+P-30;
   };
   cv.width=W;cv.height=10;const H=Math.ceil(run(false));
   // iOS Safari refuses canvases above ~16.7 M pixels; very long recaps are scaled down instead of failing.
