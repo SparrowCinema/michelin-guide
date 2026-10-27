@@ -47,18 +47,32 @@ function upRecapHighlights(rows){
   const latest=recs.filter(x=>x.rec.date).sort((a,b)=>b.rec.date.localeCompare(a.rec.date))[0];if(latest&&out.length<3&&!out.some(o=>o[1]===latest.r))out.push(['最近一次',latest.r,latest.rec.date.replaceAll('-','.')]);
   return out.slice(0,3);
 }
+// The cover of each restaurant = first photo of the most recent meal (in range) that has photos.
+async function upRecapPhotos(rows){
+  const out=new Map();if(typeof MP==='undefined'||!$('sharePhotos')?.checked)return out;
+  const load=async(id,big)=>{try{const rec=await MP._get(id);if(!rec)return null;const blob=big?rec.full:rec.thumb;
+    if('createImageBitmap' in window)return await createImageBitmap(blob);const img=new Image();img.src=URL.createObjectURL(blob);await img.decode();return img;}catch(e){return null;}};
+  for(const r of rows){const v=upShareVisits(r).filter(v=>MP.clean(v.photos).length).sort((a,b)=>(b.date||'').localeCompare(a.date||''))[0];if(!v)continue;
+    const id=MP.clean(v.photos)[0],thumb=await load(id,false);if(thumb)out.set(r.u,{id,thumb,date:v.date||''});}
+  // the photo wall uses the larger version for the 9 most recent
+  const wall=[...out].sort((a,b)=>(b[1].date||'').localeCompare(a[1].date||'')).slice(0,9);
+  for(const [u,p] of wall)p.full=await load(p.id,true)||p.thumb;
+  out.wall=wall.map(([u])=>u);return out;
+}
+function upCover(ctx,img,x,y,w,h){const iw=img.width,ih=img.height,s=Math.max(w/iw,h/ih),sw=w/s,sh=h/s;ctx.drawImage(img,(iw-sw)/2,(ih-sh)/2,sw,sh,x,y,w,h);}
 // Two passes like the IDF recap: measure the full height first, then draw once — one long image, no pages.
 async function upDrawRecap(rows){
   const W=1080,P=72,C=RECAP_C,MAPW=W-2*P,MAPH=Math.min(760,Math.max(560,Math.round(MAPW*.66)));
   const st=upRecapStats(rows),hl=upRecapHighlights(rows),trip=upTrip($('shareScope').value),from=$('shareFrom').value,to=$('shareTo').value;
   const title=($('shareTitle').value.trim()||'我的米其林结算').slice(0,24);
-  const frame=upRecapFrame(rows,MAPW,MAPH),tiles=await upRecapTiles(frame,MAPW,MAPH);
+  const frame=upRecapFrame(rows,MAPW,MAPH),[tiles,photos]=await Promise.all([upRecapTiles(frame,MAPW,MAPH),upRecapPhotos(rows)]);
   const number=new Map(rows.map((r,i)=>[r.u,i+1]));
   const cv=document.createElement('canvas'),ctx=cv.getContext('2d');
   const run=draw=>{
     let y=0;const F=(sz,w,fam)=>ctx.font=`${w||400} ${sz}px ${fam||RECAP_SANS}`;
     const tx=(s,x,yy,col,al)=>{if(!draw)return;ctx.fillStyle=col;ctx.textAlign=al||'left';ctx.fillText(s,x,yy);ctx.textAlign='left';};
     const rr=(x,yy,w,h,r,fill,stroke)=>{if(!draw)return;ctx.beginPath();ctx.roundRect?ctx.roundRect(x,yy,w,h,r):ctx.rect(x,yy,w,h);if(fill){ctx.fillStyle=fill;ctx.fill();}if(stroke){ctx.strokeStyle=stroke;ctx.lineWidth=2;ctx.stroke();}};
+    const photo=(img,x,yy,w,h,r)=>{if(!draw||!img)return;ctx.save();ctx.beginPath();ctx.roundRect?ctx.roundRect(x,yy,w,h,r):ctx.rect(x,yy,w,h);ctx.clip();upCover(ctx,img,x,yy,w,h);ctx.restore();};
     const rule=(x,yy,w,col)=>{if(draw){ctx.fillStyle=col||C.line;ctx.fillRect(x,yy,w,2);}};
     const lvLabel=l=>l<3?'★'.repeat(3-l)+' '+LVN[l]:LVN[l];
     // Michelin distinction badge (三星 / 二星 / 一星 / 必比登 / 入选) in the same colour as the map pin
@@ -113,10 +127,26 @@ async function upDrawRecap(rows){
     y+=MAPH+22;
     {let lx=P;F(20,500);LVN.forEach((name,l)=>{if(!st.lv[l])return;if(draw){ctx.beginPath();ctx.arc(lx+9,y+14,9,0,Math.PI*2);ctx.fillStyle=C.lv[l];ctx.fill();}F(20,500);tx(lvLabel(l),lx+26,y+21,C.ink2);lx+=ctx.measureText(lvLabel(l)).width+58;});}
     y+=70;
+    // photo wall: my own meal photos, numbered like the map
+    if(photos.wall&&photos.wall.length){
+      const list=photos.wall,n=list.length,cols=n===1?1:n===2||n===4?2:3,gap=14,cw2=(W-2*P-(cols-1)*gap)/cols,ch=n===1?Math.round(cw2*.62):cols===2?Math.round(cw2*.8):cw2;
+      F(40,700,RECAP_SERIF);tx('美味瞬间',P,y+38,C.ink);F(22,500);tx(`${n} 张 · 我拍的`,W-P,y+36,C.ink3,'right');y+=68;
+      list.forEach((u,i)=>{const r=DB.byU[u],p=photos.get(u),x=P+(i%cols)*(cw2+gap),yy=y+Math.floor(i/cols)*(ch+gap);
+        rr(x,yy,cw2,ch,20,'#e9e2d6');photo(p.full,x,yy,cw2,ch,20);
+        if(draw){const g=ctx.createLinearGradient(0,yy+ch*.55,0,yy+ch);g.addColorStop(0,'#0000');g.addColorStop(1,'#000a');ctx.save();ctx.beginPath();ctx.roundRect?ctx.roundRect(x,yy,cw2,ch,20):ctx.rect(x,yy,cw2,ch);ctx.clip();ctx.fillStyle=g;ctx.fillRect(x,yy+ch*.55,cw2,ch*.45);ctx.restore();
+          ctx.beginPath();ctx.arc(x+30,yy+30,18,0,Math.PI*2);ctx.fillStyle=C.lv[r.l];ctx.fill();ctx.strokeStyle='#fffaf2';ctx.lineWidth=3;ctx.stroke();}
+        F(17,700);tx(String(number.get(u)),x+30,yy+36,'#fff','center');
+        const fs=cols===3?21:25;F(fs,600);tx(upShareLines(ctx,r.zh||r.n,cw2-32,1)[0]||'',x+16,yy+ch-(p.date?44:18),'#fff');
+        if(p.date){F(cols===3?16:18,500);tx(p.date.replaceAll('-','.'),x+16,yy+ch-16,'#ffffffcc');}});
+      y+=Math.ceil(n/cols)*(ch+gap)-gap+70;
+    }
     // highlights
     if(hl.length){F(40,700,RECAP_SERIF);tx('这一路的高光',P,y+38,C.ink);y+=72;const hw=(W-2*P-(hl.length-1)*20)/hl.length;let hh=0;
-      hl.forEach(([label,r,val],i)=>{const x=P+i*(hw+20);F(32,700,RECAP_SERIF);const nl=upShareLines(ctx,r.zh||r.n,hw-44,2);hh=Math.max(hh,200+nl.length*42);});
-      hl.forEach(([label,r,val],i)=>{const x=P+i*(hw+20);rr(x,y,hw,hh,22,i===0?C.wash:C.paper,C.line);F(22,600);tx(label,x+22,y+42,C.red);F(32,700,RECAP_SERIF);const nl=upShareLines(ctx,r.zh||r.n,hw-44,2);nl.forEach((l,k)=>tx(l,x+22,y+92+k*42,C.ink));badge(r.l,x+22,y+hh-104,19);F(22,500);tx(`${DB.T[r.ci][0]} · ${val}`,x+22,y+hh-28,C.ink3);});
+      const ph=hl.some(([,r])=>photos.get(r.u))?Math.round(hw*.62):0;
+      hl.forEach(([label,r,val],i)=>{const x=P+i*(hw+20);F(32,700,RECAP_SERIF);const nl=upShareLines(ctx,r.zh||r.n,hw-44,2);hh=Math.max(hh,200+nl.length*42+ph);});
+      hl.forEach(([label,r,val],i)=>{const x=P+i*(hw+20);rr(x,y,hw,hh,22,i===0?C.wash:C.paper,C.line);const p=photos.get(r.u);
+        if(ph){if(p)photo(p.full||p.thumb,x+8,y+8,hw-16,ph-8,16);else{rr(x+8,y+8,hw-16,ph-8,16,'#efe8dc');F(Math.round(ph*.3),700,RECAP_NUM);tx(r.l<3?'★'.repeat(3-r.l):'✦',x+hw/2,y+ph/2+ph*.12,C.lv[r.l],'center');}}
+        const yy0=y;y+=ph;F(22,600);tx(label,x+22,y+42,C.red);F(32,700,RECAP_SERIF);const nl=upShareLines(ctx,r.zh||r.n,hw-44,2);nl.forEach((l,k)=>tx(l,x+22,y+92+k*42,C.ink));badge(r.l,x+22,yy0+hh-104,19);F(22,500);tx(`${DB.T[r.ci][0]} · ${val}`,x+22,yy0+hh-28,C.ink3);y=yy0;});
       y+=hh+70;}
     // every restaurant, grouped by country and city; numbers match the map
     F(40,700,RECAP_SERIF);tx('到访清单',P,y+38,C.ink);y+=78;
@@ -124,7 +154,8 @@ async function upDrawRecap(rows){
     rows.forEach(r=>{
       if(r.co!==lastCo){if(lastCo!==-1)y+=18;F(34,700,RECAP_SERIF);tx(DB.C[r.co][0],P,y+34,C.ink);const n=rows.filter(x=>x.co===r.co).length;F(22,500);tx(`${n} 家`,W-P,y+32,C.ink3,'right');y+=52;rule(P,y,W-2*P,C.ink);y+=8;lastCo=r.co;lastCi=-1;}
       if(r.ci!==lastCi){F(24,600);tx(DB.T[r.ci][0],P,y+38,C.red);y+=54;lastCi=r.ci;}
-      const rec=upShareRecord(r),x0=P+76,mw=W-P-x0-170,y0=y;
+      const rec=upShareRecord(r),pic=photos.get(r.u),TH=112,x0=P+76+(pic?TH+22:0),mw=W-P-x0-170,y0=y;
+      if(pic){rr(P+76,y+4,TH,TH,16,'#e9e2d6');photo(pic.thumb,P+76,y+4,TH,TH,16);}
       if(draw){ctx.beginPath();ctx.arc(P+24,y+30,22,0,Math.PI*2);ctx.fillStyle=C.lv[r.l];ctx.fill();}F(19,700);tx(String(number.get(r.u)),P+24,y+37,'#fff','center');
       F(32,700,RECAP_SERIF);const nl=upShareLines(ctx,r.zh||r.n,mw,2);nl.forEach((l,k)=>tx(l,x0,y+38+k*42,C.ink));y+=nl.length*42;
       if(r.zh&&r.zh!==r.n){F(20,400);tx(upShareLines(ctx,r.n,mw,1)[0]||'',x0,y+24,C.ink3);y+=30;}
@@ -133,7 +164,7 @@ async function upDrawRecap(rows){
       // my score pill
       const val=rec.best?String(rec.best):'—',on=!!rec.best;F(30,700,RECAP_NUM);const vw=ctx.measureText(val).width;F(19,500);const lw=ctx.measureText('我的评分').width;const pw=Math.max(vw,lw)+40;
       rr(W-P-pw,y0+6,pw,78,18,on?C.wash:C.paper,on?'#e8c4bf':C.line);F(19,500);tx('我的评分',W-P-pw/2,y0+34,C.ink3,'center');F(30,700,RECAP_NUM);tx(val,W-P-pw/2,y0+70,on?C.red:C.ink3,'center');
-      y=Math.max(y,y0+92)+14;rule(x0,y,W-P-x0);y+=16;
+      y=Math.max(y,y0+(pic?TH+12:92))+14;rule(P+76,y,W-2*P-76);y+=16;
     });
     // footer: QR + credits, same as the IDF recap
     y+=50;rule(P,y,W-2*P);y+=44;
@@ -142,14 +173,14 @@ async function upDrawRecap(rows){
     F(20,500);tx('扫码打开米其林名录',qx+QS/2,qy+QS+32,C.ink3,'center');
     let ly=y+30;F(30,700);tx('麻雀映画 × Claude',P,ly,C.ink);ly+=42;F(26,600);tx('米其林全球名录',P,ly,C.ink2);ly+=40;
     F(22,500,'ui-monospace,"SF Mono",Menlo,monospace');tx('sparrowcinema.github.io/michelin-guide',P,ly,C.red);ly+=46;
-    F(20,400);upShareLines(ctx,`星级以 ${DB.updated||''} 的米其林名单为准 · 我的评分满分 5 星 · 私人笔记不会出现在图中 · 与米其林官方无关`,lw,3).forEach(l=>{tx(l,P,ly,C.ink3);ly+=30;});
+    F(20,400);upShareLines(ctx,`星级以 ${DB.updated||''} 的米其林名单为准 · 我的评分满分 5 星${photos.size?' · 照片为本人拍摄':''} · 私人笔记不会出现在图中 · 与米其林官方无关`,lw,3).forEach(l=>{tx(l,P,ly,C.ink3);ly+=30;});
     return Math.max(ly,qy+QS+32)+P-10;
   };
   cv.width=W;cv.height=10;const H=Math.ceil(run(false));
   // iOS Safari refuses canvases above ~16.7 M pixels; very long recaps are scaled down instead of failing.
   const scale=Math.min(1,Math.sqrt(16e6/(W*H)));cv.width=Math.floor(W*scale);cv.height=Math.floor(H*scale);ctx.setTransform(scale,0,0,scale,0,0);
   ctx.fillStyle=C.bg;ctx.fillRect(0,0,W,H);ctx.textBaseline='alphabetic';run(true);
-  return {canvas:cv,mapStatus:!frame?'无坐标':tiles?'地图已加载':'底图暂不可用，已用真实坐标画位置示意图'};
+  return {canvas:cv,photoCount:photos.size,mapStatus:!frame?'无坐标':tiles?'地图已加载':'底图暂不可用，已用真实坐标画位置示意图'};
 }
 async function upRenderShare(){
   const state=PASSPORT_SHARE,token=++state.generation;state.file=null;$('saveShare').disabled=true;$('nativeShare').disabled=true;
@@ -159,17 +190,18 @@ async function upRenderShare(){
   $('shareStatus').textContent=rows.length?`共 ${rows.length} 家去过的餐厅 · 正在生成结算长图…`:upTrip($('shareScope').value)?'这份旅行里还没有去过的餐厅。吃过后点“去过”，就能生成结算图。':'这段时间还没有到访记录。先在餐厅里点“去过”，再来生成结算图。';
   $('shareEmpty').hidden=!!rows.length;$('sharePreview').hidden=true;if(!rows.length)return;
   await document.fonts?.ready;if(token!==state.generation)return;
-  const {canvas,mapStatus}=await upDrawRecap(rows);if(token!==state.generation)return;
+  const {canvas,mapStatus,photoCount}=await upDrawRecap(rows);if(token!==state.generation)return;
   const blob=await new Promise(resolve=>canvas.toBlob(resolve,'image/png'));if(token!==state.generation||!blob)return;
   if(state.url)URL.revokeObjectURL(state.url);state.url=URL.createObjectURL(blob);state.file=new File([blob],'我的米其林结算.png',{type:'image/png'});
   $('sharePreview').src=state.url;$('sharePreview').alt='我的米其林结算长图：足迹地图、统计和到访清单';$('sharePreview').hidden=false;
   $('saveShare').disabled=false;$('nativeShare').hidden=!(navigator.share&&navigator.canShare?.({files:[state.file]}));$('nativeShare').disabled=false;
-  $('shareStatus').textContent=`共 ${rows.length} 家去过的餐厅 · 一张长图 · ${mapStatus}`;
+  $('shareStatus').textContent=`共 ${rows.length} 家去过的餐厅${photoCount?` · ${photoCount} 家放了我拍的照片`:''} · 一张长图 · ${mapStatus}`;
 }
 function upOpenShare(scope=''){
   const sel=$('shareScope');sel.innerHTML='<option value="">全部到访记录</option>'+PERSONAL.trips.map(t=>`<option value="${t.id}">${esc(t.name)}</option>`).join('');sel.value=scope;
   $('shareTitle').value=upTrip(scope)?.name?upTrip(scope).name+' · 米其林结算':'我的米其林结算';$('shareFrom').value='';$('shareTo').value='';
   document.querySelectorAll('[data-recap-range]').forEach(b=>b.setAttribute('aria-pressed',b.dataset.recapRange==='all'));
+  const hasPhotos=typeof MP!=='undefined'&&Object.values(PERSONAL.records).some(r=>(r.visits||[]).some(v=>MP.clean(v.photos).length));$('sharePhotosRow').hidden=!hasPhotos;
   showAppDialog($('passportShareDlg'));upRenderShare();
 }
 function upRecapRange(kind){
@@ -179,12 +211,12 @@ function upRecapRange(kind){
 }
 function upInitShare(){
   const y=new Date().getFullYear();
-  document.body.insertAdjacentHTML('beforeend',`<dialog id="passportShareDlg" class="recap-dlg" aria-labelledby="shareHeading"><div class="share-header"><div><p>MY MICHELIN RECAP</p><h2 id="shareHeading">我的米其林结算地图</h2></div><button type="button" class="close" data-close>关闭</button></div><div class="share-layout"><div class="share-editor"><label>标题<input id="shareTitle" maxlength="24" placeholder="我的米其林结算"></label><label>范围<select id="shareScope"></select></label><div class="recap-range" role="group" aria-label="时间范围"><button type="button" data-recap-range="all" aria-pressed="true">全部</button><button type="button" data-recap-range="this" aria-pressed="false">${y} 年</button><button type="button" data-recap-range="last" aria-pressed="false">${y-1} 年</button><button type="button" data-recap-range="custom" aria-pressed="false">自定义</button></div><div class="share-dates" id="shareDateOptions" hidden><label>开始<input id="shareFrom" type="date"></label><label>结束<input id="shareTo" type="date"></label></div><p class="share-note">只包含你标记“去过”的餐厅，每家都标出星级、必比登或入选。去过多个城市时，地图按城市汇总；只在一个城市时逐家编号。私人笔记不会出现在图中。</p><p id="shareStatus" role="status" aria-live="polite"></p></div><div class="share-preview recap-preview"><div id="shareEmpty" class="share-empty"><span>MY MICHELIN RECAP</span><b>把下一餐，<br>写进你的结算。</b><p>在餐厅里点“去过”打个分，<br>这里会生成你的米其林长图。</p></div><img id="sharePreview" alt="我的米其林结算长图" hidden></div></div><div class="share-actions"><span>PNG 长图 · 长按预览也可保存</span><button type="button" id="saveShare" class="btn primary" disabled>保存长图</button><button type="button" id="nativeShare" class="btn" disabled hidden>分享</button></div></dialog>`);
+  document.body.insertAdjacentHTML('beforeend',`<dialog id="passportShareDlg" class="recap-dlg" aria-labelledby="shareHeading"><div class="share-header"><div><p>MY MICHELIN RECAP</p><h2 id="shareHeading">我的米其林结算地图</h2></div><button type="button" class="close" data-close>关闭</button></div><div class="share-layout"><div class="share-editor"><label>标题<input id="shareTitle" maxlength="24" placeholder="我的米其林结算"></label><label>范围<select id="shareScope"></select></label><div class="recap-range" role="group" aria-label="时间范围"><button type="button" data-recap-range="all" aria-pressed="true">全部</button><button type="button" data-recap-range="this" aria-pressed="false">${y} 年</button><button type="button" data-recap-range="last" aria-pressed="false">${y-1} 年</button><button type="button" data-recap-range="custom" aria-pressed="false">自定义</button></div><label class="share-photo-toggle" id="sharePhotosRow" hidden><input type="checkbox" id="sharePhotos" checked><span>放入我拍的用餐照片<small>照片墙 + 每家店的缩略图</small></span></label><div class="share-dates" id="shareDateOptions" hidden><label>开始<input id="shareFrom" type="date"></label><label>结束<input id="shareTo" type="date"></label></div><p class="share-note">只包含你标记“去过”的餐厅，每家都标出星级、必比登或入选。去过多个城市时，地图按城市汇总；只在一个城市时逐家编号。私人笔记不会出现在图中；照片只在你勾选时放入。</p><p id="shareStatus" role="status" aria-live="polite"></p></div><div class="share-preview recap-preview"><div id="shareEmpty" class="share-empty"><span>MY MICHELIN RECAP</span><b>把下一餐，<br>写进你的结算。</b><p>在餐厅里点“去过”打个分，<br>这里会生成你的米其林长图。</p></div><img id="sharePreview" alt="我的米其林结算长图" hidden></div></div><div class="share-actions"><span>PNG 长图 · 长按预览也可保存</span><button type="button" id="saveShare" class="btn primary" disabled>保存长图</button><button type="button" id="nativeShare" class="btn" disabled hidden>分享</button></div></dialog>`);
   document.addEventListener('click',e=>{const b=e.target.closest('[data-passport-share],[data-share-trip]');if(b)upOpenShare(b.dataset.shareTrip||'');});
   $('passportShareDlg').addEventListener('click',e=>{if(e.target===$('passportShareDlg')||e.target.closest('[data-close]'))closeAppDialog($('passportShareDlg'));
     const r=e.target.closest('[data-recap-range]');if(r){const k=r.dataset.recapRange;$('shareDateOptions').hidden=k!=='custom';if(k!=='custom'){upRecapRange(k);upRenderShare();}else document.querySelectorAll('[data-recap-range]').forEach(b=>b.setAttribute('aria-pressed',b===r));}});
   let t;$('shareTitle').addEventListener('input',()=>{clearTimeout(t);t=setTimeout(upRenderShare,350);});
-  ['shareScope','shareFrom','shareTo'].forEach(id=>$(id).addEventListener('change',upRenderShare));
+  ['shareScope','shareFrom','shareTo','sharePhotos'].forEach(id=>$(id).addEventListener('change',upRenderShare));
   $('saveShare').onclick=()=>{if(!PASSPORT_SHARE.file)return;const a=document.createElement('a');a.href=PASSPORT_SHARE.url;a.download=PASSPORT_SHARE.file.name;document.body.appendChild(a);a.click();a.remove();toast('✓ 长图已保存');};
   $('nativeShare').onclick=()=>{const file=PASSPORT_SHARE.file;if(file)navigator.share({files:[file],title:$('shareTitle').value}).catch(e=>{if(e.name!=='AbortError')toast('请点“保存长图”后分享');});};
   $('passportShareDlg').addEventListener('close',()=>{PASSPORT_SHARE.generation++;if(PASSPORT_SHARE.url)URL.revokeObjectURL(PASSPORT_SHARE.url);PASSPORT_SHARE.url='';PASSPORT_SHARE.file=null;});
