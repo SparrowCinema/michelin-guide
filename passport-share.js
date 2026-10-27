@@ -64,7 +64,7 @@ function upCover(ctx,img,x,y,w,h){const iw=img.width,ih=img.height,s=Math.max(w/
 async function upDrawRecap(rows){
   const W=1080,P=72,C=RECAP_C,MAPW=W-2*P,MAPH=Math.min(760,Math.max(560,Math.round(MAPW*.66)));
   const st=upRecapStats(rows),hl=upRecapHighlights(rows),trip=upTrip($('shareScope').value),from=$('shareFrom').value,to=$('shareTo').value;
-  const title=($('shareTitle').value.trim()||'我的米其林结算').slice(0,24);
+  const title=($('shareTitle').value.trim()||(typeof MGI18n!=='undefined'?MGI18n.tr('我的米其林结算'):'我的米其林结算')).slice(0,24);
   const frame=upRecapFrame(rows,MAPW,MAPH),[tiles,photos]=await Promise.all([upRecapTiles(frame,MAPW,MAPH),upRecapPhotos(rows)]);
   const number=new Map(rows.map((r,i)=>[r.u,i+1]));
   const cv=document.createElement('canvas'),ctx=cv.getContext('2d');
@@ -199,7 +199,7 @@ async function upRenderShare(){
 }
 function upOpenShare(scope=''){
   const sel=$('shareScope');sel.innerHTML='<option value="">全部到访记录</option>'+PERSONAL.trips.map(t=>`<option value="${t.id}">${esc(t.name)}</option>`).join('');sel.value=scope;
-  $('shareTitle').value=upTrip(scope)?.name?upTrip(scope).name+' · 米其林结算':'我的米其林结算';$('shareFrom').value='';$('shareTo').value='';
+  {const T=typeof MGI18n!=='undefined'?MGI18n.tr:x=>x;$('shareTitle').value=upTrip(scope)?.name?upTrip(scope).name+T(' · 米其林结算'):T('我的米其林结算');}$('shareFrom').value='';$('shareTo').value='';
   document.querySelectorAll('[data-recap-range]').forEach(b=>b.setAttribute('aria-pressed',b.dataset.recapRange==='all'));
   const hasPhotos=typeof MP!=='undefined'&&Object.values(PERSONAL.records).some(r=>(r.visits||[]).some(v=>MP.clean(v.photos).length));$('sharePhotosRow').hidden=!hasPhotos;
   showAppDialog($('passportShareDlg'));upRenderShare();
