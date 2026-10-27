@@ -1,6 +1,6 @@
 {
  "_note": "Guide editions. year = the guide's own year; released = official release date (from MICHELIN's announcement, see source); synced = whether data.json already reflects that edition. tools/editions_watch.py adds newly announced editions; tools/update_editions.py marks them synced when the data changes.",
- "checked": "2026-10-27",
+ "checked": "2026-10-28",
  "guides": [
   {
    "id": "tokyo",
@@ -271,18 +271,20 @@
   },
   {
    "id": "beijing",
-   "zh": "北京",
-   "en": "Beijing",
+   "zh": "北京·天津",
+   "en": "Beijing & Tianjin",
    "coverage": [
     [
      "Chinese Mainland",
      [
-      "Beijing"
+      "Beijing",
+      "Tianjin"
      ]
     ]
    ],
    "keywords": [
-    "Beijing"
+    "Beijing",
+    "Tianjin"
    ],
    "editions": [
     {
@@ -290,6 +292,12 @@
      "released": "2025-10-29",
      "source": "https://guide.michelin.com/ae-az/en/article/news-and-views/michelin-guide-beijing-2026",
      "synced": true
+    },
+    {
+     "year": 2027,
+     "released": "2026-10-27",
+     "source": "https://guide.michelin.com/ph/en/article/michelin-guide-ceremony/michelin-guide-beijing-tianjin-2027",
+     "synced": false
     }
    ]
   },
