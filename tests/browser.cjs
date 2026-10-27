@@ -5,11 +5,11 @@ const assert=require('node:assert/strict'),fs=require('node:fs'),path=require('n
 const {chromium}=require(process.env.PLAYWRIGHT_MODULE||'playwright');
 (async()=>{
   const base=path.resolve(__dirname,'..');
-  const previousCache='mg-v31';
+  const previousCache='mg-v32';
   const cacheName=fs.readFileSync(path.join(base,'sw.js'),'utf8').match(/const CACHE = "([^"]+)"/)[1];
   // A new page must never load an old cached script: index.html asset versions must match sw.js.
   const swText=fs.readFileSync(path.join(base,'sw.js'),'utf8'),assetVer=swText.match(/const ASSET_VER = "([^"]+)"/)[1],indexText=fs.readFileSync(path.join(base,'index.html'),'utf8');
-  for(const f of ['upgrade.css','search-aliases.js','guide-core.js','upgrade.js','passport-share.js'])assert(indexText.includes(f+'?v='+assetVer),f+' must be referenced as '+f+'?v='+assetVer);
+  for(const f of ['upgrade.css','search-aliases.js','guide-core.js','upgrade.js','passport-share.js','city-names.js','my-navigation.js'])assert(indexText.includes(f+'?v='+assetVer),f+' must be referenced as '+f+'?v='+assetVer);
   assert.equal(cacheName,'mg-v'+assetVer);
   assert(indexText.includes('const ASSET_VER="'+assetVer+'"'),'index.html ASSET_VER');
   assert(fs.readFileSync(path.join(base,'upgrade.js'),'utf8').includes('const UPGRADE_VER="'+assetVer+'"'),'upgrade.js UPGRADE_VER');
@@ -61,7 +61,7 @@ const {chromium}=require(process.env.PLAYWRIGHT_MODULE||'playwright');
     await page.fill('#q','Geranuium');await page.waitForTimeout(300);assert.equal(await page.locator('#count').innerText(),'1 家');assert(await page.locator('#searchNote').isVisible());
     await page.fill('#q','');await page.waitForTimeout(300);
     await page.locator('#tabbar [data-tab="me"]').click();assert((await page.locator('#passportContent').innerText()).includes('1 家餐厅'));
-    await page.locator('#newTrip').click();await page.fill('#tripName','2026 欧洲旅行');await page.locator('#tripForm button').click();
+    await page.locator('[data-me-jump="meTrips"]').click();await page.locator('#newTrip').click();await page.fill('#tripName','2026 欧洲旅行');await page.locator('#tripForm button').click();
     await page.locator('#tabbar [data-tab="list"]').click();await page.locator('.restaurant-title').first().click();await page.locator('[data-trip-pick]').first().click();await page.locator('#tripPickChoices input').check();await page.locator('#tripPickForm button').click();
     const trip=await page.evaluate(()=>PERSONAL.trips[0]);assert.equal(trip.items.length,1);await page.locator('#detailDlg .close[data-close]').click();
     await page.locator('.restaurant-title').first().click();assert(new URL(page.url()).searchParams.get('restaurant'));
@@ -147,15 +147,15 @@ const {chromium}=require(process.env.PLAYWRIGHT_MODULE||'playwright');
     assert.equal(await page.locator('#visitDlg [data-add-visit]').count(),0);await page.locator('#visitDlg .close[data-close]').click();assert.equal(await page.evaluate(u=>favOf(u),noteOnly),0);
     await visitBtn(quick).click();assert.equal(await page.inputValue('#qvisitRating'),'0');await page.locator('#visitDlg [data-rating-star="5"]').click({position:{x:30,y:18}});await page.locator('#visitDlg button[type="submit"]').click();
     if(process.env.SCREENSHOT_DIR){await visitBtn(quick).click();await page.screenshot({path:path.join(process.env.SCREENSHOT_DIR,'visit-sheet-mobile.png')});await page.locator('#visitDlg .close[data-close]').click();}
-    await page.locator('#tabbar [data-tab="me"]').click();await page.locator('[data-m="2"]').click();await page.locator('#orderScore').click();
+    await page.locator('#tabbar [data-tab="me"]').click();await page.locator('[data-me-mode="2"]').click();await page.locator('#orderScore').click();
     assert.equal(await page.locator('#meList .restaurant-title').first().getAttribute('data-restaurant'),quick); // 5 stars ranks first
     await page.locator('[data-m="1"]').click();assert(await page.locator('#orderScore').isHidden());
-    const downloadPromise=page.waitForEvent('download');await page.locator('#exportBtn').click();const download=await downloadPromise;const backup=JSON.parse(fs.readFileSync(await download.path(),'utf8'));assert.equal(backup.version,2);assert.equal(backup.personal.trips[0].items.length,1);assert.equal(Object.values(backup.personal.records)[0].rating,3.5);
+    await page.locator('[data-me-jump="meBackup"]').click();const downloadPromise=page.waitForEvent('download');await page.locator('#exportBtn').click();const download=await downloadPromise;const backup=JSON.parse(fs.readFileSync(await download.path(),'utf8'));assert.equal(backup.version,2);assert.equal(backup.personal.trips[0].items.length,1);assert.equal(Object.values(backup.personal.records)[0].rating,3.5);
     await page.evaluate(()=>{PERSONAL={version:2,trips:[],records:{}};upSave(PERSONAL);FAV={};saveFav();});
     await page.locator('#importBtn').click();await page.fill('#impText',JSON.stringify(backup));await page.locator('#impGo').click();assert.equal(await page.evaluate(()=>PERSONAL.trips.length),1);assert.equal(await page.evaluate(u=>favOf(u),u),2);
     await page.locator('#importBtn').click();await page.fill('#impText',JSON.stringify({app:'michelin-guide',version:1,items:[{u,state:'want',at:1}]}));await page.locator('#impGo').click();assert.equal(await page.evaluate(u=>favOf(u),u),2); // v1 must not downgrade been.
     if(process.env.SCREENSHOT_DIR)await page.screenshot({path:path.join(process.env.SCREENSHOT_DIR,'me-mobile.png'),fullPage:true});
-    await page.locator('[data-trip-open]').first().click();await page.fill('#tripName','欧洲觅食');await page.locator('#tripForm button').click();assert((await page.locator('#tripCards').innerText()).includes('欧洲觅食'));
+    await page.locator('[data-me-jump="meTrips"]').click();await page.locator('[data-trip-open]').first().click();await page.fill('#tripName','欧洲觅食');await page.locator('#tripForm button').click();assert((await page.locator('#tripCards').innerText()).includes('欧洲觅食'));
     await page.locator('[data-trip-map]').first().click();await page.waitForFunction(()=>MAP.ready&&MAP.layer);assert.equal(await page.evaluate(()=>MAP.layer.getLayers().length),1);
     const boundState=await page.evaluate(()=>{MAP.m.panTo([89,600],{animate:false});MAP.m.panInsideBounds(MAP.m.options.maxBounds,{animate:false});const c=MAP.m.getCenter();return {lat:c.lat,lng:c.lng,min:MAP.m.options.minZoom};});assert(Math.abs(boundState.lat)<85);assert(Math.abs(boundState.lng)<=180);assert.equal(boundState.min,0);await page.locator('#fitMap').click();
     // Real touch events: a single-finger swipe over the map must scroll the document.
@@ -196,7 +196,7 @@ const {chromium}=require(process.env.PLAYWRIGHT_MODULE||'playwright');
     assert(await page.evaluate(ci=>filtered().every(r=>r.ci===ci),tripFixture.otherCity));
     await page.selectOption('#tripCityFilter','');await page.waitForFunction(()=>MAP.layer.getLayers().length===2);
     await page.locator('#tabbar [data-tab="me"]').click();assert.equal(await page.locator('[data-trip-city-map]').count(),2);
-    await page.locator('[data-trip-open]').first().click();assert.equal(await page.locator('#tripItems .city').count(),2);await page.locator('#tripDlg [data-close]').click();
+    await page.locator('[data-me-jump="meTrips"]').click();await page.locator('[data-trip-open]').first().click();assert.equal(await page.locator('#tripItems .city').count(),2);await page.locator('#tripDlg [data-close]').click();
     await page.locator('[data-trip-city-map]').last().click();await page.waitForFunction(()=>MAP.ready&&MAP.layer.getLayers().length===1);assert(await page.locator('#travelMapTitle').isVisible());
     await page.waitForFunction(()=>filtered().filter(r=>r.lat!=null).every(r=>MAP.m.getBounds().contains(MAP.amap?[r.glat,r.glng]:[r.lat,r.lng])));
     if(process.env.SCREENSHOT_DIR)await page.screenshot({path:path.join(process.env.SCREENSHOT_DIR,'travel-city-map.png')});
@@ -310,7 +310,7 @@ const {chromium}=require(process.env.PLAYWRIGHT_MODULE||'playwright');
     await page.setViewportSize({width:1280,height:900});if(process.env.SCREENSHOT_DIR)await page.screenshot({path:path.join(process.env.SCREENSHOT_DIR,'share-desktop.png'),fullPage:true});assert(!(await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth)));
     await page.locator('#passportShareDlg [data-close]').click();
     await page.evaluate(saved=>{FAV=JSON.parse(saved.fav);PERSONAL=JSON.parse(saved.personal);saveFav();upSave(PERSONAL);render();},shareSaved);
-    await page.locator('[data-share-trip]').first().click();await page.waitForFunction(()=>!!PASSPORT_SHARE.file);assert.equal(await page.evaluate(()=>PASSPORT_SHARE.rows.length),1);await page.locator('#passportShareDlg [data-close]').click();
+    await page.locator('[data-me-jump="meTrips"]').click();await page.locator('[data-share-trip]').first().click();await page.waitForFunction(()=>!!PASSPORT_SHARE.file);assert.equal(await page.evaluate(()=>PASSPORT_SHARE.rows.length),1);await page.locator('#passportShareDlg [data-close]').click();
     // Desktop wheel scrolling over the map also reaches the list without changing zoom.
     await page.setViewportSize({width:1280,height:900});
     await page.locator('#tabsTop [data-tab="list"]').click();
