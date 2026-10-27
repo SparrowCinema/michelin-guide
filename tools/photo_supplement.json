@@ -1,6 +1,6 @@
 {
   "updated": "2026-10-27",
-  "source": "Direct public MICHELIN restaurant page gallery links; exact restaurant URL matching.",
+  "source": "Public MICHELIN restaurant gallery links; full restaurant URL identity, with explicitly reviewed localized or expanded names at the same address. Site placeholders excluded.",
   "items": {
     "singapore-region/singapore/restaurant/1887-by-andre": "39eaf87d048a4f728b4983fc6e6eb111.jpeg",
     "taipei-region/taipei/restaurant/mizue": "9ba5940996754f17840b3f700fa2e63d.jpg",
@@ -258,6 +258,2983 @@
     "doha-region/doha_2433318/restaurant/morimoto": "78eb82e888ad4738baf26b2bd27e5f39.jpeg",
     "doha-region/doha_2433318/restaurant/mr-mrs-hawker": "3c2c3c1855f4411baa400dc834023739.jpeg",
     "doha-region/doha_2433318/restaurant/salt-road": "40567ea4bdd44e9fa18dfd7144e2d17d.jpeg",
-    "belgrade-region/belgrade/restaurant/homa": "5f99d50413184078a067bf36d92aa6e4.jpg"
+    "belgrade-region/belgrade/restaurant/homa": "5f99d50413184078a067bf36d92aa6e4.jpg",
+    "guangdong-province/shenzhen_1030672/restaurant/the-bay-by-chef-fei": "35ee995e45f0446da8a7e42f087170a3.jpeg",
+    "guangdong-province/shenzhen_1030672/restaurant/chao-shang-chao-1244756": "a8aba235a2e543a4aec2e92863b8f311.jpeg",
+    "guangdong-province/shenzhen_1030672/restaurant/yun-jing": "0392e25d2b7a48dd9b13249d26293d3f.jpeg",
+    "taipei-region/taipei/restaurant/restaurant-12": "e5e241fe3e8a4078a787204fbab60f30.jpeg",
+    "singapore-region/singapore/restaurant/sushi-kimura-1247953": "422194e9706040de8fca0e4d84292e6c.jpeg",
+    "guangdong-province/shenzhen_1030672/restaurant/cuihu-nanshan": "527b1ed41a87429cb557eb8b288a2621.jpeg",
+    "berlin-region/berlin/restaurant/byblos-1245987": "4927a17977aa4641aadb833961617d89.jpg",
+    "utah/salt-lake-city_2960177/restaurant/feldman-s-deli": "37a56be537424785892b56a2b7c1b94e.jpg",
+    "nevada/las-vegas_2935077/restaurant/esther-s-kitchen": "28999a42989242f68b969a3e13862323.jpg",
+    "guangdong-province/shenzhen_1030672/restaurant/jie-yang-lao-er-guo-tiao-tang": "9071f839159c45e9a60cdae9bee1132d.jpeg",
+    "guangdong-province/shenzhen_1030672/restaurant/ge-ji-mei-ji-xian": "be402be41f8147998a6a3195deb9018a.jpeg",
+    "metro-manila/makati-city_2329358/restaurant/la-pita-poblacion": "e1e5d76d47464c5ab199f46dc85d7e3b.jpeg",
+    "guangdong-province/shenzhen_1030672/restaurant/mai-yu-lao-sha-guo-zhou": "691ced56192a47c1a5995b340882e5b0.jpeg",
+    "guangdong-province/shenzhen_1030672/restaurant/tai-shan-lao-huang-shan-fan": "dfd993f658c148cc988fd336a6aa9ba7.jpeg",
+    "guangdong-province/shenzhen_1030672/restaurant/xin-ji-ke-jia-wei-dao": "e33e038f6b274bc890df4777460e28b6.jpeg",
+    "guangdong-province/shenzhen_1030672/restaurant/xingning-ke-jia-cai-guan-meicun-road": "5737097fd2014d1c92549557b5a891e7.jpeg",
+    "southampton-region/southampton/restaurant/ao-by-daniel-rogan": "4be20f2f1b6a49b498543243826e9269.jpeg",
+    "salzburg-region/hallein_1040547/restaurant/aarons-genusskramerei": "95099bc7d7e0410ab62cdee1808aacac.png",
+    "north-carolina/asheville_2147494/restaurant/addissae-ethiopian-restaurant": "42e24703c8224a38b3056233cd3049ca.jpg",
+    "greater-london/london/restaurant/bar-des-pres-mayfair": "429a25609df94555899b529adfda9ae6.jpg",
+    "catalunya/barcelona/restaurant/barra-m-1250173": "2ff01ceaa9a549bab54a02e8d9c74dff.jpg",
+    "pays-de-la-loire/la-baule/restaurant/camelia-1250361": "6529aad234a9462d965dd7b955b0c1ea.png",
+    "catalunya/barcelona/restaurant/chambacu": "75f3dc417280424899186eff986924bf.jpg",
+    "baden-wurttemberg/meersburg/restaurant/casala": "6e14e750ba424504af98fb262fb5cb6a.jpg",
+    "arizona/phoenix_2875757/restaurant/christopher-s-at-wrigley-mansion": "7fca45f38f8845fdb1be6f2f469d2001.jpg",
+    "puglia/polignano-a-mare/restaurant/da-tuccino": "e2b6b6ec268c4a9285cce16ffd85c138.jpg",
+    "zuid-holland/den-haag/restaurant/eve-paleisstraat-by-erik-van-loo": "54f12817ed2b457e823b14fa7c2a3e24.jpg",
+    "kent/canterbury/restaurant/franc": "9b23cfd6888644e1a2b9005804cb0fda.jpeg",
+    "noord-holland/amsterdam/restaurant/fulu-mandarijn": "5f19de79ab2a4f289842f891c5fef9a7.jpg",
+    "wicklow/bray_1896407/restaurant/grain-store-at-killruddery": "6883e36f09fe469484bb1b63e3a29d33.jpg",
+    "tokyo-region/tokyo/restaurant/grolla": "918ce71dafb84672a85cd42842e1a3a0.jpeg",
+    "khon-kaen-region/khon-kaen/restaurant/halong-bay": "02d2a8dbb06c47a8aca541c5f8109b90.jpeg",
+    "arizona/paradise-valley-miranda_3990390/restaurant/indibar": "554e24ecca404ace8dd6779392a77008.jpg",
+    "occitanie/cuzance_1492528/restaurant/l-intemporel-1251357": "178d64eb3c194ad5a059298813607364.jpeg",
+    "occitanie/toulouse/restaurant/l-alouette-1196373": "42c5fee6a30341e19b1a4253981ac3be.jpeg",
+    "lombardia/villa-d-adda_1810616/restaurant/la-corte-del-noce": "c04b4b59214f4e50bb4d6a8073000d8d.jpg",
+    "catalunya/palamos/restaurant/la-cort-del-mos": "422c8e6646584349816bad7c9055b77f.jpg",
+    "toscana/marina-di-massa/restaurant/la-peniche": "e5735f4e7ecc43298dd7ebc9f7eab62d.jpg",
+    "bretagne/rennes/restaurant/la-table-de-balthazar": "319b14bf63874a4f80fbeffd4068fdd0.jpeg",
+    "khon-kaen-region/khon-kaen/restaurant/lom-kaow": "3c9f1596cfe34bccbf0f8816aef36a86.jpeg",
+    "greater-london/london/restaurant/mrbl": "b0d9b069a4b44c8ba9a3e89c1dc467e7.jpeg",
+    "appenzell-innerrhoden/gonten/restaurant/lowenstobe": "a5f8c748fd6b4d96b3b15181754c0bd7.jpeg",
+    "guangdong-province/shenzhen_1030672/restaurant/ning-bo-jiu-jia": "8d95b7add9b84075b3d30dd65e3679cd.jpeg",
+    "campania/paestum/restaurant/osteria-arbustico": "f53362b98abc446f933fc30007b60778.jpeg",
+    "lombardia/milano/restaurant/pepe-barra-italiana": "97ceb9f2d374486e98c6b8326fcbdd1e.jpg",
+    "nordrhein-westfalen/bottrop/restaurant/rosa": "d5d7354c91ec4d27aa3e86ed1f0d90e2.jpg",
+    "devon/lynton_1750131/restaurant/restaurant-kensington": "cd9812a5906d4156a6f1afd1174b5692.png",
+    "guangdong-province/shenzhen_1030672/restaurant/shang-garden-1249950": "4058aa7ec0ae4a348a93b420c6d8ec90.jpg",
+    "arizona/scottsdale_2875755/restaurant/shinbay": "54ee378f515e4ed9bfae88e235ce121e.png",
+    "guangdong-province/shenzhen_1030672/restaurant/shoku-tei": "c57edc385865467a843bde176063ffac.jpeg",
+    "guangdong-province/shenzhen_1030672/restaurant/summer-palace-1251117": "ab220d093c4a4bf399c1b0ef85e673c0.jpg",
+    "utah/salt-lake-city_2960177/restaurant/star-of-india": "dda6e847959046669d57eeba9dc2a6dd.jpeg",
+    "tokyo-region/tokyo/restaurant/sushi-kiraku": "13c9cc8acce547f38d60207732b2e7c4.jpeg",
+    "metro-manila/makati-city_2329358/restaurant/super-uncle-claypot-makati": "552dcae5e2ba4f66854957e44a122881.jpg",
+    "toscana/firenze/restaurant/terrae-by-iside-de-cesare": "629c8e0e7fb24633b76f1cbbf9c263de.jpg",
+    "guangdong-province/shenzhen_1030672/restaurant/tian-yu-shui": "5eef5885b393408d9de21fd6627c45c6.jpeg",
+    "zurich-region/zurich/restaurant/weisses-rossli": "182429d1e13d40f49f79b738abfee55c.jpg",
+    "guangdong-province/shenzhen_1030672/restaurant/zhuo-yue-xuan": "f38ee6fe89d94fd8974e0cee90df1d9d.jpeg",
+    "greater-london/london/restaurant/chez-rose": "b7ebffb86008427fad643c8028393f65.jpeg",
+    "chengdu-municipality/chengdu/restaurant/focus-by-bill-yue": "5f528eae7d174be89d984f52c7f5a463.jpeg",
+    "campania/sorrento/restaurant/torre-del-saracino": "17a03048e0674ddabaf9b3f85415019f.jpg",
+    "baden-wurttemberg/eggenstein-leopoldshafen/restaurant/das-garbo-im-lowen": "e632fa59ac554280ba201cc5d2508b6c.jpeg",
+    "ile-de-france/paris/restaurant/la-grande-du-plaza-athenee": "81e4a98909984b19bbe355608691f590.jpeg",
+    "centre-val-de-loire/ardon/restaurant/la-table-christophe-hay": "40a0b19c1d024ddcb85b956325a13dd0.jpg",
+    "principado-de-asturias/llanes/restaurant/el-retiro": "6e18565c4a364872b169617f0c0add09.jpeg",
+    "nevada/las-vegas_2935077/restaurant/e-by-jose-andres": "968616ed337b414d80d8a43f91384c2d.jpg",
+    "nevada/las-vegas_2935077/restaurant/guy-savoy-las-vegas": "438e39881d304f57bb98fac3a2b96d87.jpg",
+    "chengdu-municipality/chengdu/restaurant/ban-tian-te-se-mian": "18a930099c564a7c8228946b43afaee4.jpeg",
+    "chengdu-municipality/chengdu/restaurant/da-ya-ji": "ad2a5270be5a4180a33a4d9ec129af3b.jpeg",
+    "nevada/las-vegas_2935077/restaurant/china-poblano": "5c143d9fb2824d89ad832a155509cb7d.jpg",
+    "arizona/phoenix_2875757/restaurant/huarachis-taqueria": "55c4ef50f26e4bf591af1cee3909a6da.jpg",
+    "ontario/toronto/restaurant/golden-horseshoe-barbecue": "756d13c462324d8b83fd6128f1afa8b5.jpeg",
+    "chengdu-municipality/chengdu/restaurant/gui-tian-yuan-zi": "ced90b79aafc4e6daff71f897a4b33e9.jpeg",
+    "arizona/phoenix_2875757/restaurant/little-miss-bbq": "500e126da1e7435e846acfab7709c20d.jpeg",
+    "ontario/saint-catharines_1245759/restaurant/les-incompetents": "2bfe5c782a8c4bb1af5c7beb07791bae.jpeg",
+    "arizona/phoenix_2875757/restaurant/lom-wong": "8dfe74486a57481ea4ad503411b4a1db.jpeg",
+    "chengdu-municipality/chengdu/restaurant/no-37-lao-yuan-ba-chao-shou": "d4cc013c413d4a09a6e34e89fb0f4a8d.jpeg",
+    "colorado/denver_1261491/restaurant/pig-and-tiger": "befe207594684647b6351cc817575bf7.jpeg",
+    "chengdu-municipality/chengdu/restaurant/ren-ren-shui-jiao": "0a6f32b3412a4fccab8a210a545e7950.jpeg",
+    "ontario/jordan_7770321/restaurant/rpm-bakehouse": "b3b610c8c8fc43a0a871497f363cf542.jpeg",
+    "colorado/denver_1261491/restaurant/rougarou": "c6f28aaf9093482182ea8a2151f0534a.jpeg",
+    "guangdong-province/guangzhou/restaurant/si-mao-cai-guan": "f291117f5808428ab6b23f61140e6e37.jpeg",
+    "arizona/phoenix_2875757/restaurant/valentine": "b015c14b029a488e8c1180cf17deb2cf.jpg",
+    "ontario/toronto/restaurant/the-lunch-lady-of-saigon": "dec41342757347ae9e11e8483a43061d.jpeg",
+    "chengdu-municipality/chengdu/restaurant/xiao-you-shao-mai-qiangyang": "aa707f36e07442dc9cf9b826cec60ecb.jpeg",
+    "guangdong-province/shenzhen_1030672/restaurant/xin-hu-cun-cu-rou-longhua-jianshe-road": "a11fa607cb394fd3844b66d203fcb143.jpeg",
+    "macau-region/macau/restaurant/002-mohinga": "ea26655322414470ac96b26630bb63f8.jpeg",
+    "ontario/toronto/restaurant/156-onefivesix": "128c1046340f426d96afb87421f29044.jpeg",
+    "veneto/cortina-d-ampezzo/restaurant/1224-restaurant-cortina": "24a8be3b046643318a4629e0b660dd8f.jpg",
+    "pais-vasco/es-donostia-san-sebastian/restaurant/apar": "b8191660acb64b9f8c0330b922c304cf.jpg",
+    "galicia/betanzos/restaurant/a-artesa-da-moza-crecha": "8bdf5391a1bd42ce829614689ac3860f.jpeg",
+    "occitanie/montpellier/restaurant/aroc": "226178c6285f441c826638ab361a8a73.jpeg",
+    "castilla-y-leon/valladolid/restaurant/aquarium": "2af0b5b7989145a8a2780193e95e2f89.jpeg",
+    "new-mexico/santa-fe_2934394/restaurant/arroyo-vino": "04c4599b246347e1a0e6aa79b9e50974.jpeg",
+    "extremadura/castuera_1446688/restaurant/artigi": "ae058be4df3a4f75a4d0638262b8fb23.jpeg",
+    "sardegna/cagliari/restaurant/aurea-osteria-contemporanea": "99f46fa2afc54bd1ad2c599697df095c.jpeg",
+    "ontario/toronto/restaurant/bar-ardo": "accfbc1a555d4400a78f1fdd07298cda.jpeg",
+    "provence-alpes-cote-dazur/la-londe-les-maures_1506094/restaurant/boby": "ef66f26c9c864784ba9b43943a7d6053.jpeg",
+    "ontario/toronto/restaurant/bar-allegro": "1d8b728cc24e4a71925dcb72626eaaba.jpg",
+    "district-of-columbia/washington-dc/restaurant/bar-del-monte": "fee1c2b279a941cc899ce677e3f6a409.jpeg",
+    "veneto/peschiera-del-garda_1818693/restaurant/trattoria-bella-italia-pesce": "013a8eb076c4479094859c93291cc8d2.jpg",
+    "comunidad-de-madrid/madrid/restaurant/boccondivino-1249682": "76f2bcb4de4a40e484a1bdfe7d122b93.jpeg",
+    "provence-alpes-cote-dazur/saint-rmy-de-provence/restaurant/bistrot-canto-cigalo": "2a430cb05b8642ec9b4184d518b29ca4.jpeg",
+    "new-mexico/los-ranchos-de-albuquerque_2934235/restaurant/campo-at-los-poblanos": "739855365bea402b84858235f9bce0df.jpg",
+    "kent/royal-tunbridge-wells/restaurant/canvas-1251962": "f42f95890834442db30d7e5163ffb70a.jpeg",
+    "calabria/francavilla-angitola_1857441/restaurant/casa-klope-by-luigi-lepore": "ec7ef40637b74a5497017a53c82c0f7b.jpg",
+    "colorado/boulder_1261512/restaurant/casa-juani": "f11bc68d951a49bf8b1571dce68ad12d.jpeg",
+    "belfast-region/belfast/restaurant/capparelli-at-the-mill": "d215c5a73b774550a7d9df29b330c2fb.jpg",
+    "zurich-region/zurich/restaurant/capet-neo-bistro": "73e3aa4185be4d1faa7da36d26e91467.jpeg",
+    "guangdong-province/shenzhen_1030672/restaurant/ch-ao": "d074eca903a34f7884c195533c26c910.jpeg",
+    "worcestershire/evesham_1727085/restaurant/cedar-1905": "9bca92ed491b4f6ea41d7f2ebf30b093.jpeg",
+    "occitanie/sauve/restaurant/chai-nous": "398d377b47c2414bbe3e5497470ed1ad.jpeg",
+    "liechtenstein-region/vaduz/restaurant/chapter-two-modern-cuisine": "96267280fb3c4fb5985296abe0531df7.jpg",
+    "northern-taiwan/new-taipei-city_2853082/restaurant/chun-yu-garden": "02ac4164d97a4b90ab7f25f2f01fe27e.jpeg",
+    "occitanie/autignac_1500705/restaurant/cocagne": "dbb8916debb441f3921349a2a2eaaaf2.jpeg",
+    "lazio/tuscania_1847210/restaurant/convivial-1204653": "41c64bf37e8649b18fbd49b5fadcce19.jpeg",
+    "provence-alpes-cote-dazur/crillon-le-brave/restaurant/clovis-basina": "f3cb111bf9024f82871d5f74242efd1d.jpeg",
+    "sardegna/cagliari/restaurant/dal-pittore": "eecd837329ae4ef495964d0ba5f02708.jpeg",
+    "greater-london/london/restaurant/dakadaka": "ebeebf1d6aa7491d89249fc39e768f17.jpeg",
+    "lazio/nepi_1844847/restaurant/dieci": "31377665c02e49b187028ca1267dfad4.jpg",
+    "colorado/aurora_1261489/restaurant/dan-da": "63e16ce5c9dd4f35a241b342e1874fda.jpeg",
+    "guangdong-province/shenzhen_1030672/restaurant/east-mountain-tea-cabin": "adb35a7962cb4a29b4894f920061a0ee.jpeg",
+    "castilla-y-leon/ventas-de-armentia/restaurant/erre-de-roca-1250012": "fb3b35d0fa964b6290ce07d5d2f95efd.jpg",
+    "bretagne/dinan/restaurant/evezhea": "3beb8263a6b34fc48a01ddb2b6b2fe18.jpeg",
+    "auvergne-rhone-alpes/lyon/restaurant/frazarin": "43446b91abf64cb7a25c89b312372418.jpeg",
+    "chengdu-municipality/chengdu/restaurant/fu-rong-chuan": "5391f25b63744fd790147fb18e649926.jpeg",
+    "nordrhein-westfalen/duisburg/restaurant/freya-by-nothel": "0727d851027d4e9f91a68a3979892400.jpg",
+    "pays-de-la-loire/chalonnes-sur-loire_1570769/restaurant/galipettes": "9ee6f0488db84b4d8b346ed79ffb6697.jpeg",
+    "guangdong-province/shenzhen_1030672/restaurant/gem-garden": "751fd86366bc4ca58cd179bbd6cb0204.jpeg",
+    "nevada/las-vegas_2935077/restaurant/gymkhana-las-vegas": "7e77081887d2431b8a0ff5f936596716.jpg",
+    "tokyo-region/tokyo/restaurant/hrmt-stage": "a4e8b15b18ad4974997a18c9f12f75e8.jpeg",
+    "antwerpen/liezele_1062727/restaurant/hof-ten-broeck": "b8305ec2de1a4d23a9b0781ea3dc3a01.jpg",
+    "guangdong-province/guangzhou/restaurant/hitom-xiao-wei": "227ae14f1ff64d748470a1413bac655a.jpeg",
+    "wiltshire/limpley-stoke_1749861/restaurant/hop-pole-inn": "2e40b5fb4be44453b5431d80593f010c.jpg",
+    "arizona/scottsdale_2875755/restaurant/hush-public-house": "562cce5ad7ec4532b51dab08080c3bfd.jpeg",
+    "taichung-region/taichung/restaurant/ji-zai-ten": "6b5ee236e3884e848fa0736bce27cc0c.jpeg",
+    "new-mexico/santa-fe_2934394/restaurant/joseph-s-culinary-pub": "5484f20bf821403a9c772b793180c193.jpg",
+    "nordrhein-westfalen/meerbusch/restaurant/junsui": "f2f13b744efe4d0589f167cd8d39ab97.jpeg",
+    "utah/salt-lake-city_2960177/restaurant/koyote": "62b47ae311b3431b8d9f82af83f732f4.jpg",
+    "th-phang-nga-region/th-phang-nga/restaurant/krua-ko-yot": "000862d0866b474891bfab5e35ad10c6.jpeg",
+    "provence-alpes-cote-dazur/nice/restaurant/koyo-1251374": "34f519b7a5cc404d964b76236fe6d58a.jpeg",
+    "centre-val-de-loire/thoury_1584922/restaurant/la-becasse-heureuse": "289a65b013f44cb8b4ff18e64c2df630.jpg",
+    "nouvelle-aquitaine/mezos_1488137/restaurant/la-table-des-pins": "c14d31f0d84c4d408403f456c00b500d.jpeg",
+    "nouvelle-aquitaine/saint-vincent-de-cosse/restaurant/la-table-de-monrecour": "65e4602039c647ca9857c776ff4e83d2.jpeg",
+    "grand-est/giffaumont-champaubert_1540006/restaurant/le-cheval-blanc-1207063": "47a3f22eed57404c8a63d929f98b28de.jpeg",
+    "drenthe/veeningen_2214724/restaurant/le-epifaan": "8292426358c84591ad568c21f448a460.jpeg",
+    "provence-alpes-cote-dazur/bandol/restaurant/le-grand-large": "ae368f7cd22745eaa9dd3ee2f4e31afe.jpeg",
+    "limburg/maastricht/restaurant/le-philippe-1250226": "18c7bd69fdaa48d88d5dfe5eef43da8e.jpeg",
+    "bourgogne-franche-comte/pommard/restaurant/le-viii-chateau-la-commaraine": "7c6f130e7b8b4b73bd71e835bd2a304a.jpg",
+    "occitanie/mandagout_1503040/restaurant/les-terrasses-de-la-borie": "fb986cce9ab64a1a94adb92a196ad8bd.jpeg",
+    "castilla-y-leon/salamanca/restaurant/lilicook-cocina": "5ea9c204a6764f5e89b0590a2e56085e.jpg",
+    "phuket-region/phuket/restaurant/local-canteen": "fc5822336a4042cca8c19222ab7661b2.jpg",
+    "toscana/impruneta_1836474/restaurant/l-oca-bonda": "96fea170409c4bf59453a975dc912023.jpg",
+    "guangdong-province/shenzhen_1030672/restaurant/ma-s-kitchen-1246202": "711d0c0d4d9643f89f398c41c0803141.jpg",
+    "bruxelles-capitale/ixelles/restaurant/mome": "8b7bc1e2d1584ed1ab02e8961b8977fa.jpg",
+    "colorado/denver_1261491/restaurant/madeline": "11957229ade54b5b87e9c38c96c7c8a5.jpeg",
+    "nara-region/nara/restaurant/maruto-1689": "672b38d9de624d469cba0a4207af07f9.jpeg",
+    "district-of-columbia/washington-dc/restaurant/maison-bar-a-vins": "afea228f19024d5482e58e48d2b3c474.jpeg",
+    "nouvelle-aquitaine/ainhoa/restaurant/maison-oppoca": "6c93ca38466248708460a4ff2359f73f.jpeg",
+    "antwerpen/be-antwerpen/restaurant/mero": "aa4b8647fcd34571a86bdfaba3dd85fb.jpg",
+    "pais-vasco/es-donostia-san-sebastian/restaurant/milla-lore-124": "c69f33fdc2a14c6081a16c8122d90892.jpeg",
+    "comunidad-foral-de-navarra/villamayor-de-monjardin_1386120/restaurant/mirador-de-deyo": "7e61071c42b14631bbb00804af4eab51.jpg",
+    "zurich-region/zurich/restaurant/neri-cantina-cucina": "aedc4c40d7d54b2c8168a28a0e7abfe0.jpeg",
+    "saint-brelade-region/saint-brelade/restaurant/ob-mizi-at-the-table": "904808fa745544b5ae56aa7eab5e0174.jpg",
+    "liege/liege/restaurant/origines-1247235": "9977044b9e5a48b797ffc60843015068.jpeg",
+    "lazio/lido-di-ostia_1844201/restaurant/osteria-landi": "267c5aa5bd914aae9b867df54dcc9db6.jpg",
+    "ontario/toronto/restaurant/punch": "a7445ab7d6454d69aaf98f329c153faf.jpeg",
+    "cornwall/port-isaac/restaurant/outlaw-s-bistro": "338d9267cdd24f79bc2a4e06dee2ab5a.jpeg",
+    "noord-brabant/grave_2216252/restaurant/ovum": "cd84ebd861a342bebe6fa6719f32089a.jpeg",
+    "cornwall/padstow/restaurant/pl28-cafe": "9973e88d566e4108a2f65177c15d1f9c.jpeg",
+    "new-mexico/santa-fe_2934394/restaurant/paloma": "53cf4b566b0c40a787e56522b453af5d.jpg",
+    "jalisco/puerto-vallarta_2013264/restaurant/pancho-s-takos": "eeccd96b8024489ca30c7107483a7b3f.jpeg",
+    "nevada/las-vegas_2935077/restaurant/pho-ga-bac-bac": "3cd7aff205764c838ad0d46d42d130c4.png",
+    "lazio/bracciano/restaurant/percorsi-al-vecchio-ponte": "05f29c5bb2124ce396083a740c3aa467.jpeg",
+    "ontario/mississauga_1245409/restaurant/pho-ngoc-yen": "31568fdcc7374792847179f181858019.jpeg",
+    "castilla-y-leon/salamanca/restaurant/portal-del-lino": "4b97eb2e3bec43c5b6199bdb1c0bc3b6.jpg",
+    "arizona/phoenix_2875757/restaurant/pretty-penny": "b60eb325763942e6a006521cea81a796.jpg",
+    "pulau-pinang/my-george-town/restaurant/rr-nyonya-house": "4febbb6f0f2840ac8a9803abdf01abd8.jpeg",
+    "noord-holland/amsterdam/restaurant/restobar-massalia": "463840e1eb5745f7abcf779028bf6a94.jpeg",
+    "groningen/groningen/restaurant/restaurant-luwte": "b8be14f0e07743dd90dc618f5a454422.jpeg",
+    "new-mexico/santa-fe_2934394/restaurant/restaurant-martin": "c7fa228664b34bbcbdc350f19a90c5f3.jpg",
+    "ontario/niagara-on-the-lake_1245481/restaurant/reve-1244905": "d83b35cc565c4c8b913bd2416ac32cbc.jpeg",
+    "guangdong-province/shenzhen_1030672/restaurant/rong-chuan-cai-shennan-boulevard": "bd7945e2a86a4354bc81d5c2da0d7513.jpeg",
+    "islas-baleares/santa-eulalia-del-rio/restaurant/sa-talassa": "f83bd67096534a6690bd3a894c7fa7ea.jpeg",
+    "tokyo-region/tokyo/restaurant/shirokanedai-sakurai": "6c39d62844824aacbe92a4b8c6666be6.jpeg",
+    "auvergne-rhone-alpes/lyon/restaurant/saone": "965ce480cb0747b69ae87d74b8d16aae.jpeg",
+    "bangkok-region/bangkok/restaurant/siam-nora": "e396a0e61a6b416794fb232efcb8875f.jpeg",
+    "greater-london/london/restaurant/simpson-s-in-the-strand": "0e1f281c6e5445e7895602ffb054f6de.jpeg",
+    "pays-de-la-loire/nantes/restaurant/sources-1190237": "f962660926824d9bb4a0c80a5ef6a2d2.jpeg",
+    "devon/exeter/restaurant/stage-by-circa": "57a9b9dcb68849e9927bfe19d1360c03.jpeg",
+    "singapore-region/singapore/restaurant/sushi-ryujin": "22ade4cb9af244ffae7152f348f4d78e.jpeg",
+    "northern-taiwan/hsinchu-city_2853126/restaurant/tang-ming": "32a68c7dd6cf4b3d9c8308b9aed03b4b.jpeg",
+    "guangdong-province/shenzhen_1030672/restaurant/temporal-house": "1187d0bd2a6f4c558e9e244c4f418f29.jpeg",
+    "hong-kong-region/hong-kong/restaurant/terrace-boulud-by-mandarin-oriental": "21beb20ee08d4441845f5394b4e9db65.jpg",
+    "colorado/colorado-springs_1262223/restaurant/the-penrose-room": "cc7c6cda5b8d4060861e68dd1b83e74d.jpeg",
+    "northamptonshire/daventry/restaurant/the-cedar-restaurant": "5040d51fd742403ea17a71d652fb1d3e.jpeg",
+    "piemonte/torino/restaurant/tiffany-bistrot-di-mare": "f09229f88c7645c58e3a752d2c744fe9.jpeg",
+    "west-yorkshire/leeds/restaurant/the-smithfield": "9e5c6ea27cf146a2bbaf891cdfe81db7.jpeg",
+    "tainan-region/tainan/restaurant/tucheng-seafood": "b72e16a6c3fd44898f1aa87b05c8ab2e.jpeg",
+    "city-of-edinburgh/edinburgh/restaurant/whirlybird": "4c4718cac8b3402ca51f5fd8884336c5.jpeg",
+    "chengdu-municipality/chengdu/restaurant/xiao-ya-tang-wu": "564ca147633642d785c91acf6178aeef.jpeg",
+    "guangdong-province/shenzhen_1030672/restaurant/yan-ting-1250685": "6576331d83244870a2f2760c833ceecf.jpg",
+    "taichung-region/taichung/restaurant/yun-la-cuisine": "2eb5b54b606e4cd599659a27aafb19ff.jpeg",
+    "bayern/scheidegg/restaurant/zum-hirschen-gasthaus-beim-stockeler": "0fbbd03b8e5742d98ef91375ee631f05.jpeg",
+    "singapore-region/singapore/restaurant/yao-fa-teochew-mushroom-meat-noodle": "357a290eee404f1eafcbc28908036a5d.jpeg",
+    "antwerpen/kalmthout/restaurant/zilverden": "392773e973be49c8bc1d34909bae695f.jpg",
+    "toscana/sant-angelo-in-colle/restaurant/il-pozzo-1202739": "02964f8c74424ff1a522c7bb2cd9d4f4.jpg",
+    "mecklenburg-vorpommern/wismar/restaurant/klein-fein": "a236498ef7e14e55956643eca39ec710.jpeg",
+    "ontario/saint-catharines_1245759/restaurant/oddbird": "836ccbbcf18e4682932fe5d68717d454.jpeg",
+    "vienna/wien/restaurant/plachutta": "b6293179555348949a6b84393c6d7a7b.jpeg",
+    "ticino/centovalli-intragna/restaurant/yanelo": "731ba06cac3a4fc1a98231e2dc3bdea1.jpeg",
+    "tokyo-region/tokyo/restaurant/opaline-1250904": "0e56db335590472789d31d6c48e854bb.jpeg"
+  },
+  "review": {
+    "date": "2026-10-27",
+    "previous_missing": 461,
+    "added": 212,
+    "unresolved": 249,
+    "method": "Region-specific official pages and indexed gallery links. Full country/city/restaurant paths must match. Expanded/localized names checked against the same address. No name-only or stock-image matches."
+  },
+  "evidence": {
+    "guangdong-province/shenzhen_1030672/restaurant/the-bay-by-chef-fei": {
+      "page": "https://guide.michelin.com/gb/en/guangdong-province/shenzhen_1030672/restaurant/the-bay-by-chef-fei",
+      "title": "The Bay by Chef Fei",
+      "label": "Interior - The Bay by Chef Fei",
+      "image": "https://prod-pics.guide.michelin.com/api/public/content/35ee995e45f0446da8a7e42f087170a3.jpeg",
+      "identity": "Exact MICHELIN region/city/restaurant path and normalized display name.",
+      "availability": {
+        "checked": "2026-10-27",
+        "http_status": 200,
+        "width": 1200,
+        "height": 800
+      }
+    },
+    "guangdong-province/shenzhen_1030672/restaurant/chao-shang-chao-1244756": {
+      "page": "https://guide.michelin.com/gb/en/guangdong-province/shenzhen_1030672/restaurant/chao-shang-chao-1244756",
+      "title": "Chao Shang Chao",
+      "label": "Interior - Chao Shang Chao",
+      "image": "https://prod-pics.guide.michelin.com/api/public/content/a8aba235a2e543a4aec2e92863b8f311.jpeg",
+      "identity": "Exact MICHELIN region/city/restaurant path and normalized display name.",
+      "availability": {
+        "checked": "2026-10-27",
+        "http_status": 200,
+        "width": 1200,
+        "height": 800
+      }
+    },
+    "guangdong-province/shenzhen_1030672/restaurant/yun-jing": {
+      "page": "https://guide.michelin.com/gb/en/guangdong-province/shenzhen_1030672/restaurant/yun-jing",
+      "title": "Yun Jing",
+      "label": "Main dish - Yun Jing",
+      "image": "https://prod-pics.guide.michelin.com/api/public/content/0392e25d2b7a48dd9b13249d26293d3f.jpeg",
+      "identity": "Exact MICHELIN region/city/restaurant path and normalized display name.",
+      "availability": {
+        "checked": "2026-10-27",
+        "http_status": 200,
+        "width": 1200,
+        "height": 800
+      }
+    },
+    "taipei-region/taipei/restaurant/restaurant-12": {
+      "page": "https://guide.michelin.com/gb/en/taipei-region/taipei/restaurant/restaurant-12",
+      "title": "Restaurant 12",
+      "label": "Interior - Restaurant 12",
+      "image": "https://prod-pics.guide.michelin.com/api/public/content/e5e241fe3e8a4078a787204fbab60f30.jpeg",
+      "identity": "Exact MICHELIN region/city/restaurant path and normalized display name.",
+      "availability": {
+        "checked": "2026-10-27",
+        "http_status": 200,
+        "width": 1200,
+        "height": 800
+      }
+    },
+    "singapore-region/singapore/restaurant/sushi-kimura-1247953": {
+      "page": "https://guide.michelin.com/gb/en/singapore-region/singapore/restaurant/sushi-kimura-1247953",
+      "title": "Sushi Kimura +",
+      "label": "Starter - Sushi Kimura +",
+      "image": "https://prod-pics.guide.michelin.com/api/public/content/422194e9706040de8fca0e4d84292e6c.jpeg",
+      "identity": "Exact MICHELIN region/city/restaurant path and normalized display name.",
+      "availability": {
+        "checked": "2026-10-27",
+        "http_status": 200,
+        "width": 1200,
+        "height": 800
+      }
+    },
+    "guangdong-province/shenzhen_1030672/restaurant/cuihu-nanshan": {
+      "page": "https://guide.michelin.com/gb/en/guangdong-province/shenzhen_1030672/restaurant/cuihu-nanshan",
+      "title": "Cuihu (Nanshan)",
+      "label": "Main dish - Cuihu (Nanshan)",
+      "image": "https://prod-pics.guide.michelin.com/api/public/content/527b1ed41a87429cb557eb8b288a2621.jpeg",
+      "identity": "Exact MICHELIN region/city/restaurant path and normalized display name.",
+      "availability": {
+        "checked": "2026-10-27",
+        "http_status": 200,
+        "width": 1200,
+        "height": 800
+      }
+    },
+    "berlin-region/berlin/restaurant/byblos-1245987": {
+      "page": "https://guide.michelin.com/gb/en/berlin-region/berlin/restaurant/byblos-1245987",
+      "title": "CHEZ NASSIB",
+      "label": "Interior - CHEZ NASSIB",
+      "image": "https://prod-pics.guide.michelin.com/api/public/content/4927a17977aa4641aadb833961617d89.jpg",
+      "identity": "Exact MICHELIN region/city/restaurant path and normalized display name.",
+      "availability": {
+        "checked": "2026-10-27",
+        "http_status": 200,
+        "width": 1200,
+        "height": 800
+      }
+    },
+    "utah/salt-lake-city_2960177/restaurant/feldman-s-deli": {
+      "page": "https://guide.michelin.com/gb/en/utah/salt-lake-city_2960177/restaurant/feldman-s-deli",
+      "title": "Feldman's Deli",
+      "label": "Main dish - Feldman's Deli",
+      "image": "https://prod-pics.guide.michelin.com/api/public/content/37a56be537424785892b56a2b7c1b94e.jpg",
+      "identity": "Exact MICHELIN region/city/restaurant path and normalized display name.",
+      "availability": {
+        "checked": "2026-10-27",
+        "http_status": 200,
+        "width": 1200,
+        "height": 800
+      }
+    },
+    "nevada/las-vegas_2935077/restaurant/esther-s-kitchen": {
+      "page": "https://guide.michelin.com/gb/en/nevada/las-vegas_2935077/restaurant/esther-s-kitchen",
+      "title": "Esther's Kitchen",
+      "label": "Interior - Esther's Kitchen",
+      "image": "https://prod-pics.guide.michelin.com/api/public/content/28999a42989242f68b969a3e13862323.jpg",
+      "identity": "Exact MICHELIN region/city/restaurant path and normalized display name.",
+      "availability": {
+        "checked": "2026-10-27",
+        "http_status": 200,
+        "width": 1200,
+        "height": 800
+      }
+    },
+    "guangdong-province/shenzhen_1030672/restaurant/jie-yang-lao-er-guo-tiao-tang": {
+      "page": "https://guide.michelin.com/gb/en/guangdong-province/shenzhen_1030672/restaurant/jie-yang-lao-er-guo-tiao-tang",
+      "title": "Jie Yang Lao Er Guo Tiao Tang",
+      "label": "Main dish - Jie Yang Lao Er Guo Tiao Tang",
+      "image": "https://prod-pics.guide.michelin.com/api/public/content/9071f839159c45e9a60cdae9bee1132d.jpeg",
+      "identity": "Exact MICHELIN region/city/restaurant path and normalized display name.",
+      "availability": {
+        "checked": "2026-10-27",
+        "http_status": 200,
+        "width": 1200,
+        "height": 800
+      }
+    },
+    "guangdong-province/shenzhen_1030672/restaurant/ge-ji-mei-ji-xian": {
+      "page": "https://guide.michelin.com/gb/en/guangdong-province/shenzhen_1030672/restaurant/ge-ji-mei-ji-xian",
+      "title": "Ge Ji Mei Ji Xian",
+      "label": "Main dish - Ge Ji Mei Ji Xian",
+      "image": "https://prod-pics.guide.michelin.com/api/public/content/be402be41f8147998a6a3195deb9018a.jpeg",
+      "identity": "Exact MICHELIN region/city/restaurant path and normalized display name.",
+      "availability": {
+        "checked": "2026-10-27",
+        "http_status": 200,
+        "width": 1200,
+        "height": 800
+      }
+    },
+    "metro-manila/makati-city_2329358/restaurant/la-pita-poblacion": {
+      "page": "https://guide.michelin.com/gb/en/metro-manila/makati-city_2329358/restaurant/la-pita-poblacion",
+      "title": "La Pita (Poblacion)",
+      "label": "Main dish - La Pita (Poblacion)",
+      "image": "https://prod-pics.guide.michelin.com/api/public/content/e1e5d76d47464c5ab199f46dc85d7e3b.jpeg",
+      "identity": "Exact MICHELIN region/city/restaurant path and normalized display name.",
+      "availability": {
+        "checked": "2026-10-27",
+        "http_status": 200,
+        "width": 1200,
+        "height": 800
+      }
+    },
+    "guangdong-province/shenzhen_1030672/restaurant/mai-yu-lao-sha-guo-zhou": {
+      "page": "https://guide.michelin.com/gb/en/guangdong-province/shenzhen_1030672/restaurant/mai-yu-lao-sha-guo-zhou",
+      "title": "Mai Yu Lao Sha Guo Zhou",
+      "label": "Interior - Mai Yu Lao Sha Guo Zhou",
+      "image": "https://prod-pics.guide.michelin.com/api/public/content/691ced56192a47c1a5995b340882e5b0.jpeg",
+      "identity": "Exact MICHELIN region/city/restaurant path and normalized display name.",
+      "availability": {
+        "checked": "2026-10-27",
+        "http_status": 200,
+        "width": 1200,
+        "height": 800
+      }
+    },
+    "guangdong-province/shenzhen_1030672/restaurant/tai-shan-lao-huang-shan-fan": {
+      "page": "https://guide.michelin.com/gb/en/guangdong-province/shenzhen_1030672/restaurant/tai-shan-lao-huang-shan-fan",
+      "title": "Tai Shan Lao Huang Shan Fan",
+      "label": "Main dish - Tai Shan Lao Huang Shan Fan",
+      "image": "https://prod-pics.guide.michelin.com/api/public/content/dfd993f658c148cc988fd336a6aa9ba7.jpeg",
+      "identity": "Exact MICHELIN region/city/restaurant path and normalized display name.",
+      "availability": {
+        "checked": "2026-10-27",
+        "http_status": 200,
+        "width": 1200,
+        "height": 800
+      }
+    },
+    "guangdong-province/shenzhen_1030672/restaurant/xin-ji-ke-jia-wei-dao": {
+      "page": "https://guide.michelin.com/gb/en/guangdong-province/shenzhen_1030672/restaurant/xin-ji-ke-jia-wei-dao",
+      "title": "Xin Ji Ke Jia Wei Dao",
+      "label": "Main dish - Xin Ji Ke Jia Wei Dao",
+      "image": "https://prod-pics.guide.michelin.com/api/public/content/e33e038f6b274bc890df4777460e28b6.jpeg",
+      "identity": "Exact MICHELIN region/city/restaurant path and normalized display name.",
+      "availability": {
+        "checked": "2026-10-27",
+        "http_status": 200,
+        "width": 1200,
+        "height": 800
+      }
+    },
+    "guangdong-province/shenzhen_1030672/restaurant/xingning-ke-jia-cai-guan-meicun-road": {
+      "page": "https://guide.michelin.com/gb/en/guangdong-province/shenzhen_1030672/restaurant/xingning-ke-jia-cai-guan-meicun-road",
+      "title": "Xingning Ke Jia Cai Guan (Meicun Road)",
+      "label": "Main dish - Xingning Ke Jia Cai Guan (Meicun Road)",
+      "image": "https://prod-pics.guide.michelin.com/api/public/content/5737097fd2014d1c92549557b5a891e7.jpeg",
+      "identity": "Exact MICHELIN region/city/restaurant path and normalized display name.",
+      "availability": {
+        "checked": "2026-10-27",
+        "http_status": 200,
+        "width": 1200,
+        "height": 800
+      }
+    },
+    "southampton-region/southampton/restaurant/ao-by-daniel-rogan": {
+      "page": "https://guide.michelin.com/gb/en/southampton-region/southampton/restaurant/ao-by-daniel-rogan",
+      "title": "AO by Daniel Rogan",
+      "label": "Interior - AO by Daniel Rogan",
+      "image": "https://prod-pics.guide.michelin.com/api/public/content/4be20f2f1b6a49b498543243826e9269.jpeg",
+      "identity": "Exact MICHELIN region/city/restaurant path and normalized display name.",
+      "availability": {
+        "checked": "2026-10-27",
+        "http_status": 200,
+        "width": 1200,
+        "height": 800
+      }
+    },
+    "salzburg-region/hallein_1040547/restaurant/aarons-genusskramerei": {
+      "page": "https://guide.michelin.com/gb/en/salzburg-region/hallein_1040547/restaurant/aarons-genusskramerei",
+      "title": "Aarons Genusskrämerei",
+      "label": "Interior - Aarons Genusskrämerei",
+      "image": "https://prod-pics.guide.michelin.com/api/public/content/95099bc7d7e0410ab62cdee1808aacac.png",
+      "identity": "Exact MICHELIN region/city/restaurant path and normalized display name.",
+      "availability": {
+        "checked": "2026-10-27",
+        "http_status": 200,
+        "width": 1200,
+        "height": 800
+      }
+    },
+    "north-carolina/asheville_2147494/restaurant/addissae-ethiopian-restaurant": {
+      "page": "https://guide.michelin.com/gb/en/north-carolina/asheville_2147494/restaurant/addissae-ethiopian-restaurant",
+      "title": "Addissae Ethiopian Restaurant",
+      "label": "Main dish - Addissae Ethiopian Restaurant",
+      "image": "https://prod-pics.guide.michelin.com/api/public/content/42e24703c8224a38b3056233cd3049ca.jpg",
+      "identity": "Exact MICHELIN region/city/restaurant path and normalized display name.",
+      "availability": {
+        "checked": "2026-10-27",
+        "http_status": 200,
+        "width": 1200,
+        "height": 800
+      }
+    },
+    "greater-london/london/restaurant/bar-des-pres-mayfair": {
+      "page": "https://guide.michelin.com/gb/en/greater-london/london/restaurant/bar-des-pres-mayfair",
+      "title": "Bar des Prés - Mayfair",
+      "label": "Starter - Bar des Prés - Mayfair",
+      "image": "https://prod-pics.guide.michelin.com/api/public/content/429a25609df94555899b529adfda9ae6.jpg",
+      "identity": "Exact MICHELIN region/city/restaurant path and normalized display name.",
+      "availability": {
+        "checked": "2026-10-27",
+        "http_status": 200,
+        "width": 1200,
+        "height": 800
+      }
+    },
+    "catalunya/barcelona/restaurant/barra-m-1250173": {
+      "page": "https://guide.michelin.com/gb/en/catalunya/barcelona/restaurant/barra-m-1250173",
+      "title": "Barra /M",
+      "label": "Interior - Barra /M",
+      "image": "https://prod-pics.guide.michelin.com/api/public/content/2ff01ceaa9a549bab54a02e8d9c74dff.jpg",
+      "identity": "Exact MICHELIN region/city/restaurant path and normalized display name.",
+      "availability": {
+        "checked": "2026-10-27",
+        "http_status": 200,
+        "width": 1200,
+        "height": 800
+      }
+    },
+    "pays-de-la-loire/la-baule/restaurant/camelia-1250361": {
+      "page": "https://guide.michelin.com/gb/en/pays-de-la-loire/la-baule/restaurant/camelia-1250361",
+      "title": "Camélia",
+      "label": "Main dish - Camélia",
+      "image": "https://prod-pics.guide.michelin.com/api/public/content/6529aad234a9462d965dd7b955b0c1ea.png",
+      "identity": "Exact MICHELIN region/city/restaurant path and normalized display name.",
+      "availability": {
+        "checked": "2026-10-27",
+        "http_status": 200,
+        "width": 1200,
+        "height": 800
+      }
+    },
+    "catalunya/barcelona/restaurant/chambacu": {
+      "page": "https://guide.michelin.com/gb/en/catalunya/barcelona/restaurant/chambacu",
+      "title": "Chambacú",
+      "label": "Interior - Chambacú",
+      "image": "https://prod-pics.guide.michelin.com/api/public/content/75f3dc417280424899186eff986924bf.jpg",
+      "identity": "Exact MICHELIN region/city/restaurant path and normalized display name.",
+      "availability": {
+        "checked": "2026-10-27",
+        "http_status": 200,
+        "width": 1200,
+        "height": 800
+      }
+    },
+    "baden-wurttemberg/meersburg/restaurant/casala": {
+      "page": "https://guide.michelin.com/gb/en/baden-wurttemberg/meersburg/restaurant/casala",
+      "title": "Casala - das Restaurant",
+      "label": "Interior - Casala - das Restaurant",
+      "image": "https://prod-pics.guide.michelin.com/api/public/content/6e14e750ba424504af98fb262fb5cb6a.jpg",
+      "identity": "Exact MICHELIN region/city/restaurant path and normalized display name.",
+      "availability": {
+        "checked": "2026-10-27",
+        "http_status": 200,
+        "width": 1200,
+        "height": 800
+      }
+    },
+    "arizona/phoenix_2875757/restaurant/christopher-s-at-wrigley-mansion": {
+      "page": "https://guide.michelin.com/gb/en/arizona/phoenix_2875757/restaurant/christopher-s-at-wrigley-mansion",
+      "title": "Christopher's at Wrigley Mansion",
+      "label": "Interior - Christopher's at Wrigley Mansion",
+      "image": "https://prod-pics.guide.michelin.com/api/public/content/7fca45f38f8845fdb1be6f2f469d2001.jpg",
+      "identity": "Exact MICHELIN region/city/restaurant path and normalized display name.",
+      "availability": {
+        "checked": "2026-10-27",
+        "http_status": 200,
+        "width": 1200,
+        "height": 800
+      }
+    },
+    "puglia/polignano-a-mare/restaurant/da-tuccino": {
+      "page": "https://guide.michelin.com/gb/en/puglia/polignano-a-mare/restaurant/da-tuccino",
+      "title": "Da Tuccino",
+      "label": "Main dish - Da Tuccino",
+      "image": "https://prod-pics.guide.michelin.com/api/public/content/e2b6b6ec268c4a9285cce16ffd85c138.jpg",
+      "identity": "Exact MICHELIN region/city/restaurant path and normalized display name.",
+      "availability": {
+        "checked": "2026-10-27",
+        "http_status": 200,
+        "width": 1200,
+        "height": 800
+      }
+    },
+    "zuid-holland/den-haag/restaurant/eve-paleisstraat-by-erik-van-loo": {
+      "page": "https://guide.michelin.com/gb/en/zuid-holland/den-haag/restaurant/eve-paleisstraat-by-erik-van-loo",
+      "title": "EVE Paleisstraat by Erik van Loo",
+      "label": "Main dish - EVE Paleisstraat by Erik van Loo",
+      "image": "https://prod-pics.guide.michelin.com/api/public/content/54f12817ed2b457e823b14fa7c2a3e24.jpg",
+      "identity": "Exact MICHELIN region/city/restaurant path and normalized display name.",
+      "availability": {
+        "checked": "2026-10-27",
+        "http_status": 200,
+        "width": 1200,
+        "height": 800
+      }
+    },
+    "kent/canterbury/restaurant/franc": {
+      "page": "https://guide.michelin.com/gb/en/kent/canterbury/restaurant/franc",
+      "title": "Franc",
+      "label": "Interior - Franc",
+      "image": "https://prod-pics.guide.michelin.com/api/public/content/9b23cfd6888644e1a2b9005804cb0fda.jpeg",
+      "identity": "Exact MICHELIN region/city/restaurant path and normalized display name.",
+      "availability": {
+        "checked": "2026-10-27",
+        "http_status": 200,
+        "width": 1200,
+        "height": 800
+      }
+    },
+    "noord-holland/amsterdam/restaurant/fulu-mandarijn": {
+      "page": "https://guide.michelin.com/gb/en/noord-holland/amsterdam/restaurant/fulu-mandarijn",
+      "title": "FuLu Mandarijn",
+      "label": "Interior - FuLu Mandarijn",
+      "image": "https://prod-pics.guide.michelin.com/api/public/content/5f19de79ab2a4f289842f891c5fef9a7.jpg",
+      "identity": "Exact MICHELIN region/city/restaurant path and normalized display name.",
+      "availability": {
+        "checked": "2026-10-27",
+        "http_status": 200,
+        "width": 1200,
+        "height": 800
+      }
+    },
+    "wicklow/bray_1896407/restaurant/grain-store-at-killruddery": {
+      "page": "https://guide.michelin.com/gb/en/wicklow/bray_1896407/restaurant/grain-store-at-killruddery",
+      "title": "Grain Store at Killruddery",
+      "label": "Interior - Grain Store at Killruddery",
+      "image": "https://prod-pics.guide.michelin.com/api/public/content/6883e36f09fe469484bb1b63e3a29d33.jpg",
+      "identity": "Exact MICHELIN region/city/restaurant path and normalized display name.",
+      "availability": {
+        "checked": "2026-10-27",
+        "http_status": 200,
+        "width": 1200,
+        "height": 800
+      }
+    },
+    "tokyo-region/tokyo/restaurant/grolla": {
+      "page": "https://guide.michelin.com/gb/en/tokyo-region/tokyo/restaurant/grolla",
+      "title": "Grolla",
+      "label": "Interior - Grolla",
+      "image": "https://prod-pics.guide.michelin.com/api/public/content/918ce71dafb84672a85cd42842e1a3a0.jpeg",
+      "identity": "Exact MICHELIN region/city/restaurant path and normalized display name.",
+      "availability": {
+        "checked": "2026-10-27",
+        "http_status": 200,
+        "width": 1200,
+        "height": 800
+      }
+    },
+    "khon-kaen-region/khon-kaen/restaurant/halong-bay": {
+      "page": "https://guide.michelin.com/gb/en/khon-kaen-region/khon-kaen/restaurant/halong-bay",
+      "title": "Halong Bay",
+      "label": "Interior - Halong Bay",
+      "image": "https://prod-pics.guide.michelin.com/api/public/content/02d2a8dbb06c47a8aca541c5f8109b90.jpeg",
+      "identity": "Exact MICHELIN region/city/restaurant path and normalized display name.",
+      "availability": {
+        "checked": "2026-10-27",
+        "http_status": 200,
+        "width": 1200,
+        "height": 800
+      }
+    },
+    "arizona/paradise-valley-miranda_3990390/restaurant/indibar": {
+      "page": "https://guide.michelin.com/gb/en/arizona/paradise-valley-miranda_3990390/restaurant/indibar",
+      "title": "INDIBAR",
+      "label": "Interior - INDIBAR",
+      "image": "https://prod-pics.guide.michelin.com/api/public/content/554e24ecca404ace8dd6779392a77008.jpg",
+      "identity": "Exact MICHELIN region/city/restaurant path and normalized display name.",
+      "availability": {
+        "checked": "2026-10-27",
+        "http_status": 200,
+        "width": 1200,
+        "height": 800
+      }
+    },
+    "occitanie/cuzance_1492528/restaurant/l-intemporel-1251357": {
+      "page": "https://guide.michelin.com/gb/en/occitanie/cuzance_1492528/restaurant/l-intemporel-1251357",
+      "title": "L'Intemporel",
+      "label": "Starter - L'Intemporel",
+      "image": "https://prod-pics.guide.michelin.com/api/public/content/178d64eb3c194ad5a059298813607364.jpeg",
+      "identity": "Exact MICHELIN region/city/restaurant path and normalized display name.",
+      "availability": {
+        "checked": "2026-10-27",
+        "http_status": 200,
+        "width": 1200,
+        "height": 800
+      }
+    },
+    "occitanie/toulouse/restaurant/l-alouette-1196373": {
+      "page": "https://guide.michelin.com/gb/en/occitanie/toulouse/restaurant/l-alouette-1196373",
+      "title": "L'alouette",
+      "label": "Interior - L'alouette",
+      "image": "https://prod-pics.guide.michelin.com/api/public/content/42c5fee6a30341e19b1a4253981ac3be.jpeg",
+      "identity": "Exact MICHELIN region/city/restaurant path and normalized display name.",
+      "availability": {
+        "checked": "2026-10-27",
+        "http_status": 200,
+        "width": 1200,
+        "height": 800
+      }
+    },
+    "lombardia/villa-d-adda_1810616/restaurant/la-corte-del-noce": {
+      "page": "https://guide.michelin.com/gb/en/lombardia/villa-d-adda_1810616/restaurant/la-corte-del-noce",
+      "title": "La Corte del Noce",
+      "label": "Interior - La Corte del Noce",
+      "image": "https://prod-pics.guide.michelin.com/api/public/content/c04b4b59214f4e50bb4d6a8073000d8d.jpg",
+      "identity": "Exact MICHELIN region/city/restaurant path and normalized display name.",
+      "availability": {
+        "checked": "2026-10-27",
+        "http_status": 200,
+        "width": 1200,
+        "height": 800
+      }
+    },
+    "catalunya/palamos/restaurant/la-cort-del-mos": {
+      "page": "https://guide.michelin.com/gb/en/catalunya/palamos/restaurant/la-cort-del-mos",
+      "title": "La Cort del Mos",
+      "label": "Interior - La Cort del Mos",
+      "image": "https://prod-pics.guide.michelin.com/api/public/content/422c8e6646584349816bad7c9055b77f.jpg",
+      "identity": "Exact MICHELIN region/city/restaurant path and normalized display name.",
+      "availability": {
+        "checked": "2026-10-27",
+        "http_status": 200,
+        "width": 1200,
+        "height": 800
+      }
+    },
+    "toscana/marina-di-massa/restaurant/la-peniche": {
+      "page": "https://guide.michelin.com/gb/en/toscana/marina-di-massa/restaurant/la-peniche",
+      "title": "La Péniche",
+      "label": "Interior - La Péniche",
+      "image": "https://prod-pics.guide.michelin.com/api/public/content/e5735f4e7ecc43298dd7ebc9f7eab62d.jpg",
+      "identity": "Exact MICHELIN region/city/restaurant path and normalized display name.",
+      "availability": {
+        "checked": "2026-10-27",
+        "http_status": 200,
+        "width": 1200,
+        "height": 800
+      }
+    },
+    "bretagne/rennes/restaurant/la-table-de-balthazar": {
+      "page": "https://guide.michelin.com/gb/en/bretagne/rennes/restaurant/la-table-de-balthazar",
+      "title": "La Table de Balthazar",
+      "label": "Interior - La Table de Balthazar",
+      "image": "https://prod-pics.guide.michelin.com/api/public/content/319b14bf63874a4f80fbeffd4068fdd0.jpeg",
+      "identity": "Exact MICHELIN region/city/restaurant path and normalized display name.",
+      "availability": {
+        "checked": "2026-10-27",
+        "http_status": 200,
+        "width": 1200,
+        "height": 800
+      }
+    },
+    "khon-kaen-region/khon-kaen/restaurant/lom-kaow": {
+      "page": "https://guide.michelin.com/gb/en/khon-kaen-region/khon-kaen/restaurant/lom-kaow",
+      "title": "Lom Kaow",
+      "label": "Main dish - Lom Kaow",
+      "image": "https://prod-pics.guide.michelin.com/api/public/content/3c9f1596cfe34bccbf0f8816aef36a86.jpeg",
+      "identity": "Exact MICHELIN region/city/restaurant path and normalized display name.",
+      "availability": {
+        "checked": "2026-10-27",
+        "http_status": 200,
+        "width": 1200,
+        "height": 800
+      }
+    },
+    "greater-london/london/restaurant/mrbl": {
+      "page": "https://guide.michelin.com/gb/en/greater-london/london/restaurant/mrbl",
+      "title": "MRBL",
+      "label": "Interior - MRBL",
+      "image": "https://prod-pics.guide.michelin.com/api/public/content/b0d9b069a4b44c8ba9a3e89c1dc467e7.jpeg",
+      "identity": "Exact MICHELIN region/city/restaurant path and normalized display name.",
+      "availability": {
+        "checked": "2026-10-27",
+        "http_status": 200,
+        "width": 1200,
+        "height": 800
+      }
+    },
+    "appenzell-innerrhoden/gonten/restaurant/lowenstobe": {
+      "page": "https://guide.michelin.com/gb/en/appenzell-innerrhoden/gonten/restaurant/lowenstobe",
+      "title": "Löwenstobe",
+      "label": "Interior - Löwenstobe",
+      "image": "https://prod-pics.guide.michelin.com/api/public/content/a5f8c748fd6b4d96b3b15181754c0bd7.jpeg",
+      "identity": "Exact MICHELIN region/city/restaurant path and normalized display name.",
+      "availability": {
+        "checked": "2026-10-27",
+        "http_status": 200,
+        "width": 1200,
+        "height": 800
+      }
+    },
+    "guangdong-province/shenzhen_1030672/restaurant/ning-bo-jiu-jia": {
+      "page": "https://guide.michelin.com/gb/en/guangdong-province/shenzhen_1030672/restaurant/ning-bo-jiu-jia",
+      "title": "Ning Bo Jiu Jia",
+      "label": "Main dish - Ning Bo Jiu Jia",
+      "image": "https://prod-pics.guide.michelin.com/api/public/content/8d95b7add9b84075b3d30dd65e3679cd.jpeg",
+      "identity": "Exact MICHELIN region/city/restaurant path and normalized display name.",
+      "availability": {
+        "checked": "2026-10-27",
+        "http_status": 200,
+        "width": 1200,
+        "height": 800
+      }
+    },
+    "campania/paestum/restaurant/osteria-arbustico": {
+      "page": "https://guide.michelin.com/gb/en/campania/paestum/restaurant/osteria-arbustico",
+      "title": "Osteria Arbustico",
+      "label": "Interior - Osteria Arbustico",
+      "image": "https://prod-pics.guide.michelin.com/api/public/content/f53362b98abc446f933fc30007b60778.jpeg",
+      "identity": "Exact MICHELIN region/city/restaurant path and normalized display name.",
+      "availability": {
+        "checked": "2026-10-27",
+        "http_status": 200,
+        "width": 1200,
+        "height": 800
+      }
+    },
+    "lombardia/milano/restaurant/pepe-barra-italiana": {
+      "page": "https://guide.michelin.com/gb/en/lombardia/milano/restaurant/pepe-barra-italiana",
+      "title": "PEPE Barra Italiana",
+      "label": "Interior - PEPE Barra Italiana",
+      "image": "https://prod-pics.guide.michelin.com/api/public/content/97ceb9f2d374486e98c6b8326fcbdd1e.jpg",
+      "identity": "Exact MICHELIN region/city/restaurant path and normalized display name.",
+      "availability": {
+        "checked": "2026-10-27",
+        "http_status": 200,
+        "width": 1200,
+        "height": 800
+      }
+    },
+    "nordrhein-westfalen/bottrop/restaurant/rosa": {
+      "page": "https://guide.michelin.com/gb/en/nordrhein-westfalen/bottrop/restaurant/rosa",
+      "title": "ROSA",
+      "label": "Main dish - ROSA",
+      "image": "https://prod-pics.guide.michelin.com/api/public/content/d5d7354c91ec4d27aa3e86ed1f0d90e2.jpg",
+      "identity": "Exact MICHELIN region/city/restaurant path and normalized display name.",
+      "availability": {
+        "checked": "2026-10-27",
+        "http_status": 200,
+        "width": 1200,
+        "height": 800
+      }
+    },
+    "devon/lynton_1750131/restaurant/restaurant-kensington": {
+      "page": "https://guide.michelin.com/gb/en/devon/lynton_1750131/restaurant/restaurant-kensington",
+      "title": "Restaurant Kensington",
+      "label": "Interior - Restaurant Kensington",
+      "image": "https://prod-pics.guide.michelin.com/api/public/content/cd9812a5906d4156a6f1afd1174b5692.png",
+      "identity": "Exact MICHELIN region/city/restaurant path and normalized display name.",
+      "availability": {
+        "checked": "2026-10-27",
+        "http_status": 200,
+        "width": 1200,
+        "height": 800
+      }
+    },
+    "guangdong-province/shenzhen_1030672/restaurant/shang-garden-1249950": {
+      "page": "https://guide.michelin.com/gb/en/guangdong-province/shenzhen_1030672/restaurant/shang-garden-1249950",
+      "title": "Shang Garden",
+      "label": "Main dish - Shang Garden",
+      "image": "https://prod-pics.guide.michelin.com/api/public/content/4058aa7ec0ae4a348a93b420c6d8ec90.jpg",
+      "identity": "Exact MICHELIN region/city/restaurant path and normalized display name.",
+      "availability": {
+        "checked": "2026-10-27",
+        "http_status": 200,
+        "width": 1200,
+        "height": 800
+      }
+    },
+    "arizona/scottsdale_2875755/restaurant/shinbay": {
+      "page": "https://guide.michelin.com/gb/en/arizona/scottsdale_2875755/restaurant/shinbay",
+      "title": "ShinBay",
+      "label": "Interior - ShinBay",
+      "image": "https://prod-pics.guide.michelin.com/api/public/content/54ee378f515e4ed9bfae88e235ce121e.png",
+      "identity": "Exact MICHELIN region/city/restaurant path and normalized display name.",
+      "availability": {
+        "checked": "2026-10-27",
+        "http_status": 200,
+        "width": 1200,
+        "height": 800
+      }
+    },
+    "guangdong-province/shenzhen_1030672/restaurant/shoku-tei": {
+      "page": "https://guide.michelin.com/gb/en/guangdong-province/shenzhen_1030672/restaurant/shoku-tei",
+      "title": "Shoku-tei",
+      "label": "Interior - Shoku-tei",
+      "image": "https://prod-pics.guide.michelin.com/api/public/content/c57edc385865467a843bde176063ffac.jpeg",
+      "identity": "Exact MICHELIN region/city/restaurant path and normalized display name.",
+      "availability": {
+        "checked": "2026-10-27",
+        "http_status": 200,
+        "width": 1200,
+        "height": 800
+      }
+    },
+    "guangdong-province/shenzhen_1030672/restaurant/summer-palace-1251117": {
+      "page": "https://guide.michelin.com/gb/en/guangdong-province/shenzhen_1030672/restaurant/summer-palace-1251117",
+      "title": "Summer Palace",
+      "label": "Interior - Summer Palace",
+      "image": "https://prod-pics.guide.michelin.com/api/public/content/ab220d093c4a4bf399c1b0ef85e673c0.jpg",
+      "identity": "Exact MICHELIN region/city/restaurant path and normalized display name.",
+      "availability": {
+        "checked": "2026-10-27",
+        "http_status": 200,
+        "width": 1200,
+        "height": 800
+      }
+    },
+    "utah/salt-lake-city_2960177/restaurant/star-of-india": {
+      "page": "https://guide.michelin.com/gb/en/utah/salt-lake-city_2960177/restaurant/star-of-india",
+      "title": "Star of India",
+      "label": "Main dish - Star of India",
+      "image": "https://prod-pics.guide.michelin.com/api/public/content/dda6e847959046669d57eeba9dc2a6dd.jpeg",
+      "identity": "Exact MICHELIN region/city/restaurant path and normalized display name.",
+      "availability": {
+        "checked": "2026-10-27",
+        "http_status": 200,
+        "width": 1200,
+        "height": 800
+      }
+    },
+    "tokyo-region/tokyo/restaurant/sushi-kiraku": {
+      "page": "https://guide.michelin.com/gb/en/tokyo-region/tokyo/restaurant/sushi-kiraku",
+      "title": "Sushi Kiraku",
+      "label": "Interior - Sushi Kiraku",
+      "image": "https://prod-pics.guide.michelin.com/api/public/content/13c9cc8acce547f38d60207732b2e7c4.jpeg",
+      "identity": "Exact MICHELIN region/city/restaurant path and normalized display name.",
+      "availability": {
+        "checked": "2026-10-27",
+        "http_status": 200,
+        "width": 1200,
+        "height": 800
+      }
+    },
+    "metro-manila/makati-city_2329358/restaurant/super-uncle-claypot-makati": {
+      "page": "https://guide.michelin.com/gb/en/metro-manila/makati-city_2329358/restaurant/super-uncle-claypot-makati",
+      "title": "Super Uncle Claypot (Makati)",
+      "label": "Interior - Super Uncle Claypot (Makati)",
+      "image": "https://prod-pics.guide.michelin.com/api/public/content/552dcae5e2ba4f66854957e44a122881.jpg",
+      "identity": "Exact MICHELIN region/city/restaurant path and normalized display name.",
+      "availability": {
+        "checked": "2026-10-27",
+        "http_status": 200,
+        "width": 1200,
+        "height": 800
+      }
+    },
+    "toscana/firenze/restaurant/terrae-by-iside-de-cesare": {
+      "page": "https://guide.michelin.com/gb/en/toscana/firenze/restaurant/terrae-by-iside-de-cesare",
+      "title": "Terrae by Iside De Cesare",
+      "label": "Interior - Terrae by Iside De Cesare",
+      "image": "https://prod-pics.guide.michelin.com/api/public/content/629c8e0e7fb24633b76f1cbbf9c263de.jpg",
+      "identity": "Exact MICHELIN region/city/restaurant path and normalized display name.",
+      "availability": {
+        "checked": "2026-10-27",
+        "http_status": 200,
+        "width": 1200,
+        "height": 800
+      }
+    },
+    "guangdong-province/shenzhen_1030672/restaurant/tian-yu-shui": {
+      "page": "https://guide.michelin.com/gb/en/guangdong-province/shenzhen_1030672/restaurant/tian-yu-shui",
+      "title": "Tian Yu Shui",
+      "label": "Interior - Tian Yu Shui",
+      "image": "https://prod-pics.guide.michelin.com/api/public/content/5eef5885b393408d9de21fd6627c45c6.jpeg",
+      "identity": "Exact MICHELIN region/city/restaurant path and normalized display name.",
+      "availability": {
+        "checked": "2026-10-27",
+        "http_status": 200,
+        "width": 1200,
+        "height": 800
+      }
+    },
+    "zurich-region/zurich/restaurant/weisses-rossli": {
+      "page": "https://guide.michelin.com/gb/en/zurich-region/zurich/restaurant/weisses-rossli",
+      "title": "Weisses Rössli",
+      "label": "Dessert - Weisses Rössli",
+      "image": "https://prod-pics.guide.michelin.com/api/public/content/182429d1e13d40f49f79b738abfee55c.jpg",
+      "identity": "Exact MICHELIN region/city/restaurant path and normalized display name.",
+      "availability": {
+        "checked": "2026-10-27",
+        "http_status": 200,
+        "width": 1200,
+        "height": 800
+      }
+    },
+    "guangdong-province/shenzhen_1030672/restaurant/zhuo-yue-xuan": {
+      "page": "https://guide.michelin.com/gb/en/guangdong-province/shenzhen_1030672/restaurant/zhuo-yue-xuan",
+      "title": "Zhuo Yue Xuan",
+      "label": "Interior - Zhuo Yue Xuan",
+      "image": "https://prod-pics.guide.michelin.com/api/public/content/f38ee6fe89d94fd8974e0cee90df1d9d.jpeg",
+      "identity": "Exact MICHELIN region/city/restaurant path and normalized display name.",
+      "availability": {
+        "checked": "2026-10-27",
+        "http_status": 200,
+        "width": 1200,
+        "height": 800
+      }
+    },
+    "greater-london/london/restaurant/chez-rose": {
+      "page": "https://guide.michelin.com/gb/en/greater-london/london/restaurant/chez-rose",
+      "title": "chez Rose",
+      "label": "Main dish - chez Rose",
+      "image": "https://prod-pics.guide.michelin.com/api/public/content/b7ebffb86008427fad643c8028393f65.jpeg",
+      "identity": "Exact MICHELIN region/city/restaurant path and normalized display name.",
+      "availability": {
+        "checked": "2026-10-27",
+        "http_status": 200,
+        "width": 1200,
+        "height": 800
+      }
+    },
+    "chengdu-municipality/chengdu/restaurant/focus-by-bill-yue": {
+      "page": "https://guide.michelin.com/en/chengdu-municipality/chengdu/restaurant/focus-by-bill-yue",
+      "title": "Focus by Bill Yue",
+      "label": "Interior - Focus by Bill Yue",
+      "image": "https://prod-pics.guide.michelin.com/api/public/content/5f528eae7d174be89d984f52c7f5a463.jpeg",
+      "identity": "Exact MICHELIN region/city/restaurant path and normalized display name.",
+      "availability": {
+        "checked": "2026-10-27",
+        "http_status": 200,
+        "width": 1200,
+        "height": 800
+      }
+    },
+    "campania/sorrento/restaurant/torre-del-saracino": {
+      "page": "https://guide.michelin.com/gb/en/campania/sorrento/restaurant/torre-del-saracino?millesime=um3g85",
+      "title": "Torre del Saracino",
+      "label": "Starter - Torre del Saracino",
+      "image": "https://prod-pics.guide.michelin.com/api/public/content/17a03048e0674ddabaf9b3f85415019f.jpg",
+      "identity": "Exact MICHELIN region/city/restaurant path and normalized display name.",
+      "availability": {
+        "checked": "2026-10-27",
+        "http_status": 200,
+        "width": 1200,
+        "height": 800
+      }
+    },
+    "baden-wurttemberg/eggenstein-leopoldshafen/restaurant/das-garbo-im-lowen": {
+      "page": "https://guide.michelin.com/sg/zh_CN/baden-wurttemberg/eggenstein-leopoldshafen/restaurant/das-garbo-im-lowen",
+      "title": "Das garbo zum Löwen",
+      "label": "",
+      "image": "https://axwwgrkdco.cloudimg.io/v7/__gmpics3__/e632fa59ac554280ba201cc5d2508b6c.jpeg",
+      "identity": "Exact MICHELIN region/city/restaurant path and normalized display name.",
+      "availability": {
+        "checked": "2026-10-27",
+        "http_status": 200,
+        "width": 1200,
+        "height": 800
+      }
+    },
+    "ile-de-france/paris/restaurant/la-grande-du-plaza-athenee": {
+      "page": "https://guide.michelin.com/us/en/ile-de-france/paris/restaurant/la-grande-du-plaza-athenee",
+      "title": "La Grande Table du Plaza Athénée",
+      "label": "Interior - La Grande Table du Plaza Athénée",
+      "image": "https://prod-pics.guide.michelin.com/api/public/content/81e4a98909984b19bbe355608691f590.jpeg",
+      "identity": "Exact MICHELIN region/city/restaurant path and normalized display name.",
+      "availability": {
+        "checked": "2026-10-27",
+        "http_status": 200,
+        "width": 1200,
+        "height": 800
+      }
+    },
+    "centre-val-de-loire/ardon/restaurant/la-table-christophe-hay": {
+      "page": "https://guide.michelin.com/en/centre-val-de-loire/ardon/restaurant/la-table-christophe-hay",
+      "title": "La Table - Christophe Hay",
+      "label": "Main dish - La Table - Christophe Hay",
+      "image": "https://prod-pics.guide.michelin.com/api/public/content/40a0b19c1d024ddcb85b956325a13dd0.jpg",
+      "identity": "Exact MICHELIN region/city/restaurant path and normalized display name.",
+      "availability": {
+        "checked": "2026-10-27",
+        "http_status": 200,
+        "width": 1200,
+        "height": 800
+      }
+    },
+    "principado-de-asturias/llanes/restaurant/el-retiro": {
+      "page": "https://guide.michelin.com/es/es/principado-de-asturias/llanes/restaurante/el-retiro",
+      "title": "El Retiro",
+      "label": "Interior - El Retiro",
+      "image": "https://prod-pics.guide.michelin.com/api/public/content/6e18565c4a364872b169617f0c0add09.jpeg",
+      "identity": "Exact MICHELIN region/city/restaurant path and normalized display name.",
+      "availability": {
+        "checked": "2026-10-27",
+        "http_status": 200,
+        "width": 1200,
+        "height": 800
+      }
+    },
+    "nevada/las-vegas_2935077/restaurant/e-by-jose-andres": {
+      "page": "https://guide.michelin.com/gb/en/nevada/las-vegas_2935077/restaurant/e-by-jose-andres?millesime=prioritizedtocompletedata",
+      "title": "é by José Andrés",
+      "label": "Interior - é by José Andrés",
+      "image": "https://prod-pics.guide.michelin.com/api/public/content/968616ed337b414d80d8a43f91384c2d.jpg",
+      "identity": "Exact MICHELIN region/city/restaurant path and normalized display name.",
+      "availability": {
+        "checked": "2026-10-27",
+        "http_status": 200,
+        "width": 1200,
+        "height": 800
+      }
+    },
+    "nevada/las-vegas_2935077/restaurant/guy-savoy-las-vegas": {
+      "page": "https://guide.michelin.com/en/nevada/las-vegas_2935077/restaurant/guy-savoy-las-vegas",
+      "title": "Restaurant Guy Savoy",
+      "label": "Interior - Restaurant Guy Savoy",
+      "image": "https://prod-pics.guide.michelin.com/api/public/content/438e39881d304f57bb98fac3a2b96d87.jpg",
+      "identity": "Exact MICHELIN region/city/restaurant path and normalized display name.",
+      "availability": {
+        "checked": "2026-10-27",
+        "http_status": 200,
+        "width": 1200,
+        "height": 800
+      }
+    },
+    "chengdu-municipality/chengdu/restaurant/ban-tian-te-se-mian": {
+      "page": "https://guide.michelin.com/gb/en/chengdu-municipality/chengdu/restaurant/ban-tian-te-se-mian?millesime=um3g85",
+      "title": "Ban Tian Te Se Mian",
+      "label": "Main dish - Ban Tian Te Se Mian",
+      "image": "https://prod-pics.guide.michelin.com/api/public/content/18a930099c564a7c8228946b43afaee4.jpeg",
+      "identity": "Exact MICHELIN region/city/restaurant path and normalized display name.",
+      "availability": {
+        "checked": "2026-10-27",
+        "http_status": 200,
+        "width": 1200,
+        "height": 800
+      }
+    },
+    "chengdu-municipality/chengdu/restaurant/da-ya-ji": {
+      "page": "https://guide.michelin.com/gb/en/chengdu-municipality/chengdu/restaurant/da-ya-ji?millesime=df548b",
+      "title": "Da Ya Ji",
+      "label": "Interior - Da Ya Ji",
+      "image": "https://prod-pics.guide.michelin.com/api/public/content/ad2a5270be5a4180a33a4d9ec129af3b.jpeg",
+      "identity": "Exact MICHELIN region/city/restaurant path and normalized display name.",
+      "availability": {
+        "checked": "2026-10-27",
+        "http_status": 200,
+        "width": 1200,
+        "height": 800
+      }
+    },
+    "nevada/las-vegas_2935077/restaurant/china-poblano": {
+      "page": "https://guide.michelin.com/us/en/nevada/las-vegas_2935077/restaurant/china-poblano",
+      "title": "China Poblano",
+      "label": "Interior - China Poblano",
+      "image": "https://prod-pics.guide.michelin.com/api/public/content/5c143d9fb2824d89ad832a155509cb7d.jpg",
+      "identity": "Exact MICHELIN region/city/restaurant path and normalized display name.",
+      "availability": {
+        "checked": "2026-10-27",
+        "http_status": 200,
+        "width": 1200,
+        "height": 800
+      }
+    },
+    "arizona/phoenix_2875757/restaurant/huarachis-taqueria": {
+      "page": "https://guide.michelin.com/us/en/arizona/phoenix_2875757/restaurant/huarachis-taqueria",
+      "title": "Huarachis Taqueria",
+      "label": "Main dish - Huarachis Taqueria",
+      "image": "https://prod-pics.guide.michelin.com/api/public/content/55c4ef50f26e4bf591af1cee3909a6da.jpg",
+      "identity": "Exact MICHELIN region/city/restaurant path and normalized display name.",
+      "availability": {
+        "checked": "2026-10-27",
+        "http_status": 200,
+        "width": 1200,
+        "height": 800
+      }
+    },
+    "ontario/toronto/restaurant/golden-horseshoe-barbecue": {
+      "page": "https://guide.michelin.com/gb/en/ontario/toronto/restaurant/golden-horseshoe-barbecue?millesime=df548b",
+      "title": "Golden Horseshoe Barbecue",
+      "label": "Interior - Golden Horseshoe Barbecue",
+      "image": "https://prod-pics.guide.michelin.com/api/public/content/756d13c462324d8b83fd6128f1afa8b5.jpeg",
+      "identity": "Exact MICHELIN region/city/restaurant path and normalized display name.",
+      "availability": {
+        "checked": "2026-10-27",
+        "http_status": 200,
+        "width": 1200,
+        "height": 800
+      }
+    },
+    "chengdu-municipality/chengdu/restaurant/gui-tian-yuan-zi": {
+      "page": "https://guide.michelin.com/gb/en/chengdu-municipality/chengdu/restaurant/gui-tian-yuan-zi?millesime=prioritizedtocompletedata",
+      "title": "Gui Tian Yuan Zi",
+      "label": "Interior - Gui Tian Yuan Zi",
+      "image": "https://prod-pics.guide.michelin.com/api/public/content/ced90b79aafc4e6daff71f897a4b33e9.jpeg",
+      "identity": "Exact MICHELIN region/city/restaurant path and normalized display name.",
+      "availability": {
+        "checked": "2026-10-27",
+        "http_status": 200,
+        "width": 1200,
+        "height": 800
+      }
+    },
+    "arizona/phoenix_2875757/restaurant/little-miss-bbq": {
+      "page": "https://guide.michelin.com/us/en/arizona/phoenix_2875757/restaurant/little-miss-bbq",
+      "title": "Little Miss BBQ",
+      "label": "Main dish - Little Miss BBQ",
+      "image": "https://prod-pics.guide.michelin.com/api/public/content/500e126da1e7435e846acfab7709c20d.jpeg",
+      "identity": "Exact MICHELIN region/city/restaurant path and normalized display name.",
+      "availability": {
+        "checked": "2026-10-27",
+        "http_status": 200,
+        "width": 1200,
+        "height": 800
+      }
+    },
+    "ontario/saint-catharines_1245759/restaurant/les-incompetents": {
+      "page": "https://guide.michelin.com/au/en/ontario/saint-catharines_1245759/restaurant/les-incompetents",
+      "title": "Les Incompetents",
+      "label": "Main dish - Les Incompetents",
+      "image": "https://prod-pics.guide.michelin.com/api/public/content/2bfe5c782a8c4bb1af5c7beb07791bae.jpeg",
+      "identity": "Exact MICHELIN region/city/restaurant path and normalized display name.",
+      "availability": {
+        "checked": "2026-10-27",
+        "http_status": 200,
+        "width": 1200,
+        "height": 800
+      }
+    },
+    "arizona/phoenix_2875757/restaurant/lom-wong": {
+      "page": "https://guide.michelin.com/us/en/arizona/phoenix_2875757/restaurant/lom-wong",
+      "title": "Lom Wong",
+      "label": "Interior - Lom Wong",
+      "image": "https://prod-pics.guide.michelin.com/api/public/content/8dfe74486a57481ea4ad503411b4a1db.jpeg",
+      "identity": "Exact MICHELIN region/city/restaurant path and normalized display name.",
+      "availability": {
+        "checked": "2026-10-27",
+        "http_status": 200,
+        "width": 1200,
+        "height": 800
+      }
+    },
+    "chengdu-municipality/chengdu/restaurant/no-37-lao-yuan-ba-chao-shou": {
+      "page": "https://guide.michelin.com/tw/en/chengdu-municipality/chengdu/restaurant/no-37-lao-yuan-ba-chao-shou",
+      "title": "No.37 Lao Yuan Ba Chao Shou",
+      "label": "Main dish - No.37 Lao Yuan Ba Chao Shou",
+      "image": "https://prod-pics.guide.michelin.com/api/public/content/d4cc013c413d4a09a6e34e89fb0f4a8d.jpeg",
+      "identity": "Exact MICHELIN region/city/restaurant path and normalized display name.",
+      "availability": {
+        "checked": "2026-10-27",
+        "http_status": 200,
+        "width": 1200,
+        "height": 800
+      }
+    },
+    "colorado/denver_1261491/restaurant/pig-and-tiger": {
+      "page": "https://guide.michelin.com/us/en/colorado/denver_1261491/restaurant/pig-and-tiger",
+      "title": "Pig and Tiger",
+      "label": "Interior - Pig and Tiger",
+      "image": "https://prod-pics.guide.michelin.com/api/public/content/befe207594684647b6351cc817575bf7.jpeg",
+      "identity": "Exact MICHELIN region/city/restaurant path and normalized display name.",
+      "availability": {
+        "checked": "2026-10-27",
+        "http_status": 200,
+        "width": 1200,
+        "height": 800
+      }
+    },
+    "chengdu-municipality/chengdu/restaurant/ren-ren-shui-jiao": {
+      "page": "https://guide.michelin.com/gb/en/chengdu-municipality/chengdu/restaurant/ren-ren-shui-jiao?millesime=1q07ft%5C",
+      "title": "Ren Ren Shui Jiao",
+      "label": "Main dish - Ren Ren Shui Jiao",
+      "image": "https://prod-pics.guide.michelin.com/api/public/content/0a6f32b3412a4fccab8a210a545e7950.jpeg",
+      "identity": "Exact MICHELIN region/city/restaurant path and normalized display name.",
+      "availability": {
+        "checked": "2026-10-27",
+        "http_status": 200,
+        "width": 1200,
+        "height": 800
+      }
+    },
+    "ontario/jordan_7770321/restaurant/rpm-bakehouse": {
+      "page": "https://guide.michelin.com/gb/en/ontario/jordan_7770321/restaurant/rpm-bakehouse?millesime=prioritizedtocompletedata",
+      "title": "RPM Bakehouse",
+      "label": "Interior - RPM Bakehouse",
+      "image": "https://prod-pics.guide.michelin.com/api/public/content/b3b610c8c8fc43a0a871497f363cf542.jpeg",
+      "identity": "Exact MICHELIN region/city/restaurant path and normalized display name.",
+      "availability": {
+        "checked": "2026-10-27",
+        "http_status": 200,
+        "width": 1200,
+        "height": 800
+      }
+    },
+    "colorado/denver_1261491/restaurant/rougarou": {
+      "page": "https://guide.michelin.com/us/en/colorado/denver_1261491/restaurant/rougarou?millesime=km572e",
+      "title": "Rougarou",
+      "label": "Interior - Rougarou",
+      "image": "https://prod-pics.guide.michelin.com/api/public/content/c6f28aaf9093482182ea8a2151f0534a.jpeg",
+      "identity": "Exact MICHELIN region/city/restaurant path and normalized display name.",
+      "availability": {
+        "checked": "2026-10-27",
+        "http_status": 200,
+        "width": 1200,
+        "height": 800
+      }
+    },
+    "guangdong-province/guangzhou/restaurant/si-mao-cai-guan": {
+      "page": "https://guide.michelin.com/gb/en/guangdong-province/guangzhou/restaurant/si-mao-cai-guan?millesime=km573e",
+      "title": "Si Mao Cai Guan",
+      "label": "Main dish - Si Mao Cai Guan",
+      "image": "https://prod-pics.guide.michelin.com/api/public/content/f291117f5808428ab6b23f61140e6e37.jpeg",
+      "identity": "Exact MICHELIN region/city/restaurant path and normalized display name.",
+      "availability": {
+        "checked": "2026-10-27",
+        "http_status": 200,
+        "width": 1200,
+        "height": 800
+      }
+    },
+    "arizona/phoenix_2875757/restaurant/valentine": {
+      "page": "https://guide.michelin.com/us/en/arizona/phoenix_2875757/restaurant/valentine",
+      "title": "Valentine",
+      "label": "Interior - Valentine",
+      "image": "https://prod-pics.guide.michelin.com/api/public/content/b015c14b029a488e8c1180cf17deb2cf.jpg",
+      "identity": "Exact MICHELIN region/city/restaurant path and normalized display name.",
+      "availability": {
+        "checked": "2026-10-27",
+        "http_status": 200,
+        "width": 1200,
+        "height": 800
+      }
+    },
+    "ontario/toronto/restaurant/the-lunch-lady-of-saigon": {
+      "page": "https://guide.michelin.com/gb/en/ontario/toronto/restaurant/the-lunch-lady-of-saigon?millesime=df548b",
+      "title": "The Lunch Lady of Saigon",
+      "label": "Interior - The Lunch Lady of Saigon",
+      "image": "https://prod-pics.guide.michelin.com/api/public/content/dec41342757347ae9e11e8483a43061d.jpeg",
+      "identity": "Exact MICHELIN region/city/restaurant path and normalized display name.",
+      "availability": {
+        "checked": "2026-10-27",
+        "http_status": 200,
+        "width": 1200,
+        "height": 800
+      }
+    },
+    "chengdu-municipality/chengdu/restaurant/xiao-you-shao-mai-qiangyang": {
+      "page": "https://guide.michelin.com/au/en/chengdu-municipality/chengdu/restaurant/xiao-you-shao-mai-qiangyang",
+      "title": "Xiao You Shao Mai (Qingyang)",
+      "label": "Main dish - Xiao You Shao Mai (Qingyang)",
+      "image": "https://prod-pics.guide.michelin.com/api/public/content/aa707f36e07442dc9cf9b826cec60ecb.jpeg",
+      "identity": "Exact MICHELIN region/city/restaurant path and normalized display name.",
+      "availability": {
+        "checked": "2026-10-27",
+        "http_status": 200,
+        "width": 1200,
+        "height": 800
+      }
+    },
+    "guangdong-province/shenzhen_1030672/restaurant/xin-hu-cun-cu-rou-longhua-jianshe-road": {
+      "page": "https://guide.michelin.com/tw/zh_TW/guangdong-province/shenzhen_1030672/restaurant/xin-hu-cun-cu-rou-longhua-jianshe-road",
+      "title": "Xin Hu Cun Cu Rou (Longhua Jianshe Road)",
+      "label": "室內 - Xin Hu Cun Cu Rou (Longhua Jianshe Road)",
+      "image": "https://prod-pics.guide.michelin.com/api/public/content/a11fa607cb394fd3844b66d203fcb143.jpeg",
+      "identity": "Exact MICHELIN region/city/restaurant path and normalized display name.",
+      "availability": {
+        "checked": "2026-10-27",
+        "http_status": 200,
+        "width": 1200,
+        "height": 800
+      }
+    },
+    "macau-region/macau/restaurant/002-mohinga": {
+      "page": "https://guide.michelin.com/gb/en/macau-region/macau/restaurant/002-mohinga?millesime=prioritizedtocompletedata",
+      "title": "002 Mohinga",
+      "label": "Main dish - 002 Mohinga",
+      "image": "https://prod-pics.guide.michelin.com/api/public/content/ea26655322414470ac96b26630bb63f8.jpeg",
+      "identity": "Exact MICHELIN region/city/restaurant path and normalized display name.",
+      "availability": {
+        "checked": "2026-10-27",
+        "http_status": 200,
+        "width": 1200,
+        "height": 800
+      }
+    },
+    "ontario/toronto/restaurant/156-onefivesix": {
+      "page": "https://guide.michelin.com/kr/en/ontario/toronto/restaurant/156-onefivesix",
+      "title": "156 ONEFIVESIX",
+      "label": "Starter - 156 ONEFIVESIX",
+      "image": "https://prod-pics.guide.michelin.com/api/public/content/128c1046340f426d96afb87421f29044.jpeg",
+      "identity": "Exact MICHELIN region/city/restaurant path and normalized display name.",
+      "availability": {
+        "checked": "2026-10-27",
+        "http_status": 200,
+        "width": 1200,
+        "height": 800
+      }
+    },
+    "veneto/cortina-d-ampezzo/restaurant/1224-restaurant-cortina": {
+      "page": "https://guide.michelin.com/au/en/veneto/cortina-d-ampezzo/restaurant/1224-restaurant-cortina",
+      "title": "1224 Restaurant Cortina",
+      "label": "Interior - 1224 Restaurant Cortina",
+      "image": "https://prod-pics.guide.michelin.com/api/public/content/24a8be3b046643318a4629e0b660dd8f.jpg",
+      "identity": "Exact MICHELIN region/city/restaurant path and normalized display name.",
+      "availability": {
+        "checked": "2026-10-27",
+        "http_status": 200,
+        "width": 1200,
+        "height": 800
+      }
+    },
+    "pais-vasco/es-donostia-san-sebastian/restaurant/apar": {
+      "page": "https://guide.michelin.com/es/es/pais-vasco/es-donostia-san-sebastian/restaurante/apar",
+      "title": "APAR",
+      "label": "Plato - APAR",
+      "image": "https://prod-pics.guide.michelin.com/api/public/content/b8191660acb64b9f8c0330b922c304cf.jpg",
+      "identity": "Exact MICHELIN region/city/restaurant path and normalized display name.",
+      "availability": {
+        "checked": "2026-10-27",
+        "http_status": 200,
+        "width": 1200,
+        "height": 800
+      }
+    },
+    "galicia/betanzos/restaurant/a-artesa-da-moza-crecha": {
+      "page": "https://guide.michelin.com/gb/en/galicia/betanzos/restaurant/a-artesa-da-moza-crecha?millesime=prioritizedtocompletedata",
+      "title": "A Artesa da Moza Crecha",
+      "label": "Interior - A Artesa da Moza Crecha",
+      "image": "https://prod-pics.guide.michelin.com/api/public/content/8bdf5391a1bd42ce829614689ac3860f.jpeg",
+      "identity": "Exact MICHELIN region/city/restaurant path and normalized display name.",
+      "availability": {
+        "checked": "2026-10-27",
+        "http_status": 200,
+        "width": 1200,
+        "height": 800
+      }
+    },
+    "occitanie/montpellier/restaurant/aroc": {
+      "page": "https://guide.michelin.com/gb/en/occitanie/montpellier/restaurant/aroc?millesime=2023",
+      "title": "Aroc",
+      "label": "Interior - Aroc",
+      "image": "https://prod-pics.guide.michelin.com/api/public/content/226178c6285f441c826638ab361a8a73.jpeg",
+      "identity": "Exact MICHELIN region/city/restaurant path and normalized display name.",
+      "availability": {
+        "checked": "2026-10-27",
+        "http_status": 200,
+        "width": 1200,
+        "height": 800
+      }
+    },
+    "castilla-y-leon/valladolid/restaurant/aquarium": {
+      "page": "https://guide.michelin.com/es/es/castilla-y-leon/valladolid/restaurante/aquarium",
+      "title": "Aquarium",
+      "label": "Interior - Aquarium",
+      "image": "https://prod-pics.guide.michelin.com/api/public/content/2af0b5b7989145a8a2780193e95e2f89.jpeg",
+      "identity": "Exact MICHELIN region/city/restaurant path and normalized display name.",
+      "availability": {
+        "checked": "2026-10-27",
+        "http_status": 200,
+        "width": 1200,
+        "height": 800
+      }
+    },
+    "new-mexico/santa-fe_2934394/restaurant/arroyo-vino": {
+      "page": "https://guide.michelin.com/is/en/new-mexico/santa-fe_2934394/restaurant/arroyo-vino",
+      "title": "Arroyo Vino",
+      "label": "Main dish - Arroyo Vino",
+      "image": "https://prod-pics.guide.michelin.com/api/public/content/04c4599b246347e1a0e6aa79b9e50974.jpeg",
+      "identity": "Exact MICHELIN region/city/restaurant path and normalized display name.",
+      "availability": {
+        "checked": "2026-10-27",
+        "http_status": 200,
+        "width": 1200,
+        "height": 800
+      }
+    },
+    "extremadura/castuera_1446688/restaurant/artigi": {
+      "page": "https://guide.michelin.com/gb/en/extremadura/castuera_1446688/restaurant/artigi?millesime=prioritizedtocompletedata",
+      "title": "Artigi",
+      "label": "Interior - Artigi",
+      "image": "https://prod-pics.guide.michelin.com/api/public/content/ae058be4df3a4f75a4d0638262b8fb23.jpeg",
+      "identity": "Exact MICHELIN region/city/restaurant path and normalized display name.",
+      "availability": {
+        "checked": "2026-10-27",
+        "http_status": 200,
+        "width": 1200,
+        "height": 800
+      }
+    },
+    "sardegna/cagliari/restaurant/aurea-osteria-contemporanea": {
+      "page": "https://guide.michelin.com/gb/en/sardegna/cagliari/restaurant/aurea-osteria-contemporanea?millesime=2023",
+      "title": "Aurea Osteria Contemporanea",
+      "label": "Interior - Aurea Osteria Contemporanea",
+      "image": "https://prod-pics.guide.michelin.com/api/public/content/99f46fa2afc54bd1ad2c599697df095c.jpeg",
+      "identity": "Exact MICHELIN region/city/restaurant path and normalized display name.",
+      "availability": {
+        "checked": "2026-10-27",
+        "http_status": 200,
+        "width": 1200,
+        "height": 800
+      }
+    },
+    "ontario/toronto/restaurant/bar-ardo": {
+      "page": "https://guide.michelin.com/gb/en/ontario/toronto/restaurant/bar-ardo?millesime=df548b",
+      "title": "Bar ARDO",
+      "label": "Interior - Bar ARDO",
+      "image": "https://prod-pics.guide.michelin.com/api/public/content/accfbc1a555d4400a78f1fdd07298cda.jpeg",
+      "identity": "Exact MICHELIN region/city/restaurant path and normalized display name.",
+      "availability": {
+        "checked": "2026-10-27",
+        "http_status": 200,
+        "width": 1200,
+        "height": 800
+      }
+    },
+    "provence-alpes-cote-dazur/la-londe-les-maures_1506094/restaurant/boby": {
+      "page": "https://guide.michelin.com/us/en/provence-alpes-cote-dazur/la-londe-les-maures_1506094/restaurant/boby",
+      "title": "BOBY",
+      "label": "Starter - BOBY",
+      "image": "https://prod-pics.guide.michelin.com/api/public/content/ef66f26c9c864784ba9b43943a7d6053.jpeg",
+      "identity": "Exact MICHELIN region/city/restaurant path and normalized display name.",
+      "availability": {
+        "checked": "2026-10-27",
+        "http_status": 200,
+        "width": 1200,
+        "height": 800
+      }
+    },
+    "ontario/toronto/restaurant/bar-allegro": {
+      "page": "https://guide.michelin.com/gb/en/ontario/toronto/restaurant/bar-allegro?millesime=um3g85",
+      "title": "Bar Allegro",
+      "label": "Interior - Bar Allegro",
+      "image": "https://prod-pics.guide.michelin.com/api/public/content/1d8b728cc24e4a71925dcb72626eaaba.jpg",
+      "identity": "Exact MICHELIN region/city/restaurant path and normalized display name.",
+      "availability": {
+        "checked": "2026-10-27",
+        "http_status": 200,
+        "width": 1200,
+        "height": 800
+      }
+    },
+    "district-of-columbia/washington-dc/restaurant/bar-del-monte": {
+      "page": "https://guide.michelin.com/us/en/district-of-columbia/washington-dc/restaurant/bar-del-monte?millesime=km572e",
+      "title": "Bar del Monte",
+      "label": "Starter - Bar del Monte",
+      "image": "https://prod-pics.guide.michelin.com/api/public/content/fee1c2b279a941cc899ce677e3f6a409.jpeg",
+      "identity": "Exact MICHELIN region/city/restaurant path and normalized display name.",
+      "availability": {
+        "checked": "2026-10-27",
+        "http_status": 200,
+        "width": 1200,
+        "height": 800
+      }
+    },
+    "veneto/peschiera-del-garda_1818693/restaurant/trattoria-bella-italia-pesce": {
+      "page": "https://guide.michelin.com/gb/en/veneto/peschiera-del-garda_1818693/restaurant/trattoria-bella-italia-pesce?millesime=df548b",
+      "title": "Bella Italia Pesce",
+      "label": "Interior - Bella Italia Pesce",
+      "image": "https://prod-pics.guide.michelin.com/api/public/content/013a8eb076c4479094859c93291cc8d2.jpg",
+      "identity": "Exact MICHELIN region/city/restaurant path and normalized display name.",
+      "availability": {
+        "checked": "2026-10-27",
+        "http_status": 200,
+        "width": 1200,
+        "height": 800
+      }
+    },
+    "comunidad-de-madrid/madrid/restaurant/boccondivino-1249682": {
+      "page": "https://guide.michelin.com/gb/en/comunidad-de-madrid/madrid/restaurant/boccondivino-1249682?millesime=prioritizedtocompletedata%2F1000",
+      "title": "Boccondivino",
+      "label": "Starter - Boccondivino",
+      "image": "https://prod-pics.guide.michelin.com/api/public/content/76f2bcb4de4a40e484a1bdfe7d122b93.jpeg",
+      "identity": "Exact MICHELIN region/city/restaurant path and normalized display name.",
+      "availability": {
+        "checked": "2026-10-27",
+        "http_status": 200,
+        "width": 1200,
+        "height": 800
+      }
+    },
+    "provence-alpes-cote-dazur/saint-rmy-de-provence/restaurant/bistrot-canto-cigalo": {
+      "page": "https://guide.michelin.com/ee/en/provence-alpes-cote-dazur/saint-rmy-de-provence/restaurant/bistrot-canto-cigalo",
+      "title": "Bistrot Canto Cigalo",
+      "label": "Interior - Bistrot Canto Cigalo",
+      "image": "https://prod-pics.guide.michelin.com/api/public/content/2a430cb05b8642ec9b4184d518b29ca4.jpeg",
+      "identity": "Exact MICHELIN region/city/restaurant path and normalized display name.",
+      "availability": {
+        "checked": "2026-10-27",
+        "http_status": 200,
+        "width": 1200,
+        "height": 800
+      }
+    },
+    "new-mexico/los-ranchos-de-albuquerque_2934235/restaurant/campo-at-los-poblanos": {
+      "page": "https://guide.michelin.com/us/en/new-mexico/los-ranchos-de-albuquerque_2934235/restaurant/campo-at-los-poblanos",
+      "title": "Campo at Los Poblanos",
+      "label": "Interior - Campo at Los Poblanos",
+      "image": "https://prod-pics.guide.michelin.com/api/public/content/739855365bea402b84858235f9bce0df.jpg",
+      "identity": "Exact MICHELIN region/city/restaurant path and normalized display name.",
+      "availability": {
+        "checked": "2026-10-27",
+        "http_status": 200,
+        "width": 1200,
+        "height": 800
+      }
+    },
+    "kent/royal-tunbridge-wells/restaurant/canvas-1251962": {
+      "page": "https://guide.michelin.com/gb/en/kent/royal-tunbridge-wells/restaurant/canvas-1251962?millesime=1q07ft",
+      "title": "Canvas",
+      "label": "Interior - Canvas",
+      "image": "https://prod-pics.guide.michelin.com/api/public/content/f42f95890834442db30d7e5163ffb70a.jpeg",
+      "identity": "Exact MICHELIN region/city/restaurant path and normalized display name.",
+      "availability": {
+        "checked": "2026-10-27",
+        "http_status": 200,
+        "width": 1200,
+        "height": 800
+      }
+    },
+    "calabria/francavilla-angitola_1857441/restaurant/casa-klope-by-luigi-lepore": {
+      "page": "https://guide.michelin.com/gb/en/calabria/francavilla-angitola_1857441/restaurant/casa-klope-by-luigi-lepore?millesime=df548b",
+      "title": "Casa Klopè by Luigi Lepore",
+      "label": "Interior - Casa Klopè by Luigi Lepore",
+      "image": "https://prod-pics.guide.michelin.com/api/public/content/ec7ef40637b74a5497017a53c82c0f7b.jpg",
+      "identity": "Exact MICHELIN region/city/restaurant path and normalized display name.",
+      "availability": {
+        "checked": "2026-10-27",
+        "http_status": 200,
+        "width": 1200,
+        "height": 800
+      }
+    },
+    "colorado/boulder_1261512/restaurant/casa-juani": {
+      "page": "https://guide.michelin.com/us/en/colorado/boulder_1261512/restaurant/casa-juani?millesime=km572e",
+      "title": "Casa Juani",
+      "label": "Interior - Casa Juani",
+      "image": "https://prod-pics.guide.michelin.com/api/public/content/f11bc68d951a49bf8b1571dce68ad12d.jpeg",
+      "identity": "Exact MICHELIN region/city/restaurant path and normalized display name.",
+      "availability": {
+        "checked": "2026-10-27",
+        "http_status": 200,
+        "width": 1200,
+        "height": 800
+      }
+    },
+    "belfast-region/belfast/restaurant/capparelli-at-the-mill": {
+      "page": "https://guide.michelin.com/gb/en/belfast-region/belfast/restaurant/capparelli-at-the-mill?millesime=prioritizedtocompletedata",
+      "title": "Capparelli at the Mill",
+      "label": "Interior - Capparelli at the Mill",
+      "image": "https://prod-pics.guide.michelin.com/api/public/content/d215c5a73b774550a7d9df29b330c2fb.jpg",
+      "identity": "Exact MICHELIN region/city/restaurant path and normalized display name.",
+      "availability": {
+        "checked": "2026-10-27",
+        "http_status": 200,
+        "width": 1200,
+        "height": 800
+      }
+    },
+    "zurich-region/zurich/restaurant/capet-neo-bistro": {
+      "page": "https://guide.michelin.com/es/es/zurich-region/zurich/restaurante/capet-neo-bistro",
+      "title": "Capet - Neo-Bistro",
+      "label": "Interior - Capet - Neo-Bistro",
+      "image": "https://prod-pics.guide.michelin.com/api/public/content/73e3aa4185be4d1faa7da36d26e91467.jpeg",
+      "identity": "Exact MICHELIN region/city/restaurant path and normalized display name.",
+      "availability": {
+        "checked": "2026-10-27",
+        "http_status": 200,
+        "width": 1200,
+        "height": 800
+      }
+    },
+    "guangdong-province/shenzhen_1030672/restaurant/ch-ao": {
+      "page": "https://guide.michelin.com/es/es/guangdong-province/shenzhen_1030672/restaurante/ch-ao",
+      "title": "Ch'ao",
+      "label": "Interior - Ch'ao",
+      "image": "https://prod-pics.guide.michelin.com/api/public/content/d074eca903a34f7884c195533c26c910.jpeg",
+      "identity": "Exact MICHELIN region/city/restaurant path and normalized display name.",
+      "availability": {
+        "checked": "2026-10-27",
+        "http_status": 200,
+        "width": 1200,
+        "height": 800
+      }
+    },
+    "worcestershire/evesham_1727085/restaurant/cedar-1905": {
+      "page": "https://guide.michelin.com/us/en/worcestershire/evesham_1727085/restaurant/cedar-1905",
+      "title": "Cedar 1905",
+      "label": "Interior - Cedar 1905",
+      "image": "https://prod-pics.guide.michelin.com/api/public/content/9bca92ed491b4f6ea41d7f2ebf30b093.jpeg",
+      "identity": "Exact MICHELIN region/city/restaurant path and normalized display name.",
+      "availability": {
+        "checked": "2026-10-27",
+        "http_status": 200,
+        "width": 1200,
+        "height": 800
+      }
+    },
+    "occitanie/sauve/restaurant/chai-nous": {
+      "page": "https://guide.michelin.com/es/es/occitanie/sauve/restaurante/chai-nous",
+      "title": "Chai Nous",
+      "label": "Entrante - Chai Nous",
+      "image": "https://prod-pics.guide.michelin.com/api/public/content/398d377b47c2414bbe3e5497470ed1ad.jpeg",
+      "identity": "Exact MICHELIN region/city/restaurant path and normalized display name.",
+      "availability": {
+        "checked": "2026-10-27",
+        "http_status": 200,
+        "width": 1200,
+        "height": 800
+      }
+    },
+    "liechtenstein-region/vaduz/restaurant/chapter-two-modern-cuisine": {
+      "page": "https://guide.michelin.com/au/en/liechtenstein-region/vaduz/restaurant/chapter-two-modern-cuisine",
+      "title": "Chapter Two - modern cuisine",
+      "label": "Interior - Chapter Two - modern cuisine",
+      "image": "https://prod-pics.guide.michelin.com/api/public/content/96267280fb3c4fb5985296abe0531df7.jpg",
+      "identity": "Exact MICHELIN region/city/restaurant path and normalized display name.",
+      "availability": {
+        "checked": "2026-10-27",
+        "http_status": 200,
+        "width": 1200,
+        "height": 800
+      }
+    },
+    "northern-taiwan/new-taipei-city_2853082/restaurant/chun-yu-garden": {
+      "page": "https://guide.michelin.com/jp/en/northern-taiwan/new-taipei-city_2853082/restaurant/chun-yu-garden",
+      "title": "Chun Yu Garden",
+      "label": "Interior - Chun Yu Garden",
+      "image": "https://prod-pics.guide.michelin.com/api/public/content/02ac4164d97a4b90ab7f25f2f01fe27e.jpeg",
+      "identity": "Exact MICHELIN region/city/restaurant path and normalized display name.",
+      "availability": {
+        "checked": "2026-10-27",
+        "http_status": 200,
+        "width": 1200,
+        "height": 800
+      }
+    },
+    "occitanie/autignac_1500705/restaurant/cocagne": {
+      "page": "https://guide.michelin.com/gb/en/occitanie/autignac_1500705/restaurant/cocagne?millesime=prioritizedtocompletedata",
+      "title": "Cocagne",
+      "label": "Interior - Cocagne",
+      "image": "https://prod-pics.guide.michelin.com/api/public/content/dbb8916debb441f3921349a2a2eaaaf2.jpeg",
+      "identity": "Exact MICHELIN region/city/restaurant path and normalized display name.",
+      "availability": {
+        "checked": "2026-10-27",
+        "http_status": 200,
+        "width": 1200,
+        "height": 800
+      }
+    },
+    "lazio/tuscania_1847210/restaurant/convivial-1204653": {
+      "page": "https://guide.michelin.com/gb/en/lazio/tuscania_1847210/restaurant/convivial-1204653?millesime=65gpb9",
+      "title": "Convivial",
+      "label": "Interior - Convivial",
+      "image": "https://prod-pics.guide.michelin.com/api/public/content/41c64bf37e8649b18fbd49b5fadcce19.jpeg",
+      "identity": "Exact MICHELIN region/city/restaurant path and normalized display name.",
+      "availability": {
+        "checked": "2026-10-27",
+        "http_status": 200,
+        "width": 1200,
+        "height": 800
+      }
+    },
+    "provence-alpes-cote-dazur/crillon-le-brave/restaurant/clovis-basina": {
+      "page": "https://guide.michelin.com/au/en/provence-alpes-cote-dazur/crillon-le-brave/restaurant/clovis-basina",
+      "title": "Clovis & Basina",
+      "label": "Starter - Clovis & Basina",
+      "image": "https://prod-pics.guide.michelin.com/api/public/content/f3cb111bf9024f82871d5f74242efd1d.jpeg",
+      "identity": "Exact MICHELIN region/city/restaurant path and normalized display name.",
+      "availability": {
+        "checked": "2026-10-27",
+        "http_status": 200,
+        "width": 1200,
+        "height": 800
+      }
+    },
+    "sardegna/cagliari/restaurant/dal-pittore": {
+      "page": "https://guide.michelin.com/us/en/sardegna/cagliari/restaurant/dal-pittore",
+      "title": "Dal Pittore",
+      "label": "Interior - Dal Pittore",
+      "image": "https://prod-pics.guide.michelin.com/api/public/content/eecd837329ae4ef495964d0ba5f02708.jpeg",
+      "identity": "Exact MICHELIN region/city/restaurant path and normalized display name.",
+      "availability": {
+        "checked": "2026-10-27",
+        "http_status": 200,
+        "width": 1200,
+        "height": 800
+      }
+    },
+    "greater-london/london/restaurant/dakadaka": {
+      "page": "https://guide.michelin.com/si/en/greater-london/london/restaurant/dakadaka",
+      "title": "DakaDaka",
+      "label": "Interior - DakaDaka",
+      "image": "https://prod-pics.guide.michelin.com/api/public/content/ebeebf1d6aa7491d89249fc39e768f17.jpeg",
+      "identity": "Exact MICHELIN region/city/restaurant path and normalized display name.",
+      "availability": {
+        "checked": "2026-10-27",
+        "http_status": 200,
+        "width": 1200,
+        "height": 800
+      }
+    },
+    "lazio/nepi_1844847/restaurant/dieci": {
+      "page": "https://guide.michelin.com/au/en/lazio/nepi_1844847/restaurant/dieci",
+      "title": "Dieci",
+      "label": "Interior - Dieci",
+      "image": "https://prod-pics.guide.michelin.com/api/public/content/31377665c02e49b187028ca1267dfad4.jpg",
+      "identity": "Exact MICHELIN region/city/restaurant path and normalized display name.",
+      "availability": {
+        "checked": "2026-10-27",
+        "http_status": 200,
+        "width": 1200,
+        "height": 800
+      }
+    },
+    "colorado/aurora_1261489/restaurant/dan-da": {
+      "page": "https://guide.michelin.com/us/en/colorado/aurora_1261489/restaurant/dan-da",
+      "title": "Dân Dã",
+      "label": "Interior - Dân Dã",
+      "image": "https://prod-pics.guide.michelin.com/api/public/content/63e16ce5c9dd4f35a241b342e1874fda.jpeg",
+      "identity": "Exact MICHELIN region/city/restaurant path and normalized display name.",
+      "availability": {
+        "checked": "2026-10-27",
+        "http_status": 200,
+        "width": 1200,
+        "height": 800
+      }
+    },
+    "guangdong-province/shenzhen_1030672/restaurant/east-mountain-tea-cabin": {
+      "page": "https://guide.michelin.com/gb/en/guangdong-province/shenzhen_1030672/restaurant/east-mountain-tea-cabin?millesime=df548b",
+      "title": "East Mountain Tea Cabin",
+      "label": "Main dish - East Mountain Tea Cabin",
+      "image": "https://prod-pics.guide.michelin.com/api/public/content/adb35a7962cb4a29b4894f920061a0ee.jpeg",
+      "identity": "Exact MICHELIN region/city/restaurant path and normalized display name.",
+      "availability": {
+        "checked": "2026-10-27",
+        "http_status": 200,
+        "width": 1200,
+        "height": 800
+      }
+    },
+    "castilla-y-leon/ventas-de-armentia/restaurant/erre-de-roca-1250012": {
+      "page": "https://guide.michelin.com/ie/en/castilla-y-leon/ventas-de-armentia/restaurant/erre-de-roca-1250012",
+      "title": "Erre de Roca",
+      "label": "Interior - Erre de Roca",
+      "image": "https://prod-pics.guide.michelin.com/api/public/content/fb3b35d0fa964b6290ce07d5d2f95efd.jpg",
+      "identity": "Exact MICHELIN region/city/restaurant path and normalized display name.",
+      "availability": {
+        "checked": "2026-10-27",
+        "http_status": 200,
+        "width": 1200,
+        "height": 800
+      }
+    },
+    "bretagne/dinan/restaurant/evezhea": {
+      "page": "https://guide.michelin.com/es/es/bretagne/dinan/restaurante/evezhea",
+      "title": "Evezhea",
+      "label": "Interior - Evezhea",
+      "image": "https://prod-pics.guide.michelin.com/api/public/content/3beb8263a6b34fc48a01ddb2b6b2fe18.jpeg",
+      "identity": "Exact MICHELIN region/city/restaurant path and normalized display name.",
+      "availability": {
+        "checked": "2026-10-27",
+        "http_status": 200,
+        "width": 1200,
+        "height": 800
+      }
+    },
+    "auvergne-rhone-alpes/lyon/restaurant/frazarin": {
+      "page": "https://guide.michelin.com/gb/en/auvergne-rhone-alpes/lyon/restaurant/frazarin?millesime=df548b",
+      "title": "Frazarin",
+      "label": "Main dish - Frazarin",
+      "image": "https://prod-pics.guide.michelin.com/api/public/content/43446b91abf64cb7a25c89b312372418.jpeg",
+      "identity": "Exact MICHELIN region/city/restaurant path and normalized display name.",
+      "availability": {
+        "checked": "2026-10-27",
+        "http_status": 200,
+        "width": 1200,
+        "height": 800
+      }
+    },
+    "chengdu-municipality/chengdu/restaurant/fu-rong-chuan": {
+      "page": "https://guide.michelin.com/fi/en/chengdu-municipality/chengdu/restaurant/fu-rong-chuan",
+      "title": "Fu Rong Chuan",
+      "label": "Main dish - Fu Rong Chuan",
+      "image": "https://prod-pics.guide.michelin.com/api/public/content/5391f25b63744fd790147fb18e649926.jpeg",
+      "identity": "Exact MICHELIN region/city/restaurant path and normalized display name.",
+      "availability": {
+        "checked": "2026-10-27",
+        "http_status": 200,
+        "width": 1200,
+        "height": 800
+      }
+    },
+    "nordrhein-westfalen/duisburg/restaurant/freya-by-nothel": {
+      "page": "https://guide.michelin.com/gb/en/nordrhein-westfalen/duisburg/restaurant/freya-by-nothel?millesime=2023",
+      "title": "Freya by Nöthel",
+      "label": "Interior - Freya by Nöthel",
+      "image": "https://prod-pics.guide.michelin.com/api/public/content/0727d851027d4e9f91a68a3979892400.jpg",
+      "identity": "Exact MICHELIN region/city/restaurant path and normalized display name.",
+      "availability": {
+        "checked": "2026-10-27",
+        "http_status": 200,
+        "width": 1200,
+        "height": 800
+      }
+    },
+    "pays-de-la-loire/chalonnes-sur-loire_1570769/restaurant/galipettes": {
+      "page": "https://guide.michelin.com/gb/en/pays-de-la-loire/chalonnes-sur-loire_1570769/restaurant/galipettes?millesime=prioritizedtocompletedata",
+      "title": "Galipettes",
+      "label": "Dessert - Galipettes",
+      "image": "https://prod-pics.guide.michelin.com/api/public/content/9ee6f0488db84b4d8b346ed79ffb6697.jpeg",
+      "identity": "Exact MICHELIN region/city/restaurant path and normalized display name.",
+      "availability": {
+        "checked": "2026-10-27",
+        "http_status": 200,
+        "width": 1200,
+        "height": 800
+      }
+    },
+    "guangdong-province/shenzhen_1030672/restaurant/gem-garden": {
+      "page": "https://guide.michelin.com/gb/en/guangdong-province/shenzhen_1030672/restaurant/gem-garden?millesime=df548b",
+      "title": "Gem Garden",
+      "label": "Interior - Gem Garden",
+      "image": "https://prod-pics.guide.michelin.com/api/public/content/751fd86366bc4ca58cd179bbd6cb0204.jpeg",
+      "identity": "Exact MICHELIN region/city/restaurant path and normalized display name.",
+      "availability": {
+        "checked": "2026-10-27",
+        "http_status": 200,
+        "width": 1200,
+        "height": 800
+      }
+    },
+    "nevada/las-vegas_2935077/restaurant/gymkhana-las-vegas": {
+      "page": "https://guide.michelin.com/us/en/nevada/las-vegas_2935077/restaurant/gymkhana-las-vegas",
+      "title": "Gymkhana Las Vegas",
+      "label": "Interior - Gymkhana Las Vegas",
+      "image": "https://prod-pics.guide.michelin.com/api/public/content/7e77081887d2431b8a0ff5f936596716.jpg",
+      "identity": "Exact MICHELIN region/city/restaurant path and normalized display name.",
+      "availability": {
+        "checked": "2026-10-27",
+        "http_status": 200,
+        "width": 1200,
+        "height": 800
+      }
+    },
+    "tokyo-region/tokyo/restaurant/hrmt-stage": {
+      "page": "https://guide.michelin.com/gb/en/tokyo-region/tokyo/restaurant/hrmt-stage?millesime=df548b",
+      "title": "HRMT STAGE",
+      "label": "Interior - HRMT STAGE",
+      "image": "https://prod-pics.guide.michelin.com/api/public/content/a4e8b15b18ad4974997a18c9f12f75e8.jpeg",
+      "identity": "Exact MICHELIN region/city/restaurant path and normalized display name.",
+      "availability": {
+        "checked": "2026-10-27",
+        "http_status": 200,
+        "width": 1200,
+        "height": 800
+      }
+    },
+    "antwerpen/liezele_1062727/restaurant/hof-ten-broeck": {
+      "page": "https://guide.michelin.com/gb/en/antwerpen/liezele_1062727/restaurant/hof-ten-broeck?millesime=65gpb9",
+      "title": "Hof ten Broeck",
+      "label": "Dessert - Hof ten Broeck",
+      "image": "https://prod-pics.guide.michelin.com/api/public/content/b8305ec2de1a4d23a9b0781ea3dc3a01.jpg",
+      "identity": "Exact MICHELIN region/city/restaurant path and normalized display name.",
+      "availability": {
+        "checked": "2026-10-27",
+        "http_status": 200,
+        "width": 1200,
+        "height": 800
+      }
+    },
+    "guangdong-province/guangzhou/restaurant/hitom-xiao-wei": {
+      "page": "https://guide.michelin.com/au/en/guangdong-province/guangzhou/restaurant/hitom-xiao-wei",
+      "title": "Hitom Xiao Wei",
+      "label": "Main dish - Hitom Xiao Wei",
+      "image": "https://prod-pics.guide.michelin.com/api/public/content/227ae14f1ff64d748470a1413bac655a.jpeg",
+      "identity": "Exact MICHELIN region/city/restaurant path and normalized display name.",
+      "availability": {
+        "checked": "2026-10-27",
+        "http_status": 200,
+        "width": 1200,
+        "height": 800
+      }
+    },
+    "wiltshire/limpley-stoke_1749861/restaurant/hop-pole-inn": {
+      "page": "https://guide.michelin.com/gb/en/wiltshire/limpley-stoke_1749861/restaurant/hop-pole-inn?millesime=1q07ft%5C",
+      "title": "Hop Pole Inn",
+      "label": "Main dish - Hop Pole Inn",
+      "image": "https://prod-pics.guide.michelin.com/api/public/content/2e40b5fb4be44453b5431d80593f010c.jpg",
+      "identity": "Exact MICHELIN region/city/restaurant path and normalized display name.",
+      "availability": {
+        "checked": "2026-10-27",
+        "http_status": 200,
+        "width": 1200,
+        "height": 800
+      }
+    },
+    "arizona/scottsdale_2875755/restaurant/hush-public-house": {
+      "page": "https://guide.michelin.com/us/en/arizona/scottsdale_2875755/restaurant/hush-public-house",
+      "title": "Hush Public House",
+      "label": "Interior - Hush Public House",
+      "image": "https://prod-pics.guide.michelin.com/api/public/content/562cce5ad7ec4532b51dab08080c3bfd.jpeg",
+      "identity": "Exact MICHELIN region/city/restaurant path and normalized display name.",
+      "availability": {
+        "checked": "2026-10-27",
+        "http_status": 200,
+        "width": 1200,
+        "height": 800
+      }
+    },
+    "taichung-region/taichung/restaurant/ji-zai-ten": {
+      "page": "https://guide.michelin.com/tw/en/taichung-region/taichung/restaurant/ji-zai-ten",
+      "title": "Ji Zai Ten",
+      "label": "Interior - Ji Zai Ten",
+      "image": "https://prod-pics.guide.michelin.com/api/public/content/6b5ee236e3884e848fa0736bce27cc0c.jpeg",
+      "identity": "Exact MICHELIN region/city/restaurant path and normalized display name.",
+      "availability": {
+        "checked": "2026-10-27",
+        "http_status": 200,
+        "width": 1200,
+        "height": 800
+      }
+    },
+    "new-mexico/santa-fe_2934394/restaurant/joseph-s-culinary-pub": {
+      "page": "https://guide.michelin.com/gb/en/new-mexico/santa-fe_2934394/restaurant/joseph-s-culinary-pub?millesime=prioritizedtocompletedata",
+      "title": "Joseph's Culinary Pub",
+      "label": "Interior - Joseph's Culinary Pub",
+      "image": "https://prod-pics.guide.michelin.com/api/public/content/5484f20bf821403a9c772b793180c193.jpg",
+      "identity": "Exact MICHELIN region/city/restaurant path and normalized display name.",
+      "availability": {
+        "checked": "2026-10-27",
+        "http_status": 200,
+        "width": 1200,
+        "height": 800
+      }
+    },
+    "nordrhein-westfalen/meerbusch/restaurant/junsui": {
+      "page": "https://guide.michelin.com/ie/en/nordrhein-westfalen/meerbusch/restaurant/junsui",
+      "title": "Junsui",
+      "label": "Interior - Junsui",
+      "image": "https://prod-pics.guide.michelin.com/api/public/content/f2f13b744efe4d0589f167cd8d39ab97.jpeg",
+      "identity": "Exact MICHELIN region/city/restaurant path and normalized display name.",
+      "availability": {
+        "checked": "2026-10-27",
+        "http_status": 200,
+        "width": 1200,
+        "height": 800
+      }
+    },
+    "utah/salt-lake-city_2960177/restaurant/koyote": {
+      "page": "https://guide.michelin.com/us/en/utah/salt-lake-city_2960177/restaurant/koyote",
+      "title": "Koyote",
+      "label": "Interior - Koyote",
+      "image": "https://prod-pics.guide.michelin.com/api/public/content/62b47ae311b3431b8d9f82af83f732f4.jpg",
+      "identity": "Exact MICHELIN region/city/restaurant path and normalized display name.",
+      "availability": {
+        "checked": "2026-10-27",
+        "http_status": 200,
+        "width": 1200,
+        "height": 800
+      }
+    },
+    "th-phang-nga-region/th-phang-nga/restaurant/krua-ko-yot": {
+      "page": "https://guide.michelin.com/gb/en/th-phang-nga-region/th-phang-nga/restaurant/krua-ko-yot?millesime=km573e",
+      "title": "Krua Ko Yot",
+      "label": "Interior - Krua Ko Yot",
+      "image": "https://prod-pics.guide.michelin.com/api/public/content/000862d0866b474891bfab5e35ad10c6.jpeg",
+      "identity": "Exact MICHELIN region/city/restaurant path and normalized display name.",
+      "availability": {
+        "checked": "2026-10-27",
+        "http_status": 200,
+        "width": 1200,
+        "height": 800
+      }
+    },
+    "provence-alpes-cote-dazur/nice/restaurant/koyo-1251374": {
+      "page": "https://guide.michelin.com/gb/en/provence-alpes-cote-dazur/nice/restaurant/koyo-1251374?millesime=65gpb9",
+      "title": "Kōyō",
+      "label": "Interior - Kōyō",
+      "image": "https://prod-pics.guide.michelin.com/api/public/content/34f519b7a5cc404d964b76236fe6d58a.jpeg",
+      "identity": "Exact MICHELIN region/city/restaurant path and normalized display name.",
+      "availability": {
+        "checked": "2026-10-27",
+        "http_status": 200,
+        "width": 1200,
+        "height": 800
+      }
+    },
+    "centre-val-de-loire/thoury_1584922/restaurant/la-becasse-heureuse": {
+      "page": "https://guide.michelin.com/ca/fr/centre-val-de-loire/thoury_1584922/restaurant/la-becasse-heureuse",
+      "title": "La Bécasse Heureuse",
+      "label": "Entrée - La Bécasse Heureuse",
+      "image": "https://prod-pics.guide.michelin.com/api/public/content/289a65b013f44cb8b4ff18e64c2df630.jpg",
+      "identity": "Exact MICHELIN region/city/restaurant path and normalized display name.",
+      "availability": {
+        "checked": "2026-10-27",
+        "http_status": 200,
+        "width": 1200,
+        "height": 800
+      }
+    },
+    "nouvelle-aquitaine/mezos_1488137/restaurant/la-table-des-pins": {
+      "page": "https://guide.michelin.com/en/nouvelle-aquitaine/mezos_1488137/restaurant/la-table-des-pins",
+      "title": "La Table des Pins",
+      "label": "Starter - La Table des Pins",
+      "image": "https://prod-pics.guide.michelin.com/api/public/content/c14d31f0d84c4d408403f456c00b500d.jpeg",
+      "identity": "Exact MICHELIN region/city/restaurant path and normalized display name.",
+      "availability": {
+        "checked": "2026-10-27",
+        "http_status": 200,
+        "width": 1200,
+        "height": 800
+      }
+    },
+    "nouvelle-aquitaine/saint-vincent-de-cosse/restaurant/la-table-de-monrecour": {
+      "page": "https://guide.michelin.com/gb/en/nouvelle-aquitaine/saint-vincent-de-cosse/restaurant/la-table-de-monrecour?millesime=2023",
+      "title": "La Table de Monrecour",
+      "label": "Interior - La Table de Monrecour",
+      "image": "https://prod-pics.guide.michelin.com/api/public/content/65e4602039c647ca9857c776ff4e83d2.jpeg",
+      "identity": "Exact MICHELIN region/city/restaurant path and normalized display name.",
+      "availability": {
+        "checked": "2026-10-27",
+        "http_status": 200,
+        "width": 1200,
+        "height": 800
+      }
+    },
+    "grand-est/giffaumont-champaubert_1540006/restaurant/le-cheval-blanc-1207063": {
+      "page": "https://guide.michelin.com/fr/fr/grand-est/giffaumont-champaubert_1540006/restaurant/le-cheval-blanc-1207063?millesime=1q07ft",
+      "title": "Le Cheval Blanc",
+      "label": "Plat - Le Cheval Blanc",
+      "image": "https://prod-pics.guide.michelin.com/api/public/content/47a3f22eed57404c8a63d929f98b28de.jpeg",
+      "identity": "Exact MICHELIN region/city/restaurant path and normalized display name.",
+      "availability": {
+        "checked": "2026-10-27",
+        "http_status": 200,
+        "width": 1200,
+        "height": 800
+      }
+    },
+    "drenthe/veeningen_2214724/restaurant/le-epifaan": {
+      "page": "https://guide.michelin.com/gb/en/drenthe/veeningen_2214724/restaurant/le-epifaan?millesime=km573e",
+      "title": "Le Epifaan",
+      "label": "Interior - Le Epifaan",
+      "image": "https://prod-pics.guide.michelin.com/api/public/content/8292426358c84591ad568c21f448a460.jpeg",
+      "identity": "Exact MICHELIN region/city/restaurant path and normalized display name.",
+      "availability": {
+        "checked": "2026-10-27",
+        "http_status": 200,
+        "width": 1200,
+        "height": 800
+      }
+    },
+    "provence-alpes-cote-dazur/bandol/restaurant/le-grand-large": {
+      "page": "https://guide.michelin.com/au/en/provence-alpes-cote-dazur/bandol/restaurant/le-grand-large",
+      "title": "Le Grand Large",
+      "label": "Interior - Le Grand Large",
+      "image": "https://prod-pics.guide.michelin.com/api/public/content/ae368f7cd22745eaa9dd3ee2f4e31afe.jpeg",
+      "identity": "Exact MICHELIN region/city/restaurant path and normalized display name.",
+      "availability": {
+        "checked": "2026-10-27",
+        "http_status": 200,
+        "width": 1200,
+        "height": 800
+      }
+    },
+    "limburg/maastricht/restaurant/le-philippe-1250226": {
+      "page": "https://guide.michelin.com/gb/en/limburg/maastricht/restaurant/le-philippe-1250226?millesime=df548b",
+      "title": "Le Philippe",
+      "label": "Interior - Le Philippe",
+      "image": "https://prod-pics.guide.michelin.com/api/public/content/18c7bd69fdaa48d88d5dfe5eef43da8e.jpeg",
+      "identity": "Exact MICHELIN region/city/restaurant path and normalized display name.",
+      "availability": {
+        "checked": "2026-10-27",
+        "http_status": 200,
+        "width": 1200,
+        "height": 800
+      }
+    },
+    "bourgogne-franche-comte/pommard/restaurant/le-viii-chateau-la-commaraine": {
+      "page": "https://guide.michelin.com/fr/fr/bourgogne-franche-comte/pommard/restaurant/le-viii-chateau-la-commaraine",
+      "title": "Le VIII - Château la Commaraine",
+      "label": "Plat - Le VIII - Château la Commaraine",
+      "image": "https://prod-pics.guide.michelin.com/api/public/content/7c6f130e7b8b4b73bd71e835bd2a304a.jpg",
+      "identity": "Exact MICHELIN region/city/restaurant path and normalized display name.",
+      "availability": {
+        "checked": "2026-10-27",
+        "http_status": 200,
+        "width": 1200,
+        "height": 800
+      }
+    },
+    "occitanie/mandagout_1503040/restaurant/les-terrasses-de-la-borie": {
+      "page": "https://guide.michelin.com/fr/fr/occitanie/mandagout_1503040/restaurant/les-terrasses-de-la-borie?millesime=1q07ft%5C",
+      "title": "Les Terrasses de la Borie",
+      "label": "Entrée - Les Terrasses de la Borie",
+      "image": "https://prod-pics.guide.michelin.com/api/public/content/fb986cce9ab64a1a94adb92a196ad8bd.jpeg",
+      "identity": "Exact MICHELIN region/city/restaurant path and normalized display name.",
+      "availability": {
+        "checked": "2026-10-27",
+        "http_status": 200,
+        "width": 1200,
+        "height": 800
+      }
+    },
+    "castilla-y-leon/salamanca/restaurant/lilicook-cocina": {
+      "page": "https://guide.michelin.com/gb/en/castilla-y-leon/salamanca/restaurant/lilicook-cocina?millesime=prioritizedtocompletedata",
+      "title": "LiliCook Cocina",
+      "label": "Interior - LiliCook Cocina",
+      "image": "https://prod-pics.guide.michelin.com/api/public/content/5ea9c204a6764f5e89b0590a2e56085e.jpg",
+      "identity": "Exact MICHELIN region/city/restaurant path and normalized display name.",
+      "availability": {
+        "checked": "2026-10-27",
+        "http_status": 200,
+        "width": 1200,
+        "height": 800
+      }
+    },
+    "phuket-region/phuket/restaurant/local-canteen": {
+      "page": "https://guide.michelin.com/kr/en/phuket-region/phuket/restaurant/local-canteen",
+      "title": "Local Canteen",
+      "label": "Interior - Local Canteen",
+      "image": "https://prod-pics.guide.michelin.com/api/public/content/fc5822336a4042cca8c19222ab7661b2.jpg",
+      "identity": "Exact MICHELIN region/city/restaurant path and normalized display name.",
+      "availability": {
+        "checked": "2026-10-27",
+        "http_status": 200,
+        "width": 1200,
+        "height": 800
+      }
+    },
+    "toscana/impruneta_1836474/restaurant/l-oca-bonda": {
+      "page": "https://guide.michelin.com/gb/en/toscana/impruneta_1836474/restaurant/l-oca-bonda?millesime=df548b",
+      "title": "L’Oca Bonda",
+      "label": "Starter - L’Oca Bonda",
+      "image": "https://prod-pics.guide.michelin.com/api/public/content/96fea170409c4bf59453a975dc912023.jpg",
+      "identity": "Exact MICHELIN region/city/restaurant path and normalized display name.",
+      "availability": {
+        "checked": "2026-10-27",
+        "http_status": 200,
+        "width": 1200,
+        "height": 800
+      }
+    },
+    "guangdong-province/shenzhen_1030672/restaurant/ma-s-kitchen-1246202": {
+      "page": "https://guide.michelin.com/gb/en/guangdong-province/shenzhen_1030672/restaurant/ma-s-kitchen-1246202?millesime=df548b",
+      "title": "Ma's Kitchen",
+      "label": "Main dish - Ma's Kitchen",
+      "image": "https://prod-pics.guide.michelin.com/api/public/content/711d0c0d4d9643f89f398c41c0803141.jpg",
+      "identity": "Exact MICHELIN region/city/restaurant path and normalized display name.",
+      "availability": {
+        "checked": "2026-10-27",
+        "http_status": 200,
+        "width": 1200,
+        "height": 800
+      }
+    },
+    "bruxelles-capitale/ixelles/restaurant/mome": {
+      "page": "https://guide.michelin.com/gb/en/bruxelles-capitale/ixelles/restaurant/mome?millesime=1q07ft",
+      "title": "MOme",
+      "label": "Main dish - MOme",
+      "image": "https://prod-pics.guide.michelin.com/api/public/content/8b7bc1e2d1584ed1ab02e8961b8977fa.jpg",
+      "identity": "Exact MICHELIN region/city/restaurant path and normalized display name.",
+      "availability": {
+        "checked": "2026-10-27",
+        "http_status": 200,
+        "width": 1200,
+        "height": 800
+      }
+    },
+    "colorado/denver_1261491/restaurant/madeline": {
+      "page": "https://guide.michelin.com/us/en/colorado/denver_1261491/restaurant/madeline",
+      "title": "Madeline",
+      "label": "Interior - Madeline",
+      "image": "https://prod-pics.guide.michelin.com/api/public/content/11957229ade54b5b87e9c38c96c7c8a5.jpeg",
+      "identity": "Exact MICHELIN region/city/restaurant path and normalized display name.",
+      "availability": {
+        "checked": "2026-10-27",
+        "http_status": 200,
+        "width": 1200,
+        "height": 800
+      }
+    },
+    "nara-region/nara/restaurant/maruto-1689": {
+      "page": "https://guide.michelin.com/gb/en/nara-region/nara/restaurant/maruto-1689?millesime=prioritizedtocompletedata",
+      "title": "MARUTO 1689",
+      "label": "Interior - MARUTO 1689",
+      "image": "https://prod-pics.guide.michelin.com/api/public/content/672b38d9de624d469cba0a4207af07f9.jpeg",
+      "identity": "Exact MICHELIN region/city/restaurant path and normalized display name.",
+      "availability": {
+        "checked": "2026-10-27",
+        "http_status": 200,
+        "width": 1200,
+        "height": 800
+      }
+    },
+    "district-of-columbia/washington-dc/restaurant/maison-bar-a-vins": {
+      "page": "https://guide.michelin.com/en/district-of-columbia/washington-dc/restaurant/maison-bar-a-vins",
+      "title": "Maison Bar à Vins",
+      "label": "Interior - Maison Bar à Vins",
+      "image": "https://prod-pics.guide.michelin.com/api/public/content/afea228f19024d5482e58e48d2b3c474.jpeg",
+      "identity": "Exact MICHELIN region/city/restaurant path and normalized display name.",
+      "availability": {
+        "checked": "2026-10-27",
+        "http_status": 200,
+        "width": 1200,
+        "height": 800
+      }
+    },
+    "nouvelle-aquitaine/ainhoa/restaurant/maison-oppoca": {
+      "page": "https://guide.michelin.com/fr/fr/nouvelle-aquitaine/ainhoa/restaurant/maison-oppoca?millesime=1q07ft",
+      "title": "Maison Oppoca",
+      "label": "Plat - Maison Oppoca",
+      "image": "https://prod-pics.guide.michelin.com/api/public/content/6c93ca38466248708460a4ff2359f73f.jpeg",
+      "identity": "Exact MICHELIN region/city/restaurant path and normalized display name.",
+      "availability": {
+        "checked": "2026-10-27",
+        "http_status": 200,
+        "width": 1200,
+        "height": 800
+      }
+    },
+    "antwerpen/be-antwerpen/restaurant/mero": {
+      "page": "https://guide.michelin.com/gb/en/antwerpen/be-antwerpen/restaurant/mero?millesime=km573e",
+      "title": "Mero",
+      "label": "Interior - Mero",
+      "image": "https://prod-pics.guide.michelin.com/api/public/content/aa4b8647fcd34571a86bdfaba3dd85fb.jpg",
+      "identity": "Exact MICHELIN region/city/restaurant path and normalized display name.",
+      "availability": {
+        "checked": "2026-10-27",
+        "http_status": 200,
+        "width": 1200,
+        "height": 800
+      }
+    },
+    "pais-vasco/es-donostia-san-sebastian/restaurant/milla-lore-124": {
+      "page": "https://guide.michelin.com/gb/en/pais-vasco/es-donostia-san-sebastian/restaurant/milla-lore-124?millesime=prioritizedtocompletedata%2F1000",
+      "title": "Milla Lore 124",
+      "label": "Interior - Milla Lore 124",
+      "image": "https://prod-pics.guide.michelin.com/api/public/content/c69f33fdc2a14c6081a16c8122d90892.jpeg",
+      "identity": "Exact MICHELIN region/city/restaurant path and normalized display name.",
+      "availability": {
+        "checked": "2026-10-27",
+        "http_status": 200,
+        "width": 1200,
+        "height": 800
+      }
+    },
+    "comunidad-foral-de-navarra/villamayor-de-monjardin_1386120/restaurant/mirador-de-deyo": {
+      "page": "https://guide.michelin.com/us/en/comunidad-foral-de-navarra/villamayor-de-monjardin_1386120/restaurant/mirador-de-deyo",
+      "title": "Mirador de Deyo",
+      "label": "Interior - Mirador de Deyo",
+      "image": "https://prod-pics.guide.michelin.com/api/public/content/7e61071c42b14631bbb00804af4eab51.jpg",
+      "identity": "Exact MICHELIN region/city/restaurant path and normalized display name.",
+      "availability": {
+        "checked": "2026-10-27",
+        "http_status": 200,
+        "width": 1200,
+        "height": 800
+      }
+    },
+    "zurich-region/zurich/restaurant/neri-cantina-cucina": {
+      "page": "https://guide.michelin.com/gb/en/zurich-region/zurich/restaurant/neri-cantina-cucina?millesime=prioritizedtocompletedata",
+      "title": "Neri Cantina & Cucina",
+      "label": "Starter - Neri Cantina & Cucina",
+      "image": "https://prod-pics.guide.michelin.com/api/public/content/aedc4c40d7d54b2c8168a28a0e7abfe0.jpeg",
+      "identity": "Exact MICHELIN region/city/restaurant path and normalized display name.",
+      "availability": {
+        "checked": "2026-10-27",
+        "http_status": 200,
+        "width": 1200,
+        "height": 800
+      }
+    },
+    "saint-brelade-region/saint-brelade/restaurant/ob-mizi-at-the-table": {
+      "page": "https://guide.michelin.com/vn/en/saint-brelade-region/saint-brelade/restaurant/ob-mizi-at-the-table",
+      "title": "Ob Mizi at The Table",
+      "label": "Interior - Ob Mizi at The Table",
+      "image": "https://prod-pics.guide.michelin.com/api/public/content/904808fa745544b5ae56aa7eab5e0174.jpg",
+      "identity": "Exact MICHELIN region/city/restaurant path and normalized display name.",
+      "availability": {
+        "checked": "2026-10-27",
+        "http_status": 200,
+        "width": 1200,
+        "height": 800
+      }
+    },
+    "liege/liege/restaurant/origines-1247235": {
+      "page": "https://guide.michelin.com/au/en/liege/liege/restaurant/origines-1247235",
+      "title": "Origines",
+      "label": "Interior - Origines",
+      "image": "https://prod-pics.guide.michelin.com/api/public/content/9977044b9e5a48b797ffc60843015068.jpeg",
+      "identity": "Exact MICHELIN region/city/restaurant path and normalized display name.",
+      "availability": {
+        "checked": "2026-10-27",
+        "http_status": 200,
+        "width": 1200,
+        "height": 800
+      }
+    },
+    "lazio/lido-di-ostia_1844201/restaurant/osteria-landi": {
+      "page": "https://guide.michelin.com/gb/en/lazio/lido-di-ostia_1844201/restaurant/osteria-landi?millesime=prioritizedtocompletedata",
+      "title": "Osteria Landi",
+      "label": "Main dish - Osteria Landi",
+      "image": "https://prod-pics.guide.michelin.com/api/public/content/267c5aa5bd914aae9b867df54dcc9db6.jpg",
+      "identity": "Exact MICHELIN region/city/restaurant path and normalized display name.",
+      "availability": {
+        "checked": "2026-10-27",
+        "http_status": 200,
+        "width": 1200,
+        "height": 800
+      }
+    },
+    "ontario/toronto/restaurant/punch": {
+      "page": "https://guide.michelin.com/ca/en/ontario/toronto/restaurant/punch",
+      "title": "PUNCH",
+      "label": "Interior - PUNCH",
+      "image": "https://prod-pics.guide.michelin.com/api/public/content/a7445ab7d6454d69aaf98f329c153faf.jpeg",
+      "identity": "Exact MICHELIN region/city/restaurant path and normalized display name.",
+      "availability": {
+        "checked": "2026-10-27",
+        "http_status": 200,
+        "width": 1200,
+        "height": 800
+      }
+    },
+    "cornwall/port-isaac/restaurant/outlaw-s-bistro": {
+      "page": "https://guide.michelin.com/es/es/cornwall/port-isaac/restaurante/outlaw-s-bistro",
+      "title": "Outlaw's Bistro",
+      "label": "Interior - Outlaw's Bistro",
+      "image": "https://prod-pics.guide.michelin.com/api/public/content/338d9267cdd24f79bc2a4e06dee2ab5a.jpeg",
+      "identity": "Exact MICHELIN region/city/restaurant path and normalized display name.",
+      "availability": {
+        "checked": "2026-10-27",
+        "http_status": 200,
+        "width": 1200,
+        "height": 800
+      }
+    },
+    "noord-brabant/grave_2216252/restaurant/ovum": {
+      "page": "https://guide.michelin.com/au/en/noord-brabant/grave_2216252/restaurant/ovum",
+      "title": "Ovum",
+      "label": "Interior - Ovum",
+      "image": "https://prod-pics.guide.michelin.com/api/public/content/cd84ebd861a342bebe6fa6719f32089a.jpeg",
+      "identity": "Exact MICHELIN region/city/restaurant path and normalized display name.",
+      "availability": {
+        "checked": "2026-10-27",
+        "http_status": 200,
+        "width": 1200,
+        "height": 800
+      }
+    },
+    "cornwall/padstow/restaurant/pl28-cafe": {
+      "page": "https://guide.michelin.com/au/en/cornwall/padstow/restaurant/pl28-cafe",
+      "title": "PL28 Café",
+      "label": "Photo - PL28 Café",
+      "image": "https://prod-pics.guide.michelin.com/api/public/content/9973e88d566e4108a2f65177c15d1f9c.jpeg",
+      "identity": "Exact MICHELIN region/city/restaurant path and normalized display name.",
+      "availability": {
+        "checked": "2026-10-27",
+        "http_status": 200,
+        "width": 1200,
+        "height": 800
+      }
+    },
+    "new-mexico/santa-fe_2934394/restaurant/paloma": {
+      "page": "https://guide.michelin.com/us/en/new-mexico/santa-fe_2934394/restaurant/paloma",
+      "title": "Paloma",
+      "label": "Main dish - Paloma",
+      "image": "https://prod-pics.guide.michelin.com/api/public/content/53cf4b566b0c40a787e56522b453af5d.jpg",
+      "identity": "Exact MICHELIN region/city/restaurant path and normalized display name.",
+      "availability": {
+        "checked": "2026-10-27",
+        "http_status": 200,
+        "width": 1200,
+        "height": 800
+      }
+    },
+    "jalisco/puerto-vallarta_2013264/restaurant/pancho-s-takos": {
+      "page": "https://guide.michelin.com/us/en/jalisco/puerto-vallarta_2013264/restaurant/pancho-s-takos",
+      "title": "Pancho's Takos",
+      "label": "Main dish - Pancho's Takos",
+      "image": "https://prod-pics.guide.michelin.com/api/public/content/eeccd96b8024489ca30c7107483a7b3f.jpeg",
+      "identity": "Exact MICHELIN region/city/restaurant path and normalized display name.",
+      "availability": {
+        "checked": "2026-10-27",
+        "http_status": 200,
+        "width": 1200,
+        "height": 800
+      }
+    },
+    "nevada/las-vegas_2935077/restaurant/pho-ga-bac-bac": {
+      "page": "https://guide.michelin.com/au/en/nevada/las-vegas_2935077/restaurant/pho-ga-bac-bac",
+      "title": "Pho Ga Bac Bac",
+      "label": "Main dish - Pho Ga Bac Bac",
+      "image": "https://prod-pics.guide.michelin.com/api/public/content/3cd7aff205764c838ad0d46d42d130c4.png",
+      "identity": "Exact MICHELIN region/city/restaurant path and normalized display name.",
+      "availability": {
+        "checked": "2026-10-27",
+        "http_status": 200,
+        "width": 1200,
+        "height": 800
+      }
+    },
+    "lazio/bracciano/restaurant/percorsi-al-vecchio-ponte": {
+      "page": "https://guide.michelin.com/us/en/lazio/bracciano/restaurant/percorsi-al-vecchio-ponte",
+      "title": "Percorsi al Vecchio Ponte",
+      "label": "Interior - Percorsi al Vecchio Ponte",
+      "image": "https://prod-pics.guide.michelin.com/api/public/content/05f29c5bb2124ce396083a740c3aa467.jpeg",
+      "identity": "Exact MICHELIN region/city/restaurant path and normalized display name.",
+      "availability": {
+        "checked": "2026-10-27",
+        "http_status": 200,
+        "width": 1200,
+        "height": 800
+      }
+    },
+    "ontario/mississauga_1245409/restaurant/pho-ngoc-yen": {
+      "page": "https://guide.michelin.com/ca/en/ontario/mississauga_1245409/restaurant/pho-ngoc-yen",
+      "title": "Pho Ngoc Yen",
+      "label": "Interior - Pho Ngoc Yen",
+      "image": "https://prod-pics.guide.michelin.com/api/public/content/31568fdcc7374792847179f181858019.jpeg",
+      "identity": "Exact MICHELIN region/city/restaurant path and normalized display name.",
+      "availability": {
+        "checked": "2026-10-27",
+        "http_status": 200,
+        "width": 1200,
+        "height": 800
+      }
+    },
+    "castilla-y-leon/salamanca/restaurant/portal-del-lino": {
+      "page": "https://guide.michelin.com/gb/en/castilla-y-leon/salamanca/restaurant/portal-del-lino?millesime=prioritizedtocompletedata",
+      "title": "Portal del Lino",
+      "label": "Interior - Portal del Lino",
+      "image": "https://prod-pics.guide.michelin.com/api/public/content/4b97eb2e3bec43c5b6199bdb1c0bc3b6.jpg",
+      "identity": "Exact MICHELIN region/city/restaurant path and normalized display name.",
+      "availability": {
+        "checked": "2026-10-27",
+        "http_status": 200,
+        "width": 1200,
+        "height": 800
+      }
+    },
+    "arizona/phoenix_2875757/restaurant/pretty-penny": {
+      "page": "https://guide.michelin.com/us/en/arizona/phoenix_2875757/restaurant/pretty-penny",
+      "title": "Pretty Penny",
+      "label": "Interior - Pretty Penny",
+      "image": "https://prod-pics.guide.michelin.com/api/public/content/b60eb325763942e6a006521cea81a796.jpg",
+      "identity": "Exact MICHELIN region/city/restaurant path and normalized display name.",
+      "availability": {
+        "checked": "2026-10-27",
+        "http_status": 200,
+        "width": 1200,
+        "height": 800
+      }
+    },
+    "pulau-pinang/my-george-town/restaurant/rr-nyonya-house": {
+      "page": "https://guide.michelin.com/es/es/pulau-pinang/my-george-town/restaurante/rr-nyonya-house",
+      "title": "RR Nyonya House",
+      "label": "Interior - RR Nyonya House",
+      "image": "https://prod-pics.guide.michelin.com/api/public/content/4febbb6f0f2840ac8a9803abdf01abd8.jpeg",
+      "identity": "Exact MICHELIN region/city/restaurant path and normalized display name.",
+      "availability": {
+        "checked": "2026-10-27",
+        "http_status": 200,
+        "width": 1200,
+        "height": 800
+      }
+    },
+    "noord-holland/amsterdam/restaurant/restobar-massalia": {
+      "page": "https://guide.michelin.com/gb/en/noord-holland/amsterdam/restaurant/restobar-massalia?millesime=km573e",
+      "title": "Restobar Massalia",
+      "label": "Interior - Restobar Massalia",
+      "image": "https://prod-pics.guide.michelin.com/api/public/content/463840e1eb5745f7abcf779028bf6a94.jpeg",
+      "identity": "Exact MICHELIN region/city/restaurant path and normalized display name.",
+      "availability": {
+        "checked": "2026-10-27",
+        "http_status": 200,
+        "width": 1200,
+        "height": 800
+      }
+    },
+    "groningen/groningen/restaurant/restaurant-luwte": {
+      "page": "https://guide.michelin.com/gb/en/groningen/groningen/restaurant/restaurant-luwte?millesime=df548b",
+      "title": "Restaurant Luwte",
+      "label": "Interior - Restaurant Luwte",
+      "image": "https://prod-pics.guide.michelin.com/api/public/content/b8be14f0e07743dd90dc618f5a454422.jpeg",
+      "identity": "Exact MICHELIN region/city/restaurant path and normalized display name.",
+      "availability": {
+        "checked": "2026-10-27",
+        "http_status": 200,
+        "width": 1200,
+        "height": 800
+      }
+    },
+    "new-mexico/santa-fe_2934394/restaurant/restaurant-martin": {
+      "page": "https://guide.michelin.com/us/en/new-mexico/santa-fe_2934394/restaurant/restaurant-martin",
+      "title": "Restaurant Martin",
+      "label": "Interior - Restaurant Martin",
+      "image": "https://prod-pics.guide.michelin.com/api/public/content/c7fa228664b34bbcbdc350f19a90c5f3.jpg",
+      "identity": "Exact MICHELIN region/city/restaurant path and normalized display name.",
+      "availability": {
+        "checked": "2026-10-27",
+        "http_status": 200,
+        "width": 1200,
+        "height": 800
+      }
+    },
+    "ontario/niagara-on-the-lake_1245481/restaurant/reve-1244905": {
+      "page": "https://guide.michelin.com/kr/en/ontario/niagara-on-the-lake_1245481/restaurant/reve-1244905",
+      "title": "Revé",
+      "label": "Interior - Revé",
+      "image": "https://prod-pics.guide.michelin.com/api/public/content/d83b35cc565c4c8b913bd2416ac32cbc.jpeg",
+      "identity": "Exact MICHELIN region/city/restaurant path and normalized display name.",
+      "availability": {
+        "checked": "2026-10-27",
+        "http_status": 200,
+        "width": 1200,
+        "height": 800
+      }
+    },
+    "guangdong-province/shenzhen_1030672/restaurant/rong-chuan-cai-shennan-boulevard": {
+      "page": "https://guide.michelin.com/gb/en/guangdong-province/shenzhen_1030672/restaurant/rong-chuan-cai-shennan-boulevard?millesime=df548b",
+      "title": "Rong Chuan Cai (Shennan Boulevard)",
+      "label": "Starter - Rong Chuan Cai (Shennan Boulevard)",
+      "image": "https://prod-pics.guide.michelin.com/api/public/content/bd7945e2a86a4354bc81d5c2da0d7513.jpeg",
+      "identity": "Exact MICHELIN region/city/restaurant path and normalized display name.",
+      "availability": {
+        "checked": "2026-10-27",
+        "http_status": 200,
+        "width": 1200,
+        "height": 800
+      }
+    },
+    "islas-baleares/santa-eulalia-del-rio/restaurant/sa-talassa": {
+      "page": "https://guide.michelin.com/tr/en/islas-baleares/santa-eulalia-del-rio/restaurant/sa-talassa",
+      "title": "Sa Talassa",
+      "label": "Starter - Sa Talassa",
+      "image": "https://prod-pics.guide.michelin.com/api/public/content/f83bd67096534a6690bd3a894c7fa7ea.jpeg",
+      "identity": "Exact MICHELIN region/city/restaurant path and normalized display name.",
+      "availability": {
+        "checked": "2026-10-27",
+        "http_status": 200,
+        "width": 1200,
+        "height": 800
+      }
+    },
+    "tokyo-region/tokyo/restaurant/shirokanedai-sakurai": {
+      "page": "https://guide.michelin.com/gb/en/tokyo-region/tokyo/restaurant/shirokanedai-sakurai?millesime=prioritizedtocompletedata",
+      "title": "Shirokanedai Sakurai",
+      "label": "Interior - Shirokanedai Sakurai",
+      "image": "https://prod-pics.guide.michelin.com/api/public/content/6c39d62844824aacbe92a4b8c6666be6.jpeg",
+      "identity": "Exact MICHELIN region/city/restaurant path and normalized display name.",
+      "availability": {
+        "checked": "2026-10-27",
+        "http_status": 200,
+        "width": 1200,
+        "height": 800
+      }
+    },
+    "auvergne-rhone-alpes/lyon/restaurant/saone": {
+      "page": "https://guide.michelin.com/gb/en/auvergne-rhone-alpes/lyon/restaurant/saone?millesime=km573e",
+      "title": "Saône",
+      "label": "Interior - Saône",
+      "image": "https://prod-pics.guide.michelin.com/api/public/content/965ce480cb0747b69ae87d74b8d16aae.jpeg",
+      "identity": "Exact MICHELIN region/city/restaurant path and normalized display name.",
+      "availability": {
+        "checked": "2026-10-27",
+        "http_status": 200,
+        "width": 1200,
+        "height": 800
+      }
+    },
+    "bangkok-region/bangkok/restaurant/siam-nora": {
+      "page": "https://guide.michelin.com/th/en/bangkok-region/bangkok/restaurant/siam-nora",
+      "title": "Siam Nora",
+      "label": "Interior - Siam Nora",
+      "image": "https://prod-pics.guide.michelin.com/api/public/content/e396a0e61a6b416794fb232efcb8875f.jpeg",
+      "identity": "Exact MICHELIN region/city/restaurant path and normalized display name.",
+      "availability": {
+        "checked": "2026-10-27",
+        "http_status": 200,
+        "width": 1200,
+        "height": 800
+      }
+    },
+    "greater-london/london/restaurant/simpson-s-in-the-strand": {
+      "page": "https://guide.michelin.com/gb/en/greater-london/london/restaurant/simpson-s-in-the-strand?millesime=km573e",
+      "title": "Simpson's in the Strand",
+      "label": "Interior - Simpson's in the Strand",
+      "image": "https://prod-pics.guide.michelin.com/api/public/content/0e1f281c6e5445e7895602ffb054f6de.jpeg",
+      "identity": "Exact MICHELIN region/city/restaurant path and normalized display name.",
+      "availability": {
+        "checked": "2026-10-27",
+        "http_status": 200,
+        "width": 1200,
+        "height": 800
+      }
+    },
+    "pays-de-la-loire/nantes/restaurant/sources-1190237": {
+      "page": "https://guide.michelin.com/us/en/pays-de-la-loire/nantes/restaurant/sources-1190237",
+      "title": "Sources",
+      "label": "Interior - Sources",
+      "image": "https://prod-pics.guide.michelin.com/api/public/content/f962660926824d9bb4a0c80a5ef6a2d2.jpeg",
+      "identity": "Exact MICHELIN region/city/restaurant path and normalized display name.",
+      "availability": {
+        "checked": "2026-10-27",
+        "http_status": 200,
+        "width": 1200,
+        "height": 800
+      }
+    },
+    "devon/exeter/restaurant/stage-by-circa": {
+      "page": "https://guide.michelin.com/gb/en/devon/exeter/restaurant/stage-by-circa?millesime=2023",
+      "title": "Stage by Circa",
+      "label": "Interior - Stage by Circa",
+      "image": "https://prod-pics.guide.michelin.com/api/public/content/57a9b9dcb68849e9927bfe19d1360c03.jpeg",
+      "identity": "Exact MICHELIN region/city/restaurant path and normalized display name.",
+      "availability": {
+        "checked": "2026-10-27",
+        "http_status": 200,
+        "width": 1200,
+        "height": 800
+      }
+    },
+    "singapore-region/singapore/restaurant/sushi-ryujin": {
+      "page": "https://guide.michelin.com/au/en/singapore-region/singapore/restaurant/sushi-ryujin",
+      "title": "Sushi Ryujin",
+      "label": "Interior - Sushi Ryujin",
+      "image": "https://prod-pics.guide.michelin.com/api/public/content/22ade4cb9af244ffae7152f348f4d78e.jpeg",
+      "identity": "Exact MICHELIN region/city/restaurant path and normalized display name.",
+      "availability": {
+        "checked": "2026-10-27",
+        "http_status": 200,
+        "width": 1200,
+        "height": 800
+      }
+    },
+    "northern-taiwan/hsinchu-city_2853126/restaurant/tang-ming": {
+      "page": "https://guide.michelin.com/gb/en/northern-taiwan/hsinchu-city_2853126/restaurant/tang-ming?millesime=prioritizedtocompletedata",
+      "title": "Tang Ming",
+      "label": "Main dish - Tang Ming",
+      "image": "https://prod-pics.guide.michelin.com/api/public/content/32a68c7dd6cf4b3d9c8308b9aed03b4b.jpeg",
+      "identity": "Exact MICHELIN region/city/restaurant path and normalized display name.",
+      "availability": {
+        "checked": "2026-10-27",
+        "http_status": 200,
+        "width": 1200,
+        "height": 800
+      }
+    },
+    "guangdong-province/shenzhen_1030672/restaurant/temporal-house": {
+      "page": "https://guide.michelin.com/gb/en/guangdong-province/shenzhen_1030672/restaurant/temporal-house?millesime=df548b",
+      "title": "Temporal House",
+      "label": "Interior - Temporal House",
+      "image": "https://prod-pics.guide.michelin.com/api/public/content/1187d0bd2a6f4c558e9e244c4f418f29.jpeg",
+      "identity": "Exact MICHELIN region/city/restaurant path and normalized display name.",
+      "availability": {
+        "checked": "2026-10-27",
+        "http_status": 200,
+        "width": 1200,
+        "height": 800
+      }
+    },
+    "hong-kong-region/hong-kong/restaurant/terrace-boulud-by-mandarin-oriental": {
+      "page": "https://guide.michelin.com/en/hong-kong-region/hong-kong/restaurant/terrace-boulud-by-mandarin-oriental",
+      "title": "Terrace Boulud by Mandarin Oriental",
+      "label": "Interior - Terrace Boulud by Mandarin Oriental",
+      "image": "https://prod-pics.guide.michelin.com/api/public/content/21beb20ee08d4441845f5394b4e9db65.jpg",
+      "identity": "Exact MICHELIN region/city/restaurant path and normalized display name.",
+      "availability": {
+        "checked": "2026-10-27",
+        "http_status": 200,
+        "width": 1200,
+        "height": 800
+      }
+    },
+    "colorado/colorado-springs_1262223/restaurant/the-penrose-room": {
+      "page": "https://guide.michelin.com/us/en/colorado/colorado-springs_1262223/restaurant/the-penrose-room",
+      "title": "The Penrose Room",
+      "label": "Interior - The Penrose Room",
+      "image": "https://prod-pics.guide.michelin.com/api/public/content/cc7c6cda5b8d4060861e68dd1b83e74d.jpeg",
+      "identity": "Exact MICHELIN region/city/restaurant path and normalized display name.",
+      "availability": {
+        "checked": "2026-10-27",
+        "http_status": 200,
+        "width": 1200,
+        "height": 800
+      }
+    },
+    "northamptonshire/daventry/restaurant/the-cedar-restaurant": {
+      "page": "https://guide.michelin.com/gb/en/northamptonshire/daventry/restaurant/the-cedar-restaurant?millesime=prioritizedtocompletedata",
+      "title": "The Cedar Restaurant",
+      "label": "Starter - The Cedar Restaurant",
+      "image": "https://prod-pics.guide.michelin.com/api/public/content/5040d51fd742403ea17a71d652fb1d3e.jpeg",
+      "identity": "Exact MICHELIN region/city/restaurant path and normalized display name.",
+      "availability": {
+        "checked": "2026-10-27",
+        "http_status": 200,
+        "width": 1200,
+        "height": 800
+      }
+    },
+    "piemonte/torino/restaurant/tiffany-bistrot-di-mare": {
+      "page": "https://guide.michelin.com/gb/en/piemonte/torino/restaurant/tiffany-bistrot-di-mare?millesime=1q07ft",
+      "title": "Tiffany Bistrot di Mare",
+      "label": "Starter - Tiffany Bistrot di Mare",
+      "image": "https://prod-pics.guide.michelin.com/api/public/content/f09229f88c7645c58e3a752d2c744fe9.jpeg",
+      "identity": "Exact MICHELIN region/city/restaurant path and normalized display name.",
+      "availability": {
+        "checked": "2026-10-27",
+        "http_status": 200,
+        "width": 1200,
+        "height": 800
+      }
+    },
+    "west-yorkshire/leeds/restaurant/the-smithfield": {
+      "page": "https://guide.michelin.com/au/en/west-yorkshire/leeds/restaurant/the-smithfield",
+      "title": "The Smithfield",
+      "label": "Interior - The Smithfield",
+      "image": "https://prod-pics.guide.michelin.com/api/public/content/9e5c6ea27cf146a2bbaf891cdfe81db7.jpeg",
+      "identity": "Exact MICHELIN region/city/restaurant path and normalized display name.",
+      "availability": {
+        "checked": "2026-10-27",
+        "http_status": 200,
+        "width": 1200,
+        "height": 800
+      }
+    },
+    "tainan-region/tainan/restaurant/tucheng-seafood": {
+      "page": "https://guide.michelin.com/au/en/tainan-region/tainan/restaurant/tucheng-seafood",
+      "title": "Tucheng Seafood",
+      "label": "Main dish - Tucheng Seafood",
+      "image": "https://prod-pics.guide.michelin.com/api/public/content/b72e16a6c3fd44898f1aa87b05c8ab2e.jpeg",
+      "identity": "Exact MICHELIN region/city/restaurant path and normalized display name.",
+      "availability": {
+        "checked": "2026-10-27",
+        "http_status": 200,
+        "width": 1200,
+        "height": 800
+      }
+    },
+    "city-of-edinburgh/edinburgh/restaurant/whirlybird": {
+      "page": "https://guide.michelin.com/gb/en/city-of-edinburgh/edinburgh/restaurant/whirlybird?millesime=1q07ft%5C",
+      "title": "Whirlybird",
+      "label": "Interior - Whirlybird",
+      "image": "https://prod-pics.guide.michelin.com/api/public/content/4c4718cac8b3402ca51f5fd8884336c5.jpeg",
+      "identity": "Exact MICHELIN region/city/restaurant path and normalized display name.",
+      "availability": {
+        "checked": "2026-10-27",
+        "http_status": 200,
+        "width": 1200,
+        "height": 800
+      }
+    },
+    "chengdu-municipality/chengdu/restaurant/xiao-ya-tang-wu": {
+      "page": "https://guide.michelin.com/gb/en/chengdu-municipality/chengdu/restaurant/xiao-ya-tang-wu?millesime=prioritizedtocompletedata",
+      "title": "Xiao Ya Tang Wu",
+      "label": "Interior - Xiao Ya Tang Wu",
+      "image": "https://prod-pics.guide.michelin.com/api/public/content/564ca147633642d785c91acf6178aeef.jpeg",
+      "identity": "Exact MICHELIN region/city/restaurant path and normalized display name.",
+      "availability": {
+        "checked": "2026-10-27",
+        "http_status": 200,
+        "width": 1200,
+        "height": 800
+      }
+    },
+    "guangdong-province/shenzhen_1030672/restaurant/yan-ting-1250685": {
+      "page": "https://guide.michelin.com/us/en/guangdong-province/shenzhen_1030672/restaurant/yan-ting-1250685",
+      "title": "Yan Ting",
+      "label": "Main dish - Yan Ting",
+      "image": "https://prod-pics.guide.michelin.com/api/public/content/6576331d83244870a2f2760c833ceecf.jpg",
+      "identity": "Exact MICHELIN region/city/restaurant path and normalized display name.",
+      "availability": {
+        "checked": "2026-10-27",
+        "http_status": 200,
+        "width": 1200,
+        "height": 800
+      }
+    },
+    "taichung-region/taichung/restaurant/yun-la-cuisine": {
+      "page": "https://guide.michelin.com/gb/en/taichung-region/taichung/restaurant/yun-la-cuisine?millesime=prioritizedtocompletedata",
+      "title": "Yùn: La Cuisine",
+      "label": "Interior - Yùn: La Cuisine",
+      "image": "https://prod-pics.guide.michelin.com/api/public/content/2eb5b54b606e4cd599659a27aafb19ff.jpeg",
+      "identity": "Exact MICHELIN region/city/restaurant path and normalized display name.",
+      "availability": {
+        "checked": "2026-10-27",
+        "http_status": 200,
+        "width": 1200,
+        "height": 800
+      }
+    },
+    "bayern/scheidegg/restaurant/zum-hirschen-gasthaus-beim-stockeler": {
+      "page": "https://guide.michelin.com/en/bayern/scheidegg/restaurant/zum-hirschen-gasthaus-beim-stockeler",
+      "title": "ZUM HIRSCHEN beim stöckeler",
+      "label": "Interior - ZUM HIRSCHEN beim stöckeler",
+      "image": "https://prod-pics.guide.michelin.com/api/public/content/0fbbd03b8e5742d98ef91375ee631f05.jpeg",
+      "identity": "Exact MICHELIN region/city/restaurant path and normalized display name.",
+      "availability": {
+        "checked": "2026-10-27",
+        "http_status": 200,
+        "width": 1200,
+        "height": 800
+      }
+    },
+    "singapore-region/singapore/restaurant/yao-fa-teochew-mushroom-meat-noodle": {
+      "page": "https://guide.michelin.com/gb/en/singapore-region/singapore/restaurant/yao-fa-teochew-mushroom-meat-noodle?millesime=prioritizedtocompletedata",
+      "title": "Yao Fa Teochew Mushroom Meat Noodle",
+      "label": "Main dish - Yao Fa Teochew Mushroom Meat Noodle",
+      "image": "https://prod-pics.guide.michelin.com/api/public/content/357a290eee404f1eafcbc28908036a5d.jpeg",
+      "identity": "Exact MICHELIN region/city/restaurant path and normalized display name.",
+      "availability": {
+        "checked": "2026-10-27",
+        "http_status": 200,
+        "width": 1200,
+        "height": 800
+      }
+    },
+    "antwerpen/kalmthout/restaurant/zilverden": {
+      "page": "https://guide.michelin.com/gb/en/antwerpen/kalmthout/restaurant/zilverden?millesime=2023",
+      "title": "Zilverden",
+      "label": "Starter - Zilverden",
+      "image": "https://prod-pics.guide.michelin.com/api/public/content/392773e973be49c8bc1d34909bae695f.jpg",
+      "identity": "Exact MICHELIN region/city/restaurant path and normalized display name.",
+      "availability": {
+        "checked": "2026-10-27",
+        "http_status": 200,
+        "width": 1200,
+        "height": 800
+      }
+    },
+    "toscana/sant-angelo-in-colle/restaurant/il-pozzo-1202739": {
+      "page": "https://guide.michelin.com/gb/en/toscana/sant-angelo-in-colle/restaurant/il-pozzo-1202739?millesime=2023",
+      "title": "il Pozzo",
+      "label": "Main dish - il Pozzo",
+      "image": "https://prod-pics.guide.michelin.com/api/public/content/02964f8c74424ff1a522c7bb2cd9d4f4.jpg",
+      "identity": "Exact MICHELIN region/city/restaurant path and normalized display name.",
+      "availability": {
+        "checked": "2026-10-27",
+        "http_status": 200,
+        "width": 1200,
+        "height": 800
+      }
+    },
+    "mecklenburg-vorpommern/wismar/restaurant/klein-fein": {
+      "page": "https://guide.michelin.com/gb/en/mecklenburg-vorpommern/wismar/restaurant/klein-fein?millesime=prioritizedtocompletedata",
+      "title": "klein&fein",
+      "label": "Interior - klein&fein",
+      "image": "https://prod-pics.guide.michelin.com/api/public/content/a236498ef7e14e55956643eca39ec710.jpeg",
+      "identity": "Exact MICHELIN region/city/restaurant path and normalized display name.",
+      "availability": {
+        "checked": "2026-10-27",
+        "http_status": 200,
+        "width": 1200,
+        "height": 800
+      }
+    },
+    "ontario/saint-catharines_1245759/restaurant/oddbird": {
+      "page": "https://guide.michelin.com/au/en/ontario/saint-catharines_1245759/restaurant/oddbird",
+      "title": "oddBird",
+      "label": "Starter - oddBird",
+      "image": "https://prod-pics.guide.michelin.com/api/public/content/836ccbbcf18e4682932fe5d68717d454.jpeg",
+      "identity": "Exact MICHELIN region/city/restaurant path and normalized display name.",
+      "availability": {
+        "checked": "2026-10-27",
+        "http_status": 200,
+        "width": 1200,
+        "height": 800
+      }
+    },
+    "vienna/wien/restaurant/plachutta": {
+      "page": "https://guide.michelin.com/gb/en/vienna/wien/restaurant/plachutta?millesime=1q07ft",
+      "title": "Plachutta Wollzeile",
+      "label": "Interior - Plachutta Wollzeile",
+      "image": "https://prod-pics.guide.michelin.com/api/public/content/b6293179555348949a6b84393c6d7a7b.jpeg",
+      "identity": "Exact restaurant page path and same street address; expanded or localized display name reviewed.",
+      "availability": {
+        "checked": "2026-10-27",
+        "http_status": 200,
+        "width": 1200,
+        "height": 800
+      }
+    },
+    "ticino/centovalli-intragna/restaurant/yanelo": {
+      "page": "https://guide.michelin.com/gb/en/ticino/centovalli-intragna/restaurant/yanelo?millesime=prioritizedtocompletedata/1000",
+      "title": "Ristorante della Stazione da YanElo",
+      "label": "Starter - Ristorante della Stazione da YanElo",
+      "image": "https://prod-pics.guide.michelin.com/api/public/content/731ba06cac3a4fc1a98231e2dc3bdea1.jpeg",
+      "identity": "Exact restaurant page path and same street address; expanded or localized display name reviewed.",
+      "availability": {
+        "checked": "2026-10-27",
+        "http_status": 200,
+        "width": 1200,
+        "height": 800
+      }
+    },
+    "tokyo-region/tokyo/restaurant/opaline-1250904": {
+      "page": "https://guide.michelin.com/jp/ja/tokyo-region/tokyo/restaurant/opaline-1250904",
+      "title": "オパラン／opaline",
+      "label": "内観 - オパラン／opaline",
+      "image": "https://prod-pics.guide.michelin.com/api/public/content/0e56db335590472789d31d6c48e854bb.jpeg",
+      "identity": "Exact restaurant page path and same street address; expanded or localized display name reviewed.",
+      "availability": {
+        "checked": "2026-10-27",
+        "http_status": 200,
+        "width": 1200,
+        "height": 800
+      }
+    }
   }
 }
