@@ -12,6 +12,7 @@ const MGI18n=(()=>{
 
   // ---- whole-text matches (exact node / attribute text, trimmed) ----
   const FULL={
+    '城市中文名参考':'Chinese place names based on','地名资料与参考音译，导航保留原文。':'gazetteer names and reference transliterations; navigation keeps the original name.','旅行':'Trips','护照':'Passport','同步':'Sync','备份':'Backup','设置':'Settings','我的页面直达':'Personal shortcuts','美食护照':'Food passport','签章与我的旅行记录':'Stamps and travel memories','规划旅程，收藏沿途餐厅':'Plan a journey, save tables along the way','餐厅清单':'My restaurants','想去与去过，随时展开查看':'Saved and visited restaurants','手机与电脑，共享一份收藏':'One collection across your devices','备份与恢复':'Backup and restore','导出一份，安心保留':'Keep a copy of your collection','偏好与关于':'Preferences and about','主题、语言与使用帮助':'Theme, language and help','生僻地名采用参考音译，支持中文与原名检索。':'Less common places use reference transliterations; search in Chinese or the original name.',
     '次用餐':'meals','家餐厅':'restaurants','颗米其林星':'MICHELIN Stars','我的平均分':'my average','去过':'Been','想去':'Want to go',
     '次':'meals','天':'days','家':'restaurants','去过的国家和地区':'countries & regions','去过的城市':'cities','到访城市':'cities','去过的餐厅':'restaurants visited',
     '全部':'All','个':'','清单':'List','名录':'Directory','地图':'Map','附近':'Nearby','我的':'Me','筛选':'Filters','关闭':'Close',

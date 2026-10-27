@@ -16,7 +16,7 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
-      - run: node --test tests/core.test.js tests/intro.test.js tests/route.test.js tests/sync.test.js
+      - run: node --test tests/cities.test.js tests/core.test.js tests/intro.test.js tests/route.test.js tests/sync.test.js
       - run: python -m unittest discover -s tests -p 'test_*.py'
       - run: python tools/check_updates.py --validate-only
-      - run: node --check upgrade.js && node --check guide-core.js && node --check sw.js && node --check passport-share.js && node --check address-localization.js && node --check meal-photos.js && node --check restaurant-intro.js && node --check trip-route.js && node --check i18n.js && node --check cloud-sync.js && node --check guide-updates.js
+      - run: node --check city-names.js && node --check my-navigation.js && node --check upgrade.js && node --check guide-core.js && node --check sw.js && node --check passport-share.js && node --check address-localization.js && node --check meal-photos.js && node --check restaurant-intro.js && node --check trip-route.js && node --check i18n.js && node --check cloud-sync.js && node --check guide-updates.js

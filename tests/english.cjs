@@ -7,7 +7,7 @@ const assert=require('node:assert/strict'),http=require('http'),fs=require('fs')
     res.setHeader('Content-Type',({'.html':'text/html','.js':'text/javascript','.css':'text/css','.json':'application/json','.png':'image/png','.webp':'image/webp'})[path.extname(file)]||'text/plain');
     try{res.end(fs.readFileSync(file));}catch(e){res.writeHead(404);res.end('missing');}});
   await new Promise(ok=>server.listen(0,'127.0.0.1',ok));const url='http://127.0.0.1:'+server.address().port,shots=process.env.SCREENSHOT_DIR;
-  const browser=await chromium.launch({headless:true});const T=m=>process.env.TRACE&&console.error('> '+m);const left=new Map();
+  const browser=await chromium.launch({headless:true,executablePath:process.env.CHROMIUM_EXECUTABLE||undefined,args:['--no-sandbox','--disable-dev-shm-usage','--use-gl=angle','--use-angle=swiftshader','--enable-unsafe-swiftshader']});const T=m=>process.env.TRACE&&console.error('> '+m);const left=new Map();
   try{
     const ctx=await browser.newContext({viewport:{width:390,height:844},hasTouch:true,isMobile:true,deviceScaleFactor:2,permissions:['geolocation'],geolocation:{latitude:48.86,longitude:2.35}});
     const page=await ctx.newPage(),errors=[];page.on('pageerror',e=>errors.push(e.message));
@@ -28,9 +28,10 @@ const assert=require('node:assert/strict'),http=require('http'),fs=require('fs')
     await sweep('list');if(shots)await page.screenshot({path:path.join(shots,'en-list.png')});
     T('filters');await page.evaluate(()=>document.getElementById('filterBtn')?.click());await sweep('filters');await page.keyboard.press('Escape');
     await page.evaluate(()=>{document.querySelectorAll('dialog[open]').forEach(d=>closeAppDialog(d));});
-    for(const tab of ['map','near','me']){await page.locator(`#tabbar [data-tab="${tab}"]`).click();await page.waitForTimeout(600);await sweep(tab);}
+    for(const tab of ['map','near','me']){await page.locator(`#tabbar [data-tab="${tab}"]`).click();await page.waitForTimeout(600);if(tab==='me')await page.evaluate(()=>document.querySelectorAll('#mePage>.me-fold').forEach(d=>d.open=true));await sweep(tab);}
     if(shots)await page.screenshot({path:path.join(shots,'en-me.png'),fullPage:true});
     await page.locator('#tabbar [data-tab="me"]').click();
+    await page.evaluate(()=>document.querySelectorAll('#mePage>.me-fold').forEach(d=>d.open=true));
     for(const sel of ['.openAbout','#installBtn','#importBtn']){await page.evaluate(s=>[...document.querySelectorAll(s)].find(e=>e.offsetParent)?.click()??document.querySelector(s).click(),sel);await page.waitForTimeout(300);await sweep(sel);await page.evaluate(()=>{document.querySelectorAll('dialog[open]').forEach(d=>closeAppDialog(d));});}
     await page.evaluate(u=>upOpenDetail(u),seed.detail);await page.waitForSelector('#detailDlg[open] .detail-intro');await sweep('detail');
     if(shots)await page.locator('#detailDlg .dlg').screenshot({path:path.join(shots,'en-detail.png')});
@@ -53,7 +54,7 @@ const assert=require('node:assert/strict'),http=require('http'),fs=require('fs')
     for(const fn of ['()=>toast("已复制地址")','()=>toast("链接已复制，发给朋友打开就是同样的筛选结果")']){await page.evaluate(`(${fn})()`);await sweep('toast');}
     for(const [k,v] of left)console.log(`LEFT [${v}] ${k}`);
     // switching back to Chinese
-    await page.locator('#tabbar [data-tab="me"]').click();await page.locator('#langSeg [data-lang="zh"]').click();await page.waitForLoadState('load');await page.waitForFunction(()=>typeof DB!=='undefined'&&DB&&DB.rows.length>1000);
+    await page.locator('#tabbar [data-tab="me"]').click();await page.locator('[data-me-jump="meSettings"]').click();await page.locator('#langSeg [data-lang="zh"]').click();await page.waitForLoadState('load');await page.waitForFunction(()=>typeof DB!=='undefined'&&DB&&DB.rows.length>1000);
     assert.equal(await page.evaluate(()=>document.documentElement.lang),'zh-CN');assert.equal(await page.evaluate(()=>localStorage.getItem('mg-lang')),'zh');
     assert.deepEqual(errors,[]);assert.equal(left.size,0,left.size+' untranslated strings');
     console.log('PASS: English interface — list, filters, map, nearby, me, about, install, import, detail (intro/address/meal log), visit sheet, trips, route, passport, recap canvas, search, toasts; switch back to Chinese.');

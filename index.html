@@ -18,7 +18,7 @@
 <meta name="apple-mobile-web-app-title" content="米其林名录">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <!-- ?v= must match ASSET_VER in sw.js: a new page must never run with an old cached script -->
-<link rel="stylesheet" href="upgrade.css?v=32">
+<link rel="stylesheet" href="upgrade.css?v=33">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" href="icon.svg" type="image/svg+xml">
 <link rel="icon" href="icon-192.png" sizes="192x192" type="image/png">
@@ -283,7 +283,7 @@ dialog::backdrop{background:var(--shade)}
       <div class="row" id="conts"></div>
       <div class="row">
         <select id="country" aria-label="国家或地区"></select>
-        <select id="city" aria-label="城市"></select>
+        <select id="city" aria-label="城市"></select><p class="city-name-note">生僻地名采用参考音译，支持中文与原名检索。</p>
       </div>
 
         <div class="lbl">菜系与价位</div>
@@ -352,6 +352,7 @@ dialog::backdrop{background:var(--shade)}
     </div>
     <div class="card">
       <h3>关于</h3>
+      <p class="note">城市中文名参考 <a href="https://www.geonames.org/" target="_blank" rel="noopener">GeoNames</a> 地名资料与参考音译，导航保留原文。</p>
       <button type="button" class="cell" id="installBtn">添加到手机主屏幕<span class="r" id="installHint">像 App 一样打开</span></button>
       <button type="button" class="cell openAbout">等级怎么分、怎么评<span class="r"></span></button>
       <a class="cell" href="https://github.com/SparrowCinema/michelin-guide/issues/new?title=%E7%BA%A0%E9%94%99%EF%BC%9A" target="_blank" rel="noopener">纠错与反馈<span class="r">GitHub</span></a>
@@ -440,24 +441,26 @@ dialog::backdrop{background:var(--shade)}
 <div id="inappBar" hidden><span>在微信等 App 里无法添加到主屏幕，也可能打不开地图。</span><button type="button" id="inappHow">怎么办</button><button type="button" id="inappX" aria-label="关闭">×</button></div>
 <div id="toast" role="status" aria-live="polite"></div>
 
-<script src="i18n.js?v=32"></script>
-<script src="search-aliases.js?v=32"></script>
-<script src="guide-core.js?v=32"></script>
-<script src="address-localization.js?v=32"></script>
-<script src="restaurant-intro.js?v=32"></script>
-<script src="upgrade.js?v=32"></script>
-<script src="passport-share.js?v=32"></script>
-<script src="meal-photos.js?v=32"></script>
-<script src="trip-route.js?v=32"></script>
-<script src="cloud-sync.js?v=32"></script>
-<script src="guide-updates.js?v=32"></script>
+<script src="i18n.js?v=33"></script>
+<script src="city-names.js?v=33"></script>
+<script src="my-navigation.js?v=33"></script>
+<script src="search-aliases.js?v=33"></script>
+<script src="guide-core.js?v=33"></script>
+<script src="address-localization.js?v=33"></script>
+<script src="restaurant-intro.js?v=33"></script>
+<script src="upgrade.js?v=33"></script>
+<script src="passport-share.js?v=33"></script>
+<script src="meal-photos.js?v=33"></script>
+<script src="trip-route.js?v=33"></script>
+<script src="cloud-sync.js?v=33"></script>
+<script src="guide-updates.js?v=33"></script>
 <script>
 const CONT=["亚洲","欧洲","北美洲","南美洲","大洋洲"];
 const LVN=["三星","二星","一星","必比登","入选"];
 const LVC=["#7a0d0a","#b3261e","#e0574d","#c98a00","#9a9390"];
 const PIN=["中国内地","中国香港","中国澳门","中国台湾"];
 const REPO="https://github.com/SparrowCinema/michelin-guide";
-const ASSET_VER="32"; // = ?v= on the asset tags above, UPGRADE_VER in upgrade.js and ASSET_VER in sw.js
+const ASSET_VER="33"; // = ?v= on the asset tags above, UPGRADE_VER in upgrade.js and ASSET_VER in sw.js
 const DATA_VER="20261003-5"; // bump whenever data.json changes so browsers skip their cached copy
 const $=id=>document.getElementById(id);
 const esc=s=>String(s).replace(/[&<>"]/g,ch=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[ch]));
@@ -466,7 +469,7 @@ const isPhone=()=>matchMedia("(max-width:700px)").matches;
 
 // ---- state ----
 const S={v:"list",l:"all",c:"",co:"",ci:"",q:"",cu:"",p:"",f:new Set(),near:false,trip:"",change:"",budget:0,currency:"EUR"};
-let DB=null,page=1,showAllStats=false,ME=null,meTab=1,meOrder="time";
+let DB=null,page=1,showAllStats=false,ME=null,meTab=1,meOrder="time",meLimit=12;
 // Native <dialog> makes the background inert, but does not reliably stop page scrolling
 // (especially touch scrolling in Safari). Freeze the page before focus moves into a modal.
 const MODAL_SCROLL={locked:false,x:0,y:0,body:[],root:[]};
@@ -510,7 +513,7 @@ function km(a,b,c,d){const R=6371,p=Math.PI/180,x=Math.sin((c-a)*p/2)**2+Math.co
 
 // ---- data ----
 function prep(d){
-  const C=d.countries,T=d.cities;
+  const C=d.countries,T=d.cities.map(t=>(typeof MGI18n!=="undefined"&&MGI18n.en)?[t[2]||t[0],...t.slice(1)]:t);
   const ctryTot=C.map(()=>0),cityTot=T.map(()=>0);
   d.r.forEach(r=>{cityTot[r[3]]++;ctryTot[T[r[3]][1]]++});
   const corder=C.map((c,i)=>i).sort((a,b)=>CONT.indexOf(C[a][2])-CONT.indexOf(C[b][2])
@@ -519,7 +522,7 @@ function prep(d){
   const rows=d.r.map(r=>{const t=T[r[3]],c=C[t[1]],cu=r[5]>=0?d.cuisines[r[5]]:"";
     const o={n:r[0],zh:(typeof MGI18n!=="undefined"&&MGI18n.en)?"":r[1],zhn:r[1],kind:r[2]&3,ci:r[3],co:t[1],l:r[4],cu,cue:r[5]>=0&&d.cuisines_en?d.cuisines_en[r[5]]:"",cui:r[5],p:r[6],u:r[7],w:r[8],a:r[9],
       lat:r[10],lng:r[11],green:!!r[12],h:r[13]||"",bp:r[14]||0,la:r[15]||"",ml:c[1]==="Chinese Mainland",
-      s:(typeof MGI18n!=="undefined"&&MGI18n.en)?r[0]:r[1]||r[0],k:MG.index([r[0],r[1],t[0],c[0],c[1],cu,r[9],r[15]||""],window.MG_ALIASES)};
+      s:(typeof MGI18n!=="undefined"&&MGI18n.en)?r[0]:r[1]||r[0],k:MG.index([r[0],r[1],d.cities[r[3]][0],t[0],t[2]||"",c[0],c[1],cu,r[9],r[15]||""],window.MG_ALIASES)};
     // history: one char per yearly snapshot 2022..2025; current award is o.l
     const cur=String(o.l),prev=o.h.length===4?o.h[3]:"?";
     o.nw=o.ml?!!(r[2]&4):prev==="-";
@@ -545,14 +548,14 @@ function readHash(){
   S._co=h.get("co")||"";S._ci=h.get("ci")||"";return true}
 function resolveNames(){
   if(S._co!==undefined){S.co=S._co&&DB.coByName[S._co]!==undefined?String(DB.coByName[S._co]):"";
-    S.ci="";if(S.co!==""&&S._ci){const i=DB.T.findIndex(t=>t[0]===S._ci&&t[1]==S.co);if(i>=0)S.ci=String(i)}
+    S.ci="";if(S.co!==""&&S._ci){const i=DB.T.findIndex(t=>(t[0]===S._ci||t[2]===S._ci||(typeof MGCity!=="undefined"&&MGCity.info(DB.C[t[1]][1],t[2])?.[0]===S._ci))&&t[1]==S.co);if(i>=0)S.ci=String(i)}
     delete S._co;delete S._ci}
   if(S.cu&&!DB.cuisines.includes(S.cu))S.cu="";
 }
 function hashString(){
   const h=new URLSearchParams();
   if(S.v!=="list")h.set("v",S.v);if(S.l!=="all")h.set("l",S.l);if(S.c)h.set("c",S.c);
-  if(S.co!=="")h.set("co",DB.C[S.co][0]);if(S.ci!=="")h.set("ci",DB.T[S.ci][0]);
+  if(S.co!=="")h.set("co",DB.C[S.co][0]);if(S.ci!=="")h.set("ci",DB.T[S.ci][2]||DB.T[S.ci][0]);
   if(S.q)h.set("q",S.q);if(S.cu)h.set("cu",S.cu);if(S.p)h.set("p",S.p);
 
   if(S.f.size)h.set("f",[...S.f].join(","));
@@ -587,7 +590,7 @@ function fillSelects(){
   else{const byT={};DB.rows.filter(r=>r.co==S.co).forEach(r=>byT[r.ci]=(byT[r.ci]||0)+1);
     const ts=Object.keys(byT).map(Number).sort((a,b)=>byT[b]-byT[a]);
     $("city").disabled=false;
-    $("city").innerHTML=`<option value="">全部城市（${ts.length}）</option>`+ts.map(t=>`<option value="${t}">${esc(DB.T[t][0])}　${byT[t]}</option>`).join("");
+    $("city").innerHTML=`<option value="">全部城市（${ts.length}）</option>`+ts.map(t=>`<option value="${t}">${esc(typeof MGI18n!=="undefined"&&MGI18n.en?DB.T[t][2]:(DB.T[t][0]+(DB.T[t][2]!==DB.T[t][0]?" / "+DB.T[t][2]:"")))}　${byT[t]}</option>`).join("");
     $("city").value=S.ci}
   const cc={};filtered("cuisine").forEach(r=>{if(r.cui>=0)cc[r.cui]=(cc[r.cui]||0)+1});
   if(S.cu){const i=DB.cuisines.indexOf(S.cu);cc[i]=cc[i]||0}
@@ -708,19 +711,20 @@ function renderMe(){
   document.querySelectorAll("[data-m]").forEach(b=>b.setAttribute("aria-pressed",+b.dataset.m===meTab));
   document.querySelectorAll("[data-o]").forEach(b=>b.setAttribute("aria-pressed",b.dataset.o===meOrder));
   const list=(meTab===1?want:been);
+  if(typeof MGMe!=="undefined")MGMe.update(want.length,been.length,list.length);
   $("orderScore").hidden=meTab!==2;if(meTab!==2&&meOrder==="score")meOrder="time";
   if(!list.length){$("meList").innerHTML=`<p class="empty">${meTab===1?"还没有想去的餐厅。<br>在名录或地图里点店名下面的“想去”，就会出现在这里。":"还没有去过的餐厅。<br>吃过之后点“去过”打个分，这里会记下来。"}</p>`;return}
   if(meOrder==="score"){
     const score=x=>PERSONAL.records[x[0].u]?.rating||0;
     const rs=list.slice().sort((a,b)=>score(b)-score(a)||b[1][1]-a[1][1]).map(x=>x[0]);
-    $("meList").innerHTML=`<ul class="rl">`+rs.map(r=>`<li>${badge(r)}<span class="nm">${itemBody(r,true)}</span></li>`).join("")+"</ul>";
+    $("meList").innerHTML=`<ul class="rl">`+rs.slice(0,meLimit).map(r=>`<li>${badge(r)}<span class="nm">${itemBody(r,true)}</span></li>`).join("")+"</ul>";
   }else if(meOrder==="time"){
     const rs=list.slice().sort((a,b)=>b[1][1]-a[1][1]).map(x=>x[0]);
-    $("meList").innerHTML=`<ul class="rl">`+rs.map(r=>`<li>${badge(r)}<span class="nm">${itemBody(r,true)}</span></li>`).join("")+"</ul>";
+    $("meList").innerHTML=`<ul class="rl">`+rs.slice(0,meLimit).map(r=>`<li>${badge(r)}<span class="nm">${itemBody(r,true)}</span></li>`).join("")+"</ul>";
   }else{
     const pos=new Map(DB.rows.map((r,i)=>[r,i]));
     const rs=list.map(x=>x[0]).sort((a,b)=>pos.get(a)-pos.get(b));
-    $("meList").innerHTML=grouped(rs,rs.length);
+    $("meList").innerHTML=grouped(rs,Math.min(rs.length,meLimit));
   }
 }
 function updateBadge(){const n=Object.values(FAV).filter(x=>x[0]===1).length;$("meBadge").hidden=!n;$("meBadge").textContent=n>99?"99+":n}
@@ -926,8 +930,8 @@ document.addEventListener("click",e=>{const b=e.target.closest(".fav");if(!b)ret
   document.querySelectorAll(`.fav[data-u="${CSS.escape(u)}"]`).forEach(x=>{x.setAttribute("aria-pressed",favOf(u)===+x.dataset.v);if(x.dataset.v==="2")x.textContent=upVisitLabel(u)});
   toast(favOf(u)===1?"已加入“想去”，在“我的”里查看":favOf(u)===2?"已标为“去过”":"已取消");
   if(S.v==="me")renderMe()});
-document.querySelectorAll("[data-m]").forEach(b=>b.addEventListener("click",()=>{meTab=+b.dataset.m;renderMe()}));
-document.querySelectorAll("[data-o]").forEach(b=>b.addEventListener("click",()=>{meOrder=b.dataset.o;renderMe()}));
+document.querySelectorAll("[data-m]").forEach(b=>b.addEventListener("click",()=>{meTab=+b.dataset.m;meLimit=12;renderMe()}));
+document.querySelectorAll("[data-o]").forEach(b=>b.addEventListener("click",()=>{meOrder=b.dataset.o;meLimit=12;renderMe()}));
 document.querySelectorAll(".openAbout").forEach(b=>b.addEventListener("click",()=>showAppDialog($("about"))));
 document.querySelectorAll("dialog").forEach(d=>{d.addEventListener("click",e=>{if(e.target===d||e.target.closest("[data-close]"))closeAppDialog(d)})});
 window.addEventListener("hashchange",()=>{if(!DB)return;if(readHash()){resolveNames();reset();render()}});
@@ -1020,7 +1024,7 @@ matchMedia("(max-width:700px)").addEventListener("change",()=>{closeSheet();if(D
 async function healMismatch(){
   const got=typeof UPGRADE_VER==="undefined"?"none":UPGRADE_VER;if(got===ASSET_VER)return false;
   const key=ASSET_VER+"|"+got;try{if(sessionStorage.getItem("mg-heal")===key)return false;sessionStorage.setItem("mg-heal",key)}catch(e){return false}
-  const files=["./","index.html","upgrade.js","passport-share.js","upgrade.css","guide-core.js","search-aliases.js","address-localization.js","sw.js"];
+  const files=["./","index.html","upgrade.js","passport-share.js","upgrade.css","guide-core.js","search-aliases.js","address-localization.js","city-names.js","my-navigation.js","i18n.js","sw.js"];
   await Promise.all(files.flatMap(f=>[f,f+"?v="+got,f+"?v="+ASSET_VER]).map(u=>fetch(u,{cache:"reload"}).catch(()=>{})));
   try{const reg=await navigator.serviceWorker?.getRegistration();await reg?.update()}catch(e){}
   location.reload();return true;
@@ -1039,12 +1043,14 @@ async function healMismatch(){
       const all=new Uint8Array(got);let o=0;for(const p of parts){all.set(p,o);o+=p.length}
       d=JSON.parse(new TextDecoder().decode(all));
     }else d=await res.json();
+    if(typeof MGCity!=="undefined")MGCity.apply(d);
     if(typeof MGI18n!=="undefined")MGI18n.data(d);
     DB=prep(d);resolveNames();upInit();
     if(DB.updated){const [y,m,dd]=DB.updated.split("-");document.querySelectorAll(".updated").forEach(e=>e.textContent=e.closest(".cell")?`${y} 年 ${+m} 月 ${+dd} 日`:`数据更新至 ${y} 年 ${+m} 月 ${+dd} 日`)}
     render();
     if(typeof MGUpdates!=="undefined")MGUpdates.start();
     if(typeof MGSync!=="undefined")MGSync.start();
+    if(typeof MGMe!=="undefined")MGMe.mount();
   }catch(e){$("list").innerHTML='<p class="empty">数据没能载入，请刷新页面再试。</p>'}
 })();
 </script>

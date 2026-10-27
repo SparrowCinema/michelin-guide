@@ -16,7 +16,7 @@ const assert=require('node:assert/strict'),http=require('http'),fs=require('fs')
     mg_photo_put:({code,photo_id,data})=>{const k=key(code);assert(db.has(k));assert(/^data:image\/jpeg;base64,/.test(data));if(!photos.has(k))photos.set(k,new Map());photos.get(k).set(photo_id,data);return true;},
     mg_photo_get:({code,ids})=>{const m=photos.get(key(code))||new Map();return Object.fromEntries(ids.slice(0,20).filter(i=>m.has(i)).map(i=>[i,m.get(i)]));},
     mg_photo_delete:({code,ids})=>{const m=photos.get(key(code))||new Map();let n=0;for(const i of ids)if(m.delete(i))n++;return n;}};
-  const browser=await chromium.launch({headless:true});const errors=[];
+  const browser=await chromium.launch({headless:true,executablePath:process.env.CHROMIUM_EXECUTABLE||undefined,args:['--no-sandbox','--disable-dev-shm-usage']});const errors=[];
   async function device(name){
     const ctx=await browser.newContext({locale:'zh-CN',viewport:{width:390,height:844},hasTouch:true,isMobile:true,deviceScaleFactor:2,permissions:['clipboard-read','clipboard-write']});
     await ctx.route(/^https:\/\/dclxhxxjktegyiwafmsv\.supabase\.co\/rest\/v1\/rpc\/(\w+)$/,async route=>{calls++;const fn=route.request().url().split('/').pop();
@@ -37,14 +37,14 @@ const assert=require('node:assert/strict'),http=require('http'),fs=require('fs')
     await phone.waitForFunction(()=>document.querySelectorAll('#detailDlg .mp-edit [data-photo-tile]').length===1);
     await phone.fill('#visitDate','2026-10-01');await phone.locator('#detailDlg .visit-form button[type=submit]').click();
     await phone.evaluate(()=>closeAppDialog(document.getElementById('detailDlg')));
-    await phone.locator('#tabbar [data-tab="me"]').click();await phone.locator('[data-sync="start"]').click();await settle(phone);
+    await phone.locator('#tabbar [data-tab="me"]').click();await phone.locator('[data-me-jump="meSync"]').click();await phone.locator('[data-sync="start"]').click();await settle(phone);
     const code=await phone.evaluate(()=>MGSync.state().code);assert.match(code,/^MG(-[A-Z2-9]{4}){6}$/);
     assert.equal(await phone.locator('#syncCard code').innerText(),code,'new code shown in full');
     assert.equal([...photos.values()][0].size,1,'photo uploaded');
     if(shots)await phone.locator('#syncCard').screenshot({path:path.join(shots,'sync-on.png')});
     // laptop: its own record, then join with the code → union
     await laptop.evaluate(u=>{FAV[u[3]]=[1,Date.now()];saveFav();},rows);
-    await laptop.locator('#tabbar [data-tab="me"]').click();await laptop.locator('[data-sync="join"]').click();
+    await laptop.locator('#tabbar [data-tab="me"]').click();await laptop.locator('[data-me-jump="meSync"]').click();await laptop.locator('[data-sync="join"]').click();
     if(shots)await laptop.locator('#syncCard').screenshot({path:path.join(shots,'sync-join.png')});
     await laptop.fill('#syncInput',code.toLowerCase().replaceAll('-',' '));await laptop.locator('#syncJoin button').click();await settle(laptop);
     const lap=await laptop.evaluate(u=>({fav:u.map(x=>FAV[x]?.[0]||0),visits:upVisits(u[2]).length,photo:upVisits(u[2])[0]?.photos?.length||0}),rows);
@@ -61,7 +61,7 @@ const assert=require('node:assert/strict'),http=require('http'),fs=require('fs')
     await new Promise(r=>setTimeout(r,7000));assert([...db.values()][0].rev>before,'auto-sync pushed the change');
     // bad code
     await laptop.evaluate(()=>{localStorage.removeItem('mg-sync');});await laptop.reload();await laptop.waitForFunction(()=>document.getElementById('syncCard'));
-    await laptop.locator('#tabbar [data-tab="me"]').click();await laptop.locator('[data-sync="join"]').click();await laptop.fill('#syncInput','MG-1234');await laptop.locator('#syncJoin button').click();
+    await laptop.locator('#tabbar [data-tab="me"]').click();await laptop.locator('[data-me-jump="meSync"]').click();await laptop.locator('[data-sync="join"]').click();await laptop.fill('#syncInput','MG-1234');await laptop.locator('#syncJoin button').click();
     assert((await laptop.locator('#toast').innerText()).includes('同步码格式不对'));
     // stop syncing keeps local data
     await phone.evaluate(()=>{window.confirm=()=>true;});await phone.locator('[data-sync="stop"]').click();assert.equal(await phone.evaluate(()=>MGSync.state()),null);
