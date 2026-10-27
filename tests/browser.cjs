@@ -5,7 +5,7 @@ const assert=require('node:assert/strict'),fs=require('node:fs'),path=require('n
 const {chromium}=require(process.env.PLAYWRIGHT_MODULE||'playwright');
 (async()=>{
   const base=path.resolve(__dirname,'..');
-  const previousCache='mg-v22';
+  const previousCache='mg-v23';
   const cacheName=fs.readFileSync(path.join(base,'sw.js'),'utf8').match(/const CACHE = "([^"]+)"/)[1];
   // A new page must never load an old cached script: index.html asset versions must match sw.js.
   const swText=fs.readFileSync(path.join(base,'sw.js'),'utf8'),assetVer=swText.match(/const ASSET_VER = "([^"]+)"/)[1],indexText=fs.readFileSync(path.join(base,'index.html'),'utf8');
@@ -38,6 +38,7 @@ const {chromium}=require(process.env.PLAYWRIGHT_MODULE||'playwright');
     const leaflet=path.dirname(require.resolve(process.env.LEAFLET_MODULE||'leaflet'));
     await page.route(/https:\/\/.*leaflet.*\.(js|css)$/,route=>route.fulfill({path:path.join(leaflet,route.request().url().endsWith('.css')?'leaflet.css':'leaflet.js'),contentType:route.request().url().endsWith('.css')?'text/css':'text/javascript'}));
     await page.route(/https:\/\/.*(autonavi|arcgisonline|tile\.openstreetmap).*$/,route=>route.fulfill({status:200,headers:{'Access-Control-Allow-Origin':'*'},contentType:'image/png',body:Buffer.from('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+aN1sAAAAASUVORK5CYII=','base64')}));
+    await page.route(/https:\/\/prod-pics\.guide\.michelin\.com\/api\/public\/content\/.*/,route=>route.fulfill({status:200,contentType:process.env.PHOTO_FIXTURE?'image/webp':'image/png',body:process.env.PHOTO_FIXTURE?fs.readFileSync(process.env.PHOTO_FIXTURE):Buffer.from('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+aN1sAAAAASUVORK5CYII=','base64')}));
     await page.goto(url);await page.waitForFunction(()=>typeof DB!=='undefined'&&DB&&upLoaded);
     await page.locator('#tabbar [data-tab="me"]').click();
     assert(await page.locator('.pp-cover').isVisible());
@@ -236,6 +237,22 @@ const {chromium}=require(process.env.PLAYWRIGHT_MODULE||'playwright');
     assert.equal(await page.locator('button.pp-stamp').count(),0);
     await page.evaluate(saved=>{FAV=JSON.parse(saved);saveFav();S.v='me';applyTheme('light');render();},savedFavourites);
     await page.locator('[data-passport-close]').click();assert(await page.locator('.pp-cover').isVisible());
+    // Restaurant hero uses its own exact-ID photo; async loads never replace a visit draft.
+    const photoFixture=await page.evaluate(()=>DB.rows.find(r=>r.n==='Arpège').u);
+    await page.evaluate(u=>upOpenDetail(u),photoFixture);await page.waitForSelector('.detail-hero.has-photo');
+    const photoSrc=await page.locator('.detail-photo').getAttribute('src');assert(photoSrc.startsWith('https://prod-pics.guide.michelin.com/api/public/content/'));assert(await page.locator('.detail-photo-credit').isVisible());
+    await page.fill('#visitNote','draft stays while photo resolves');
+    await page.evaluate(()=>upLoadDetailPhoto(DB.byU[document.getElementById('detailDlg').dataset.u]));assert.equal(await page.inputValue('#visitNote'),'draft stays while photo resolves');
+    if(process.env.SCREENSHOT_DIR){await page.locator('#detailDlg').evaluate(d=>d.scrollTop=0);await page.screenshot({path:path.join(process.env.SCREENSHOT_DIR,'photo-detail-mobile.png')});await page.setViewportSize({width:1280,height:900});await page.locator('#detailDlg').evaluate(d=>d.scrollTop=0);await page.screenshot({path:path.join(process.env.SCREENSHOT_DIR,'photo-detail-desktop.png')});await page.setViewportSize({width:320,height:800});}
+    await page.locator('#detailDlg .close[data-close]').click();
+    // Missing/failed image and country-index errors keep the title, address and visit form usable.
+    await page.route(/https:\/\/prod-pics\.guide\.michelin\.com\/api\/public\/content\/.*/,route=>route.abort());
+    await page.evaluate(u=>{const r=DB.byU[u];DETAIL_PHOTOS.set(r.co,Promise.resolve({[u]:'0'.repeat(32)+'.jpeg'}));upOpenDetail(u);},photoFixture);await page.waitForFunction(()=>{const img=document.querySelector('.detail-photo');return img.getAttribute('src')&&img.complete&&!img.naturalWidth;});assert.equal(await page.locator('.detail-hero.has-photo').count(),0);assert(await page.locator('#detailTitle').isVisible());assert(await page.locator('#visitForm').isVisible());
+    await page.locator('#detailDlg .close[data-close]').click();
+    const raceTarget=await page.evaluate(({u,file})=>{DETAIL_PHOTOS.clear();const a=DB.byU[u],b=DB.rows.find(r=>r.co===a.co&&r.u!==u);let release;DETAIL_PHOTOS.set(a.co,new Promise(resolve=>release=resolve));upOpenDetail(u);upOpenDetail(b.u);release({[u]:file});return b.u;},{u:photoFixture,file:photoSrc.match(/content\/([^?]+)/)[1]});
+    await page.waitForTimeout(50);assert.equal(await page.locator('#detailDlg').getAttribute('data-u'),raceTarget);assert.equal(await page.locator('.detail-hero.has-photo').count(),0);assert.equal(await page.locator('.detail-photo').getAttribute('src'),null);await page.locator('#detailDlg .close[data-close]').click();
+    await page.evaluate(()=>{const r=DB.rows[0];DETAIL_PHOTOS.set(r.co,Promise.resolve({}));upOpenDetail(r.u);});await page.waitForTimeout(50);assert.equal(await page.locator('.detail-hero.has-photo').count(),0);assert(await page.locator('#detailTitle').isVisible());
+    await page.locator('#detailDlg .close[data-close]').click();await page.evaluate(()=>DETAIL_PHOTOS.clear());
     // One short pull on the sticky header dismisses a long, scrolled restaurant sheet.
     await page.evaluate(()=>upOpenDetail(DB.rows[0].u));assert(await page.locator('.detail-record').evaluate(el=>el.open));
     await page.evaluate(()=>{const d=document.getElementById('detailDlg');d.scrollTop=d.scrollHeight;const target=d.querySelector('.detail-drag');const fire=(type,y)=>{const t=new Touch({identifier:2,target,clientX:120,clientY:y});target.dispatchEvent(new TouchEvent(type,{bubbles:true,cancelable:true,touches:type==='touchend'?[]:[t],changedTouches:[t]}));};fire('touchstart',90);fire('touchmove',128);fire('touchend',128);});
@@ -319,6 +336,6 @@ const {chromium}=require(process.env.PLAYWRIGHT_MODULE||'playwright');
     await context.setOffline(true);await page.reload();await page.waitForFunction(()=>typeof DB!=='undefined'&&DB&&upLoaded);assert.equal(await page.evaluate(()=>DB.rows.length),19721);assert.equal(await page.evaluate(()=>PERSONAL.trips[0].name),'欧洲觅食');
     await page.locator('[data-passport-share]').click();await page.waitForFunction(()=>!!PASSPORT_SHARE.file);assert(await page.locator('#sharePreview').isVisible());
     await context.setOffline(false);assert.deepEqual(errors,[]);await context.close();
-    console.log('PASS: 我的米其林结算 single long PNG (badges, map, QR, ranges, trip scope), meal-log timeline (newest first, single editor, two-tap delete, stays open after save), touch-open passport, simultaneous mobile spread, animated touch page-turn, repeated meals append/edit/delete/reload/backup, bounded world map, no map-share entries/historical visit dates/offline export, draft clearing/custom dates/auto-close/storage rollback, sticky-header short swipe, compact directory, touch scroll over passive map, explicit map panning, list jump, desktop wheel scrolling, numbered pins, retina tiles, title focus, narrow/dark layouts, existing search/trips/ratings/backup regression and v16→current offline migration; no browser errors.');
+    console.log('PASS: exact-ID official photo hero / image failure / missing photo / async switch race / unsaved draft retention, 我的米其林结算 single long PNG (badges, map, QR, ranges, trip scope), meal-log timeline (newest first, single editor, two-tap delete, stays open after save), touch-open passport, simultaneous mobile spread, animated touch page-turn, repeated meals append/edit/delete/reload/backup, bounded world map, no map-share entries/historical visit dates/offline export, draft clearing/custom dates/auto-close/storage rollback, sticky-header short swipe, compact directory, touch scroll over passive map, explicit map panning, list jump, desktop wheel scrolling, numbered pins, retina tiles, title focus, narrow/dark layouts, existing search/trips/ratings/backup regression and v16→current offline migration; no browser errors.');
   }finally{await browser.close();server.close();}
 })().catch(e=>{console.error(e);process.exit(1);});
