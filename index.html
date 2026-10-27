@@ -18,7 +18,7 @@
 <meta name="apple-mobile-web-app-title" content="米其林名录">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <!-- ?v= must match ASSET_VER in sw.js: a new page must never run with an old cached script -->
-<link rel="stylesheet" href="upgrade.css?v=29">
+<link rel="stylesheet" href="upgrade.css?v=30">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" href="icon.svg" type="image/svg+xml">
 <link rel="icon" href="icon-192.png" sizes="192x192" type="image/png">
@@ -440,22 +440,23 @@ dialog::backdrop{background:var(--shade)}
 <div id="inappBar" hidden><span>在微信等 App 里无法添加到主屏幕，也可能打不开地图。</span><button type="button" id="inappHow">怎么办</button><button type="button" id="inappX" aria-label="关闭">×</button></div>
 <div id="toast" role="status" aria-live="polite"></div>
 
-<script src="i18n.js?v=29"></script>
-<script src="search-aliases.js?v=29"></script>
-<script src="guide-core.js?v=29"></script>
-<script src="address-localization.js?v=29"></script>
-<script src="restaurant-intro.js?v=29"></script>
-<script src="upgrade.js?v=29"></script>
-<script src="passport-share.js?v=29"></script>
-<script src="meal-photos.js?v=29"></script>
-<script src="trip-route.js?v=29"></script>
+<script src="i18n.js?v=30"></script>
+<script src="search-aliases.js?v=30"></script>
+<script src="guide-core.js?v=30"></script>
+<script src="address-localization.js?v=30"></script>
+<script src="restaurant-intro.js?v=30"></script>
+<script src="upgrade.js?v=30"></script>
+<script src="passport-share.js?v=30"></script>
+<script src="meal-photos.js?v=30"></script>
+<script src="trip-route.js?v=30"></script>
+<script src="cloud-sync.js?v=30"></script>
 <script>
 const CONT=["亚洲","欧洲","北美洲","南美洲","大洋洲"];
 const LVN=["三星","二星","一星","必比登","入选"];
 const LVC=["#7a0d0a","#b3261e","#e0574d","#c98a00","#9a9390"];
 const PIN=["中国内地","中国香港","中国澳门","中国台湾"];
 const REPO="https://github.com/SparrowCinema/michelin-guide";
-const ASSET_VER="29"; // = ?v= on the asset tags above, UPGRADE_VER in upgrade.js and ASSET_VER in sw.js
+const ASSET_VER="30"; // = ?v= on the asset tags above, UPGRADE_VER in upgrade.js and ASSET_VER in sw.js
 const DATA_VER="20261003-4"; // bump whenever data.json changes so browsers skip their cached copy
 const $=id=>document.getElementById(id);
 const esc=s=>String(s).replace(/[&<>"]/g,ch=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[ch]));
@@ -1041,6 +1042,7 @@ async function healMismatch(){
     DB=prep(d);resolveNames();upInit();
     if(DB.updated){const [y,m,dd]=DB.updated.split("-");document.querySelectorAll(".updated").forEach(e=>e.textContent=e.closest(".cell")?`${y} 年 ${+m} 月 ${+dd} 日`:`数据更新至 ${y} 年 ${+m} 月 ${+dd} 日`)}
     render();
+    if(typeof MGSync!=="undefined")MGSync.start();
   }catch(e){$("list").innerHTML='<p class="empty">数据没能载入，请刷新页面再试。</p>'}
 })();
 </script>

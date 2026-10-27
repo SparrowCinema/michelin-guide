@@ -189,6 +189,15 @@ const MGI18n=(()=>{
     '标题':'Title','范围':'Scope','时间范围':'Time range','自定义':'Custom','放入我拍的用餐照片':'Include my meal photos','照片墙':'photo wall','每家店的缩略图':'a thumbnail per restaurant','开始':'From','结束':'To',
     '只包含你标记“去过”的餐厅，每家都标出星级、必比登或入选。去过多个城市时，地图按城市汇总；只在一个城市时逐家编号。私人笔记不会出现在图中；照片只在你勾选时放入。':'Only restaurants you marked “Been”, each with its Stars, Bib Gourmand or Selected badge. Across several cities the map groups by city; within one city every restaurant is numbered. Private notes are never included; photos only when you tick the box.',
     '把下一餐，':'Put your next meal','写进你的结算。':'into your recap.','在餐厅里点“去过”打个分，':'Tap “Been” at a restaurant and rate it —','这里会生成你的米其林长图。':'your MICHELIN recap appears here.','我的米其林结算长图':'My MICHELIN recap image','长图 · 长按预览也可保存':'long image · or long-press the preview to save','保存长图':'Save image','长图已保存':'Image saved','请点“保存长图”后分享':'Tap “Save image”, then share it',
+    // cloud sync
+    '云端同步':'Cloud sync','用一串同步码，在手机和电脑之间同步“想去':'Use one sync code to keep “Want to go','去过”、评分、用餐记录、旅行和照片。不用注册账号。':'Been”, ratings, meals, trips and photos in step between your phone and computer. No account needed.',
+    '开启同步':'Turn on sync','我有同步码':'I have a sync code','输入同步码':'Enter sync code','连接':'Connect','输入另一台设备上的同步码。这台设备上已有的记录会和云端合并，不会丢。':'Enter the sync code from your other device. Records already on this device are merged with the cloud, nothing is lost.',
+    '同步中…':'Syncing…','同步失败：':'Sync failed:','已同步':'Synced','同步码':'Sync code','隐藏':'Hide','显示':'Show','复制':'Copy',
+    '同步码就是钥匙：拿到它的人能看到并修改你的记录；丢了也无法找回。请存进备忘录或密码管理器，在另一台设备点“我有同步码”输入即可。':'The sync code is the key: anyone who has it can see and change your records, and it can’t be recovered if lost. Keep it in your notes or password manager, then tap “I have a sync code” on your other device.',
+    '立即同步':'Sync now','在这台设备停止同步':'Stop syncing on this device','停止同步':'Stop syncing','正在上传照片':'Uploading photos','正在下载照片':'Downloading photos','云端有其他设备正在同步，请稍后再试':'Another device is syncing, try again in a moment',
+    '刚刚':'just now','分钟前':'min ago','小时前':'h ago','✓ 已开启同步，请保存好同步码':'✓ Sync is on — keep your sync code safe','同步码已复制':'Sync code copied','✓ 已同步，并合并了其他设备的更改':'✓ Synced, with changes from your other devices','✓ 已同步':'✓ Synced',
+    '在这台设备停止同步？这台设备上的记录会保留，云端的记录也不会删除；以后输入同步码可以重新连接。':'Stop syncing on this device? Records here stay, the cloud copy is not deleted, and you can reconnect with the sync code later.',
+    '已在这台设备停止同步':'Sync stopped on this device','同步码格式不对，请检查':'That doesn’t look like a sync code','✓ 已连接，记录已合并':'✓ Connected, records merged',
     // photos
     '此浏览器不支持保存照片':'This browser can’t store photos','照片保存失败':'Couldn’t save the photo','图片无法处理':'Couldn’t process the image','查看第':'View photo','移除第':'Remove photo','添加照片':'Add photos','照片只存在这台设备上，导出备份时一并带走。':'Photos stay on this device and travel with your backup.',
     '查看照片':'View photo','上一张':'Previous photo','下一张':'Next photo','每次用餐最多':'Up to','张，已添加前':'photos per meal; added the first','张':'','正在处理照片':'Processing photo','照片保存失败，请检查存储空间':'Couldn’t save the photo — check storage',
