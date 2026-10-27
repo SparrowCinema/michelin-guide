@@ -1,6 +1,6 @@
 /* Travel, details, passport and snapshot views. Existing restaurant IDs remain unchanged. */
 // Must equal ASSET_VER in index.html and sw.js; index.html reloads fresh files when they disagree.
-const UPGRADE_VER="22";
+const UPGRADE_VER="23";
 let PERSONAL={version:2,trips:[],records:Object.create(null)},PRICE_DB={items:{}},upSelected='',upPickU='',upLoaded=false,upReadError=false;
 function upSave(next){
   if(upReadError){toast('已有旅行存储无法读取，已阻止覆盖。请先导出原始备份再恢复。');return false;}
@@ -296,10 +296,17 @@ function upBindVisitForms(){
   });
 }
 
-function upAddressHTML(r){
+function upLocalAddress(r){
+  // Official address from the MICHELIN Guide's own Chinese / Japanese site; else the rule-based reference.
+  if(r.la){const c=DB.C[r.co][1],ja=c==='Japan',hant=/Hong Kong|Macau|Taiwan/.test(c);
+    return {text:r.la,lang:ja?'ja':hant?'zh-Hant':'zh-CN',official:true,label:ja?'米其林指南日文官网地址 · Official Japanese address':hant?'米其林指南繁体中文官网地址 · Official Chinese address':'米其林指南中文官网地址 · Official Chinese address'};}
   const zh=typeof MGAddress!=='undefined'?MGAddress.localize(r.a,DB.C[r.co][0],DB.T[r.ci][0]):'';
-  const query=encodeURIComponent(r.n+', '+r.a),maps=r.ml?`<a href="${esc(mapLink(r).href)}" target="_blank" rel="noopener">高德地图 ↗</a>`:`<a href="https://www.google.com/maps/search/?api=1&query=${query}&hl=zh-CN" target="_blank" rel="noopener">Google 地图 ↗</a><a href="https://maps.apple.com/?q=${query}${Number.isFinite(r.lat)&&Number.isFinite(r.lng)?'&ll='+r.lat+','+r.lng:''}" target="_blank" rel="noopener">Apple 地图 ↗</a>`;
-  return `<div class="address-display">${zh?`<p class="address-zh" lang="zh-CN">${esc(zh)}</p><small class="address-method">中文参考地址 · 未核实专名保留原文</small><details class="address-original"><summary>原文地址</summary><p>${esc(r.a)}</p></details>`:`<p class="address-raw">${esc(r.a)}</p>`}<div class="address-tools">${maps}<button type="button" class="linkbtn" data-copy-address="${esc(r.u)}">复制地址</button></div></div>`;
+  return zh?{text:zh,lang:'zh-CN',official:false,label:'中文参考地址 · 未核实专名保留原文 · Reference translation'}:null;
+}
+function upAddressHTML(r){
+  const loc=upLocalAddress(r);
+  const query=encodeURIComponent(r.n+', '+r.a),maps=r.ml?`<a href="${esc(mapLink(r).href)}" target="_blank" rel="noopener">高德地图 AMap ↗</a>`:`<a href="https://www.google.com/maps/search/?api=1&query=${query}&hl=zh-CN" target="_blank" rel="noopener">Google 地图 ↗</a><a href="https://maps.apple.com/?q=${query}${Number.isFinite(r.lat)&&Number.isFinite(r.lng)?'&ll='+r.lat+','+r.lng:''}" target="_blank" rel="noopener">Apple 地图 ↗</a>`;
+  return `<div class="address-display">${loc?`<p class="address-zh${loc.official?' is-official':''}" lang="${loc.lang}">${esc(loc.text)}</p><small class="address-method">${loc.official?'<b>官方</b> ':''}${esc(loc.label)}</small><p class="address-en" lang="en"><span>EN</span>${esc(r.a)}</p>`:`<p class="address-raw" lang="en">${esc(r.a)}</p>`}<div class="address-tools">${maps}<button type="button" class="linkbtn" data-copy-address="${esc(r.u)}">复制地址 Copy</button></div></div>`;
 }
 function upOpenDetail(u,push=true){
   const r=DB.byU[u];if(!r){toast('这家餐厅不在现有名单中，请核对链接');return;}
@@ -336,7 +343,7 @@ function upInit(){
     if(!upSave({...PERSONAL,trips}))return;closeAppDialog($('tripPickDlg'));if($('tripDlg').open){const rs=upRows(upSelected);$('tripItems').innerHTML=grouped(rs,rs.length)||'<p class="empty">暂无餐厅，可在名录中添加。</p>';}render();toast('已更新旅行清单');};
   upBindPassport();
   document.addEventListener('click',e=>{
-    const address=e.target.closest('[data-copy-address]');if(address){const r=DB.byU[address.dataset.copyAddress];if(r){const zh=typeof MGAddress!=='undefined'?MGAddress.localize(r.a,DB.C[r.co][0],DB.T[r.ci][0]):'';copyText((zh?zh+'\n':'')+r.a).then(()=>toast('已复制地址'),()=>toast('复制失败，请长按地址复制'));}return;}
+    const address=e.target.closest('[data-copy-address]');if(address){const r=DB.byU[address.dataset.copyAddress];if(r){const loc=upLocalAddress(r);copyText((loc?loc.text+'\n':'')+r.a).then(()=>toast('已复制地址'),()=>toast('复制失败，请长按地址复制'));}return;}
     const el=e.target.closest('[data-trip-open],[data-trip-map],[data-trip-pick],[data-restaurant],[data-change],[data-trip-city-map],#copyRestaurant');if(!el)return;
     if(el.hasAttribute('data-restaurant')){if(e.metaKey||e.ctrlKey||e.shiftKey||e.altKey)return;e.preventDefault();upOpenDetail(el.dataset.restaurant);}
     if(el.hasAttribute('data-trip-open'))upOpenTrip(el.dataset.tripOpen);

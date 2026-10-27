@@ -8,7 +8,8 @@ Usage:
 history.json comes from tools/history.py (yearly snapshots of the same CSV);
 the last argument is the date of the CSV snapshot, shown on the page.
 Row layout: [name, zh, flags, cityIdx, award, cuisineIdx, price, urlPath, website, address,
-             lat, lon, greenStar, history, blackPearl]
+             lat, lon, greenStar, history, blackPearl, localAddress?]
+localAddress (optional) is the MICHELIN Guide's own zh/ja address, see tools/local_address.py.
 
 michelin_my_maps.csv comes from https://github.com/ngshiheng/michelin-my-maps (data/).
 """
@@ -97,6 +98,8 @@ UPDATED=sys.argv[8] if len(sys.argv)>8 else ""
 def coord(v):
     try: return round(float(v),5)
     except ValueError: return None
+from local_address import load as load_local
+LOCAL=load_local()
 rows=[]; unknown=collections.Counter(); stats=collections.Counter()
 for x in csv.DictReader(open(SRC,encoding="utf8")):
     loc=[p.strip() for p in x["Location"].split(",")]
@@ -119,7 +122,7 @@ for x in csv.DictReader(open(SRC,encoding="utf8")):
     web=x["WebsiteUrl"].strip()
     rows.append([name, zh, kind+(4 if new else 0), city(cname,ctry), LV[x["Award"]], cuisine(x["Cuisine"]), PRICE.get(x["Price"],0), url, web, x["Address"],
                  coord(x["Latitude"]), coord(x["Longitude"]), 1 if x.get("GreenStar","0").strip()=="1" else 0,
-                 HIST.get(unquote(url).lower(),""), BP.get(url,0)])
+                 HIST.get(unquote(url).lower(),""), BP.get(url,0)] + ([LOCAL[url]] if LOCAL.get(url) else []))
 json.dump({"updated":UPDATED,"countries":countries,"cities":cities,"cuisines":cuis,"r":rows},open(OUT,"w",encoding="utf8"),ensure_ascii=False,separators=(",",":"))
 print("rows",len(rows),"unknown",unknown,"kinds",stats)
 print(collections.Counter(r[4] for r in rows))

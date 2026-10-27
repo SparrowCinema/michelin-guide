@@ -5,7 +5,7 @@ const assert=require('node:assert/strict'),fs=require('node:fs'),path=require('n
 const {chromium}=require(process.env.PLAYWRIGHT_MODULE||'playwright');
 (async()=>{
   const base=path.resolve(__dirname,'..');
-  const previousCache='mg-v21';
+  const previousCache='mg-v22';
   const cacheName=fs.readFileSync(path.join(base,'sw.js'),'utf8').match(/const CACHE = "([^"]+)"/)[1];
   // A new page must never load an old cached script: index.html asset versions must match sw.js.
   const swText=fs.readFileSync(path.join(base,'sw.js'),'utf8'),assetVer=swText.match(/const ASSET_VER = "([^"]+)"/)[1],indexText=fs.readFileSync(path.join(base,'index.html'),'utf8');
@@ -75,11 +75,17 @@ const {chromium}=require(process.env.PLAYWRIGHT_MODULE||'playwright');
     await page.locator('#detailDlg .close[data-close]').click();
     await page.locator('.restaurant-title').first().click();await page.locator('#detailDlg [data-edit-visit]').first().click();assert.equal(await page.inputValue('#visitNote'),'旅途笔记 <script>');
     assert.equal(await page.inputValue('#visitRating'),'3.5');
-    assert(await page.locator('.address-zh').isVisible());assert((await page.locator('.address-method').innerText()).includes('参考'));
-    assert.equal(await page.locator('.address-original').evaluate(d=>d.open),false);await page.locator('.address-original summary').click();assert((await page.locator('.address-original p').innerText()).length>0);
+    assert(await page.locator('.address-zh').isVisible());assert(/官方|参考/.test(await page.locator('.address-method').innerText()));
     const originalAddress=await page.evaluate(()=>DB.byU[document.getElementById('detailDlg').dataset.u].a);
-    await page.locator('.address-original summary').click();
-    const addressState=await page.evaluate(()=>{const r=DB.byU[document.getElementById('detailDlg').dataset.u];return {u:r.u,original:r.a,zh:MGAddress.localize(r.a,DB.C[r.co][0],DB.T[r.ci][0])};});assert.equal(addressState.original,originalAddress);
+    assert((await page.locator('.address-en').innerText()).includes(originalAddress)); // English original always shown beside the Chinese
+    const addressState=await page.evaluate(()=>{const r=DB.byU[document.getElementById('detailDlg').dataset.u];return {u:r.u,original:r.a};});assert.equal(addressState.original,originalAddress);
+    // Official MICHELIN Chinese / Japanese addresses win over the rule-based reference.
+    const official=await page.evaluate(()=>{const pick=c=>DB.rows.find(r=>DB.C[r.co][1]===c&&r.la);return ['Chinese Mainland','Hong Kong SAR','Japan'].map(c=>{const r=pick(c);return {la:r.la,html:upAddressHTML(r)};});});
+    assert(/^(北京|上海|广州|深圳|成都|杭州|南京|苏州|扬州|常州|温州|台州|福州|厦门|泉州|宁德)市/.test(official[0].la));assert(official[0].html.includes('米其林指南中文官网地址'));assert(official[0].html.includes('lang="zh-CN"'));
+    assert(official[1].la.startsWith('香港'));assert(official[1].html.includes('lang="zh-Hant"'));
+    assert(/^〒\d{3}-\d{4} /.test(official[2].la));assert(official[2].html.includes('日文官网地址'));
+    assert(official.every(o=>o.html.includes('address-en')));
+    const fallback=await page.evaluate(()=>upAddressHTML(DB.rows.find(r=>DB.C[r.co][1]==='France')));assert(fallback.includes('参考'));
     // Address localization always derives from the restaurant's current source address.
     const fresh=await page.evaluate(()=>{const r={...DB.rows[0],a:'New Road 98765'};return upAddressHTML(r);});assert(fresh.includes('98765'));
     const overseasLinks=await page.evaluate(()=>upAddressHTML(DB.rows.find(r=>!r.ml)));assert(overseasLinks.includes('google.com/maps'));assert(overseasLinks.includes('maps.apple.com'));assert(overseasLinks.includes('复制地址'));
