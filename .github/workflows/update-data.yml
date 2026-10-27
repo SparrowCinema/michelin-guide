@@ -55,6 +55,7 @@ jobs:
           build "$(python -c "import json;print(json.load(open('data.json'))['updated'])")"   # carry editions synced just now
           python tools/check_updates.py --validate-only
           python tools/build_photos.py --reuse   # keep the photo index in step with the restaurant list
+          python tools/build_city_names.py --fill   # Chinese labels for cities new to the list
           if ! git diff --quiet -- data.json; then sed -i -E "s/const DATA_VER=\"[^\"]*\"/const DATA_VER=\"$(date -u +%Y%m%d)-auto\"/" index.html; fi
           python tools/update_summary.py /tmp/report.json /tmp/watch.json /tmp/updates.out tools/editions.json /tmp/retired.txt > /tmp/pr-body.md
           cat /tmp/pr-body.md >> "$GITHUB_STEP_SUMMARY"
@@ -62,12 +63,12 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          if git diff --quiet HEAD -- data.json updates.json tools/editions.json index.html tools/overrides photos; then echo "上游名单和指南版本都没有变化。" >> "$GITHUB_STEP_SUMMARY"; exit 0; fi
+          if git diff --quiet HEAD -- data.json updates.json tools/editions.json index.html tools/overrides photos city-names.js tools/city_names.json; then echo "上游名单和指南版本都没有变化。" >> "$GITHUB_STEP_SUMMARY"; exit 0; fi
           BRANCH="data/update-$(date -u +%Y-%m-%d)"
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git checkout -B "$BRANCH"
-          git add -A data.json updates.json tools/editions.json index.html tools/overrides photos
+          git add -A data.json updates.json tools/editions.json index.html tools/overrides photos city-names.js tools/city_names.json
           git commit -m "data: rolling MICHELIN update $(date -u +%F)"
           git push -f origin "$BRANCH"
           gh pr create --head "$BRANCH" --base main --title "数据更新：米其林名单与指南版本 $(date -u +%F)" --body-file /tmp/pr-body.md \
