@@ -63,21 +63,21 @@ CNCITY = {"Beijing":"北京","Shanghai":"上海","Nanjing":"南京","Yangzhou":"
 
 countries=[]; cidx={}
 cities=[]; tidx={}
-cuis=[]; cuidx={}
+cuis=[]; cuidx={}; cuis_en=[]
 def country(en):
     if en not in cidx:
         cidx[en]=len(countries); countries.append([COUNTRY[en][0],en,COUNTRY[en][1]])
     return cidx[en]
-def city(name,en_country):
+def city(name,en_country,en_name=""):
     k=(name,en_country)
     if k not in tidx:
-        tidx[k]=len(cities); cities.append([name,country(en_country)])
+        tidx[k]=len(cities); cities.append([name,country(en_country),en_name or name])
     return tidx[k]
 def cuisine(c):
     if not c: return -1
     k=CUISINE.get(c,c)  # several English labels can share one Chinese name
     if k not in cuidx:
-        cuidx[k]=len(cuis); cuis.append(k)
+        cuidx[k]=len(cuis); cuis.append(k); cuis_en.append(c)
     return cuidx[k]
 
 
@@ -110,7 +110,7 @@ for x in csv.DictReader(open(SRC,encoding="utf8")):
         cname = loc[0] + (f" ({loc[1]})" if len(loc)==3 and loc[0] not in CITY else ""); ctry="USA"
     else: cname, ctry = loc[0], loc[-1]
     if ctry not in COUNTRY: unknown[ctry]+=1; continue
-    cname = CITY.get(cname, cname)
+    cname_en = cname; cname = CITY.get(cname, cname)
     url = x["Url"].replace("https://guide.michelin.com/en/","")
     slug = url.rsplit("/restaurant/",1)[-1]
     name=x["Name"]; zh=""; kind=0
@@ -120,10 +120,10 @@ for x in csv.DictReader(open(SRC,encoding="utf8")):
     new = 1 if ctry=="Chinese Mainland" and zh and norm(zh) in NEW else 0
     stats[kind]+=1
     web=x["WebsiteUrl"].strip()
-    rows.append([name, zh, kind+(4 if new else 0), city(cname,ctry), LV[x["Award"]], cuisine(x["Cuisine"]), PRICE.get(x["Price"],0), url, web, x["Address"],
+    rows.append([name, zh, kind+(4 if new else 0), city(cname,ctry,cname_en), LV[x["Award"]], cuisine(x["Cuisine"]), PRICE.get(x["Price"],0), url, web, x["Address"],
                  coord(x["Latitude"]), coord(x["Longitude"]), 1 if x.get("GreenStar","0").strip()=="1" else 0,
                  HIST.get(unquote(url).lower(),""), BP.get(url,0)] + ([LOCAL[url]] if LOCAL.get(url) else []))
-json.dump({"updated":UPDATED,"countries":countries,"cities":cities,"cuisines":cuis,"r":rows},open(OUT,"w",encoding="utf8"),ensure_ascii=False,separators=(",",":"))
+json.dump({"updated":UPDATED,"countries":countries,"cities":cities,"cuisines":cuis,"cuisines_en":cuis_en,"r":rows},open(OUT,"w",encoding="utf8"),ensure_ascii=False,separators=(",",":"))
 print("rows",len(rows),"unknown",unknown,"kinds",stats)
 print(collections.Counter(r[4] for r in rows))
 mc=collections.Counter(r[4] for r in rows if countries[cities[r[3]][1]][1]=="Chinese Mainland"); print("mainland",mc, "new",sum(1 for r in rows if r[2]&4))

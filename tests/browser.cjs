@@ -5,7 +5,7 @@ const assert=require('node:assert/strict'),fs=require('node:fs'),path=require('n
 const {chromium}=require(process.env.PLAYWRIGHT_MODULE||'playwright');
 (async()=>{
   const base=path.resolve(__dirname,'..');
-  const previousCache='mg-v24';
+  const previousCache='mg-v25';
   const cacheName=fs.readFileSync(path.join(base,'sw.js'),'utf8').match(/const CACHE = "([^"]+)"/)[1];
   // A new page must never load an old cached script: index.html asset versions must match sw.js.
   const swText=fs.readFileSync(path.join(base,'sw.js'),'utf8'),assetVer=swText.match(/const ASSET_VER = "([^"]+)"/)[1],indexText=fs.readFileSync(path.join(base,'index.html'),'utf8');
@@ -80,6 +80,9 @@ const {chromium}=require(process.env.PLAYWRIGHT_MODULE||'playwright');
     const originalAddress=await page.evaluate(()=>DB.byU[document.getElementById('detailDlg').dataset.u].a);
     assert((await page.locator('.address-en').innerText()).includes(originalAddress)); // English original always shown beside the Chinese
     const addressState=await page.evaluate(()=>{const r=DB.byU[document.getElementById('detailDlg').dataset.u];return {u:r.u,original:r.a};});assert.equal(addressState.original,originalAddress);
+    // Bilingual intro written from the site's facts, with official review links.
+    assert(await page.locator('#detailDlg .detail-intro .intro-zh').isVisible());assert((await page.locator('#detailDlg .intro-en').innerText()).length>30);
+    assert(await page.locator('#detailDlg .intro-review a[href^="https://guide.michelin.com/en/"]').count()===1);
     // Official MICHELIN Chinese / Japanese addresses win over the rule-based reference.
     const official=await page.evaluate(()=>{const pick=c=>DB.rows.find(r=>DB.C[r.co][1]===c&&r.la);return ['Chinese Mainland','Hong Kong SAR','Japan'].map(c=>{const r=pick(c);return {la:r.la,html:upAddressHTML(r)};});});
     assert(/^(北京|上海|广州|深圳|成都|杭州|南京|苏州|扬州|常州|温州|台州|福州|厦门|泉州|宁德)市/.test(official[0].la));assert(official[0].html.includes('米其林指南中文官网地址'));assert(official[0].html.includes('lang="zh-CN"'));
