@@ -17,7 +17,7 @@ const assert=require('node:assert/strict'),http=require('http'),fs=require('fs')
       const sh=DB.rows.filter(r=>DB.T[r.ci][0]==='上海'&&r.lat!=null&&r.l<=2).slice(0,7),tk=DB.rows.filter(r=>DB.T[r.ci][0]==='东京'&&r.lat!=null).slice(0,3);
       const t=upNewTrip('上海东京吃吃吃');upSave({...PERSONAL,trips:PERSONAL.trips.map(x=>x.id===t.id?{...x,items:[...sh,...tk].map(r=>r.u)}:x)});
       FAV[sh[0].u]=[2,Date.now()];saveFav();render();return {id:t.id,first:sh[0].u};});
-    await page.locator(`[data-trip-route="${trip.id}"]`).first().click();
+    await page.locator('[data-me-jump="meTrips"]').click();await page.locator(`[data-trip-route="${trip.id}"]`).first().click();
     await page.waitForSelector('#routeDlg[open] .route-day');
     assert.equal(await page.locator('#routeCities button').count(),2);
     assert.equal(await page.locator('#routeCities [aria-selected="true"]').innerText().then(t=>t.startsWith('上海')),true);

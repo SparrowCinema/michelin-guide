@@ -15,10 +15,17 @@ def photo(value):
  u=urlsplit(value);m=IMAGE.fullmatch(u.path)
  return m[1] if u.scheme=='https' and u.hostname=='prod-pics.guide.michelin.com' and m else None
 
+def reuse_rows():
+ # Reuse the published index (exact restaurant URLs) when the source CSV isn't reachable.
+ for f in sorted((ROOT/'photos').glob('country-*.json')):
+  for u,p in json.loads(f.read_text())['items'].items():
+   yield {'url':'https://guide.michelin.com/en/'+u,'image':'https://prod-pics.guide.michelin.com/api/public/content/'+p,'name':'','lat':'','lng':''}
+def lookup_keys(data):return {r[7] for r in data['r']}
 def build(path):
  data=json.loads((ROOT/'data.json').read_text());lookup={};ambiguous=set();source_rows=[];aliases=[]
- with open(path,encoding='utf-8-sig',newline='') as f:
-  for row in csv.DictReader(f):
+ prev=json.loads((ROOT/'photos/manifest.json').read_text()) if path is None else None
+ with (open(path,encoding='utf-8-sig',newline='') if path else open(__file__)) as f:
+  for row in (csv.DictReader(f) if path else list(reuse_rows())):
    source_rows.append(row)
    p=photo(row.get('image',''));k=key(row.get('url',''))
    if not p or '/restaurant/' not in k:continue
@@ -55,8 +62,8 @@ def build(path):
    else:missing.append(r[7])
   total+=len(items);counts.append({'country':country[1],'matched':len(items),'total':len(rows)})
   (out/f'country-{co}.json').write_text(json.dumps({'country':country[1],'items':items},ensure_ascii=False,separators=(',',':'))+'\n')
- report={'updated':'2026-10-27','source':SOURCE,'source_page':'https://github.com/abobabo91/michelin-map','supplement':'Direct public MICHELIN restaurant gallery links in tools/photo_supplement.json','source_sha256':hashlib.sha256(Path(path).read_bytes()).hexdigest(),'image_origin':'https://prod-pics.guide.michelin.com','matched':total,'total':len(data['r']),'countries':counts,'alias_matches':aliases,'missing':missing,'notice':'Exact MICHELIN restaurant URL matches only. Image rights remain with original owners. Missing is not proof the official page has no photo.'}
+ report={'updated':data['updated'],'source':SOURCE,'source_page':'https://github.com/abobabo91/michelin-map','supplement':'Direct public MICHELIN restaurant gallery links in tools/photo_supplement.json','source_sha256':hashlib.sha256(Path(path).read_bytes()).hexdigest() if path else prev['source_sha256'],'image_origin':'https://prod-pics.guide.michelin.com','matched':total,'total':len(data['r']),'countries':counts,'alias_matches':aliases if path else [a for a in prev.get('alias_matches',[]) if a['restaurant'] in lookup_keys(data)],'missing':missing,'notice':'Exact MICHELIN restaurant URL matches only. Image rights remain with original owners. Missing is not proof the official page has no photo.'}
  (out/'manifest.json').write_text(json.dumps(report,ensure_ascii=False,indent=2)+'\n')
  print(f'{total} matched of {len(data["r"])}; {len(missing)} without a verified index match')
 if __name__=='__main__':
- p=argparse.ArgumentParser();p.add_argument('--csv',required=True);args=p.parse_args();build(args.csv)
+ p=argparse.ArgumentParser();g=p.add_mutually_exclusive_group(required=True);g.add_argument('--csv');g.add_argument('--reuse',action='store_true',help='rebuild from the published index + supplement');args=p.parse_args();build(args.csv)

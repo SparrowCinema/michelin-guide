@@ -453,7 +453,9 @@
      "year": 2026,
      "released": "2026-10-07",
      "source": "https://guide.michelin.com/ae-du/en/article/michelin-guide-ceremony/michelin-guide-restaurant-ceremony-dubai-highlights-2026",
-     "synced": false
+     "synced": true,
+     "synced_on": "2026-10-27",
+     "via": "guide.michelin.com"
     }
    ]
   },
@@ -788,7 +790,9 @@
      "year": 2026,
      "released": "2026-10-05",
      "source": "https://guide.michelin.com/en/article/michelin-guide-ceremony/azurite-and-suis-awarded-two-michelin-stars-each-in-the-2026-netherlands-michelin-guide",
-     "synced": false
+     "synced": true,
+     "synced_on": "2026-10-27",
+     "via": "guide.michelin.com"
     }
    ]
   },
@@ -1079,7 +1083,9 @@
      "year": 2027,
      "released": "2026-10-20",
      "source": "https://guide.michelin.com/en/article/michelin-guide-ceremony/the-michelin-guide-athens-thessaloniki-santorini-2027-marks-a-milestone-for-greek-gastronomy",
-     "synced": false
+     "synced": true,
+     "synced_on": "2026-10-27",
+     "via": "guide.michelin.com"
     }
    ]
   },
@@ -1191,7 +1197,9 @@
      "year": 2026,
      "released": "2026-10-08",
      "source": "https://guide.michelin.com/ca/en/article/michelin-guide-ceremony/every-michelin-starred-restaurant-in-texas-for-2026",
-     "synced": false
+     "synced": true,
+     "synced_on": "2026-10-27",
+     "via": "guide.michelin.com"
     }
    ]
   },
@@ -1251,7 +1259,9 @@
      "year": 2026,
      "released": "2026-10-22",
      "source": "https://guide.michelin.com/en/article/michelin-guide-ceremony/every-michelin-starred-restaurant-in-the-american-south-for-2026",
-     "synced": false
+     "synced": true,
+     "synced_on": "2026-10-27",
+     "via": "guide.michelin.com"
     }
    ]
   },
@@ -1347,7 +1357,9 @@
      "year": 2026,
      "released": "2026-10-07",
      "source": "https://guide.michelin.com/en/article/michelin-guide-ceremony/every-michelin-starred-restaurant-in-vancouver-for-2026",
-     "synced": false
+     "synced": true,
+     "synced_on": "2026-10-27",
+     "via": "guide.michelin.com"
     }
    ]
   },
@@ -1485,7 +1497,9 @@
      "year": 2027,
      "released": "2026-10-14",
      "source": "https://guide.michelin.com/th/en/article/michelin-guide-ceremony/michelin-guide-south-australia-restaurant-selection-2027",
-     "synced": false
+     "synced": true,
+     "synced_on": "2026-10-27",
+     "via": "guide.michelin.com"
     }
    ]
   }

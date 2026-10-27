@@ -31,7 +31,7 @@ COUNTRY = {  # en: (中文, 大洲)
  "Finland":("芬兰","欧洲"),"Greece":("希腊","欧洲"),"Latvia":("拉脱维亚","欧洲"),"Serbia":("塞尔维亚","欧洲"),
  "Principality of Monaco":("摩纳哥","欧洲"),"Iceland":("冰岛","欧洲"),"Andorra":("安道尔","欧洲"),"Liechtenstein":("列支敦士登","欧洲"),
  "USA":("美国","北美洲"),"Canada":("加拿大","北美洲"),"Mexico":("墨西哥","北美洲"),
- "Brazil":("巴西","南美洲"),"Argentina":("阿根廷","南美洲"),"New Zealand":("新西兰","大洋洲"),
+ "Brazil":("巴西","南美洲"),"Argentina":("阿根廷","南美洲"),"New Zealand":("新西兰","大洋洲"),"Australia":("澳大利亚","大洋洲"),
 }
 CITY = {
  "Tokyo":"东京","Kyoto":"京都","Osaka":"大阪","Nara":"奈良","Hokkaido":"北海道","Sapporo":"札幌","Fukuoka":"福冈","Nagoya":"名古屋","Yokohama":"横滨","Kanazawa":"金泽","Kobe":"神户","Hiroshima":"广岛","Nagano":"长野","Toyama":"富山","Ishikawa":"石川","Miyagi":"宫城","Tottori":"鸟取","Shimane":"岛根","Wakayama":"和歌山","Okayama":"冈山","Kumamoto":"熊本","Saga":"佐贺","Shizuoka":"静冈","Hyogo":"兵库","Hakone":"箱根","Kamakura":"镰仓","Karuizawa":"轻井泽",
@@ -51,7 +51,7 @@ CITY = {
  "Prague":"布拉格","Budapest":"布达佩斯","Ljubljana":"卢布尔雅那","Zagreb":"萨格勒布","Dubrovnik":"杜布罗夫尼克","Split":"斯普利特","Athens":"雅典","Tallinn":"塔林","Riga":"里加","Vilnius":"维尔纽斯","Belgrade":"贝尔格莱德","Valletta":"瓦莱塔","Monaco":"摩纳哥","Vaduz":"瓦杜兹",
  "New York":"纽约","Brooklyn":"布鲁克林（纽约）","Queens":"皇后区（纽约）","Washington":"华盛顿","San Francisco":"旧金山","Los Angeles":"洛杉矶","Chicago":"芝加哥","Miami":"迈阿密","Orlando":"奥兰多","Atlanta":"亚特兰大","Austin":"奥斯汀","Houston":"休斯敦","Dallas":"达拉斯","San Antonio":"圣安东尼奥","Denver":"丹佛","Philadelphia":"费城","New Orleans":"新奥尔良","Boston":"波士顿","Las Vegas":"拉斯维加斯","San Diego":"圣迭戈","Oakland":"奥克兰（加州）","Nashville":"纳什维尔","Tampa":"坦帕","Seattle":"西雅图","Napa":"纳帕","Yountville":"扬特维尔","Healdsburg":"希尔兹堡","Santa Monica":"圣莫尼卡","West Hollywood":"西好莱坞",
  "Toronto":"多伦多","Vancouver":"温哥华","Montréal":"蒙特利尔","Québec":"魁北克城","Cuauhtémoc":"墨西哥城·夸乌特莫克区","Miguel Hidalgo":"墨西哥城·米格尔伊达尔戈区","Oaxaca":"瓦哈卡","Tulum":"图卢姆","Mérida":"梅里达",
- "São Paulo":"圣保罗","Rio de Janeiro":"里约热内卢","Buenos Aires":"布宜诺斯艾利斯","Mendoza":"门多萨","Auckland":"奥克兰（新西兰）","Wellington":"惠灵顿","Christchurch":"基督城","Queenstown":"皇后镇",
+ "São Paulo":"圣保罗","Rio de Janeiro":"里约热内卢","Buenos Aires":"布宜诺斯艾利斯","Mendoza":"门多萨","Auckland":"奥克兰（新西兰）","Wellington":"惠灵顿","Christchurch":"基督城","Queenstown":"皇后镇","Adelaide":"阿德莱德","Thessaloniki":"塞萨洛尼基","Thessalonica":"塞萨洛尼基","Santorini":"圣托里尼","McLaren Vale":"麦克拉伦谷",
 }
 CUISINE = {
  "Modern Cuisine":"现代菜","Contemporary":"时尚菜","Creative":"创意菜","Traditional Cuisine":"传统菜","Japanese":"日本菜","Italian":"意大利菜","Fish and Seafood":"鱼鲜海鲜","French":"法国菜","Mediterranean Cuisine":"地中海菜","Regional Cuisine":"地方菜","Farm to table":"农场到餐桌","Classic Cuisine":"经典菜","Modern British":"现代英国菜","Mexican":"墨西哥菜","Country cooking":"乡村菜","Street Food":"街头小吃","Modern French":"现代法国菜","Thai":"泰国菜","Cantonese":"粤菜","International":"国际菜","Noodles":"面食","Chinese":"中国菜","Italian Contemporary":"时尚意大利菜","Seasonal Cuisine":"时令菜","American":"美国菜","French Contemporary":"时尚法国菜","Indian":"印度菜","Sushi":"寿司","Fusion":"融合菜","Small eats":"小吃","Meats and Grills":"烤肉","Classic French":"经典法国菜","Innovative":"创新菜","Vietnamese":"越南菜","Asian":"亚洲菜","Taiwanese":"台湾菜","Vegetarian":"素食","Steakhouse":"扒房","Korean":"韩国菜","Spanish":"西班牙菜","Piedmontese":"皮埃蒙特菜","European Contemporary":"时尚欧陆菜","Barbecue":"烧烤","Seafood":"海鲜","Sichuan":"川菜","Traditional British":"传统英国菜","Japanese Contemporary":"时尚日本菜","Turkish":"土耳其菜","Tuscan":"托斯卡纳菜","Middle Eastern":"中东菜","Grills":"烧烤","Californian":"加州菜","Fujian":"闽菜","Creative French":"创意法国菜","Emilian":"艾米利亚菜","Austrian":"奥地利菜","Pizza":"披萨","Zhejiang":"浙江菜","Tempura":"天妇罗","European":"欧陆菜","Ramen":"拉面","Sicilian":"西西里菜","Filipino":"菲律宾菜","Vegan":"纯素","Yakitori":"烧鸟","Greek":"希腊菜","Southern Thai":"泰南菜","Peruvian":"秘鲁菜","Huaiyang":"淮扬菜","Soba":"荞麦面","New Zealand":"新西兰菜","Thai contemporary":"时尚泰国菜","Izakaya":"居酒屋","Malaysian":"马来西亚菜","Dim Sum":"点心","Shanghainese":"上海菜","Chao Zhou":"潮州菜","Campanian":"坎帕尼亚菜","Lebanese":"黎巴嫩菜","Provençal":"普罗旺斯菜","Venetian":"威尼斯菜","Portuguese":"葡萄牙菜","Italian-American":"意式美国菜","British Contemporary":"时尚英国菜","Asian Contemporary":"时尚亚洲菜","Jiangsu Cuisine":"江苏菜","Latin American":"拉丁美洲菜","Taizhou":"台州菜","Jiangzhe":"江浙菜","Alpine":"阿尔卑斯菜","Kaiseki":"怀石料理","Korean Contemporary":"时尚韩国菜","Hunanese":"湘菜","Beijing Cuisine":"京菜","Shandong":"鲁菜","Hang Zhou":"杭州菜","Teppanyaki":"铁板烧","Tonkatsu":"炸猪排","Unagi / Freshwater eel":"鳗鱼","Hot Pot":"火锅","Hotpot":"火锅","Dumplings":"饺子","Peranakan":"娘惹菜","Singaporean":"新加坡菜","Hong Kong Style":"港式","Basque":"巴斯克菜","Catalan":"加泰罗尼亚菜","Bistro":"小酒馆","Classic":"经典菜","Market Cuisine":"市场菜","Scandinavian":"北欧菜","Nordic":"北欧菜","German":"德国菜","Swiss":"瑞士菜","Belgian":"比利时菜","Dutch":"荷兰菜","Irish":"爱尔兰菜","Polish":"波兰菜","Brazilian":"巴西菜","Argentinian":"阿根廷菜","Southern":"美国南方菜","Cajun":"卡津菜","Creole":"克里奥尔菜",
@@ -100,10 +100,11 @@ def coord(v):
     except ValueError: return None
 from local_address import load as load_local
 import editions as ED
+import overrides as OV
 EDOC=ED.load(); EDMATCH=ED.matcher(EDOC)
 LOCAL=load_local()
 rows=[]; unknown=collections.Counter(); stats=collections.Counter()
-for x in csv.DictReader(open(SRC,encoding="utf8")):
+for x in OV.apply(csv.DictReader(open(SRC,encoding="utf8")), EDMATCH, EDOC["guides"]):
     loc=[p.strip() for p in x["Location"].split(",")]
     if loc[-1] in ("Dubai","Abu Dhabi"): cname, ctry = loc[-1], "UAE"
     elif loc==["Singapore"]: cname, ctry = "Singapore","Singapore"
@@ -130,7 +131,7 @@ for x in csv.DictReader(open(SRC,encoding="utf8")):
     if len(cities[ci]) < 4: cities[ci].append(ed)
     rows.append([name, zh, kind+(4 if new else 0), ci, LV[x["Award"]], cuisine(x["Cuisine"]), PRICE.get(x["Price"],0), url, web, x["Address"],
                  coord(x["Latitude"]), coord(x["Longitude"]), 1 if x.get("GreenStar","0").strip()=="1" else 0,
-                 HIST.get(unquote(url).lower(),""), BP.get(url,0)] + ([LOCAL[url]] if LOCAL.get(url) else []))
+                 HIST.get(unquote(url).lower(),"") or ("----" if x.get("_override") else ""), BP.get(url,0)] + ([LOCAL[url]] if LOCAL.get(url) else []))
 json.dump({"updated":UPDATED,"countries":countries,"cities":cities,"cuisines":cuis,"cuisines_en":cuis_en,"editions":ED.export(EDOC),"r":rows},open(OUT,"w",encoding="utf8"),ensure_ascii=False,separators=(",",":"))
 print("rows",len(rows),"unknown",unknown,"kinds",stats)
 print(collections.Counter(r[4] for r in rows))

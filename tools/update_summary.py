@@ -11,6 +11,8 @@ if len(sys.argv) > 3 and os.path.exists(sys.argv[3]):
     try: upd = json.loads(open(sys.argv[3], encoding="utf8").read().strip().splitlines()[-1])
     except Exception: upd = None
 eds = load(sys.argv[4]) if len(sys.argv) > 4 else None
+retired = [l.strip() for l in open(sys.argv[5], encoding="utf8")] if len(sys.argv) > 5 and os.path.exists(sys.argv[5]) else []
+retired = [os.path.basename(x) for x in retired if x]
 
 up = [c for c in r['award_changes'] if c['award'] < c['previous_award']]
 down = [c for c in r['award_changes'] if c['award'] > c['previous_award']]
@@ -22,6 +24,8 @@ if watch and watch.get("added"):
     print()
 if upd and upd.get("synced"):
     print("**本次已同步进名单的新版指南**：" + "、".join(upd["synced"]) + "\n")
+if retired:
+    print("**上游已追上、撤掉的官网名单覆盖**：" + "、".join(retired) + "\n")
 if eds:
     pend = [f'{g["zh"]} {e["year"]}（{e["released"]} 发布）' for g in eds["guides"] for e in g["editions"] if not e.get("synced")]
     if pend: print("**已发布、等数据源更新的版本**：" + "、".join(pend) + "\n")
