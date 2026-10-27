@@ -18,6 +18,6 @@ class Addresses(unittest.TestCase):
   data=json.loads((ROOT/'data.json').read_text())
   for r in data['r']:
    if not r[9].strip():continue
-   city,co=data['cities'][r[3]];item={'zh':m.localize(r[9],data['countries'][co][0],city)};self.assertRegex(item['zh'],r'[\u3400-\u9fff]')
+   city,co=data['cities'][r[3]][:2];item={'zh':m.localize(r[9],data['countries'][co][0],city)};self.assertRegex(item['zh'],r'[\u3400-\u9fff]')
    self.assertLessEqual(collections.Counter(re.findall(r'\d+',r[9])),collections.Counter(re.findall(r'\d+',item['zh'])))
 if __name__=='__main__':unittest.main()
