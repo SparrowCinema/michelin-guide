@@ -423,3 +423,7 @@ dialog.route-sheet{margin:auto 0 0;width:100%;max-width:100%;max-height:92vh;bor
 .route-leg a{font-size:11.5px;color:var(--red);text-decoration:none;padding:4px 10px;border-radius:999px;border:1px solid color-mix(in srgb,var(--red) 30%,var(--line))}
 .route-foot{display:grid;gap:10px;margin-top:18px}
 .route-foot p{margin:0;font-size:11px;line-height:1.6;color:var(--muted)}
+.share-photo-toggle{display:flex!important;align-items:center;gap:12px;padding:12px 14px;border-radius:14px;border:1px solid color-mix(in srgb,var(--red) 25%,var(--line));background:color-mix(in srgb,var(--red-soft) 40%,var(--surface));cursor:pointer}
+.share-photo-toggle input{width:20px;height:20px;accent-color:var(--red);flex:none}
+.share-photo-toggle span{display:grid;gap:2px;font-size:14px;color:var(--fg)}
+.share-photo-toggle small{font-size:11.5px;color:var(--muted)}

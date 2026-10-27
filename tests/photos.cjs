@@ -82,10 +82,20 @@ const {chromium}=require('playwright');
     await p2.evaluate(()=>document.getElementById('impGo').click());
     await keysWhen(p2,k=>k.length===3);
     await p2.evaluate(u=>upOpenDetail(u),u);await p2.waitForFunction(()=>document.querySelectorAll('#detailDlg .mp-strip .mp-tile.is-loaded').length===3);
+    // Recap long image: photo wall + row thumbnails, and a toggle to leave them out.
+    await page.evaluate(()=>{const more=DB.rows.filter(r=>r.ml&&r.lat!=null).slice(0,3);more.forEach((r,i)=>{FAV[r.u]=[2,Date.now()];PERSONAL.records[r.u]={date:'2026-0'+(i+3)+'-01',rating:4,note:'',visits:[{id:'v'+i,date:'2026-0'+(i+3)+'-01',rating:4,note:''}]};});saveFav();upSave(PERSONAL);upOpenShare('');});
+    await page.waitForFunction(()=>!!PASSPORT_SHARE.file,null,{timeout:30000});
+    assert(await page.locator('#sharePhotosRow').isVisible());assert((await page.locator('#shareStatus').innerText()).includes('1 家放了我拍的照片'));
+    const withPhotos=await page.evaluate(async()=>{const b=new Uint8Array(await PASSPORT_SHARE.file.arrayBuffer());return (b[20]<<24)|(b[21]<<16)|(b[22]<<8)|b[23];});
+    if(shots)fs.writeFileSync(path.join(shots,'recap-photos.png'),Buffer.from(await page.evaluate(async()=>{const b=await PASSPORT_SHARE.file.arrayBuffer();return [...new Uint8Array(b)];})));
+    await page.locator('#sharePhotos').uncheck();await page.waitForFunction(()=>!!PASSPORT_SHARE.file&&!document.getElementById('shareStatus').innerText.includes('照片'),null,{timeout:30000});
+    const without=await page.evaluate(async()=>{const b=new Uint8Array(await PASSPORT_SHARE.file.arrayBuffer());return (b[20]<<24)|(b[21]<<16)|(b[22]<<8)|b[23];});
+    assert(withPhotos>without+300,'photo wall makes the recap longer');
+    await page.evaluate(()=>closeAppDialog(document.getElementById('passportShareDlg')));
     // Dark mode look.
     await page.evaluate(u=>{applyTheme('dark');upOpenDetail(u);},u);await page.waitForFunction(()=>document.querySelectorAll('#detailDlg .mp-strip .mp-tile.is-loaded').length===3);
     if(shots)await page.locator('#detailDlg .meal-log').screenshot({path:path.join(shots,'photo-card-dark.png')});
     assert.deepEqual(errors,[]);
-    console.log('PASS: meal photos — add/compress (≤1600px JPEG + thumb), 9-cap counter, cover tag, save into visit, card strip +N, viewer swipe/wrap/close, remove + IndexedDB cleanup, cancel cleanup, reload, backup export/import with photos; no browser errors.');
+    console.log('PASS: meal photos — add/compress (≤1600px JPEG + thumb), 9-cap counter, cover tag, save into visit, card strip +N, viewer swipe/wrap/close, remove + IndexedDB cleanup, cancel cleanup, reload, recap photo wall + toggle, backup export/import with photos; no browser errors.');
   }catch(e){if(shots)await page?.screenshot?.({path:path.join(shots,"fail.png")}).catch(()=>{});throw e;}finally{await browser.close();server.close();}
 })().catch(e=>{console.error(e);process.exit(1);});
