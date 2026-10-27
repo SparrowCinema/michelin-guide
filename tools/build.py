@@ -99,6 +99,8 @@ def coord(v):
     try: return round(float(v),5)
     except ValueError: return None
 from local_address import load as load_local
+import editions as ED
+EDOC=ED.load(); EDMATCH=ED.matcher(EDOC)
 LOCAL=load_local()
 rows=[]; unknown=collections.Counter(); stats=collections.Counter()
 for x in csv.DictReader(open(SRC,encoding="utf8")):
@@ -109,7 +111,11 @@ for x in csv.DictReader(open(SRC,encoding="utf8")):
     elif loc[-1]=="USA":
         cname = loc[0] + (f" ({loc[1]})" if len(loc)==3 and loc[0] not in CITY else ""); ctry="USA"
     else: cname, ctry = loc[0], loc[-1]
+    # upstream has renamed regions before; accept the older spellings too
+    ctry = {"Taiwan":"Taiwan Region","Hong Kong SAR China":"Hong Kong SAR","Macau":"Macau SAR","China Mainland":"Chinese Mainland","United States":"USA"}.get(ctry, ctry)
+    if ctry != loc[-1] and loc[-1] not in ("Dubai","Abu Dhabi"): loc = loc[:-1] + [ctry]
     if ctry not in COUNTRY: unknown[ctry]+=1; continue
+    ed = EDMATCH(loc)
     cname_en = cname; cname = CITY.get(cname, cname)
     url = x["Url"].replace("https://guide.michelin.com/en/","")
     slug = url.rsplit("/restaurant/",1)[-1]
@@ -120,10 +126,12 @@ for x in csv.DictReader(open(SRC,encoding="utf8")):
     new = 1 if ctry=="Chinese Mainland" and zh and norm(zh) in NEW else 0
     stats[kind]+=1
     web=x["WebsiteUrl"].strip()
-    rows.append([name, zh, kind+(4 if new else 0), city(cname,ctry,cname_en), LV[x["Award"]], cuisine(x["Cuisine"]), PRICE.get(x["Price"],0), url, web, x["Address"],
+    ci = city(cname,ctry,cname_en)
+    if len(cities[ci]) < 4: cities[ci].append(ed)
+    rows.append([name, zh, kind+(4 if new else 0), ci, LV[x["Award"]], cuisine(x["Cuisine"]), PRICE.get(x["Price"],0), url, web, x["Address"],
                  coord(x["Latitude"]), coord(x["Longitude"]), 1 if x.get("GreenStar","0").strip()=="1" else 0,
                  HIST.get(unquote(url).lower(),""), BP.get(url,0)] + ([LOCAL[url]] if LOCAL.get(url) else []))
-json.dump({"updated":UPDATED,"countries":countries,"cities":cities,"cuisines":cuis,"cuisines_en":cuis_en,"r":rows},open(OUT,"w",encoding="utf8"),ensure_ascii=False,separators=(",",":"))
+json.dump({"updated":UPDATED,"countries":countries,"cities":cities,"cuisines":cuis,"cuisines_en":cuis_en,"editions":ED.export(EDOC),"r":rows},open(OUT,"w",encoding="utf8"),ensure_ascii=False,separators=(",",":"))
 print("rows",len(rows),"unknown",unknown,"kinds",stats)
 print(collections.Counter(r[4] for r in rows))
 mc=collections.Counter(r[4] for r in rows if countries[cities[r[3]][1]][1]=="Chinese Mainland"); print("mainland",mc, "new",sum(1 for r in rows if r[2]&4))

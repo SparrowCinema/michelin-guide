@@ -1,0 +1,1493 @@
+{
+ "_note": "Guide editions. year = the guide's own year; released = official release date (from MICHELIN's announcement, see source); synced = whether data.json already reflects that edition. tools/editions_watch.py adds newly announced editions; tools/update_editions.py marks them synced when the data changes.",
+ "checked": "2026-10-27",
+ "guides": [
+  {
+   "id": "tokyo",
+   "zh": "东京",
+   "en": "Tokyo",
+   "coverage": [
+    [
+     "Japan",
+     [
+      "Tokyo"
+     ]
+    ]
+   ],
+   "keywords": [
+    "Tokyo"
+   ],
+   "editions": [
+    {
+     "year": 2026,
+     "released": "2025-09-25",
+     "source": "https://guide.michelin.com/th/en/article/michelin-guide-ceremony/michelin-guide-tokyo-2026-stars-reveal",
+     "synced": true
+    }
+   ]
+  },
+  {
+   "id": "kyoto-osaka",
+   "zh": "京都·大阪",
+   "en": "Kyoto & Osaka",
+   "coverage": [
+    [
+     "Japan",
+     [
+      "Kyoto",
+      "Osaka"
+     ]
+    ]
+   ],
+   "keywords": [
+    "Kyoto",
+    "Osaka"
+   ],
+   "editions": [
+    {
+     "year": 2026,
+     "released": "2026-04-23",
+     "source": "https://guide.michelin.com/th/en/article/michelin-guide-ceremony/michelin-guide-kyoto-osaka-2026-stars-reveal",
+     "synced": true
+    }
+   ]
+  },
+  {
+   "id": "nara",
+   "zh": "奈良",
+   "en": "Nara",
+   "coverage": [
+    [
+     "Japan",
+     [
+      "Nara"
+     ]
+    ]
+   ],
+   "keywords": [
+    "Nara"
+   ],
+   "editions": [
+    {
+     "year": 2026,
+     "released": "2026-05-13",
+     "source": "https://guide.michelin.com/th/en/article/michelin-guide-ceremony/michelin-guide-nara-2026-restaurants",
+     "synced": true
+    }
+   ]
+  },
+  {
+   "id": "hk-macau",
+   "zh": "香港澳门",
+   "en": "Hong Kong & Macau",
+   "coverage": [
+    [
+     "Hong Kong SAR",
+     null
+    ],
+    [
+     "Macau SAR",
+     null
+    ]
+   ],
+   "keywords": [
+    "Hong Kong",
+    "Macau"
+   ],
+   "editions": [
+    {
+     "year": 2026,
+     "released": "2026-03-19",
+     "source": "https://guide.michelin.com/th/en/article/michelin-guide-ceremony/hong-kong-and-macau-full-selection-release-2026",
+     "synced": true
+    }
+   ]
+  },
+  {
+   "id": "taiwan",
+   "zh": "台湾",
+   "en": "Taiwan",
+   "coverage": [
+    [
+     "Taiwan Region",
+     null
+    ]
+   ],
+   "keywords": [
+    "Taiwan"
+   ],
+   "editions": [
+    {
+     "year": 2026,
+     "released": "2026-07-21",
+     "source": "https://guide.michelin.com/th/en/article/michelin-guide-ceremony/michelin-stars-taiwan-2026",
+     "synced": true
+    }
+   ]
+  },
+  {
+   "id": "singapore",
+   "zh": "新加坡",
+   "en": "Singapore",
+   "coverage": [
+    [
+     "Singapore",
+     null
+    ]
+   ],
+   "keywords": [
+    "Singapore"
+   ],
+   "editions": [
+    {
+     "year": 2026,
+     "released": "2026-08-04",
+     "source": "https://guide.michelin.com/th/en/article/michelin-guide-ceremony/singapore-full-selection-2026",
+     "synced": true
+    }
+   ]
+  },
+  {
+   "id": "seoul-busan",
+   "zh": "首尔·釜山",
+   "en": "Seoul & Busan",
+   "coverage": [
+    [
+     "South Korea",
+     null
+    ]
+   ],
+   "keywords": [
+    "Seoul",
+    "Busan"
+   ],
+   "editions": [
+    {
+     "year": 2026,
+     "released": "2026-03-05",
+     "source": "https://guide.michelin.com/th/en/article/michelin-guide-ceremony/michelin-guide-seoul-busan-2026-highlights",
+     "synced": true
+    }
+   ]
+  },
+  {
+   "id": "thailand",
+   "zh": "泰国",
+   "en": "Thailand",
+   "coverage": [
+    [
+     "Thailand",
+     null
+    ]
+   ],
+   "keywords": [
+    "Thailand"
+   ],
+   "editions": [
+    {
+     "year": 2026,
+     "released": "2025-11-27",
+     "source": "https://guide.michelin.com/th/en/article/michelin-guide-ceremony/michelin-guide-thailand-2026",
+     "synced": true
+    }
+   ],
+   "scheduled": {
+    "year": 2027,
+    "date": "2026-11-10",
+    "source": "https://guide.michelin.com/th/en/article/michelin-guide-ceremony/save-the-date-the-michelin-guide-thailand-2027"
+   }
+  },
+  {
+   "id": "malaysia",
+   "zh": "吉隆坡·槟城",
+   "en": "Kuala Lumpur & Penang",
+   "coverage": [
+    [
+     "Malaysia",
+     null
+    ]
+   ],
+   "keywords": [
+    "Kuala Lumpur",
+    "Penang",
+    "Malaysia"
+   ],
+   "editions": [
+    {
+     "year": 2026,
+     "released": "2025-11-11",
+     "source": "https://guide.michelin.com/th/en/article/michelin-guide-ceremony/malaysia-full-selection-2026",
+     "synced": true
+    }
+   ]
+  },
+  {
+   "id": "vietnam",
+   "zh": "越南",
+   "en": "Vietnam",
+   "coverage": [
+    [
+     "Vietnam",
+     null
+    ]
+   ],
+   "keywords": [
+    "Vietnam",
+    "Hanoi",
+    "Ho Chi Minh"
+   ],
+   "editions": [
+    {
+     "year": 2026,
+     "released": "2026-06-04",
+     "source": "https://guide.michelin.com/th/en/article/michelin-guide-ceremony/michelin-guide-vietnam-2026",
+     "synced": true
+    }
+   ]
+  },
+  {
+   "id": "philippines",
+   "zh": "马尼拉及周边·宿务",
+   "en": "Manila & Environs, Cebu",
+   "coverage": [
+    [
+     "The Philippines",
+     null
+    ]
+   ],
+   "keywords": [
+    "Manila",
+    "Philippine",
+    "Cebu"
+   ],
+   "editions": [
+    {
+     "year": 2026,
+     "released": "2025-10-30",
+     "source": "https://guide.michelin.com/th/en/article/michelin-guide-ceremony/philippines-full-selection-2026",
+     "synced": true
+    }
+   ]
+  },
+  {
+   "id": "beijing",
+   "zh": "北京",
+   "en": "Beijing",
+   "coverage": [
+    [
+     "Chinese Mainland",
+     [
+      "Beijing"
+     ]
+    ]
+   ],
+   "keywords": [
+    "Beijing"
+   ],
+   "editions": [
+    {
+     "year": 2026,
+     "released": "2025-10-29",
+     "source": "https://guide.michelin.com/ae-az/en/article/news-and-views/michelin-guide-beijing-2026",
+     "synced": true
+    }
+   ]
+  },
+  {
+   "id": "sjz",
+   "zh": "上海·江苏·浙江",
+   "en": "Shanghai, Jiangsu & Zhejiang",
+   "coverage": [
+    [
+     "Chinese Mainland",
+     [
+      "Shanghai",
+      "Nanjing",
+      "Suzhou",
+      "Yangzhou",
+      "Changzhou",
+      "Hangzhou",
+      "Wenzhou",
+      "Taizhou"
+     ]
+    ]
+   ],
+   "keywords": [
+    "Shanghai",
+    "Jiangsu",
+    "Zhejiang"
+   ],
+   "editions": [
+    {
+     "year": 2026,
+     "released": "2026-04-09",
+     "source": "https://guide.michelin.com/en/article/michelin-guide-ceremony/michelin-guide-shanghai-jiangsu-zhejiang",
+     "synced": true
+    }
+   ]
+  },
+  {
+   "id": "gz-sz",
+   "zh": "广州·深圳",
+   "en": "Guangzhou & Shenzhen",
+   "coverage": [
+    [
+     "Chinese Mainland",
+     [
+      "Guangzhou",
+      "Shenzhen"
+     ]
+    ]
+   ],
+   "keywords": [
+    "Guangzhou",
+    "Shenzhen"
+   ],
+   "editions": [
+    {
+     "year": 2026,
+     "released": "2026-08-18",
+     "source": "https://guide.michelin.com/en/article/michelin-guide-ceremony/michelin-stars-guangzhou-shenzhen-2026",
+     "synced": true
+    }
+   ]
+  },
+  {
+   "id": "chengdu",
+   "zh": "成都",
+   "en": "Chengdu",
+   "coverage": [
+    [
+     "Chinese Mainland",
+     [
+      "Chengdu"
+     ]
+    ]
+   ],
+   "keywords": [
+    "Chengdu"
+   ],
+   "editions": [
+    {
+     "year": 2027,
+     "released": "2026-09-03",
+     "source": "https://guide.michelin.com/mo/en/article/michelin-guide-ceremony/michelin-stars-chengdu-2027",
+     "synced": true
+    }
+   ]
+  },
+  {
+   "id": "fujian",
+   "zh": "福建",
+   "en": "Fujian",
+   "coverage": [
+    [
+     "Chinese Mainland",
+     [
+      "Fuzhou",
+      "Xiamen",
+      "Quanzhou",
+      "Ningde"
+     ]
+    ]
+   ],
+   "keywords": [
+    "Fujian"
+   ],
+   "editions": [
+    {
+     "year": 2026,
+     "released": "2025-11-21",
+     "source": "https://guide.michelin.com/en/article/news-and-views/michelin-guide-fujian-2026",
+     "synced": true
+    }
+   ]
+  },
+  {
+   "id": "abu-dhabi",
+   "zh": "阿布扎比",
+   "en": "Abu Dhabi",
+   "coverage": [
+    [
+     "UAE",
+     [
+      "Abu Dhabi"
+     ]
+    ]
+   ],
+   "keywords": [
+    "Abu Dhabi"
+   ],
+   "editions": [
+    {
+     "year": 2026,
+     "released": "2025-10-24",
+     "source": "https://guide.michelin.com/ae-az/en/article/michelin-guide-ceremony/just-unveiled-the-michelin-guide-abu-dhabi-2026",
+     "synced": true
+    }
+   ]
+  },
+  {
+   "id": "dubai",
+   "zh": "迪拜",
+   "en": "Dubai",
+   "coverage": [
+    [
+     "UAE",
+     [
+      "Dubai"
+     ]
+    ]
+   ],
+   "keywords": [
+    "Dubai"
+   ],
+   "editions": [
+    {
+     "year": 2025,
+     "released": null,
+     "source": null,
+     "synced": true
+    },
+    {
+     "year": 2026,
+     "released": "2026-10-07",
+     "source": "https://guide.michelin.com/ae-du/en/article/michelin-guide-ceremony/michelin-guide-restaurant-ceremony-dubai-highlights-2026",
+     "synced": false
+    }
+   ]
+  },
+  {
+   "id": "doha",
+   "zh": "多哈",
+   "en": "Doha",
+   "coverage": [
+    [
+     "Qatar",
+     null
+    ]
+   ],
+   "keywords": [
+    "Doha",
+    "Qatar"
+   ],
+   "editions": [
+    {
+     "year": 2026,
+     "released": "2025-12-10",
+     "source": "https://guide.michelin.com/ae-du/en/article/michelin-guide-ceremony/michelin-guide-doha-2026",
+     "synced": true
+    }
+   ]
+  },
+  {
+   "id": "saudi",
+   "zh": "沙特阿拉伯",
+   "en": "Saudi Arabia",
+   "coverage": [
+    [
+     "Saudi Arabia",
+     null
+    ]
+   ],
+   "keywords": [
+    "Saudi"
+   ],
+   "editions": [
+    {
+     "year": 2026,
+     "released": "2025-12-15",
+     "source": "https://guide.michelin.com/us/en/article/michelin-guide-ceremony/saudi-arabia-inaugural-michelin-guide-restaurant-selection",
+     "synced": true
+    }
+   ]
+  },
+  {
+   "id": "turkiye",
+   "zh": "土耳其",
+   "en": "Türkiye",
+   "coverage": [
+    [
+     "Türkiye",
+     null
+    ]
+   ],
+   "keywords": [
+    "Türkiye",
+    "Turkey",
+    "Turquie"
+   ],
+   "editions": [
+    {
+     "year": 2026,
+     "released": "2025-12-05",
+     "source": "https://guide.michelin.com/gb/en/article/michelin-guide-ceremony/the-michelin-guide-turkiye-reveals-its-2026-restaurant-selection",
+     "synced": true
+    }
+   ]
+  },
+  {
+   "id": "france",
+   "zh": "法国·摩纳哥",
+   "en": "France & Monaco",
+   "coverage": [
+    [
+     "France",
+     null
+    ],
+    [
+     "Principality of Monaco",
+     null
+    ]
+   ],
+   "keywords": [
+    "France"
+   ],
+   "editions": [
+    {
+     "year": 2026,
+     "released": "2026-03-16",
+     "source": "https://guide.michelin.com/fr/fr/article/michelin-guide-ceremony/le-palmares-du-guide-michelin-france-et-monaco-2026",
+     "synced": true
+    }
+   ]
+  },
+  {
+   "id": "spain",
+   "zh": "西班牙·安道尔",
+   "en": "Spain & Andorra",
+   "coverage": [
+    [
+     "Spain",
+     null
+    ],
+    [
+     "Andorra",
+     null
+    ]
+   ],
+   "keywords": [
+    "Spain",
+    "España",
+    "Espagne"
+   ],
+   "editions": [
+    {
+     "year": 2026,
+     "released": "2025-11-26",
+     "source": "https://guide.michelin.com/es/es/articulo/michelin-guide-ceremony/todo-sobre-la-guia-michelin-espana-andorra-2026",
+     "synced": true
+    }
+   ]
+  },
+  {
+   "id": "portugal",
+   "zh": "葡萄牙",
+   "en": "Portugal",
+   "coverage": [
+    [
+     "Portugal",
+     null
+    ]
+   ],
+   "keywords": [
+    "Portugal"
+   ],
+   "editions": [
+    {
+     "year": 2026,
+     "released": "2026-03-11",
+     "source": "https://guide.michelin.com/en/article/michelin-guide-ceremony/All%20About%20the%20MICHELIN%20Guide%20Portugal%202026",
+     "synced": true
+    }
+   ]
+  },
+  {
+   "id": "italy",
+   "zh": "意大利",
+   "en": "Italy",
+   "coverage": [
+    [
+     "Italy",
+     null
+    ]
+   ],
+   "keywords": [
+    "Italy",
+    "Italia",
+    "Italie"
+   ],
+   "editions": [
+    {
+     "year": 2026,
+     "released": "2025-11-19",
+     "source": "https://guide.michelin.com/it/it/notizia/michelin-guide-ceremony/le-nuove-stelle-della-guida-michelin-italia-2026",
+     "synced": true
+    }
+   ]
+  },
+  {
+   "id": "germany",
+   "zh": "德国",
+   "en": "Germany",
+   "coverage": [
+    [
+     "Germany",
+     null
+    ]
+   ],
+   "keywords": [
+    "Germany",
+    "Deutschland"
+   ],
+   "editions": [
+    {
+     "year": 2026,
+     "released": "2026-06-23",
+     "source": "https://guide.michelin.com/de/de/article/michelin-guide-ceremony/der-michelin-guide-deutschland-2026-ist-da",
+     "synced": true
+    }
+   ]
+  },
+  {
+   "id": "switzerland",
+   "zh": "瑞士",
+   "en": "Switzerland",
+   "coverage": [
+    [
+     "Switzerland",
+     null
+    ],
+    [
+     "Liechtenstein",
+     null
+    ]
+   ],
+   "keywords": [
+    "Switzerland",
+    "Suisse",
+    "Schweiz",
+    "Svizzera"
+   ],
+   "editions": [
+    {
+     "year": 2025,
+     "released": "2025-10-20",
+     "source": "https://guide.michelin.com/ch/fr/article/michelin-guide-ceremony/toutes-les-nouvelles-etoiles-de-la-selection-suisse-2025",
+     "synced": true
+    },
+    {
+     "year": 2026,
+     "released": "2026-10-25",
+     "source": "https://guide.michelin.com/ch/fr/article/michelin-guide-ceremony/guide-michelin-suisse-2026-nouvelles-etoiles-direct",
+     "synced": false
+    }
+   ]
+  },
+  {
+   "id": "austria",
+   "zh": "奥地利",
+   "en": "Austria",
+   "coverage": [
+    [
+     "Austria",
+     null
+    ]
+   ],
+   "keywords": [
+    "Austria",
+    "Österreich"
+   ],
+   "editions": [
+    {
+     "year": 2026,
+     "released": "2026-03-18",
+     "source": "https://guide.michelin.com/at/de/article/michelin-guide-ceremony/alle-sternerestaurants---michelin-guide-osterreich-2026",
+     "synced": true
+    }
+   ]
+  },
+  {
+   "id": "gb-ireland",
+   "zh": "英国·爱尔兰",
+   "en": "Great Britain & Ireland",
+   "coverage": [
+    [
+     "United Kingdom",
+     null
+    ],
+    [
+     "Ireland",
+     null
+    ]
+   ],
+   "keywords": [
+    "Great Britain",
+    "Ireland"
+   ],
+   "editions": [
+    {
+     "year": 2026,
+     "released": "2026-02-10",
+     "source": "https://guide.michelin.com/gb/en/article/michelin-guide-ceremony/new-michelin-star-restaurants-uk-ireland",
+     "synced": true
+    }
+   ]
+  },
+  {
+   "id": "benelux",
+   "zh": "比利时·卢森堡",
+   "en": "Belgium & Luxembourg",
+   "coverage": [
+    [
+     "Belgium",
+     null
+    ],
+    [
+     "Luxembourg",
+     null
+    ]
+   ],
+   "keywords": [
+    "Belgium",
+    "Belgique",
+    "België",
+    "Luxembourg"
+   ],
+   "editions": [
+    {
+     "year": 2026,
+     "released": "2026-05-04",
+     "source": "https://guide.michelin.com/en/article/michelin-guide-ceremony/cuines-33-and-the-jane-awarded-two-stars-in-the-michelin-guide-belgium-and-luxembourg-2026",
+     "synced": true
+    }
+   ]
+  },
+  {
+   "id": "netherlands",
+   "zh": "荷兰",
+   "en": "Netherlands",
+   "coverage": [
+    [
+     "Netherlands",
+     null
+    ]
+   ],
+   "keywords": [
+    "Netherlands",
+    "Nederland"
+   ],
+   "editions": [
+    {
+     "year": 2025,
+     "released": "2025-10-06",
+     "source": "https://guide.michelin.com/nl/nl/article/michelin-guide-ceremony/de-volledige-lijst-van-de-sterren-in-de-michelin-gids-nederland-2025",
+     "synced": true
+    },
+    {
+     "year": 2026,
+     "released": "2026-10-05",
+     "source": "https://guide.michelin.com/en/article/michelin-guide-ceremony/azurite-and-suis-awarded-two-michelin-stars-each-in-the-2026-netherlands-michelin-guide",
+     "synced": false
+    }
+   ]
+  },
+  {
+   "id": "nordic",
+   "zh": "北欧五国",
+   "en": "Nordic Countries",
+   "coverage": [
+    [
+     "Denmark",
+     null
+    ],
+    [
+     "Sweden",
+     null
+    ],
+    [
+     "Norway",
+     null
+    ],
+    [
+     "Finland",
+     null
+    ],
+    [
+     "Iceland",
+     null
+    ]
+   ],
+   "keywords": [
+    "Nordic"
+   ],
+   "editions": [
+    {
+     "year": 2026,
+     "released": "2026-06-02",
+     "source": "https://guide.michelin.com/gb/en/article/michelin-guide-ceremony/michelin-guide-nordic-denmark-finland-iceland-norway-sweden-2026-new-stars-bib-gourmands-special-awards",
+     "synced": true
+    }
+   ]
+  },
+  {
+   "id": "estonia",
+   "zh": "爱沙尼亚",
+   "en": "Estonia",
+   "coverage": [
+    [
+     "Estonia",
+     null
+    ]
+   ],
+   "keywords": [
+    "Estonia"
+   ],
+   "editions": [
+    {
+     "year": 2026,
+     "released": "2026-05-19",
+     "source": "https://guide.michelin.com/dk/en/article/michelin-guide-ceremony/all-the-winners-in-the-michelin-guide-estonia-2026-new-stars-bib-gourmands-special-awards",
+     "synced": true
+    }
+   ]
+  },
+  {
+   "id": "latvia",
+   "zh": "拉脱维亚",
+   "en": "Latvia",
+   "coverage": [
+    [
+     "Latvia",
+     null
+    ]
+   ],
+   "keywords": [
+    "Latvia",
+    "Riga"
+   ],
+   "editions": [
+    {
+     "year": 2026,
+     "released": "2025-10-22",
+     "source": "https://guide.michelin.com/dk/en/article/michelin-guide-ceremony/the-michelin-guide-latvia-riga-2026-winners-michelin-guide-ceremony",
+     "synced": true
+    }
+   ]
+  },
+  {
+   "id": "lithuania",
+   "zh": "立陶宛",
+   "en": "Lithuania",
+   "coverage": [
+    [
+     "Lithuania",
+     null
+    ]
+   ],
+   "keywords": [
+    "Lithuania"
+   ],
+   "editions": [
+    {
+     "year": 2026,
+     "released": "2026-06-05",
+     "source": "https://guide.michelin.com/lv/en/article/michelin-guide-ceremony/all-the-winners-michelin-guide-lithuania-2026-has-been-unveiled-new-stars-bib-gourmands-special-awards",
+     "synced": true
+    }
+   ]
+  },
+  {
+   "id": "poland",
+   "zh": "波兰",
+   "en": "Poland",
+   "coverage": [
+    [
+     "Poland",
+     null
+    ]
+   ],
+   "keywords": [
+    "Poland"
+   ],
+   "editions": [
+    {
+     "year": 2026,
+     "released": "2026-05-28",
+     "source": "https://guide.michelin.com/pl/en/article/michelin-guide-ceremony/the-full-list-of-michelin-star-restaurants-in-poland",
+     "synced": true
+    }
+   ]
+  },
+  {
+   "id": "czechia",
+   "zh": "捷克",
+   "en": "Czechia",
+   "coverage": [
+    [
+     "Czechia",
+     null
+    ]
+   ],
+   "keywords": [
+    "Czechia"
+   ],
+   "editions": [
+    {
+     "year": 2025,
+     "released": "2025-12-12",
+     "source": "https://guide.michelin.com/en/article/michelin-guide-ceremony/the-michelin-guide-czechia-2025-is-out",
+     "synced": true
+    }
+   ]
+  },
+  {
+   "id": "hungary",
+   "zh": "匈牙利",
+   "en": "Hungary",
+   "coverage": [
+    [
+     "Hungary",
+     null
+    ]
+   ],
+   "keywords": [
+    "Hungary"
+   ],
+   "editions": [
+    {
+     "year": 2025,
+     "released": "2025-10-10",
+     "source": "https://guide.michelin.com/th/en/article/michelin-guide-ceremony/the-michelin-guide-hungary-2025-is-out",
+     "synced": true
+    }
+   ]
+  },
+  {
+   "id": "slovenia",
+   "zh": "斯洛文尼亚",
+   "en": "Slovenia",
+   "coverage": [
+    [
+     "Slovenia",
+     null
+    ]
+   ],
+   "keywords": [
+    "Slovenia"
+   ],
+   "editions": [
+    {
+     "year": 2026,
+     "released": "2026-06-16",
+     "source": "https://guide.michelin.com/en/article/news-and-views/the-michelin-guide-slovenia-2026-is-out",
+     "synced": true
+    }
+   ]
+  },
+  {
+   "id": "croatia",
+   "zh": "克罗地亚",
+   "en": "Croatia",
+   "coverage": [
+    [
+     "Croatia",
+     null
+    ]
+   ],
+   "keywords": [
+    "Croatia"
+   ],
+   "editions": [
+    {
+     "year": 2026,
+     "released": "2026-06-25",
+     "source": "https://guide.michelin.com/hr/en/article/michelin-guide-ceremony/the-michelin-guide-croatia-2026-is-unveiled",
+     "synced": true
+    }
+   ]
+  },
+  {
+   "id": "serbia",
+   "zh": "贝尔格莱德",
+   "en": "Belgrade",
+   "coverage": [
+    [
+     "Serbia",
+     null
+    ]
+   ],
+   "keywords": [
+    "Belgrade",
+    "Serbia"
+   ],
+   "editions": [
+    {
+     "year": 2026,
+     "released": "2025-12-10",
+     "source": "https://guide.michelin.com/rs/en/article/michelin-guide-ceremony/michelin-guide-belgrade-2026-celebrates-growth-and-culinary-excellence",
+     "synced": true
+    }
+   ]
+  },
+  {
+   "id": "malta",
+   "zh": "马耳他",
+   "en": "Malta",
+   "coverage": [
+    [
+     "Malta",
+     null
+    ]
+   ],
+   "keywords": [
+    "Malta"
+   ],
+   "editions": [
+    {
+     "year": 2026,
+     "released": "2026-02-17",
+     "source": "https://guide.michelin.com/mt/en/article/michelin-guide-ceremony/the-michelin-guide-malta-2026-is-launched-today",
+     "synced": true
+    }
+   ]
+  },
+  {
+   "id": "greece",
+   "zh": "希腊",
+   "en": "Greece",
+   "coverage": [
+    [
+     "Greece",
+     null
+    ]
+   ],
+   "keywords": [
+    "Greece",
+    "Athens",
+    "Thessaloniki",
+    "Santorini"
+   ],
+   "editions": [
+    {
+     "year": null,
+     "released": null,
+     "source": null,
+     "synced": true
+    },
+    {
+     "year": 2027,
+     "released": "2026-10-20",
+     "source": "https://guide.michelin.com/en/article/michelin-guide-ceremony/the-michelin-guide-athens-thessaloniki-santorini-2027-marks-a-milestone-for-greek-gastronomy",
+     "synced": false
+    }
+   ]
+  },
+  {
+   "id": "california",
+   "zh": "加州",
+   "en": "California",
+   "coverage": [
+    [
+     "USA",
+     [
+      "CA"
+     ]
+    ]
+   ],
+   "keywords": [
+    "California"
+   ],
+   "editions": [
+    {
+     "year": 2026,
+     "released": "2026-06-25",
+     "source": "https://guide.michelin.com/en/article/michelin-guide-ceremony/guide-michelin-california",
+     "synced": true
+    }
+   ]
+  },
+  {
+   "id": "us-northeast",
+   "zh": "纽约·芝加哥·华盛顿·波士顿·费城",
+   "en": "Northeast Cities (New York, Chicago, D.C., Boston, Philadelphia)",
+   "coverage": [
+    [
+     "USA",
+     [
+      "NY",
+      "IL",
+      "DC",
+      "VA",
+      "MA",
+      "PA"
+     ]
+    ]
+   ],
+   "keywords": [
+    "New York",
+    "Chicago",
+    "Washington",
+    "Boston",
+    "Philadelphia",
+    "Northeast"
+   ],
+   "editions": [
+    {
+     "year": 2025,
+     "released": "2025-11-19",
+     "source": "https://guide.michelin.com/us/en/article/michelin-guide-ceremony/all-the-stars-in-the-michelin-guide-to-new-york-city-2025",
+     "synced": true
+    }
+   ]
+  },
+  {
+   "id": "florida",
+   "zh": "佛罗里达",
+   "en": "Florida",
+   "coverage": [
+    [
+     "USA",
+     [
+      "FL"
+     ]
+    ]
+   ],
+   "keywords": [
+    "Florida"
+   ],
+   "editions": [
+    {
+     "year": 2026,
+     "released": "2026-05-21",
+     "source": "https://guide.michelin.com/ca/en/article/michelin-guide-ceremony/the-michelin-guide-florida-2026-restaurant-guide-ceremony-livestream",
+     "synced": true
+    }
+   ]
+  },
+  {
+   "id": "texas",
+   "zh": "得克萨斯",
+   "en": "Texas",
+   "coverage": [
+    [
+     "USA",
+     [
+      "TX"
+     ]
+    ]
+   ],
+   "keywords": [
+    "Texas"
+   ],
+   "editions": [
+    {
+     "year": 2025,
+     "released": "2025-10-29",
+     "source": "https://guide.michelin.com/ca/en/article/michelin-guide-ceremony/all-the-stars-in-the-michelin-guide-texas-2025",
+     "synced": true
+    },
+    {
+     "year": 2026,
+     "released": "2026-10-08",
+     "source": "https://guide.michelin.com/ca/en/article/michelin-guide-ceremony/every-michelin-starred-restaurant-in-texas-for-2026",
+     "synced": false
+    }
+   ]
+  },
+  {
+   "id": "colorado",
+   "zh": "科罗拉多",
+   "en": "Colorado",
+   "coverage": [
+    [
+     "USA",
+     [
+      "CO"
+     ]
+    ]
+   ],
+   "keywords": [
+    "Colorado"
+   ],
+   "editions": [
+    {
+     "year": 2026,
+     "released": "2026-09-14",
+     "source": "https://guide.michelin.com/en/article/michelin-guide-ceremony/every-michelin-starred-restaurant-in-colorado-for-2026-plus-the-state-s-key-dining-trends",
+     "synced": true
+    }
+   ]
+  },
+  {
+   "id": "american-south",
+   "zh": "美国南部",
+   "en": "American South",
+   "coverage": [
+    [
+     "USA",
+     [
+      "GA",
+      "NC",
+      "TN",
+      "LA",
+      "SC",
+      "AL",
+      "MS"
+     ]
+    ]
+   ],
+   "keywords": [
+    "American South"
+   ],
+   "editions": [
+    {
+     "year": 2025,
+     "released": "2025-11-04",
+     "source": "https://guide.michelin.com/us/en/article/michelin-guide-ceremony/all-the-stars-in-the-michelin-guide-to-the-american-south",
+     "synced": true
+    },
+    {
+     "year": 2026,
+     "released": "2026-10-22",
+     "source": "https://guide.michelin.com/en/article/michelin-guide-ceremony/every-michelin-starred-restaurant-in-the-american-south-for-2026",
+     "synced": false
+    }
+   ]
+  },
+  {
+   "id": "us-southwest",
+   "zh": "美国西南部",
+   "en": "American Southwest",
+   "coverage": [
+    [
+     "USA",
+     [
+      "AZ",
+      "NV",
+      "NM",
+      "UT"
+     ]
+    ]
+   ],
+   "keywords": [
+    "Southwest"
+   ],
+   "editions": [
+    {
+     "year": 2026,
+     "released": "2026-08-27",
+     "source": "https://guide.michelin.com/en/article/michelin-guide-ceremony/guide-michelin-southwest",
+     "synced": true
+    }
+   ]
+  },
+  {
+   "id": "toronto",
+   "zh": "多伦多及周边",
+   "en": "Toronto & Region",
+   "coverage": [
+    [
+     "Canada",
+     [
+      "Toronto",
+      "Mississauga",
+      "St. Catharines",
+      "Dundas",
+      "Niagara-on-the-Lake",
+      "Lincoln",
+      "Creemore",
+      "Oakville",
+      "Jordan",
+      "Uxbridge",
+      "Markdale",
+      "Collingwood",
+      "Cambridge",
+      "Scarborough",
+      "Markham",
+      "Kitchener"
+     ]
+    ]
+   ],
+   "keywords": [
+    "Toronto"
+   ],
+   "editions": [
+    {
+     "year": 2026,
+     "released": "2026-09-23",
+     "source": "https://guide.michelin.com/us/en/article/michelin-guide-ceremony/every-michelin-starred-restaurant-in-toronto-region-for-2026",
+     "synced": true
+    }
+   ]
+  },
+  {
+   "id": "vancouver",
+   "zh": "温哥华",
+   "en": "Vancouver",
+   "coverage": [
+    [
+     "Canada",
+     [
+      "Vancouver"
+     ]
+    ]
+   ],
+   "keywords": [
+    "Vancouver"
+   ],
+   "editions": [
+    {
+     "year": 2025,
+     "released": "2025-10-03",
+     "source": "https://guide.michelin.com/ca/en/article/michelin-guide-ceremony/elisa-vancouver-michelin-guide-sommelier-award",
+     "synced": true
+    },
+    {
+     "year": 2026,
+     "released": "2026-10-07",
+     "source": "https://guide.michelin.com/en/article/michelin-guide-ceremony/every-michelin-starred-restaurant-in-vancouver-for-2026",
+     "synced": false
+    }
+   ]
+  },
+  {
+   "id": "quebec",
+   "zh": "魁北克",
+   "en": "Québec",
+   "coverage": [
+    [
+     "Canada",
+     null
+    ]
+   ],
+   "keywords": [
+    "Québec",
+    "Quebec"
+   ],
+   "editions": [
+    {
+     "year": 2026,
+     "released": "2026-05-06",
+     "source": "https://guide.michelin.com/ca/en/article/michelin-guide-ceremony/every-michelin-starred-restaurant-in-quebec-for-2026-and-the-year-s-key-trends",
+     "synced": true
+    }
+   ]
+  },
+  {
+   "id": "mexico",
+   "zh": "墨西哥",
+   "en": "Mexico",
+   "coverage": [
+    [
+     "Mexico",
+     null
+    ]
+   ],
+   "keywords": [
+    "Mexico",
+    "México"
+   ],
+   "editions": [
+    {
+     "year": 2026,
+     "released": "2026-05-21",
+     "source": "https://guide.michelin.com/ca/en/article/michelin-guide-ceremony/every-michelin-starred-restaurant-in-mexico-for-2026-and-the-year-s-key-trends",
+     "synced": true
+    }
+   ]
+  },
+  {
+   "id": "brazil",
+   "zh": "巴西",
+   "en": "Brazil",
+   "coverage": [
+    [
+     "Brazil",
+     null
+    ]
+   ],
+   "keywords": [
+    "Brazil",
+    "Brasil"
+   ],
+   "editions": [
+    {
+     "year": 2026,
+     "released": "2026-04-14",
+     "source": "https://guide.michelin.com/en/article/michelin-guide-ceremony/brazil-restaurants-three-michelin-stars",
+     "synced": true
+    }
+   ]
+  },
+  {
+   "id": "argentina",
+   "zh": "阿根廷",
+   "en": "Argentina",
+   "coverage": [
+    [
+     "Argentina",
+     null
+    ]
+   ],
+   "keywords": [
+    "Argentina",
+    "Buenos Aires",
+    "Mendoza"
+   ],
+   "editions": [
+    {
+     "year": 2026,
+     "released": "2026-07-13",
+     "source": "https://guide.michelin.com/en/article/michelin-guide-ceremony/michelin-guide-newly-starred-restaurants-in-buenos-aires-and-mendoza",
+     "synced": true
+    }
+   ]
+  },
+  {
+   "id": "new-zealand",
+   "zh": "新西兰",
+   "en": "New Zealand",
+   "coverage": [
+    [
+     "New Zealand",
+     null
+    ]
+   ],
+   "keywords": [
+    "New Zealand",
+    "Aotearoa"
+   ],
+   "editions": [
+    {
+     "year": 2026,
+     "released": "2026-06-30",
+     "source": "https://guide.michelin.com/th/en/article/michelin-guide-ceremony/michelin-guide-new-zealand-2026-restaurant-selection",
+     "synced": true
+    }
+   ]
+  },
+  {
+   "id": "south-australia",
+   "zh": "南澳大利亚",
+   "en": "South Australia",
+   "coverage": [
+    [
+     "Australia",
+     null
+    ]
+   ],
+   "keywords": [
+    "South Australia"
+   ],
+   "editions": [
+    {
+     "year": 2027,
+     "released": "2026-10-14",
+     "source": "https://guide.michelin.com/th/en/article/michelin-guide-ceremony/michelin-guide-south-australia-restaurant-selection-2027",
+     "synced": false
+    }
+   ]
+  }
+ ]
+}

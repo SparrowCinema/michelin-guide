@@ -84,9 +84,11 @@ python -m unittest discover -s tests -p 'test_*.py'
 python tools/check_updates.py --validate-only
 ```
 
-数据更新：`.github/workflows/update-data.yml` 每月 3 日自动拉取上游名单，有变化就重建 `data.json` 并开 PR（需在 Settings → Actions → General 勾选 “Allow GitHub Actions to create and approve pull requests”）。也可在 Actions 页手动运行。
+数据更新：`.github/workflows/update-data.yml` 每周一自动运行——先读米其林官网发布会文章，把新发布的指南版本（指南年份＋实际发布日期）记进 `tools/editions.json`；再拉取上游名单，有变化就重建 `data.json`、写入本次按指南分组的变化（`updates.json`，首页顶部「本次更新」显示）并开 PR（需在 Settings → Actions → General 勾选 “Allow GitHub Actions to create and approve pull requests”）。也可在 Actions 页手动运行。
 
 可选浏览器回归：安装 Playwright 与 Leaflet 后，运行 `node tests/browser.cjs`。覆盖移动端 / 桌面、旅行、分享链接、笔记、v1/v2 备份、预算、星级筛选，以及 旧版 → 当前版 离线缓存迁移。测试使用本地 Leaflet 和占位底图，不依赖地图供应商网络；真实 iPhone Safari 与外部底图连通性仍需设备验证。
+
+本次更新与指南版本回归：`node tests/updates.cjs`；`python3 -m unittest tests.test_editions`。
 
 云端同步回归：`node tests/sync.cjs`（两个浏览器档案模拟手机和电脑，经与 SQL 函数同契约的替身 API 同步；后端见 `supabase/`）。
 

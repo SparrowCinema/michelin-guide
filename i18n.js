@@ -189,6 +189,7 @@ const MGI18n=(()=>{
     '标题':'Title','范围':'Scope','时间范围':'Time range','自定义':'Custom','放入我拍的用餐照片':'Include my meal photos','照片墙':'photo wall','每家店的缩略图':'a thumbnail per restaurant','开始':'From','结束':'To',
     '只包含你标记“去过”的餐厅，每家都标出星级、必比登或入选。去过多个城市时，地图按城市汇总；只在一个城市时逐家编号。私人笔记不会出现在图中；照片只在你勾选时放入。':'Only restaurants you marked “Been”, each with its Stars, Bib Gourmand or Selected badge. Across several cities the map groups by city; within one city every restaurant is numbered. Private notes are never included; photos only when you tick the box.',
     '把下一餐，':'Put your next meal','写进你的结算。':'into your recap.','在餐厅里点“去过”打个分，':'Tap “Been” at a restaurant and rate it —','这里会生成你的米其林长图。':'your MICHELIN recap appears here.','我的米其林结算长图':'My MICHELIN recap image','长图 · 长按预览也可保存':'long image · or long-press the preview to save','保存长图':'Save image','长图已保存':'Image saved','请点“保存长图”后分享':'Tap “Save image”, then share it',
+    '本次更新':'This update','新建旅行':'New trip','结算图':'Recap','各地指南版本':'Guide editions',
     // cloud sync
     '云端同步':'Cloud sync','用一串同步码，在手机和电脑之间同步“想去':'Use one sync code to keep “Want to go','去过”、评分、用餐记录、旅行和照片。不用注册账号。':'Been”, ratings, meals, trips and photos in step between your phone and computer. No account needed.',
     '开启同步':'Turn on sync','我有同步码':'I have a sync code','输入同步码':'Enter sync code','连接':'Connect','输入另一台设备上的同步码。这台设备上已有的记录会和云端合并，不会丢。':'Enter the sync code from your other device. Records already on this device are merged with the cloud, nothing is lost.',

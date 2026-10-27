@@ -1,10 +1,12 @@
-name: Monthly data update
-# On the 3rd of every month: fetch the upstream MICHELIN CSV, and if any restaurant was
-# added, removed or changed award, rebuild data.json and open a pull request to review and merge.
+name: Rolling data update
+# Every Monday: (1) read MICHELIN's own ceremony announcements and record newly released guide
+# editions with their official date; (2) fetch the upstream restaurant list; if anything changed,
+# rebuild data.json, write this update's per-guide summary (updates.json, shown at the top of the
+# site), mark editions as synced once their changes reach the data, and open a pull request.
 on:
   workflow_dispatch:
   schedule:
-    - cron: '20 1 3 * *'
+    - cron: '20 1 * * 1'
 permissions:
   contents: write
   pull-requests: write
@@ -19,6 +21,10 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
+      - name: Watch MICHELIN announcements
+        id: watch
+        continue-on-error: true
+        run: python tools/editions_watch.py | tee /tmp/watch.json
       - name: Fetch upstream CSV
         run: curl -fsSL --retry 3 -o /tmp/upstream.csv https://raw.githubusercontent.com/ngshiheng/michelin-my-maps/main/data/michelin_my_maps.csv
       - name: Compare with published data
@@ -29,38 +35,36 @@ jobs:
           import json, os
           r = json.load(open('/tmp/report.json'))
           n = sum(len(r[k]) for k in ('added', 'removed', 'award_changes'))
-          with open(os.environ['GITHUB_OUTPUT'], 'a') as f:
-              f.write(f'changes={n}\n')
+          with open(os.environ['GITHUB_OUTPUT'], 'a') as f: f.write(f'changes={n}\n')
           PY
-      - name: Rebuild data.json
-        if: steps.cmp.outputs.changes != '0'
+      - name: Rebuild data.json and the update summary
         run: |
           TODAY=$(date -u +%F)
+          cp data.json /tmp/old.json
+          if [ "${{ steps.cmp.outputs.changes }}" != "0" ]; then DATE=$TODAY; else DATE=$(python -c "import json;print(json.load(open('data.json'))['updated'])"); fi
           python tools/build.py /tmp/upstream.csv tools/cn_mainland_curated.json data.json \
             tools/zh_official_names.json tools/reference_translations.tsv \
-            tools/history.json tools/black_pearl_2026.json "$TODAY"
-          sed -i -E "s/const DATA_VER=\"[^\"]*\"/const DATA_VER=\"$(date -u +%Y%m%d)-auto\"/" index.html
+            tools/history.json tools/black_pearl_2026.json "$DATE"
+          python tools/updates.py /tmp/old.json data.json updates.json "$TODAY" --editions tools/editions.json | tee /tmp/updates.out
+          # editions.json may have changed (synced editions) - rebuild so data.json carries it
+          python tools/build.py /tmp/upstream.csv tools/cn_mainland_curated.json data.json \
+            tools/zh_official_names.json tools/reference_translations.tsv \
+            tools/history.json tools/black_pearl_2026.json "$DATE" > /dev/null
           python tools/check_updates.py --validate-only
-          python tools/update_summary.py /tmp/report.json > /tmp/pr-body.md
+          if ! git diff --quiet -- data.json; then sed -i -E "s/const DATA_VER=\"[^\"]*\"/const DATA_VER=\"$(date -u +%Y%m%d)-auto\"/" index.html; fi
+          python tools/update_summary.py /tmp/report.json /tmp/watch.json /tmp/updates.out tools/editions.json > /tmp/pr-body.md
+          cat /tmp/pr-body.md >> "$GITHUB_STEP_SUMMARY"
       - name: Open pull request
-        if: steps.cmp.outputs.changes != '0'
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          BRANCH="data/update-$(date -u +%Y-%m)"
+          if git diff --quiet -- data.json updates.json tools/editions.json index.html; then echo "上游名单和指南版本都没有变化。" >> "$GITHUB_STEP_SUMMARY"; exit 0; fi
+          BRANCH="data/update-$(date -u +%Y-%m-%d)"
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git checkout -B "$BRANCH"
-          git add data.json index.html
-          git commit -m "data: monthly MICHELIN update $(date -u +%F)"
+          git add data.json updates.json tools/editions.json index.html
+          git commit -m "data: rolling MICHELIN update $(date -u +%F)"
           git push -f origin "$BRANCH"
-          if gh pr view "$BRANCH" --json state -q .state 2>/dev/null | grep -q OPEN; then
-            gh pr edit "$BRANCH" --body-file /tmp/pr-body.md
-          else
-            gh pr create --head "$BRANCH" --base main --title "数据更新：米其林名单 $(date -u +%Y-%m)" --body-file /tmp/pr-body.md \
-              || echo "::warning::Could not open the PR. Enable Settings → Actions → General → 'Allow GitHub Actions to create and approve pull requests', or open it from branch $BRANCH."
-          fi
-          cat /tmp/pr-body.md >> "$GITHUB_STEP_SUMMARY"
-      - name: No changes
-        if: steps.cmp.outputs.changes == '0'
-        run: echo "上游名单与网站数据一致，本月无需更新。" >> "$GITHUB_STEP_SUMMARY"
+          gh pr create --head "$BRANCH" --base main --title "数据更新：米其林名单与指南版本 $(date -u +%F)" --body-file /tmp/pr-body.md \
+            || echo "::warning::Could not open the PR. Enable Settings → Actions → General → 'Allow GitHub Actions to create and approve pull requests', or open it from branch $BRANCH."
