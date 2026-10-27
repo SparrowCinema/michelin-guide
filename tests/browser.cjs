@@ -5,7 +5,7 @@ const assert=require('node:assert/strict'),fs=require('node:fs'),path=require('n
 const {chromium}=require(process.env.PLAYWRIGHT_MODULE||'playwright');
 (async()=>{
   const base=path.resolve(__dirname,'..');
-  const previousCache='mg-v20';
+  const previousCache='mg-v21';
   const cacheName=fs.readFileSync(path.join(base,'sw.js'),'utf8').match(/const CACHE = "([^"]+)"/)[1];
   // A new page must never load an old cached script: index.html asset versions must match sw.js.
   const swText=fs.readFileSync(path.join(base,'sw.js'),'utf8'),assetVer=swText.match(/const ASSET_VER = "([^"]+)"/)[1],indexText=fs.readFileSync(path.join(base,'index.html'),'utf8');
@@ -75,6 +75,14 @@ const {chromium}=require(process.env.PLAYWRIGHT_MODULE||'playwright');
     await page.locator('#detailDlg .close[data-close]').click();
     await page.locator('.restaurant-title').first().click();await page.locator('#detailDlg [data-edit-visit]').first().click();assert.equal(await page.inputValue('#visitNote'),'旅途笔记 <script>');
     assert.equal(await page.inputValue('#visitRating'),'3.5');
+    assert(await page.locator('.address-zh').isVisible());assert((await page.locator('.address-method').innerText()).includes('参考'));
+    assert.equal(await page.locator('.address-original').evaluate(d=>d.open),false);await page.locator('.address-original summary').click();assert((await page.locator('.address-original p').innerText()).length>0);
+    const originalAddress=await page.evaluate(()=>DB.byU[document.getElementById('detailDlg').dataset.u].a);
+    await page.locator('.address-original summary').click();
+    const addressState=await page.evaluate(()=>{const r=DB.byU[document.getElementById('detailDlg').dataset.u];return {u:r.u,original:r.a,zh:MGAddress.localize(r.a,DB.C[r.co][0],DB.T[r.ci][0])};});assert.equal(addressState.original,originalAddress);
+    // Address localization always derives from the restaurant's current source address.
+    const fresh=await page.evaluate(()=>{const r={...DB.rows[0],a:'New Road 98765'};return upAddressHTML(r);});assert(fresh.includes('98765'));
+    const overseasLinks=await page.evaluate(()=>upAddressHTML(DB.rows.find(r=>!r.ml)));assert(overseasLinks.includes('google.com/maps'));assert(overseasLinks.includes('maps.apple.com'));assert(overseasLinks.includes('复制地址'));
     const historyHTML=await page.evaluate(()=>upHistory({h:'--g2',l:1}));assert(!/2022|2023|2024|暂无记录/.test(historyHTML));assert(historyHTML.includes('2025')&&historyHTML.includes('2026'));
     // Body scrolling is preserved; the persistent header dismisses from any depth in one short swipe.
     assert(await page.locator('.detail-record').evaluate(el=>el.open));
