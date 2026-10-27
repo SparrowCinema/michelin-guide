@@ -42,6 +42,10 @@ class Editions(unittest.TestCase):
         self.assertEqual(g["id"], "netherlands"); self.assertEqual(len(g["up"]) + len(g["down"]), 3); self.assertEqual(len(g["removed"]), 1)
         import tempfile, shutil
         tmp = tempfile.mkdtemp(); p = os.path.join(tmp, "e.json"); shutil.copy(editions.PATH, p)
+        d = json.load(open(p, encoding="utf8"))   # pretend the Netherlands 2026 list hasn't reached the data yet
+        for e in next(x for x in d["guides"] if x["id"] == "netherlands")["editions"]:
+            if e["year"] == 2026: e["synced"] = False; e.pop("synced_on", None)
+        json.dump(d, open(p, "w", encoding="utf8"), ensure_ascii=False)
         self.assertEqual(updates.sync_editions(p, [g], "2026-10-20", "2026-10-21"), ["荷兰 2026"])
         self.assertEqual(updates.sync_editions(p, [g], "2026-10-01", "2026-10-21"), [])
 

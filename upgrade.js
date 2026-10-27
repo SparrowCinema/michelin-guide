@@ -1,6 +1,6 @@
 /* Travel, details, passport and snapshot views. Existing restaurant IDs remain unchanged. */
 // Must equal ASSET_VER in index.html and sw.js; index.html reloads fresh files when they disagree.
-const UPGRADE_VER="33";
+const UPGRADE_VER="34";
 let PERSONAL={version:2,trips:[],records:Object.create(null)},PRICE_DB={items:{}},upSelected='',upPickU='',upLoaded=false,upReadError=false;
 function upSave(next){
   if(upReadError){toast('已有旅行存储无法读取，已阻止覆盖。请先导出原始备份再恢复。');return false;}
@@ -318,7 +318,7 @@ function upAddressHTML(r){
 const DETAIL_PHOTOS=new Map();
 function upPhotoIndex(co){
   if(DETAIL_PHOTOS.has(co))return DETAIL_PHOTOS.get(co);
-  const request=fetch(`photos/country-${co}.json?v=${UPGRADE_VER}`).then(res=>{if(!res.ok)throw new Error('photo-index');return res.json();}).then(data=>{if(data.country!==DB.C[co][1]||!data.items||typeof data.items!=='object')throw new Error('photo-country');return data.items;}).catch(()=>{if(DETAIL_PHOTOS.get(co)===request)DETAIL_PHOTOS.delete(co);return null;});
+  const request=fetch(`photos/country-${co}.json?v=${UPGRADE_VER}-${typeof DATA_VER==="undefined"?"":DATA_VER}`).then(res=>{if(!res.ok)throw new Error('photo-index');return res.json();}).then(data=>{if(data.country!==DB.C[co][1]||!data.items||typeof data.items!=='object')throw new Error('photo-country');return data.items;}).catch(()=>{if(DETAIL_PHOTOS.get(co)===request)DETAIL_PHOTOS.delete(co);return null;});
   DETAIL_PHOTOS.set(co,request);return request;
 }
 async function upLoadDetailPhoto(r){

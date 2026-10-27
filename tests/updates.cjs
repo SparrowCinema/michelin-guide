@@ -21,8 +21,8 @@ const assert=require('node:assert/strict'),http=require('http'),fs=require('fs')
     await page.waitForSelector('#detailDlg[open] .detail-guide');assert.match(await page.locator('.detail-guide').innerText(),/米其林指南 .+ 20\d\d/);
     await page.evaluate(()=>closeAppDialog(document.getElementById('detailDlg')));
     // pending edition is explained on the restaurant page
-    const nl=await page.evaluate(()=>{const r=DB.rows.find(r=>DB.T[r.ci][2]==='Amsterdam');upOpenDetail(r.u);return document.querySelector('.detail-guide').innerText;});
-    assert(nl.includes('荷兰 2025')&&nl.includes('2026 新版已于'));await page.evaluate(()=>closeAppDialog(document.getElementById('detailDlg')));
+    const nl=await page.evaluate(()=>{const r=DB.rows.find(r=>DB.T[r.ci][2]==='Zurich');upOpenDetail(r.u);return document.querySelector('.detail-guide').innerText;});
+    assert(nl.includes('瑞士 2025')&&nl.includes('2026 新版已于'));await page.evaluate(()=>closeAppDialog(document.getElementById('detailDlg')));
     await page.locator('[data-ub="guides"]').click();await page.waitForSelector('#guidesDlg[open]');
     assert.equal(await page.locator('.guides-table tbody tr').count(),await page.evaluate(()=>DB.E.length));
     assert(!(await page.evaluate(()=>{const d=document.getElementById('guidesDlg');return d.scrollWidth>d.clientWidth+1;})),'editions table fits a phone');

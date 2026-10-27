@@ -5,8 +5,8 @@
   "supplement": "Direct public MICHELIN restaurant gallery links in tools/photo_supplement.json",
   "source_sha256": "f5787880308dac0ccd55ebf33e99a8b831a263e01e73cfb426b0dab7cdc87050",
   "image_origin": "https://prod-pics.guide.michelin.com",
-  "matched": 19522,
-  "total": 19721,
+  "matched": 19685,
+  "total": 19888,
   "countries": [
     {
       "country": "Hong Kong SAR",
@@ -25,8 +25,8 @@
     },
     {
       "country": "USA",
-      "matched": 1821,
-      "total": 1847
+      "matched": 1880,
+      "total": 1906
     },
     {
       "country": "United Kingdom",
@@ -64,19 +64,9 @@
       "total": 528
     },
     {
-      "country": "Netherlands",
-      "matched": 508,
-      "total": 512
-    },
-    {
       "country": "Brazil",
       "matched": 145,
       "total": 146
-    },
-    {
-      "country": "UAE",
-      "matched": 157,
-      "total": 158
     },
     {
       "country": "Sweden",
@@ -164,11 +154,6 @@
       "total": 117
     },
     {
-      "country": "Greece",
-      "matched": 32,
-      "total": 32
-    },
-    {
       "country": "Malaysia",
       "matched": 147,
       "total": 147
@@ -210,8 +195,8 @@
     },
     {
       "country": "Canada",
-      "matched": 301,
-      "total": 305
+      "matched": 299,
+      "total": 303
     },
     {
       "country": "Hungary",
@@ -244,6 +229,11 @@
       "total": 43
     },
     {
+      "country": "UAE",
+      "matched": 174,
+      "total": 175
+    },
+    {
       "country": "Serbia",
       "matched": 22,
       "total": 22
@@ -267,6 +257,21 @@
       "country": "Saudi Arabia",
       "matched": 49,
       "total": 49
+    },
+    {
+      "country": "Greece",
+      "matched": 58,
+      "total": 62
+    },
+    {
+      "country": "Netherlands",
+      "matched": 495,
+      "total": 498
+    },
+    {
+      "country": "Australia",
+      "matched": 76,
+      "total": 77
     }
   ],
   "alias_matches": [
@@ -399,30 +404,30 @@
     "bretagne/larmor-plage/restaurant/erin-bistrot-de-la-dune",
     "pennsylvania/philadelphia_2942787/restaurant/dalessandro-s",
     "new-mexico/albuquerque_2934232/restaurant/frontier",
-    "north-carolina/charlotte_2987283/restaurant/lang-van",
-    "texas/houston_2986624/restaurant/nam-giao",
     "new-york-state/new-york/restaurant/nyonya",
     "california/us-los-angeles/restaurant/pollo-a-la-brasa",
     "new-mexico/santa-fe_2934394/restaurant/tia-sophia-s",
     "nevada/las-vegas_2935077/restaurant/yen-viet-kitchen",
     "new-york-state/queens/restaurant/abuqir",
     "new-york-state/brooklyn/restaurant/al-badawi",
-    "georgia/chamblee_2884167/restaurant/best-bbq",
     "new-york-state/new-york/restaurant/bistrot-ha",
     "new-york-state/new-york/restaurant/cha-kee",
-    "south-carolina/columbia_2952191/restaurant/di-vino-rosso",
     "florida/tampa/restaurant/flaming-mountain",
     "california/alhambra/restaurant/henry-s-cuisine",
-    "georgia/doraville_2884168/restaurant/lanzhou-ramen",
     "florida/miami/restaurant/lung-yai-thai-tapas",
     "california/industry_2880157/restaurant/luyu-dumplings",
     "massachusetts/boston_2914838/restaurant/neptune-oyster",
     "colorado/vail_1261554/restaurant/osaki-s",
-    "louisiana/new-orleans_2906000/restaurant/patois",
-    "georgia/duluth_2884230/restaurant/pho-house",
     "nevada/las-vegas_2935077/restaurant/ping-pang-pong",
-    "georgia/doraville_2884168/restaurant/woo-nam-jeong",
     "california/us-sacramento/restaurant/yue-huang",
+    "georgia/chamblee_2884167/restaurant/best-bbq",
+    "georgia/doraville_2884168/restaurant/lanzhou-ramen",
+    "georgia/doraville_2884168/restaurant/woo-nam-jeong",
+    "georgia/duluth_2884230/restaurant/pho-house",
+    "louisiana/new-orleans_2906000/restaurant/patois",
+    "north-carolina/charlotte_2987283/restaurant/lang-van",
+    "south-carolina/columbia_2952191/restaurant/di-vino-rosso",
+    "texas/houston_2986624/restaurant/nam-giao",
     "greater-london/london/restaurant/dante-mayfair",
     "leicestershire/medbourne_1734255/restaurant/nevill-arms",
     "suffolk/easton_1732798/restaurant/the-white-horse-easton",
@@ -482,12 +487,7 @@
     "graubunden/lostallo/restaurant/groven",
     "solothurn-region/olten/restaurant/national-da-sergio",
     "solothurn-region/olten/restaurant/salmen",
-    "noord-brabant/%E2%80%AChelmond/restaurant/bistro-margaux",
-    "zeeland/groede/restaurant/etablissement-1880",
-    "zeeland/yerseke/restaurant/oesterbeurs",
-    "fryslan/grou/restaurant/oostergoo",
     "rio-de-janeiro-region/rio-de-janeiro/restaurant/sushi-vaz",
-    "abu-dhabi-emirate/abu-dhabi/restaurant/cipriani-dolci",
     "skane/bastad_2649603/restaurant/pensionat-furuhem",
     "gorizia/medana_7770441/restaurant/klinec",
     "baden-wurttemberg/staufen-im-breisgau/restaurant/die-krone",
@@ -529,10 +529,10 @@
     "ciudad-de-mexico/cuauhtemoc_1995126/restaurant/tacos-de-canasta-los-especiales",
     "ciudad-de-mexico/cuauhtemoc_1995126/restaurant/taqueria-el-paisa-1212979",
     "pilsen/petrovice_1269397/restaurant/u-stepana",
-    "british-columbia/ca-vancouver/restaurant/chang-an",
-    "british-columbia/ca-vancouver/restaurant/new-mandarin-seafood-restaurant",
     "ontario/toronto/restaurant/pho-tien-thanh",
     "quebec/montreal_2433514/restaurant/schwartz-s-deli",
+    "british-columbia/ca-vancouver/restaurant/chang-an",
+    "british-columbia/ca-vancouver/restaurant/jay-nok",
     "istanbul-province/istanbul/restaurant/ahmet-ustam-ocakbas%C4%B1",
     "mugla/bodrum_2806351/restaurant/mandalya",
     "izmir/izmir_2809416/restaurant/partal-kardesler-bal%C4%B1k-restorant",
@@ -542,7 +542,16 @@
     "aksaray/aksaray-merkez_2810363/restaurant/kardesler-restoran",
     "istanbul-province/istanbul/restaurant/rumelihisari-iskele",
     "nigde/nigde-merkez_2821454/restaurant/sofram-restaurant",
-    "izmir/izmir_2809416/restaurant/terakki"
+    "izmir/izmir_2809416/restaurant/terakki",
+    "abu-dhabi-emirate/abu-dhabi/restaurant/cipriani-dolci",
+    "central-macedonia/thessaloniki_1773462/restaurant/7-thalasses",
+    "central-macedonia/thessaloniki_1773462/restaurant/daios-bar-restaurant",
+    "central-macedonia/thessaloniki_1773462/restaurant/l-albero",
+    "central-macedonia/thessaloniki_1773462/restaurant/opsopoion-maganeiai",
+    "fryslan/grou/restaurant/oostergoo",
+    "noord-brabant/%e2%80%achelmond/restaurant/bistro-margaux",
+    "zeeland/groede/restaurant/etablissement-1880",
+    "south-australia/port-willunga/restaurant/star-of-greece"
   ],
   "notice": "Exact MICHELIN restaurant URL matches only. Image rights remain with original owners. Missing is not proof the official page has no photo."
 }
