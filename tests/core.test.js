@@ -39,3 +39,12 @@ test('multiple meals survive validation, JSON backups and merging by stable entr
  assert.equal(restored.records.a.visits.length,3);assert.equal(restored.records.a.visits.find(v=>v.id==='first').note,'first note');assert.equal(restored.records.a.visits.find(v=>v.id==='third').rating,4.5);assert.equal(restored.records.a.rating,5);
  const tenth=MG.personal({records:{a:{visits:Array.from({length:10},(_,i)=>({id:'meal-'+i,date:'2025-01-01',rating:i%2?4.5:5,note:'Meal '+i}))}}},{a:{}});assert.equal(tenth.records.a.visits.length,10);
 });
+
+test('offline Chinese addresses preserve source numbers and unknown proper names across the directory',()=>{
+ const A=require('../address-localization'),data=require('../data.json');
+ for(const r of data.r){const [city,co]=data.cities[r[3]],zh=A.localize(r[9],data.countries[co][0],city);assert(/[\u3400-\u9fff]/.test(zh));
+  const counts=s=>(s.match(/\d+/g)||[]).reduce((a,n)=>(a[n]=(a[n]||0)+1,a),Object.create(null)),before=counts(r[9]),after=counts(zh);for(const [n,count] of Object.entries(before))assert((after[n]||0)>=count,r[7]+' number '+n);
+ }
+ const translated=A.localize('84 rue de Varenne, Paris, 75007, France','法国','巴黎');assert(translated.includes('rue de Varenne（街）84号'));assert(translated.includes('75007'));
+ assert(A.localize('20 Orange Road, London, UK','英国','伦敦').includes('Orange'));
+});
