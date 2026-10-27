@@ -1,0 +1,99 @@
+{
+  "edition": 2027,
+  "released": "2026-10-27",
+  "status": "source_reference_only__NOT_YET_PUBLISHED_AS_RESTAURANT_DATA",
+  "summary": {
+    "beijing": {
+      "total": 107,
+      "three_stars": 2,
+      "two_stars": 5,
+      "one_star": 26,
+      "bib_gourmand": 32,
+      "selected": 42
+    },
+    "tianjin": {
+      "total": 27,
+      "three_stars": 0,
+      "two_stars": 0,
+      "one_star": 1,
+      "bib_gourmand": 16,
+      "selected": 10
+    }
+  },
+  "beijing_highlights": {
+    "three_stars": [
+      "潮上潮（朝阳）",
+      "新荣记（新源南路）"
+    ],
+    "two_stars": [
+      "黑天鹅",
+      "京季",
+      "京兆尹",
+      "兰斋",
+      "鲁上鲁"
+    ],
+    "new_one_stars": [
+      "1996川菜·主厨餐厅",
+      "Old Tower"
+    ],
+    "moved_two_to_one": [
+      "屋里厢"
+    ],
+    "new_bib_gourmand": [
+      "陈记卤煮小肠",
+      "万红路羊汤烧饼店",
+      "烹味堂（朝阳）",
+      "福见玉山堂",
+      "老有酒家",
+      "攀枝花印象",
+      "浙鲜小厨（朝阳）"
+    ],
+    "new_selected": [
+      "鼎盛鑫",
+      "太仓",
+      "Monsieur Dior by Anne-Sophie Pic",
+      "崖（Under Clouds Green）"
+    ]
+  },
+  "tianjin_full_list": {
+    "one_star": [
+      "听潮华宴"
+    ],
+    "bib_gourmand": [
+      "八九不离食",
+      "惠宾餐厅",
+      "津鲁菜馆（南开）",
+      "湖苑（水上公园东路）",
+      "九河居（荔湾路）",
+      "热海饭庄",
+      "小愚",
+      "玉泉饭庄",
+      "赵大姑津味坊",
+      "清真青琅轩水饺（红桥）",
+      "饶师傅大馅水饺",
+      "饺子说",
+      "必点海鲜·头等舱",
+      "Ember",
+      "渠口周家肉饼",
+      "正味斋"
+    ],
+    "selected": [
+      "耳朵眼会馆（南开）",
+      "燕春楼",
+      "津菜典藏（河北）",
+      "金牌餐厅",
+      "卫鼎轩·曹公馆",
+      "津韵",
+      "喜筵28",
+      "天泰轩",
+      "典宴",
+      "Mellō Charcoal Grill"
+    ]
+  },
+  "sources": [
+    "https://guide.michelin.com/ph/en/article/michelin-guide-ceremony/michelin-guide-beijing-tianjin-2027",
+    "https://www.bbtnews.com.cn/2026/1027/609268.shtml",
+    "https://news.bjd.com.cn/2026/10/27/12008452.shtml"
+  ],
+  "notes": "Editorial research list only. The published site is not yet refreshed. Do not label guide edition synced until 107 Beijing plus 27 Tianjin verified restaurant records with stable identifiers, addresses, coordinates and images are imported."
+}
