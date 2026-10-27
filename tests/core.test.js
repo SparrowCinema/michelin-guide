@@ -48,3 +48,17 @@ test('offline Chinese addresses preserve source numbers and unknown proper names
  const translated=A.localize('84 rue de Varenne, Paris, 75007, France','法国','巴黎');assert(translated.includes('rue de Varenne（街）84号'));assert(translated.includes('75007'));
  assert(A.localize('20 Orange Road, London, UK','英国','伦敦').includes('Orange'));
 });
+
+test('meal photos survive validation as clean id lists, never on the summary record', () => {
+  const byU = {'a/restaurant/x': {}};
+  const p = MG.personal({records: {'a/restaurant/x': {visits: [
+    {id: 'v1', date: '2026-01-02', rating: 4, note: '', photos: ['p-abc123-xyz', 'p-abc123-xyz', '../evil', 7, 'p-' + 'a'.repeat(70)]},
+    {id: 'v2', date: '2026-02-03', rating: 5, note: '', photos: Array.from({length: 12}, (_, i) => 'p-photo-' + i)},
+  ]}}}, byU);
+  const r = p.records['a/restaurant/x'];
+  assert.deepEqual(r.visits[0].photos, ['p-abc123-xyz']);
+  assert.equal(r.visits[1].photos.length, 9);
+  assert.equal(r.photos, undefined);
+  const merged = MG.mergePersonal({version: 2, trips: [], records: {}}, p);
+  assert.deepEqual(merged.records['a/restaurant/x'].visits[0].photos, ['p-abc123-xyz']);
+});

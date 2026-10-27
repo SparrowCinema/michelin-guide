@@ -18,7 +18,7 @@
 <meta name="apple-mobile-web-app-title" content="米其林名录">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <!-- ?v= must match ASSET_VER in sw.js: a new page must never run with an old cached script -->
-<link rel="stylesheet" href="upgrade.css?v=24">
+<link rel="stylesheet" href="upgrade.css?v=25">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" href="icon.svg" type="image/svg+xml">
 <link rel="icon" href="icon-192.png" sizes="192x192" type="image/png">
@@ -438,18 +438,19 @@ dialog::backdrop{background:var(--shade)}
 <div id="inappBar" hidden><span>在微信等 App 里无法添加到主屏幕，也可能打不开地图。</span><button type="button" id="inappHow">怎么办</button><button type="button" id="inappX" aria-label="关闭">×</button></div>
 <div id="toast" role="status" aria-live="polite"></div>
 
-<script src="search-aliases.js?v=24"></script>
-<script src="guide-core.js?v=24"></script>
-<script src="address-localization.js?v=24"></script>
-<script src="upgrade.js?v=24"></script>
-<script src="passport-share.js?v=24"></script>
+<script src="search-aliases.js?v=25"></script>
+<script src="guide-core.js?v=25"></script>
+<script src="address-localization.js?v=25"></script>
+<script src="upgrade.js?v=25"></script>
+<script src="passport-share.js?v=25"></script>
+<script src="meal-photos.js?v=25"></script>
 <script>
 const CONT=["亚洲","欧洲","北美洲","南美洲","大洋洲"];
 const LVN=["三星","二星","一星","必比登","入选"];
 const LVC=["#7a0d0a","#b3261e","#e0574d","#c98a00","#9a9390"];
 const PIN=["中国内地","中国香港","中国澳门","中国台湾"];
 const REPO="https://github.com/SparrowCinema/michelin-guide";
-const ASSET_VER="24"; // = ?v= on the asset tags above, UPGRADE_VER in upgrade.js and ASSET_VER in sw.js
+const ASSET_VER="25"; // = ?v= on the asset tags above, UPGRADE_VER in upgrade.js and ASSET_VER in sw.js
 const DATA_VER="20261003-3"; // bump whenever data.json changes so browsers skip their cached copy
 const $=id=>document.getElementById(id);
 const esc=s=>String(s).replace(/[&<>"]/g,ch=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[ch]));
@@ -932,18 +933,26 @@ document.querySelectorAll("#themeSeg button").forEach(b=>b.addEventListener("cli
 applyTheme(document.documentElement.dataset.theme||"auto");
 
 // backup
-$("exportBtn").addEventListener("click",()=>{
+$("exportBtn").addEventListener("click",async()=>{
+  let photos;try{photos=typeof MP!=="undefined"?await MP.exportAll():undefined}catch(e){toast("照片未能读取，本次只导出文字记录")}
+  const nPhotos=photos?Object.keys(photos).length:0;if(!nPhotos)photos=undefined;
   const data={app:"michelin-guide",version:2,personal:PERSONAL,personalRecovery:upReadError?localStorage.getItem("mg-personal"):undefined,exported:new Date().toISOString(),
     items:Object.entries(FAV).map(([u,[s,t]])=>({u,state:s===1?"want":"been",at:t,name:DB&&DB.byU[u]?(DB.byU[u].zh||DB.byU[u].n):""}))};
-  const txt=JSON.stringify(data,null,1);
+  if(photos)data.photos=photos;
+  const txt=JSON.stringify(data,null,photos?0:1);
   try{const a=document.createElement("a");a.href=URL.createObjectURL(new Blob([txt],{type:"application/json"}));a.download=`米其林清单-${fmtDate(Date.now())}.json`;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(a.href),4000)}catch(e){}
+  if(nPhotos){toast(`已导出 ${data.items.length} 家和 ${nPhotos} 张照片`);return}
   copyText(txt).then(()=>toast(`已导出 ${data.items.length} 家，同时复制到了剪贴板`),()=>toast(`已导出 ${data.items.length} 家`));
 });
-$("importBtn").addEventListener("click",()=>{$("impText").value="";$("impFile").value="";showAppDialog($("importDlg"))});
-$("impFile").addEventListener("change",e=>{const f=e.target.files[0];if(f)f.text().then(t=>$("impText").value=t)});
-$("impGo").addEventListener("click",()=>{
-  try{const d=JSON.parse($("impText").value),n=upImportBackup(d);
-    closeAppDialog($("importDlg"));toast(`已导入 ${n} 家，并合并旅行与笔记`);render();}
+let impRaw="";
+$("importBtn").addEventListener("click",()=>{impRaw="";$("impText").value="";$("impText").placeholder="或粘贴备份内容";$("impFile").value="";showAppDialog($("importDlg"))});
+// Backups with photos can be tens of MB: keep them out of the textarea.
+$("impFile").addEventListener("change",e=>{const f=e.target.files[0];if(f)f.text().then(t=>{if(t.length>400000){impRaw=t;$("impText").value="";$("impText").placeholder=`已载入备份文件（${(t.length/1048576).toFixed(1)} MB，含照片），点导入即可`}else{impRaw="";$("impText").value=t}})});
+$("impGo").addEventListener("click",async()=>{
+  try{const d=JSON.parse($("impText").value.trim()||impRaw),n=upImportBackup(d);
+    closeAppDialog($("importDlg"));render();
+    let m=0;if(d.photos&&typeof MP!=="undefined"){try{m=await MP.importAll(d.photos)}catch(e){toast("记录已导入，但照片未能保存，请检查存储空间");return}}
+    toast(`已导入 ${n} 家${m?`和 ${m} 张照片`:""}，并合并旅行与笔记`);}
   catch(e){toast("导入失败："+(e.message||"请确认备份文件格式和存储权限"));}
 });
 
