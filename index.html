@@ -252,7 +252,6 @@ dialog::backdrop{background:var(--shade)}
       <a class="linkbtn" href="https://github.com/SparrowCinema/michelin-guide/issues/new?title=%E7%BA%A0%E9%94%99%EF%BC%9A" target="_blank" rel="noopener">纠错与反馈</a>
       <button type="button" class="linkbtn lang-switch" data-lang-switch translate="no" aria-label="Switch language / 切换语言"><span class="lang-zh-only">English</span><span class="lang-en-only">中文</span></button>
     </div>
-    <div class="totals" id="totals"></div>
   </div>
 
   <div class="controls" id="controls">
@@ -679,7 +678,6 @@ function renderList(){
   if($("searchNote"))$("searchNote").hidden=!searchCache.result?.fuzzy||!S.q.trim()||!all.length;
   $("count").textContent=`${all.length.toLocaleString()} 家`;
   const tot=[0,0,0,0,0];filtered("level").forEach(r=>tot[r.l]++);
-  $("totals").innerHTML=LVN.map((t,i)=>`<div class="tot"><b>${tot[i].toLocaleString()}</b><span>${t}</span></div>`).join("");
   $("scope").textContent=[S.c||"全球",S.co!==""?DB.C[S.co][0]:"",S.ci!==""?DB.T[S.ci][0]:""].filter(Boolean).join(" › ")+`　共 ${all.length.toLocaleString()} 家`;
   const n=activeFilterCount();$("filterBtn").innerHTML="筛选"+(n?`<b>${n}</b>`:"");
   const shown=rs.slice(0,page*200);let out="";
