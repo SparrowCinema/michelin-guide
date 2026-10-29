@@ -1,0 +1,1 @@
+<view class="wrap"><view class="title">附近的餐厅</view><view class="sub">授权定位后按距离排列已加载的餐厅。海外定位及地图可用性需真机验证。</view><button class="btn" bindtap="locate">获取我的位置</button><view class="card" wx:for="{{items}}" wx:key="id" data-id="{{item.id}}" bindtap="open">{{item.name}}<view class="sub">约 {{item.km}} 公里</view></view></view>
