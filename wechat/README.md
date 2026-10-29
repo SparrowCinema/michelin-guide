@@ -21,3 +21,11 @@
 5. 微信开发者工具导入本目录；替换 `project.config.json` 的 `touristappid` 为自己的 AppID；真机测试海外地图和定位权限。
 
 原网站未被修改，GitHub main 分支未被修改。
+
+## 2026.10.29.2 下载与导入
+
+小程序专用包：`downloads/dining-passport-wechat.zip`。解压后 `app.json` 和 `project.config.json` 就在项目根目录；直接导入该目录。
+整个仓库也新增根目录 `project.config.json`，自动指向 `wechat/`，因此下载整个分支也能从仓库根目录导入。
+两种方式都填写自己的 AppID。不要继续使用旧的基础演示包。
+新增 `node wechat/tests/flow.cjs` 验证创建旅行、餐厅加入旅行、城市筛选、地图标记、评分日期笔记到护照签章及搜索保留。
+运行 `python3 tools/package_wechat.py` 可重新导出专用包；ZIP 内的 BUILD-MANIFEST.json 包含全部源码 SHA-256，打包脚本核对压缩包内容与当前源码一致。
