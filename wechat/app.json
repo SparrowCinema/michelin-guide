@@ -1,0 +1,83 @@
+{
+  "pages": [
+    "pages/catalog/index",
+    "pages/map/index",
+    "pages/nearby/index",
+    "pages/me/index",
+    "pages/restaurant/index"
+  ],
+  "window": {
+    "navigationBarTitleText": "全球美食护照",
+    "navigationBarBackgroundColor": "#faf7f1",
+    "navigationBarTextStyle": "black",
+    "backgroundColor": "#faf7f1"
+  },
+  "tabBar": {
+    "color": "#888078",
+    "selectedColor": "#722f3a",
+    "backgroundColor": "#fffdf9",
+    "list": [
+      {
+        "pagePath": "pages/catalog/index",
+        "text": "名录"
+      },
+      {
+        "pagePath": "pages/map/index",
+        "text": "地图"
+      },
+      {
+        "pagePath": "pages/nearby/index",
+        "text": "附近"
+      },
+      {
+        "pagePath": "pages/me/index",
+        "text": "我的"
+      }
+    ]
+  },
+  "permission": {
+    "scope.userLocation": {
+      "desc": "用于查找附近的已收录餐厅"
+    }
+  },
+  "subpackages": [
+    {
+      "name": "dataset0",
+      "root": "dataset0",
+      "pages": [
+        "empty"
+      ]
+    },
+    {
+      "name": "dataset1",
+      "root": "dataset1",
+      "pages": [
+        "empty"
+      ]
+    },
+    {
+      "name": "dataset2",
+      "root": "dataset2",
+      "pages": [
+        "empty"
+      ]
+    },
+    {
+      "name": "dataset3",
+      "root": "dataset3",
+      "pages": [
+        "empty"
+      ]
+    },
+    {
+      "name": "dataset4",
+      "root": "dataset4",
+      "pages": [
+        "empty"
+      ]
+    }
+  ],
+  "requiredPrivateInfos": [
+    "getLocation"
+  ]
+}

@@ -1,0 +1,1 @@
+const get=(k,def)=>{try{return wx.getStorageSync(k)||def}catch(e){return def}};const set=(k,v)=>wx.setStorageSync(k,v);module.exports={get,set};

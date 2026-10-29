@@ -1,0 +1,10 @@
+{
+  "description": "全球美食护照微信小程序开发版",
+  "appid": "touristappid",
+  "projectname": "dining-passport",
+  "compileType": "miniprogram",
+  "setting": {
+    "es6": true,
+    "minified": true
+  }
+}
