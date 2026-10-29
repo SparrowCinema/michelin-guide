@@ -3,6 +3,9 @@
   "appid": "touristappid",
   "projectname": "dining-passport",
   "compileType": "miniprogram",
+  "miniprogramRoot": "./",
+  "libVersion": "3.8.0",
+  "packOptions": {"ignore": [{"type": "folder", "value": "tests"}, {"type": "file", "value": "README.md"}]},
   "setting": {
     "es6": true,
     "minified": true
