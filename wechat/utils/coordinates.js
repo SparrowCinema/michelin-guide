@@ -1,0 +1,5 @@
+function tLat(x,y){let r=-100+2*x+3*y+.2*y*y+.1*x*y+.2*Math.sqrt(Math.abs(x));r+=(20*Math.sin(6*x*Math.PI)+20*Math.sin(2*x*Math.PI))*2/3;r+=(20*Math.sin(y*Math.PI)+40*Math.sin(y/3*Math.PI))*2/3;r+=(160*Math.sin(y/12*Math.PI)+320*Math.sin(y*Math.PI/30))*2/3;return r}
+function tLng(x,y){let r=300+x+2*y+.1*x*x+.1*x*y+.1*Math.sqrt(Math.abs(x));r+=(20*Math.sin(6*x*Math.PI)+20*Math.sin(2*x*Math.PI))*2/3;r+=(20*Math.sin(x*Math.PI)+40*Math.sin(x/3*Math.PI))*2/3;r+=(150*Math.sin(x/12*Math.PI)+300*Math.sin(x/30*Math.PI))*2/3;return r}
+function gcj(lat,lng){const a=6378245,ee=.00669342162296594323;let dLat=tLat(lng-105,lat-35),dLng=tLng(lng-105,lat-35);const rad=lat/180*Math.PI;let m=Math.sin(rad);m=1-ee*m*m;const sm=Math.sqrt(m);dLat=dLat*180/((a*(1-ee))/(m*sm)*Math.PI);dLng=dLng*180/(a/sm*Math.cos(rad)*Math.PI);return[lat+dLat,lng+dLng]}
+
+module.exports={gcj};

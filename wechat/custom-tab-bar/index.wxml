@@ -1,0 +1,1 @@
+<view class="native-tabbar theme-{{theme}}"><view wx:for="{{tabs}}" wx:key="path" class="native-tab {{selected===index?'active':''}}" data-index="{{index}}" bindtap="switchTab"><image src="/assets/{{item.icon}}{{selected===index?'-active':''}}.png"/><text>{{item.text}}</text></view></view>

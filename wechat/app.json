@@ -4,13 +4,14 @@
     "pages/map/index",
     "pages/nearby/index",
     "pages/me/index",
-    "pages/restaurant/index"
+    "pages/restaurant/index",
+    "pages/recap/index"
   ],
   "window": {
-    "navigationBarTitleText": "全球美食护照",
-    "navigationBarBackgroundColor": "#faf7f1",
+    "navigationBarTitleText": "米其林全球名录",
+    "navigationBarBackgroundColor": "#faf8f6",
     "navigationBarTextStyle": "black",
-    "backgroundColor": "#faf7f1"
+    "backgroundColor": "#faf8f6"
   },
   "tabBar": {
     "color": "#888078",
@@ -18,22 +19,23 @@
     "backgroundColor": "#fffdf9",
     "list": [
       {
-        "pagePath": "pages/catalog/index",
-        "text": "名录"
+        "pagePath": "pages/nearby/index",
+        "text": "附近"
       },
       {
         "pagePath": "pages/map/index",
         "text": "地图"
       },
       {
-        "pagePath": "pages/nearby/index",
-        "text": "附近"
+        "pagePath": "pages/catalog/index",
+        "text": "名录"
       },
       {
         "pagePath": "pages/me/index",
         "text": "我的"
       }
-    ]
+    ],
+    "custom": true
   },
   "permission": {
     "scope.userLocation": {
