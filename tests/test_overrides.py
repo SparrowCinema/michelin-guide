@@ -40,6 +40,6 @@ class Overrides(unittest.TestCase):
         en = {c[2] for c in d["cities"]}
         for c in ("Adelaide", "Athens", "Dubai", "Austin", "Vancouver"): self.assertIn(c, en)
         u = json.load(open(os.path.join(ROOT, "updates.json"), encoding="utf8"))
-        self.assertEqual(u["updates"][0]["date"], "2026-10-27")
+        self.assertEqual(u["updates"][0]["date"], "2026-11-02")
 
 if __name__ == "__main__": unittest.main()
