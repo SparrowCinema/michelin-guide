@@ -271,18 +271,20 @@
   },
   {
    "id": "beijing",
-   "zh": "北京",
-   "en": "Beijing",
+   "zh": "北京·天津",
+   "en": "Beijing & Tianjin",
    "coverage": [
     [
      "Chinese Mainland",
      [
-      "Beijing"
+      "Beijing",
+      "Tianjin"
      ]
     ]
    ],
    "keywords": [
-    "Beijing"
+    "Beijing",
+    "Tianjin"
    ],
    "editions": [
     {
@@ -290,6 +292,13 @@
      "released": "2025-10-29",
      "source": "https://guide.michelin.com/ae-az/en/article/news-and-views/michelin-guide-beijing-2026",
      "synced": true
+    },
+    {
+     "year": 2027,
+     "released": "2026-10-27",
+     "source": "https://guide.michelin.com/en/article/news-and-views/michelin-guide-china-tianjin-restaurant-guide",
+     "synced": true,
+     "synced_on": "2026-11-02"
     }
    ]
   },

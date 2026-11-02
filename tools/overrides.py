@@ -35,7 +35,7 @@ def to_csv(r):
     sym = r[11] if r[11] in ("$", "€") else "$"
     return {"Name": r[1], "Address": ", ".join(x for x in (r[2], r[4], r[3], r[6]) if x), "Location": location(r),
             "Price": sym * n, "Cuisine": r[9], "Longitude": str(r[8]), "Latitude": str(r[7]), "PhoneNumber": r[13],
-            "Url": "https://guide.michelin.com/en/" + key(r[0]), "WebsiteUrl": r[12], "Award": AWARD.get(r[14], r[14]),
+            "Url": "https://guide.michelin.com/en/" + "/".join(r[0].strip("/").split("/")[-4:]), "WebsiteUrl": r[12], "Award": AWARD.get(r[14], r[14]),
             "GreenStar": "1" if r[15] else "0", "FacilitiesAndServices": "", "Description": "", "_override": True}
 
 def upstream_loc(x):
@@ -43,11 +43,17 @@ def upstream_loc(x):
     loc[-1] = ALIAS.get(loc[-1], loc[-1])
     return loc
 
+def removed(path=os.path.join(os.path.dirname(__file__), "removals.json")):
+    """Restaurants MICHELIN's own site no longer lists, which the upstream CSV may still carry (keys as in key())."""
+    if not os.path.exists(path): return set()
+    return {key(r["url"]) for r in json.load(open(path, encoding="utf8"))["removed"]}
+
 def apply(rows, match, guides):
-    """Yield upstream rows, swapping in every override guide's own rows."""
+    """Yield upstream rows, swapping in every override guide's own rows and dropping removals.json entries."""
     ov = load(); ids = {g["id"]: i for i, g in enumerate(guides)}
-    active = {ids[g]: doc for g, doc in ov.items() if g in ids}
+    active = {ids[g]: doc for g, doc in ov.items() if g in ids}; gone = removed()
     for x in rows:
+        if key(x["Url"]) in gone: continue
         if match(upstream_loc(x)) not in active: yield x
     for doc in active.values():
         for r in doc["rows"]: yield to_csv(r)

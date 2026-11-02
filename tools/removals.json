@@ -1,0 +1,12 @@
+{
+ "_note": "Restaurants that the upstream CSV still lists but MICHELIN's own site no longer does. build.py drops them (tools/overrides.py: removed). Delete an entry once the upstream CSV has caught up.",
+ "removed": [
+  {
+   "url": "https://guide.michelin.com/en/zhe-jiang/hangzhou_1027184/restaurant/ming-kitchen",
+   "name": "Ming Kitchen",
+   "city": "Hangzhou",
+   "checked": "2026-11-02",
+   "reason": "MICHELIN site: restaurant page returns 'Restaurant not found', search finds no restaurant, and the official Hangzhou list (86 restaurants, guide year 2026) does not include it."
+  }
+ ]
+}
