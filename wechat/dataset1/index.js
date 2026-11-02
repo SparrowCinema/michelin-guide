@@ -1,0 +1,1 @@
+module.exports={rows:require('./rows'),photos:require('./photos')};

@@ -1,0 +1,1 @@
+Component({data:{selected:2,theme:'light',tabs:[{text:'附近',icon:'near',path:'nearby'},{text:'地图',icon:'map',path:'map'},{text:'名录',icon:'list',path:'catalog'},{text:'我的',icon:'me',path:'me'}]},methods:{switchTab(e){const i=e.currentTarget.dataset.index;wx.switchTab({url:'/pages/'+this.data.tabs[i].path+'/index'})}}});

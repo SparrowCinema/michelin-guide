@@ -1,0 +1,15 @@
+{
+  "siteCommit": "ff504820e72e59e5d65099e464e670de401ce0b0",
+  "files": {
+    "index.html": "fc3bf837f18a339b414e8606478c91c99151c2d3e281b09727fc331b75dc65e1",
+    "upgrade.css": "aa7092ab5e7ebc8144ef6ae1d8da54bb22af18f198b1c061d9a09ba8f4ffeac8",
+    "upgrade.js": "07900282d0a68e4ad9047b4bd4bf923e5e753e38966b7710c89f8b9a973ac634",
+    "guide-core.js": "5d2712962b8839f1d1595f11b6c9a6cd366acbc128231310494f3784c90165b6",
+    "city-names.js": "4443134aa25eb295b3936ab8a3980d57f28a4507cadb36ce116876e56a7e0c88",
+    "restaurant-intro.js": "c46b99214d2df51d3fc50be9b4dcc10b0973f1db014658bcfd8ac2297ce9735a",
+    "address-localization.js": "6858ffc1dbada5f53e84ffae7477a341f2068536f72fe5e3194f3b918a26981b",
+    "search-aliases.js": "30a7e6a8d6f5a9a7abf5d387a284be7ebda166e22e2084663cc7ba80650eb438",
+    "data.json": "35c43205de73bafe51730e7bc789fd8c512183e37a7f2f4d61d8ab22b1d1b301",
+    "prices.json": "b071e649b3c87ac4df452e7ac16b4be395b912977541d1572b204feae5ea08b1"
+  }
+}

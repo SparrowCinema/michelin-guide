@@ -1,0 +1,10 @@
+{
+  "description": "全球美食护照：仓库根目录导入入口",
+  "appid": "touristappid",
+  "projectname": "global-dining-passport",
+  "compileType": "miniprogram",
+  "miniprogramRoot": "wechat/",
+  "libVersion": "3.8.0",
+  "setting": {"es6": true, "minified": true},
+  "packOptions": {"ignore": [{"type": "folder", "value": "tests"}, {"type": "file", "value": "README.md"}]}
+}
