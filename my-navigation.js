@@ -2,11 +2,11 @@
 const MGMe=(()=>{
   let mounted=false;
   const $=id=>document.getElementById(id);
-  const icons={passport:'M5 3h12a2 2 0 0 1 2 2v15H7a2 2 0 0 1-2-2V3Zm0 13h14M9 8h6M12 5v6',trips:'M3 6l6-3 6 3 6-3v15l-6 3-6-3-6 3V6Zm6-3v15m6-12v15',want:'M12 20s-8-5-8-11a4.5 4.5 0 0 1 8-3 4.5 4.5 0 0 1 8 3c0 6-8 11-8 11Z',been:'m5 12 4 4L19 6',sync:'M4 9a8 8 0 0 1 14-4l2 2m0-5v5h-5M20 15a8 8 0 0 1-14 4l-2-2m0 5v-5h5',backup:'M4 15v5h16v-5M12 3v12m-5-5 5 5 5-5',settings:'M4 6h16M4 12h16M4 18h16M8 3v6m8 0v6m-6 0v6'};
+  const icons={passport:'M5 3h12a2 2 0 0 1 2 2v15H7a2 2 0 0 1-2-2V3Zm0 13h14M9 8h6M12 5v6',trips:'M3 6l6-3 6 3 6-3v15l-6 3-6-3-6 3V6Zm6-3v15m6-12v15',want:'M12 20s-8-5-8-11a4.5 4.5 0 0 1 8-3 4.5 4.5 0 0 1 8 3c0 6-8 11-8 11Z',been:'m5 12 4 4L19 6',sync:'M4 9a8 8 0 0 1 14-4l2 2m0-5v5h-5M20 15a8 8 0 0 1-14 4l-2-2m0 5v-5h5',backup:'M4 15v5h16v-5M12 3v12m-5-5 5 5 5-5',settings:'M4 6h16M4 12h16M4 18h16M8 3v6m8 0v6m-6 0v6',friends:'M10 14a4 4 0 0 0 5.7 0l3-3a4 4 0 0 0-5.7-5.7l-1 1M14 10a4 4 0 0 0-5.7 0l-3 3a4 4 0 0 0 5.7 5.7l1-1'};
   const navItems=[['passport','护照','mePassport'],['trips','旅行','meTrips'],['want','想去','meCollection',1],['been','去过','meCollection',2],['sync','同步','meSync'],['backup','备份','meBackup'],['settings','设置','meSettings']];
-  function fold(id,title,subtitle,nodes,open=false){
+  function fold(id,title,subtitle,nodes,icon,open=false){
     const box=document.createElement('details');box.id=id;box.className='me-fold';box.open=open;
-    box.innerHTML=`<summary><span><strong>${title}</strong><small>${subtitle}</small></span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m8 5 7 7-7 7"/></svg></summary><div class="me-fold-body"></div>`;
+    box.innerHTML=`<summary><svg class="me-ico" viewBox="0 0 24 24" aria-hidden="true"><path d="${icons[icon]}"/></svg><span><strong>${title}</strong><small>${subtitle}</small></span><svg class="me-chev" viewBox="0 0 24 24" aria-hidden="true"><path d="m8 5 7 7-7 7"/></svg></summary><div class="me-fold-body"></div>`;
     nodes[0].before(box);nodes.forEach(n=>box.lastElementChild.append(n));return box;
   }
   function mount(){
@@ -16,19 +16,20 @@ const MGMe=(()=>{
     nav.innerHTML=navItems.map(([key,label,target,mode])=>`<button type="button" data-me-jump="${target}"${mode?` data-me-mode="${mode}"`:''} aria-controls="${target}"><span class="me-jump-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="${icons[key]}"/></svg>${mode?`<b data-me-count="${mode}">0</b>`:''}</span><span>${label}</span></button>`).join('');head.after(nav);
     nav.after($('meStats'));$('meStats').after($('meLv'));
     const passport=$('passportContent').closest('section'),trips=$('tripCards').closest('section');
-    fold('mePassport','美食护照','签章与我的旅行记录',[passport],true);
-    fold('meTrips','旅行美食地图','规划旅程，收藏沿途餐厅',[trips]);
-    const tabs=$('mePage').querySelector('.metabs');fold('meCollection','餐厅清单','想去与去过，随时展开查看',[tabs,$('meList')]);
+    fold('mePassport','美食护照','签章与我的旅行记录',[passport],'passport');
+    fold('meTrips','旅行美食地图','规划旅程，收藏沿途餐厅',[trips],'trips');
+    const tabs=$('mePage').querySelector('.metabs');fold('meCollection','餐厅清单','想去与去过，随时展开查看',[tabs,$('meList')],'want');
     const more=document.createElement('button');more.id='meMore';more.type='button';more.className='me-more';more.hidden=true;$('meList').after(more);
     more.onclick=()=>{meLimit+=24;renderMe();};
     const backup=$('exportBtn').closest('.card'),appearance=$('themeSeg').closest('.card'),about=$('installBtn').closest('.card');
-    if($('syncCard'))fold('meSync','云端同步','手机与电脑，共享一份收藏',[$('syncCard')]);
-    fold('meBackup','备份与恢复','导出一份，安心保留',[backup]);
-    fold('meSettings','偏好与关于','主题、语言与使用帮助',[appearance,about]);
+    if($('syncCard'))fold('meSync','云端同步','手机与电脑，共享一份收藏',[$('syncCard')],'sync');
+    fold('meBackup','备份与恢复','导出一份，安心保留',[backup],'backup');
+    fold('meSettings','偏好与关于','主题、语言与使用帮助',[appearance,about],'settings');
     const friends=document.createElement('section');friends.className='me-friends';
-    friends.innerHTML='<a href="https://sparrowcinema.github.io/SparrowTribe/?v=2&amp;lang=zh#my" target="_blank" rel="noopener noreferrer"><span><strong>麻雀观影护照</strong><small>记录光影足迹，收藏每一次观影。</small></span><span aria-hidden="true">↗</span></a>';
+    friends.innerHTML='<a href="https://sparrowcinema.github.io/SparrowTribe/?v=2&amp;lang=zh#my" target="_blank" rel="noopener noreferrer"><img class="friend-logo" src="assets/tribe-logo.png" alt="" width="44" height="44" loading="lazy"><span class="friend-text"><strong>麻雀观影护照</strong><small>记录光影足迹，收藏每一次观影。</small></span><span aria-hidden="true">↗</span></a>';
     $('meSettings').after(friends);
-    fold('meFriends','友情链接','发现更多生活记录',[friends]);
+    fold('meFriends','友情链接','发现更多生活记录',[friends],'friends');
+    const menu=document.createElement('div');menu.id='meMenu';menu.className='me-menu';$('mePassport').before(menu);['mePassport','meTrips','meCollection','meSync','meBackup','meSettings','meFriends'].forEach(id=>{if($(id))menu.append($(id));});
     nav.addEventListener('click',e=>{
       const b=e.target.closest('[data-me-jump]');if(!b)return;const target=$(b.dataset.meJump);if(!target)return;
       if(b.dataset.meMode){meTab=+b.dataset.meMode;meLimit=12;renderMe();}
@@ -43,5 +44,7 @@ const MGMe=(()=>{
     const summary=$('meCollection').querySelector('summary small');summary.textContent=`想去 ${want} · 去过 ${been}`;
     const b=$('meMore');b.hidden=total<=meLimit;b.textContent=`再显示 ${Math.min(24,Math.max(0,total-meLimit))} 家（还有 ${Math.max(0,total-meLimit)} 家）`;
   }
-  return {mount,update};
+  let wasMe=false;
+  function enter(me){if(me&&!wasMe)document.querySelectorAll('#mePage .me-fold').forEach(d=>{d.open=false;});wasMe=!!me;}
+  return {mount,update,enter};
 })();
