@@ -28,10 +28,10 @@ const assert=require('node:assert/strict'),http=require('http'),fs=require('fs')
     await sweep('list');if(shots)await page.screenshot({path:path.join(shots,'en-list.png')});
     T('filters');await page.evaluate(()=>document.getElementById('filterBtn')?.click());await sweep('filters');await page.keyboard.press('Escape');
     await page.evaluate(()=>{document.querySelectorAll('dialog[open]').forEach(d=>closeAppDialog(d));});
-    for(const tab of ['map','near','me']){await page.locator(`#tabbar [data-tab="${tab}"]`).click();await page.waitForTimeout(600);if(tab==='me')await page.evaluate(()=>document.querySelectorAll('#mePage>.me-fold').forEach(d=>d.open=true));await sweep(tab);}
+    for(const tab of ['map','near','me']){await page.locator(`#tabbar [data-tab="${tab}"]`).click();await page.waitForTimeout(600);if(tab==='me')await page.evaluate(()=>document.querySelectorAll('#mePage .me-fold').forEach(d=>d.open=true));await sweep(tab);}
     if(shots)await page.screenshot({path:path.join(shots,'en-me.png'),fullPage:true});
     await page.locator('#tabbar [data-tab="me"]').click();
-    await page.evaluate(()=>document.querySelectorAll('#mePage>.me-fold').forEach(d=>d.open=true));
+    await page.evaluate(()=>document.querySelectorAll('#mePage .me-fold').forEach(d=>d.open=true));
     for(const sel of ['.openAbout','#installBtn','#importBtn']){await page.evaluate(s=>[...document.querySelectorAll(s)].find(e=>e.offsetParent)?.click()??document.querySelector(s).click(),sel);await page.waitForTimeout(300);await sweep(sel);await page.evaluate(()=>{document.querySelectorAll('dialog[open]').forEach(d=>closeAppDialog(d));});}
     await page.evaluate(u=>upOpenDetail(u),seed.detail);await page.waitForSelector('#detailDlg[open] .detail-intro');await sweep('detail');
     if(shots)await page.locator('#detailDlg .dlg').screenshot({path:path.join(shots,'en-detail.png')});
