@@ -210,11 +210,11 @@ const {chromium}=require(process.env.PLAYWRIGHT_MODULE||'playwright');
     await page.setViewportSize({width:1280,height:900});await page.locator('#tabsTop [data-tab="me"]').click();
     assert(!(await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth)));
     if(process.env.SCREENSHOT_DIR)await page.screenshot({path:path.join(process.env.SCREENSHOT_DIR,'me-desktop.png'),fullPage:true});
-    // One city gets separate actual date stamps and distinct local landmark engravings.
+    // Repeated meals belong to one restaurant stamp, with the latest actual date.
     const cityStampSaved=await page.evaluate(()=>({fav:JSON.stringify(FAV),personal:JSON.stringify(PERSONAL)}));
     await page.evaluate(()=>{const r=DB.rows.find(r=>DB.T[r.ci][0]==='上海');PERSONAL.records[r.u]={visits:['2023-01-02','2024-03-04','2025-05-06'].map((date,i)=>({id:'city-test-'+i,date,rating:4,note:''}))};FAV[r.u]=[2,1];PASSPORT.open=true;PASSPORT.sheet=0;upPassport([r]);});
-    assert.equal(await page.locator('.pp-city-stamp').count(),3);assert.deepEqual(await page.locator('.pp-stamp-date').allTextContents(),['06 MAY 2025','04 MAR 2024','02 JAN 2023']);
-    assert.equal(new Set(await page.locator('.pp-landmark').evaluateAll(nodes=>nodes.map(n=>n.title))).size,3);assert.equal(await page.locator('.pp-landmark svg').count(),3);
+    assert.equal(await page.locator('.pp-restaurant-stamp').count(),1);assert.deepEqual(await page.locator('.pp-stamp-date').allTextContents(),['06 MAY 2025']);
+    assert((await page.locator('.pp-stamp-count').innerText()).includes('3 次用餐'));
     if(process.env.SCREENSHOT_DIR)await page.screenshot({path:path.join(process.env.SCREENSHOT_DIR,'city-stamps-desktop.png')});
     await page.setViewportSize({width:320,height:800});assert(await page.locator('.pp-identity').isVisible());assert(await page.locator('.pp-visas').isVisible());assert(!(await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth)));
     if(process.env.SCREENSHOT_DIR)await page.screenshot({path:path.join(process.env.SCREENSHOT_DIR,'city-stamps-mobile.png')});
@@ -237,7 +237,7 @@ const {chromium}=require(process.env.PLAYWRIGHT_MODULE||'playwright');
     await page.evaluate(()=>applyTheme('dark'));
     if(process.env.SCREENSHOT_DIR)await page.screenshot({path:path.join(process.env.SCREENSHOT_DIR,'passport-dark.png')});
     assert.equal(await page.locator('[data-passport-country],#passportMap').count(),0);
-    assert.equal(await page.locator('button.pp-stamp').count(),0);
+    assert(await page.locator('button.pp-stamp').count()>0);
     await page.evaluate(saved=>{FAV=JSON.parse(saved);saveFav();S.v='me';applyTheme('light');render();},savedFavourites);
     await page.locator('[data-passport-close]').click();assert(await page.locator('.pp-cover').isVisible());
     // Restaurant hero uses its own exact-ID photo; async loads never replace a visit draft.
