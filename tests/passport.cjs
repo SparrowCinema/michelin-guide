@@ -33,9 +33,9 @@ const {chromium}=require('playwright');
  await page.goto(url+'/?lang=en#v=me');await page.waitForFunction(()=>typeof DB!=='undefined'&&DB&&document.getElementById('mePassport'));await page.evaluate(()=>{document.getElementById('mePassport').open=true;PASSPORT.open=true;upPassport(DB.rows.filter(r=>favOf(r.u)===2))});await page.waitForTimeout(150);assert((await page.locator('.pp-growth-head').innerText()).includes('Passport growth'));assert(!(await page.locator('.pp-growth').innerText()).match(/[\u3400-\u9fff]/));
  await page.evaluate(()=>goTab('list'));await page.locator('#q').fill('Hokklo');await page.waitForFunction(()=>document.querySelector('#list').textContent.includes('Hokklo'));await page.evaluate(()=>goTab('map'));assert(await page.locator('#mapbox').isVisible());
  // Upgrade an old shell cache without touching personal data; then reopen offline.
- await page.evaluate(async()=>{const old=await caches.open('mg-v47');const request=new Request(new URL('data.json?v='+DATA_VER,location.href));await old.put(request,await fetch(request));await navigator.serviceWorker.register('sw.js');await navigator.serviceWorker.ready;});
- await page.waitForFunction(()=>!!navigator.serviceWorker.controller);await page.waitForFunction(async()=>!(await caches.keys()).includes('mg-v47'));
- assert(await page.evaluate(async()=>!!await (await caches.open('mg-v48')).match(new URL('data.json?v='+DATA_VER,location.href).href)));
+ await page.evaluate(async()=>{const old=await caches.open('mg-v48');const request=new Request(new URL('data.json?v='+DATA_VER,location.href));await old.put(request,await fetch(request));await navigator.serviceWorker.register('sw.js');await navigator.serviceWorker.ready;});
+ await page.waitForFunction(()=>!!navigator.serviceWorker.controller);await page.waitForFunction(async()=>!(await caches.keys()).includes('mg-v48'));
+ assert(await page.evaluate(async()=>!!await (await caches.open('mg-v49')).match(new URL('data.json?v='+DATA_VER,location.href).href)));
  await context.setOffline(true);await page.reload();await page.waitForFunction(()=>typeof DB!=='undefined'&&DB&&upLoaded);assert.equal(await page.evaluate(()=>JSON.stringify(PERSONAL)),fixture.records);
  assert.deepEqual(errors,[]);console.log('PASS restaurant-owned stamps: same-day distinct shops, undated, repeats/detail, four/page, honors/empty, city progress, milestones, persistence, 320/390/1280 unclipped layouts, dark, English, search/map; no browser errors');
  }finally{await browser.close();server.close();}

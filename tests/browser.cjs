@@ -207,7 +207,7 @@ const {chromium}=require(process.env.PLAYWRIGHT_MODULE||'playwright');
     assert.equal(await page.locator('#budgetPanel').count(),0);await page.evaluate(()=>{S.budget=300;S.currency='EUR';render();});assert.equal(await page.locator('#count').innerText(),'19,888 家');assert(!page.url().includes('budget='));
     await page.evaluate(()=>{S.budget=0;S.change='streak';render();});assert(await page.locator('#annualCard').evaluate(el=>el.open));assert(await page.evaluate(()=>filtered().every(r=>r.h==='0000'&&r.l===0)));
     await page.evaluate(()=>{S.change='';render();});
-    await page.setViewportSize({width:1280,height:900});await page.locator('#tabsTop [data-tab="me"]').click();
+    await page.setViewportSize({width:1280,height:900});await page.locator('#tabbar [data-tab="me"]').click();
     assert(!(await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth)));
     if(process.env.SCREENSHOT_DIR)await page.screenshot({path:path.join(process.env.SCREENSHOT_DIR,'me-desktop.png'),fullPage:true});
     // Repeated meals belong to one restaurant stamp, with the latest actual date.
@@ -313,7 +313,7 @@ const {chromium}=require(process.env.PLAYWRIGHT_MODULE||'playwright');
     await page.locator('[data-me-jump="meTrips"]').click();await page.locator('[data-share-trip]').first().click();await page.waitForFunction(()=>!!PASSPORT_SHARE.file);assert.equal(await page.evaluate(()=>PASSPORT_SHARE.rows.length),1);await page.locator('#passportShareDlg [data-close]').click();
     // Desktop wheel scrolling over the map also reaches the list without changing zoom.
     await page.setViewportSize({width:1280,height:900});
-    await page.locator('#tabsTop [data-tab="list"]').click();
+    await page.locator('#tabbar [data-tab="list"]').click();
     const desktopBackground=await page.evaluate(()=>{window.scrollTo(0,600);return {y:scrollY,top:document.getElementById('list').getBoundingClientRect().top};});
     await page.evaluate(()=>upOpenDetail(DB.rows[0].u));assert(await page.locator('.detail-record').evaluate(el=>el.open));
     detailBox=await page.locator('#detailDlg').boundingBox();await page.mouse.move(detailBox.x+10,detailBox.y+detailBox.height/2);await page.mouse.wheel(0,700);
@@ -321,7 +321,7 @@ const {chromium}=require(process.env.PLAYWRIGHT_MODULE||'playwright');
     assert(Math.abs((await page.locator('#list').boundingBox()).y-desktopBackground.top)<1);
     await page.locator('#detailDlg .close[data-close]').click();await page.waitForFunction(y=>scrollY===y,desktopBackground.y);
     assert.equal(await page.evaluate(()=>document.documentElement.classList.contains('modal-scroll-locked')),false);
-    await page.locator('#tabsTop [data-tab="map"]').click();await page.waitForFunction(()=>MAP.ready);
+    await page.locator('#tabbar [data-tab="map"]').click();await page.waitForFunction(()=>MAP.ready);
     await page.locator('#map').scrollIntoViewIfNeeded();
     const desktopMap=await page.locator('#map').boundingBox(),zoomBefore=await page.evaluate(()=>MAP.m.getZoom());scrollBefore=await page.evaluate(()=>scrollY);
     await page.mouse.move(desktopMap.x+desktopMap.width/2,desktopMap.y+desktopMap.height/2);await page.mouse.wheel(0,350);
