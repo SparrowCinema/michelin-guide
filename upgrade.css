@@ -635,7 +635,7 @@ body[data-tab="me"] #controls,body[data-tab="me"] #intro{display:none!important}
 @media(prefers-reduced-motion:reduce){.pp-cover-atlas,.pp-cover-atlas:hover{transform:none;transition:none}}
 
 /* A self-hosted four-character title cut; reading text keeps the system stack. */
-@font-face{font-family:"Passport Calligraphy";src:url("assets/fonts/passport-calligraphy.ttf?v=55") format("truetype");font-style:normal;font-weight:400;font-display:swap;unicode-range:U+7F8E,U+98DF,U+62A4,U+7167}
+@font-face{font-family:"Passport Calligraphy";src:url("assets/fonts/passport-calligraphy.ttf?v=56") format("truetype");font-style:normal;font-weight:400;font-display:swap;unicode-range:U+7F8E,U+98DF,U+62A4,U+7167}
 .pp-cover-atlas .pp-cover-name{font-family:"Passport Calligraphy","Kaiti SC","STKaiti",var(--display);font-weight:400;font-size:42px;line-height:1.35;letter-spacing:.14em;margin-left:.14em;text-shadow:0 1px 0 #f9e9b638,0 2px 1px #230c18;}
 .pp-cover-atlas .pp-cover-en{font-family:Georgia,"Times New Roman",serif;font-size:11px;line-height:1.7;font-weight:400;letter-spacing:.26em;margin-top:10px}
 .pp-cover-atlas .pp-cover-publisher{font-size:12px;letter-spacing:.2em}.pp-cover-atlas .pp-cover-motto{letter-spacing:.2em;margin-top:12px}.pp-cover-atlas .pp-cover-bottom{font-family:var(--display);letter-spacing:.16em}
@@ -706,6 +706,37 @@ body[data-tab="me"] #controls,body[data-tab="me"] #intro{display:none!important}
 /* One data section; manual snapshots stay available as a secondary disclosure. */
 .me-sync-advanced{margin:20px 0 4px;border-top:1px solid var(--line);padding-top:4px}.me-sync-advanced>summary{display:flex;justify-content:space-between;align-items:center;gap:16px;padding:16px 2px;list-style:none;cursor:pointer}.me-sync-advanced>summary::-webkit-details-marker{display:none}.me-sync-advanced>summary strong{display:block;font-size:14px;font-weight:500}.me-sync-advanced>summary small{display:block;font-size:11px;line-height:1.7;color:var(--muted);margin-top:4px}.me-sync-advanced>summary svg{width:16px;height:16px;flex-shrink:0;fill:none;stroke:var(--muted);stroke-width:1.5}.me-sync-advanced[open]>summary svg{transform:rotate(90deg)}.me-sync-advanced>summary:focus-visible{outline:2px solid var(--red);outline-offset:3px}.me-sync-advanced-body>.card{margin:0!important;border:1px solid var(--line);border-radius:12px;background:var(--bg)}.me-sync-advanced-body .cell{font-size:14px}.me-sync-advanced-body .cell .r{font-size:11px}.me-sync-advanced-body .note{font-size:11px;line-height:1.8}
 @media(max-width:360px){.me-sync-advanced-body .cell{flex-wrap:wrap;gap:4px}.me-sync-advanced-body .cell .r{width:100%;margin-left:0}}
+
+/* Long-journey collections: level title, nearest medals, collapsible series, slams. */
+.pp-points-rule{display:block;margin-top:9px;font-size:11px;line-height:1.6;color:#d8c3b2}
+.pp-journey-ring>span b{font-size:23px}.pp-journey-ring>span small{font-size:11px}
+.pp-almost{padding:22px 30px 6px;border-bottom:1px solid var(--line)}
+.pp-almost ul{list-style:none;margin:14px 0 4px;padding:0;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+.pp-almost li{display:grid;grid-template-columns:40px 1fr;grid-template-rows:auto auto;column-gap:11px;row-gap:3px;align-items:center;padding:13px 14px;border:1px solid var(--line);border-radius:12px;background:var(--bg);min-width:0}
+.pp-almost-ico{grid-row:span 2;display:grid;place-items:center;width:40px;height:40px;border:1px solid #b79a6c88;border-radius:50%;color:#70462e;background:linear-gradient(145deg,#f9edca,#e6d1a0)}
+.pp-almost-ico svg{width:19px;height:19px}.pp-almost-ico b{font:17px Georgia,serif;font-weight:400}
+.pp-almost li strong{font-size:13px;line-height:1.4;color:var(--fg)}
+.pp-almost-meter{height:4px;border-radius:6px;background:var(--line);overflow:hidden;margin-top:6px}.pp-almost-meter i{display:block;height:100%;background:#98764a;border-radius:6px;min-width:2px}
+.pp-almost-num{grid-column:2;font:600 12px var(--body);color:var(--muted);font-variant-numeric:tabular-nums}
+.pp-tracks{display:grid;gap:10px;margin-top:14px}
+.pp-track{border:1px solid var(--line);border-radius:12px;background:var(--bg)}
+.pp-track>summary{list-style:none;display:grid;grid-template-columns:38px 1fr auto;gap:12px;align-items:center;padding:13px 14px;cursor:pointer}
+.pp-track>summary::-webkit-details-marker{display:none}
+.pp-track>summary:focus-visible{outline:2px solid var(--red);outline-offset:2px;border-radius:12px}
+.pp-track-ico{display:grid;place-items:center;width:38px;height:38px;border-radius:50%;border:1px solid #b79a6c55;color:var(--red);background:#b79a6c0b}.pp-track-ico svg{width:19px;height:19px}
+.pp-track-info{display:block;min-width:0}.pp-track-info strong{display:block;font:600 15px/1.4 var(--display)}.pp-track-info small{display:block;font-size:12px;color:var(--muted);line-height:1.5}
+.pp-track-next{display:block;height:3px;border-radius:4px;background:var(--line);margin-top:7px;overflow:hidden}.pp-track-next i{display:block;height:100%;background:#98764a;min-width:2px}
+.pp-track-count{font-size:12px;color:var(--muted);white-space:nowrap;font-variant-numeric:tabular-nums}.pp-track-count b{font:600 16px Georgia,serif;color:var(--fg)}
+.pp-track[open]>summary{border-bottom:1px solid var(--line)}
+.pp-track-body{padding:12px 10px 14px}.pp-track-rule{font-size:12px;line-height:1.7;color:var(--muted);margin:0 6px 12px}
+.pp-track .pp-milestones{margin:0}
+.pp-slam-rules{list-style:none;margin:14px 6px 0;padding:12px 0 0;border-top:1px dashed var(--line);display:grid;gap:9px}.pp-slam-rules li{font-size:12px;line-height:1.6;color:var(--muted)}.pp-slam-rules b{display:block;color:var(--fg);font-size:12.5px}
+.pp-track-slam .pp-milestones li.is-earned .pp-medallion{border-color:#8a5a2b;background:linear-gradient(145deg,#f4d98c,#c99a4b);color:#5a3414}
+.pp-city-badge{margin-left:auto;font:600 11px/1 var(--body);font-style:normal;color:var(--muted);border:1px solid var(--line);border-radius:999px;padding:6px 9px;white-space:nowrap}.pp-city-badge.is-full{color:#70462e;border-color:#c0a16c;background:#f6e8c0}
+@media(max-width:780px){.pp-almost{padding:20px 24px 4px}.pp-almost ul{grid-template-columns:1fr}}
+@media(max-width:360px){.pp-almost{padding:18px 16px 4px}}
+:root[data-theme=dark] .pp-city-badge.is-full{color:#f1d6a1;background:#4a3a24;border-color:#8a6d3c}
+.pp-next-copy .pp-points-rule{text-align:left;margin-top:9px}
 
 /* Award text is explicit; the Mi emblem belongs to the passport brand. */
 .pp-book .pp-honor-4 .pp-honor-symbol{font:600 14px/1.3 var(--display);letter-spacing:.12em}.lang-en .pp-book .pp-honor-4 .pp-honor-symbol{font:600 11px/1.3 var(--body);letter-spacing:.03em}
