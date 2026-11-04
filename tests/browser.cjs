@@ -50,7 +50,7 @@ const {chromium}=require(process.env.PLAYWRIGHT_MODULE||'playwright');
     await cdp.send('Input.dispatchTouchEvent',{type:'touchEnd',touchPoints:[]});await page.waitForFunction(()=>PASSPORT.open);
     assert(await page.locator('.pp-turning-leaf').isVisible());assert(await page.locator('.pp-identity').isVisible());
     await page.waitForFunction(()=>!PASSPORT.busy);assert(await page.locator('.pp-visas').isVisible());assert(await page.locator('.pp-blank-stamp').isVisible());assert.equal(await page.locator('#passportMap').count(),0);
-    await page.locator('[data-passport-browse]').click();
+    await page.locator('.pp-blank-stamp [data-passport-browse]').click();
     assert(!(await page.locator('#browse').innerText()).includes('快照'));
     assert(!(await page.locator('#browse').innerText()).includes('数据更新'));
     assert(!(await page.locator('#travelControls').isVisible()));
