@@ -12,7 +12,7 @@ const {chromium}=require('playwright');
  await page.goto(url+'/?lang=zh#v=me');await page.waitForFunction(()=>typeof DB!=='undefined'&&DB&&document.getElementById('mePassport'));await page.evaluate(()=>document.getElementById('mePassport').open=true);assert.equal(await page.locator('#pageBrand').innerText(),'美食护照');assert.equal(await page.title(),'美食护照');assert.equal(await page.locator('.mehead h2').innerText(),'美食护照');
  for(const [width,height] of [[320,800],[390,844],[744,1133],[890,626],[1024,768],[1133,744],[1280,900]]){
   await page.setViewportSize({width,height});await page.waitForTimeout(120);await page.evaluate(()=>document.getElementById('mePassport').open=true);
-  assert(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth));assert(await page.locator('.pp-cover-atlas').isVisible());
+  assert(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth));assert(await page.locator('.pp-cover-atlas').isVisible());await page.evaluate(()=>document.fonts.ready);assert.equal(await page.locator('.pp-cover-name').evaluate(e=>e.scrollWidth<=e.clientWidth),true);
   const box=await page.locator('.pp-cover-atlas').boundingBox();assert(box.width>=210);assert(box.height>=425);
   if(width<=1199)assert(await page.locator('#tabbar').isVisible());
   if(width>=900){assert(await page.locator('.pp-cover-companion').isVisible());assert(await page.locator('.wrap').evaluate(e=>e.clientWidth>860));}
@@ -27,6 +27,7 @@ const {chromium}=require('playwright');
  await page.setViewportSize({width:1133,height:744});await page.evaluate(()=>goTab('map'));assert(await page.locator('#mapbox').isVisible());await page.evaluate(()=>{goTab('me');document.getElementById('mePassport').open=true;});await page.locator('[data-passport-close]').click();
  await page.evaluate(()=>applyTheme('dark'));assert(await page.locator('.pp-cover-atlas').isVisible());if(process.env.SCREENSHOT_DIR)await page.locator('.pp-cover-stage').screenshot({style:'.tabbar{visibility:hidden!important}',path:path.join(process.env.SCREENSHOT_DIR,'new-cover-dark.png')});
  assert.equal(await page.evaluate(()=>JSON.stringify(PERSONAL)),original);
+ assert.equal(await page.evaluate(()=>document.fonts.check('400 42px \"Passport Calligraphy\"','美食护照')),true);
  await page.goto(url+'/?lang=en#v=me');await page.waitForFunction(()=>typeof DB!=='undefined'&&DB&&document.getElementById('mePassport'));await page.evaluate(()=>document.getElementById('mePassport').open=true);await page.waitForTimeout(100);assert.equal(await page.locator('#pageBrand').innerText(),'Food passport');assert.equal(await page.title(),'Food passport');assert(!(await page.locator('.pp-cover-companion').innerText()).match(/[\u3400-\u9fff]/));
  assert.deepEqual(errors,[]);console.log('PASS original culinary cover, 320/390/744/890/1024/1133/1280 layouts, expanded touch navigation, full-width book, folding/rotation state, search/map, dark/English, unchanged personal data');
  }finally{await browser.close();server.close();}

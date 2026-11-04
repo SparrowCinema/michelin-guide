@@ -633,3 +633,27 @@ button.ub-r:hover{color:var(--red)}.ub-r.gone{color:var(--muted);text-decoration
 body[data-tab="me"] #controls,body[data-tab="me"] #intro{display:none!important}.tabbar button{min-height:58px}.pp-honor-filters button,.pp-navigation button{min-height:44px}.pp-cover-caption{font-size:12px}#map{height:clamp(320px,55dvh,650px)}.controls{top:var(--lbh)}.page-language-toggle{min-height:44px}
 .tabbar{justify-content:center}.tabbar button{flex:0 1 280px;position:relative}.tabbar button:focus-visible{outline:2px solid var(--red);outline-offset:-4px}.sheethead button,.sheetfoot button{min-height:44px}
 @media(prefers-reduced-motion:reduce){.pp-cover-atlas,.pp-cover-atlas:hover{transform:none;transition:none}}
+
+/* A self-hosted four-character title cut; reading text keeps the system stack. */
+@font-face{font-family:"Passport Calligraphy";src:url("assets/fonts/passport-calligraphy.ttf?v=51") format("truetype");font-style:normal;font-weight:400;font-display:swap;unicode-range:U+7F8E,U+98DF,U+62A4,U+7167}
+.pp-cover-atlas .pp-cover-name{font-family:"Passport Calligraphy","Kaiti SC","STKaiti",var(--display);font-weight:400;font-size:42px;line-height:1.35;letter-spacing:.14em;margin-left:.14em;text-shadow:0 1px 0 #f9e9b638,0 2px 1px #230c18;}
+.pp-cover-atlas .pp-cover-en{font-family:Georgia,"Times New Roman",serif;font-size:11px;line-height:1.7;font-weight:400;letter-spacing:.26em;margin-top:10px}
+.pp-cover-atlas .pp-cover-publisher{font-size:12px;letter-spacing:.2em}.pp-cover-atlas .pp-cover-motto{letter-spacing:.2em;margin-top:12px}.pp-cover-atlas .pp-cover-bottom{font-family:var(--display);letter-spacing:.16em}
+.lang-en .pp-cover-atlas .pp-cover-name{font-family:Georgia,"Times New Roman",serif;font-size:25px;letter-spacing:.06em;margin-left:.06em;font-variant:small-caps;font-weight:400}
+@media(max-width:370px){.pp-cover-atlas .pp-cover-name{font-size:38px}.lang-en .pp-cover-atlas .pp-cover-name{font-size:23px}}
+
+/* A portrait phone reads one leaf; tablets and landscape windows open two. */
+.pp-spread-stage.is-single{max-width:420px}.pp-spread-stage.is-single .pp-book{width:420px;grid-template-columns:420px}.pp-spread-stage.is-single .pp-page{border-radius:5px 12px 12px 5px;border-right:0}.pp-spread-stage.is-single .pp-turning-leaf{left:0;width:100%}
+.pp-book .pp-end{align-items:center;justify-content:center;text-align:center;color:#9c8159}.pp-end-emblem svg{width:95px;height:95px}.pp-end p{font:22px var(--display)}.pp-end small{font:9px var(--body);letter-spacing:.22em}
+/* Ten distinct, slightly overlapping impressions, with stable placement per shop. */
+.pp-book .pp-visas .pp-page-header{margin-bottom:12px}.pp-book .pp-visas>h4{font-size:17px;line-height:1.5}.pp-book .pp-visa-sub{font-size:10px;margin-bottom:10px!important}
+.pp-book .pp-stamp-grid{display:block;position:relative;min-height:390px;padding:0;flex:1;margin:0 5px;isolation:isolate}
+.pp-book .pp-restaurant-stamp{position:absolute;width:100px;height:90px;max-width:none;left:calc(var(--stamp-x) - 50px + var(--stamp-dx));top:calc(var(--stamp-y) + var(--stamp-dy));padding:7px 6px;gap:1px;transform:rotate(var(--tilt));opacity:var(--stamp-opacity);mix-blend-mode:multiply;z-index:1}
+.pp-book .pp-restaurant-stamp:after{inset:3px;opacity:.65}.pp-book .pp-restaurant-stamp strong{font-size:11px;line-height:1.2;min-height:26px;max-width:100%}.pp-book .pp-restaurant-stamp .pp-honor-symbol{font-size:18px;line-height:1}.pp-book .pp-restaurant-stamp .pp-stamp-top{font-size:4.5px;letter-spacing:.04em}.pp-book .pp-restaurant-stamp .pp-stamp-en{font-size:7px;line-height:1.15}.pp-book .pp-restaurant-stamp .pp-stamp-date,.pp-book .pp-restaurant-stamp .pp-stamp-count{font-size:7px;line-height:1.2}.pp-book .pp-restaurant-stamp .pp-stamp-count{padding-top:2px;margin-top:1px}
+.pp-book .pp-restaurant-stamp:hover,.pp-book .pp-restaurant-stamp:focus-visible{z-index:10;opacity:1;transform:rotate(var(--tilt)) scale(1.08)}.pp-book .pp-filter-empty{padding:30px 16px}.pp-book .pp-blank-stamp{margin:20px 5px;min-height:290px}
+/* The same menu becomes a landscape dashboard, as in the cinema passport. */
+@media(min-width:900px),(min-width:700px) and (orientation:landscape){.me-menu{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px;background:transparent;border:0;overflow:visible}.me-menu>.me-fold,.me-menu>.me-fold:last-child{min-width:0;border:1px solid var(--line);border-radius:14px;background:var(--surface);overflow:clip}.me-menu>.me-fold>summary{min-height:112px;box-sizing:border-box;padding:22px 24px;gap:18px}.me-menu>.me-fold>summary strong{font-size:21px}.me-menu>.me-fold[open]{grid-column:1/-1}.me-menu>.me-fold[open]>summary{min-height:90px}.mehead{margin-block:24px}.mehead h2{font-size:30px}.me-menu>.me-fold>summary small{line-height:1.6}}
+
+.pp-book .pp-restaurant-stamp .pp-stamp-top,.pp-book .pp-restaurant-stamp .pp-stamp-count{display:none}.pp-book .pp-restaurant-stamp strong{font-size:12px;min-height:28px}.pp-book .pp-restaurant-stamp .pp-honor-symbol{font-size:19px}
+
+@media(min-width:900px),(min-width:700px) and (orientation:landscape){#mePage .mehead h2{font-size:32px;line-height:1.4}}
