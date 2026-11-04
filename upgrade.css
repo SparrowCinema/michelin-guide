@@ -674,3 +674,31 @@ body[data-tab="me"] #controls,body[data-tab="me"] #intro{display:none!important}
 .pp-journey .pp-growth-eyebrow{font:8px/1.5 var(--body);letter-spacing:.22em;color:#dfc28b}.pp-journey .pp-journey-empty{display:block}.pp-journey-body>section{min-width:0}
 
 .pp-next-action{font:500 10px/1.4 var(--body);color:#f0d6a5;background:transparent;border:0;border-bottom:1px solid #e1c59560;padding:8px 0 4px;margin-top:4px;cursor:pointer}.pp-next-action:focus-visible{outline:2px solid #dfc28b;outline-offset:4px}
+
+/* Passport v2: two views (签章 / 成长), attainable per-tier city goals, grouped medals, unlock cues. */
+.pp-tabs{display:flex;gap:4px;padding:4px;margin:0 0 14px;border:1px solid var(--line);border-radius:999px;background:var(--surface);width:fit-content}
+.pp-tabs button{position:relative;font:600 13px/1 var(--body);color:var(--muted);background:none;border:0;border-radius:999px;padding:11px 22px;min-height:40px;cursor:pointer;touch-action:manipulation}
+.pp-tabs button[aria-selected=true]{background:var(--red);color:#fffaf0}
+.pp-tabs button:focus-visible{outline:2px solid var(--red);outline-offset:2px}
+.pp-tab-dot{position:absolute;top:7px;right:10px;width:8px;height:8px;border-radius:50%;background:#d6a545;box-shadow:0 0 0 2px var(--surface)}
+.pp-teaser{display:flex;justify-content:space-between;align-items:center;gap:12px;width:100%;margin:14px 0 0;padding:13px 16px;border:1px solid var(--line);border-radius:12px;background:var(--surface);color:var(--fg);font:inherit;font-size:13px;cursor:pointer;text-align:left}
+.pp-teaser span:last-child{color:var(--red);font-weight:600;white-space:nowrap}.pp-teaser b{font-weight:600}
+.pp-journey-stats span{font-size:12px}.pp-journey .pp-growth-head>p{font-size:13px}.pp-next-copy p{font-size:12px}.pp-next-copy p b{color:#f1d6a1}.pp-next-action{font-size:12px}
+.pp-journey-caption{font-size:13px}.pp-journey-section-head>div>span{font-size:9px}.pp-journey-section-head>span{font-size:12px}
+.pp-destination-top span:not(.pp-destination-icon){font-size:12px}.pp-destination-top b{font:600 16px Georgia,serif;color:var(--fg)}
+.pp-tiers{list-style:none;margin:14px 0 0;padding:0;display:grid;gap:9px}
+.pp-tiers li{display:grid;grid-template-columns:3.4em 1fr auto;align-items:center;gap:10px;font-size:12px;color:var(--muted)}
+.pp-tiers progress{display:block;width:100%;height:5px;margin:0;border:0;border-radius:8px;overflow:hidden;appearance:none;background:var(--line)}
+.pp-tiers progress::-webkit-progress-bar{background:var(--line);border-radius:8px}.pp-tiers progress::-webkit-progress-value{background:#98764a;border-radius:8px;min-width:0}.pp-tiers progress::-moz-progress-bar{background:#98764a;border-radius:8px}
+.pp-tiers b{font:600 12px var(--body);color:var(--fg);font-variant-numeric:tabular-nums}
+.pp-award-group{margin:18px 0 10px;font:600 12px/1 var(--body);letter-spacing:.12em;color:var(--muted)}.pp-award-group:first-of-type{margin-top:6px}
+.pp-journey .pp-milestones+.pp-award-group{margin-top:20px}
+.pp-journey .pp-milestones li strong{display:block;font-size:12px;line-height:1.4;color:var(--fg)}.pp-journey .pp-milestones li small{display:block;font-size:11px;margin-top:2px}
+.pp-milestones li.is-pending .pp-medallion{opacity:.78}
+.pp-milestones li.is-next .pp-medallion{opacity:1;border-color:#b98c5c;box-shadow:0 0 0 3px #d6a54533,inset 0 0 0 4px var(--surface),inset 0 0 0 5px #b98c5c}
+.pp-milestones li.is-next small{color:#98764a;font-weight:600}
+.pp-milestones li.is-new .pp-medallion{animation:pp-pop .9s cubic-bezier(.2,.9,.3,1.3) both}
+@keyframes pp-pop{0%{transform:scale(.6);opacity:0}60%{transform:scale(1.12);opacity:1}100%{transform:scale(1)}}
+@media(prefers-reduced-motion:reduce){.pp-milestones li.is-new .pp-medallion{animation:none}}
+:root[data-theme=dark] .pp-tabs button[aria-selected=true]{color:#fffaf0}
+.pp-journey .pp-tiers li progress{grid-column:auto;grid-row:auto;margin:0;height:5px;width:100%}
