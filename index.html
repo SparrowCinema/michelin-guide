@@ -18,7 +18,7 @@
 <meta name="apple-mobile-web-app-title" content="米其林名录">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <!-- ?v= must match ASSET_VER in sw.js: a new page must never run with an old cached script -->
-<link rel="stylesheet" href="upgrade.css?v=41">
+<link rel="stylesheet" href="upgrade.css?v=42">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" href="icon.svg" type="image/svg+xml">
 <link rel="icon" href="icon-192.png" sizes="192x192" type="image/png">
@@ -442,26 +442,26 @@ dialog::backdrop{background:var(--shade)}
 <div id="inappBar" hidden><span>在微信等 App 里无法添加到主屏幕，也可能打不开地图。</span><button type="button" id="inappHow">怎么办</button><button type="button" id="inappX" aria-label="关闭">×</button></div>
 <div id="toast" role="status" aria-live="polite"></div>
 
-<script src="i18n.js?v=41"></script>
-<script src="city-names.js?v=41"></script>
-<script src="my-navigation.js?v=41"></script>
-<script src="search-aliases.js?v=41"></script>
-<script src="guide-core.js?v=41"></script>
-<script src="address-localization.js?v=41"></script>
-<script src="restaurant-intro.js?v=41"></script>
-<script src="upgrade.js?v=41"></script>
-<script src="passport-share.js?v=41"></script>
-<script src="meal-photos.js?v=41"></script>
-<script src="trip-route.js?v=41"></script>
-<script src="cloud-sync.js?v=41"></script>
-<script src="guide-updates.js?v=41"></script>
+<script src="i18n.js?v=42"></script>
+<script src="city-names.js?v=42"></script>
+<script src="my-navigation.js?v=42"></script>
+<script src="search-aliases.js?v=42"></script>
+<script src="guide-core.js?v=42"></script>
+<script src="address-localization.js?v=42"></script>
+<script src="restaurant-intro.js?v=42"></script>
+<script src="upgrade.js?v=42"></script>
+<script src="passport-share.js?v=42"></script>
+<script src="meal-photos.js?v=42"></script>
+<script src="trip-route.js?v=42"></script>
+<script src="cloud-sync.js?v=42"></script>
+<script src="guide-updates.js?v=42"></script>
 <script>
 const CONT=["亚洲","欧洲","北美洲","南美洲","大洋洲"];
 const LVN=["三星","二星","一星","必比登","入选"];
 const LVC=["#7a0d0a","#b3261e","#e0574d","#c98a00","#9a9390"];
 const PIN=["中国内地","中国香港","中国澳门","中国台湾"];
 const REPO="https://github.com/SparrowCinema/michelin-guide";
-const ASSET_VER="41"; // = ?v= on the asset tags above, UPGRADE_VER in upgrade.js and ASSET_VER in sw.js
+const ASSET_VER="42"; // = ?v= on the asset tags above, UPGRADE_VER in upgrade.js and ASSET_VER in sw.js
 const DATA_VER="20261103-2"; // bump whenever data.json changes so browsers skip their cached copy
 const $=id=>document.getElementById(id);
 const esc=s=>String(s).replace(/[&<>"]/g,ch=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[ch]));
@@ -1042,18 +1042,62 @@ async function healMismatch(){
       for(;;){const {done,value}=await rd.read();if(done)break;parts.push(value);got+=value.length;
         $("loading").textContent=`正在载入约 2 万家餐厅……已下载 ${(got/1048576).toFixed(1)} MB`}
       const all=new Uint8Array(got);let o=0;for(const p of parts){all.set(p,o);o+=p.length}
-      d=JSON.parse(new TextDecoder().decode(all));
-    }else d=await res.json();
-    if(typeof MGCity!=="undefined")MGCity.apply(d);
-    if(typeof MGI18n!=="undefined")MGI18n.data(d);
-    DB=prep(d);resolveNames();upInit();
-    if(DB.updated){const [y,m,dd]=DB.updated.split("-");document.querySelectorAll(".updated").forEach(e=>e.textContent=e.closest(".cell")?`${y} 年 ${+m} 月 ${+dd} 日`:`数据更新至 ${y} 年 ${+m} 月 ${+dd} 日`)}
-    render();
-    if(typeof MGUpdates!=="undefined")MGUpdates.start();
-    if(typeof MGSync!=="undefined")MGSync.start();
-    if(typeof MGMe!=="undefined")MGMe.mount();
-  }catch(e){$("list").innerHTML='<p class="empty">数据没能载入，请刷新页面再试。</p>'}
-})();
-</script>
-</body>
-</html>
+      d=JSON.parse(new TextDe…10873 tokens truncated…unction(()=>!!PASSPORT_SHARE.file);
+    assert(await page.evaluate(u=>PASSPORT_SHARE.rows.some(r=>r.u===u),repeatU));assert.equal(await page.evaluate(u=>upShareRecord(DB.byU[u]).date,repeatU),'2024-05-06');assert.equal(await page.evaluate(u=>upShareRecord(DB.byU[u]).rating,repeatU),4.5);
+    await page.locator('#passportShareDlg [data-close]').click();await page.evaluate(saved=>{FAV=JSON.parse(saved.fav);PERSONAL=JSON.parse(saved.personal);saveFav();upSave(PERSONAL);S.v='me';render();},repeatSaved);
+    // 我的米其林结算: one long PNG of every visited restaurant (no pages), with distinction badges, map and QR footer.
+    const shareSaved=await page.evaluate(()=>({fav:JSON.stringify(FAV),personal:JSON.stringify(PERSONAL)}));
+    await page.evaluate(()=>{const rs=DB.rows.slice(0,7);FAV=Object.create(null);PERSONAL.records=Object.create(null);rs.forEach((r,i)=>{FAV[r.u]=[2,Date.now()-i];PERSONAL.records[r.u]={date:'2025-06-'+String(i+1).padStart(2,'0'),rating:i===0?3.5:4,note:'PRIVATE_NOTE_NEVER_ON_CARD'};});upSave(PERSONAL);saveFav();render();});
+    assert((await page.locator('[data-passport-share]').innerText()).includes('米其林结算'));
+    await page.locator('[data-passport-share]').click();await page.waitForFunction(()=>!!PASSPORT_SHARE.file);
+    await page.waitForFunction(()=>document.getElementById('sharePreview').complete&&document.getElementById('sharePreview').naturalWidth>0);
+    assert.equal(await page.locator('#sharePage,#shareNext,[data-share-kind]').count(),0);
+    assert((await page.locator('#shareStatus').innerText()).includes('7 家'));assert((await page.locator('#shareStatus').innerText()).includes('一张长图'));
+    assert(await page.locator('.recap-preview').evaluate(el=>getComputedStyle(el).overflowY==='auto'));
+    if(process.env.SCREENSHOT_DIR)await page.screenshot({path:path.join(process.env.SCREENSHOT_DIR,'recap-mobile.png')});
+    const shareDownloadPromise=page.waitForEvent('download');await page.locator('#saveShare').click();const shareDownload=await shareDownloadPromise,sharePNG=fs.readFileSync(await shareDownload.path());
+    assert.equal(sharePNG.readUInt32BE(16),1080);const recapH=sharePNG.readUInt32BE(20);assert(recapH>3000,'one long image, got '+recapH);
+    if(process.env.SCREENSHOT_DIR)fs.writeFileSync(path.join(process.env.SCREENSHOT_DIR,'recap.png'),sharePNG);
+    // more restaurants make the same single image longer instead of adding pages
+    await page.evaluate(()=>{DB.rows.slice(7,15).forEach((r,i)=>{FAV[r.u]=[2,Date.now()-i];});saveFav();upRenderShare();});await page.waitForFunction(()=>PASSPORT_SHARE.file&&PASSPORT_SHARE.rows.length===15);
+    const longer=await page.evaluate(async()=>{const b=new Uint8Array(await PASSPORT_SHARE.file.arrayBuffer());return (b[20]<<24)|(b[21]<<16)|(b[22]<<8)|b[23];});assert(longer>recapH);
+    await page.fill('#shareTitle','从上海到世界各地的美食旅行记录与难忘相遇珍藏册');await page.waitForFunction(()=>!!PASSPORT_SHARE.file);
+    await page.locator('[data-recap-range="custom"]').click();assert(await page.locator('#shareFrom').isVisible());
+    await page.fill('#shareFrom','2030-01-01');await page.locator('#shareFrom').dispatchEvent('change');
+    assert(await page.locator('#saveShare').isDisabled());assert(await page.locator('#sharePreview').isHidden());assert(await page.locator('#shareEmpty').isVisible());
+    await page.locator('[data-recap-range="all"]').click();await page.waitForFunction(()=>!!PASSPORT_SHARE.file);
+    await page.setViewportSize({width:1280,height:900});if(process.env.SCREENSHOT_DIR)await page.screenshot({path:path.join(process.env.SCREENSHOT_DIR,'share-desktop.png'),fullPage:true});assert(!(await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth)));
+    await page.locator('#passportShareDlg [data-close]').click();
+    await page.evaluate(saved=>{FAV=JSON.parse(saved.fav);PERSONAL=JSON.parse(saved.personal);saveFav();upSave(PERSONAL);render();},shareSaved);
+    await page.locator('[data-me-jump="meTrips"]').click();await page.locator('[data-share-trip]').first().click();await page.waitForFunction(()=>!!PASSPORT_SHARE.file);assert.equal(await page.evaluate(()=>PASSPORT_SHARE.rows.length),1);await page.locator('#passportShareDlg [data-close]').click();
+    // Desktop wheel scrolling over the map also reaches the list without changing zoom.
+    await page.setViewportSize({width:1280,height:900});
+    await page.locator('#tabsTop [data-tab="list"]').click();
+    const desktopBackground=await page.evaluate(()=>{window.scrollTo(0,600);return {y:scrollY,top:document.getElementById('list').getBoundingClientRect().top};});
+    await page.evaluate(()=>upOpenDetail(DB.rows[0].u));assert(await page.locator('.detail-record').evaluate(el=>el.open));
+    detailBox=await page.locator('#detailDlg').boundingBox();await page.mouse.move(detailBox.x+10,detailBox.y+detailBox.height/2);await page.mouse.wheel(0,700);
+    await page.waitForFunction(()=>document.getElementById('detailDlg').scrollTop>30);
+    assert(Math.abs((await page.locator('#list').boundingBox()).y-desktopBackground.top)<1);
+    await page.locator('#detailDlg .close[data-close]').click();await page.waitForFunction(y=>scrollY===y,desktopBackground.y);
+    assert.equal(await page.evaluate(()=>document.documentElement.classList.contains('modal-scroll-locked')),false);
+    await page.locator('#tabsTop [data-tab="map"]').click();await page.waitForFunction(()=>MAP.ready);
+    await page.locator('#map').scrollIntoViewIfNeeded();
+    const desktopMap=await page.locator('#map').boundingBox(),zoomBefore=await page.evaluate(()=>MAP.m.getZoom());scrollBefore=await page.evaluate(()=>scrollY);
+    await page.mouse.move(desktopMap.x+desktopMap.width/2,desktopMap.y+desktopMap.height/2);await page.mouse.wheel(0,350);
+    await page.waitForFunction(y=>scrollY>y+40,scrollBefore);assert.equal(await page.evaluate(()=>MAP.m.getZoom()),zoomBefore);
+    await page.setViewportSize({width:320,height:800});assert(!(await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth)));
+    if(process.env.SCREENSHOT_DIR)await page.screenshot({path:path.join(process.env.SCREENSHOT_DIR,'map-narrow.png'),fullPage:true});
+    await page.evaluate(()=>applyTheme('dark'));if(process.env.SCREENSHOT_DIR)await page.screenshot({path:path.join(process.env.SCREENSHOT_DIR,'map-dark.png'),fullPage:true});
+    await page.evaluate(()=>applyTheme('light'));await page.locator('#tabbar [data-tab="me"]').click();
+    // Upgrade a seeded v16 cache, keeping the existing data and all personal storage.
+    const oldStore=await page.evaluate(()=>localStorage.getItem('mg-personal'));
+    await page.evaluate(async previous=>{const c=await caches.open(previous);const req=new Request(new URL('data.json?v='+DATA_VER,location.href));await c.put(req,await fetch(req));await navigator.serviceWorker.register('sw.js');await navigator.serviceWorker.ready;},previousCache);
+    await page.waitForFunction(()=>!!navigator.serviceWorker.controller);await page.waitForFunction(async previous=>!(await caches.keys()).includes(previous),previousCache);
+    assert.equal(await page.evaluate(()=>localStorage.getItem('mg-personal')),oldStore);
+    assert(await page.evaluate(async name=>!!await (await caches.open(name)).match(new URL('data.json?v='+DATA_VER,location.href).href),cacheName));
+    await context.setOffline(true);await page.reload();await page.waitForFunction(()=>typeof DB!=='undefined'&&DB&&upLoaded);assert.equal(await page.evaluate(()=>DB.rows.length),19888);assert.equal(await page.evaluate(()=>PERSONAL.trips[0].name),'欧洲觅食');
+    await page.locator('[data-passport-share]').click();await page.waitForFunction(()=>!!PASSPORT_SHARE.file);assert(await page.locator('#sharePreview').isVisible());
+    await context.setOffline(false);assert.deepEqual(errors,[]);await context.close();
+    console.log('PASS: exact-ID official photo hero / image failure / missing photo / async switch race / unsaved draft retention, 我的米其林结算 single long PNG (badges, map, QR, ranges, trip scope), meal-log timeline (newest first, single editor, two-tap delete, stays open after save), touch-open passport, simultaneous mobile spread, animated touch page-turn, repeated meals append/edit/delete/reload/backup, bounded world map, no map-share entries/historical visit dates/offline export, draft clearing/custom dates/auto-close/storage rollback, sticky-header short swipe, compact directory, touch scroll over passive map, explicit map panning, list jump, desktop wheel scrolling, numbered pins, retina tiles, title focus, narrow/dark layouts, existing search/trips/ratings/backup regression and v16→current offline migration; no browser errors.');
+  }finally{await browser.close();server.close();}
+})().catch(e=>{console.error(e);process.exit(1);});

@@ -1,6 +1,6 @@
 /* Travel, details, passport and snapshot views. Existing restaurant IDs remain unchanged. */
 // Must equal ASSET_VER in index.html and sw.js; index.html reloads fresh files when they disagree.
-const UPGRADE_VER="41";
+const UPGRADE_VER="42";
 let PERSONAL={version:2,trips:[],records:Object.create(null)},PRICE_DB={items:{}},upSelected='',upPickU='',upLoaded=false,upReadError=false;
 function upSave(next){
   if(upReadError){toast('已有旅行存储无法读取，已阻止覆盖。请先导出原始备份再恢复。');return false;}
@@ -35,7 +35,7 @@ function upNewTrip(name,u){
   return t;
 }
 // Passport presentation state is intentionally separate from saved travel data.
-const PASSPORT={open:false,sheet:0,busy:false,observer:null};
+const PASSPORT={open:false,sheet:0,busy:false,observer:null,honor:'all'};
 const passportEmblem=`<svg viewBox="0 0 64 64" fill="none" aria-hidden="true"><g><circle cx="32" cy="32" r="27.6" fill="none" stroke="#d9ae62" stroke-width="1.15"/><circle cx="32" cy="32" r="24.9" fill="none" stroke="#d9ae62" stroke-width=".7"/><g stroke="#f4e7cd" stroke-width="3.5" stroke-linecap="butt"><line x1="32" y1="18.6" x2="32" y2="50.3"/><line x1="13.9" y1="30.4" x2="50.7" y2="30.4"/><line x1="21.1" y1="19.4" x2="43.3" y2="44.2"/><line x1="43.0" y1="19.4" x2="20.8" y2="44.2"/></g><g fill="#f4e7cd"><circle cx="32" cy="50.3" r="2.7"/><circle cx="13.9" cy="30.4" r="2.7"/><circle cx="50.7" cy="30.4" r="2.7"/><circle cx="21.1" cy="19.4" r="2.7"/><circle cx="43.0" cy="19.4" r="2.7"/><circle cx="20.8" cy="44.2" r="2.7"/><circle cx="43.3" cy="44.2" r="2.7"/><path d="M32 9.4 Q32.9 12.2 35.7 13.1 Q32.9 14 32 16.8 Q31.1 14 28.3 13.1 Q31.1 12.2 32 9.4Z"/></g><circle cx="14.4" cy="30.2" r="1.15" fill="#d8532e" stroke="none"/></g></svg>`;
 // Landmark drawings are deliberately small monochrome passport engravings.
 const CITY_LANDMARKS=[
@@ -67,22 +67,42 @@ const CITY_ENGRAVINGS={
 };
 function upCityLandmark(ci,variant=0){const name=DB.T[ci][0];const options=CITY_LANDMARKS.filter(x=>x[0].split('|').some(n=>name.toLowerCase()===n.toLowerCase())),item=options[variant%options.length];return item?{label:item[1],svg:`<svg viewBox="0 0 120 110" aria-hidden="true"><path d="${CITY_ENGRAVINGS[item[2]]}"/></svg>`}:{label:'城市纪念章',svg:`<span class="pp-city-monogram" aria-hidden="true">${esc(Array.from(name).slice(0,2).join(''))}</span>`};}
 function upStampDate(date){if(!date)return '日期未填写';const [y,m,d]=date.split('-');return `${d} ${['JAN','FEB','MAR','APR','MAY','JUN','JUL','AUG','SEP','OCT','NOV','DEC'][+m-1]||m} ${y}`;}
+// One earned stamp per stable restaurant ID; dates never decide eligibility.
+function upPassportEntries(visit){
+  return [...new Map(visit.map(r=>[r.u,r])).values()].map(r=>{
+    const visits=upVisits(r.u),date=visits.map(v=>v.date||'').filter(Boolean).sort().at(-1)||'';
+    let code=2166136261;for(const ch of r.u)code=Math.imul(code^ch.charCodeAt(0),16777619)>>>0;
+    return {r,date,count:visits.length,code:code.toString(36).toUpperCase().padStart(7,'0')};
+  }).sort((a,b)=>b.date.localeCompare(a.date)||a.r.ci-b.r.ci||a.r.u.localeCompare(b.r.u));
+}
+function upPassportCities(visit){
+  const totals=new Map(),done=new Map();
+  DB.rows.forEach(r=>totals.set(r.ci,(totals.get(r.ci)||0)+1));
+  new Map(visit.map(r=>[r.u,r])).forEach(r=>done.set(r.ci,(done.get(r.ci)||0)+1));
+  return [...done].map(([ci,n])=>({ci,n,total:totals.get(ci)||n})).sort((a,b)=>b.n-a.n||a.ci-b.ci);
+}
+function upPassportGrowth(visit){
+  const cities=upPassportCities(visit),levels=new Set(visit.map(r=>r.l)),n=new Set(visit.map(r=>r.u)).size;
+  const goals=[...[[1,'第一枚专属章'],[5,'五味初识'],[10,'十家探味'],[25,'二十五家珍藏'],[50,'五十家足迹'],[100,'百家纪念']].map(([at,label])=>({label,ok:n>=at,now:Math.min(n,at),at})),{label:'初次摘星',ok:visit.some(r=>r.l<3)},{label:'必比登发现者',ok:levels.has(3)},{label:'三城寻味',ok:cities.length>=3,now:Math.min(cities.length,3),at:3}];
+  return `<section class="pp-growth" aria-label="护照成长"><div class="pp-growth-head"><h4>护照成长</h4><span>${n} 枚餐厅专属章</span></div><p>标记“去过”即获章，日期可后补；仅“想去”不盖章。重复到访保存在店铺记录中。</p><details class="pp-growth-fold"><summary>城市进度 · ${cities.length} 座城市</summary><p>已去过 / 当前名录收录餐厅，名录变化时进度会更新。</p><div class="pp-city-progress">${cities.length?cities.map(c=>`<div><span>${esc(DB.T[c.ci][0])}</span><b>${c.n} / ${c.total}</b><progress value="${c.n}" max="${c.total}" aria-label="${esc(DB.T[c.ci][0])} ${c.n} / ${c.total}"></progress></div>`).join(''):'标记第一家“去过”，开启城市进度。'}</div></details><details class="pp-growth-fold"><summary>里程碑 · ${goals.filter(g=>g.ok).length} / ${goals.length}</summary><ul class="pp-milestones">${goals.map(g=>`<li class="${g.ok?'is-earned':''}"><span>${g.ok?'✓':'○'} ${g.label}</span><small>${g.ok?'已达成':g.at?`${g.now} / ${g.at}`:'待探索'}</small></li>`).join('')}</ul></details></section>`;
+}
 function upPassport(visit){
   const groups=new Map();visit.forEach(r=>{if(!groups.has(r.ci))groups.set(r.ci,[]);groups.get(r.ci).push(r);});
   const countries=[...new Set(visit.map(r=>r.co))],cities=new Set(groups.keys()),want=Object.values(FAV).filter(f=>f[0]===1).length;
-  const entries=[...groups].flatMap(([ci,rows])=>{const dates=[...new Set(rows.flatMap(r=>upVisits(r.u).map(v=>v.date)).filter(Boolean))].sort();return (dates.length?dates:['']).map((date,variant)=>({ci,rows,date,variant}));}).sort((a,b)=>b.date.localeCompare(a.date)||a.ci-b.ci);
+  const allEntries=upPassportEntries(visit),entries=allEntries.filter(e=>PASSPORT.honor==='all'||e.r.l===+PASSPORT.honor);
+  const honorFilters=`<div class="pp-honor-filters" role="group" aria-label="签章荣誉分类">${[['all','全部'],...LVN.map((v,i)=>[String(i),v])].map(([key,label])=>`<button type="button" data-passport-honor="${key}" aria-pressed="${PASSPORT.honor===key}">${esc(label)} <span>${key==='all'?allEntries.length:allEntries.filter(e=>e.r.l===+key).length}</span></button>`).join('')}</div>`;
   const pages=Math.max(1,Math.ceil(entries.length/4));PASSPORT.sheet=Math.min(PASSPORT.sheet,pages-1);
   const lv=LVN.map((name,l)=>({name,n:visit.filter(r=>r.l===l).length})).filter(x=>x.n);
   const stats=`<div class="pp-tallies"><span><b>${String(countries.length).padStart(2,'0')}</b>国家 / 地区</span><span><b>${String(cities.size).padStart(2,'0')}</b>到访城市</span><span><b>${String(visit.length).padStart(2,'0')}</b>去过的餐厅</span></div>`;
-  const stamps=entries.slice(PASSPORT.sheet*4,PASSPORT.sheet*4+4).map(({ci,rows,date,variant},i)=>{
-    const co=rows[0].co,landmark=upCityLandmark(ci,variant),city=DB.T[ci][0];
-    return `<div class="pp-stamp pp-city-stamp pp-ink-${ci%3} pp-shape-${i%2}" style="--tilt:${[-5,4,3,-4][i]}deg" role="img" aria-label="${esc(city)} · ${esc(landmark.label)} · ${esc(date||'日期未填写')}"><span class="pp-stamp-top">FOOD PASSPORT · CITY VISIT</span><span class="pp-landmark" title="${esc(landmark.label)}">${landmark.svg}</span><strong>${esc(city)}</strong><span class="pp-stamp-en">${esc(DB.C[co][1])} · ${esc(landmark.label)}</span><time class="pp-stamp-date" ${date?`datetime="${date}"`:''}>${upStampDate(date)}</time></div>`;
+  const stamps=entries.slice(PASSPORT.sheet*4,PASSPORT.sheet*4+4).map(({r,date,count,code},i)=>{
+    const city=DB.T[r.ci][0],name=r.zh||r.n,symbol=['★★★','★★','★','BIB','米'][r.l];
+    return `<button type="button" class="pp-stamp pp-restaurant-stamp pp-honor-${r.l}" data-passport-restaurant="${esc(r.u)}" style="--tilt:${[-5,4,3,-4][i]}deg" aria-label="${esc(name)} · ${esc(LVN[r.l])} · 查看用餐记录"><span class="pp-stamp-top">RESTAURANT · ${code}</span><span class="pp-honor-symbol" aria-hidden="true">${symbol}</span><strong translate="no">${esc(name)}</strong><span class="pp-stamp-en">${esc(city)} · ${esc(LVN[r.l])}</span><span class="pp-stamp-date">${upStampDate(date)}</span><span class="pp-stamp-count">${count?`${count} 次用餐`:'已去过'} · 点击查看</span></button>`;
   }).join('');
   const empty=`<div class="pp-blank-stamp"><span>YOUR FIRST STAMP</span><b>下一站，吃点什么？</b><p>在餐厅下点“去过”，<br>为护照盖下第一枚签章。</p><button type="button" data-passport-browse>去发现餐厅 ↗</button></div>`;
   const cover=`<button type="button" class="pp-cover" data-passport-open aria-label="翻开我的美食护照" aria-expanded="false"><span class="pp-cover-border"></span><span class="pp-cover-publisher">米其林全球名录<br><small>PERSONAL COLLECTION</small></span><span class="pp-cover-emblem">${passportEmblem}</span><span class="pp-cover-name">美食护照</span><span class="pp-cover-en">FOOD PASSPORT</span><span class="pp-cover-motto">A WORLD OF TASTE</span><span class="pp-cover-bottom"><svg viewBox="0 0 36 24" aria-hidden="true"><rect x="1" y="1" width="34" height="22" rx="2"/><circle cx="18" cy="12" r="6"/><path d="M1 12h11m12 0h11"/></svg>私人珍藏 · 每一餐都值得记住</span></button>`;
   const identity=`<section class="pp-page pp-identity" aria-label="护照资料页"><div class="pp-page-header"><span>FOOD PASSPORT / 资料页</span><span>01</span></div><div class="pp-identity-head"><div class="pp-portrait">${passportEmblem}</div><div><span class="pp-field-label">持有人 / HOLDER</span><h4>美食旅行者</h4><span class="pp-holder-en">THE FOOD EXPLORER</span><span class="pp-field-label pp-type">护照类型 / PERSONAL</span></div></div><p class="pp-intro">以一餐为起点，<br>收集与世界相遇的证据。</p>${stats}<div class="pp-document-row"><span>已收藏目的地 / WISHLIST</span><b>${want} 家想去</b></div><div class="pp-ratings">${lv.length?lv.map(x=>`<span>${x.name} <b>${x.n}</b></span>`).join(''):'尚未留下到访记录'}</div><p class="pp-dataset-note">星级以现有名单为准。独立私人收藏工具，非米其林官方产品。</p><div class="pp-signature"><span>签名 / SIGNATURE</span><b>Bon appétit.</b></div><div class="pp-machine" aria-hidden="true">P&lt;FOOD&lt;EXPLORER&lt;&lt;A&lt;WORLD&lt;OF&lt;TASTE<br>JOURNEYS&lt;&lt;${String(countries.length).padStart(3,'0')}&lt;CITIES&lt;&lt;${String(cities.size).padStart(3,'0')}&lt;&lt;${String(visit.length).padStart(4,'0')}</div></section>`;
-  const visas=`<section class="pp-page pp-visas" aria-label="护照签章页"><div class="pp-page-header"><span>VISAS / 味觉签章</span><span>${String(PASSPORT.sheet+2).padStart(2,'0')}</span></div><h4>世界的味道，逐页收藏。</h4><p class="pp-visa-sub">一座城市，一枚地标；每个到访日期，单独盖章。</p><div class="pp-stamp-grid">${stamps||empty}</div><p class="pp-stamp-hint">${visit.length?'每一枚签章，都记录一次与世界的相遇。':'真正的旅程，从你喜欢的那一家开始。'}</p><div class="pp-page-nav"><span>签章 ${PASSPORT.sheet+1} / ${pages}</span><span>FOOD PASSPORT</span></div></section>`;
-  $('passportContent').innerHTML=`<div class="pp ${PASSPORT.open?'is-open':''}"><div class="pp-heading"><div><span class="pp-kicker">THE TASTE OF EVERY JOURNEY</span><h3>我的美食护照</h3></div></div>${PASSPORT.open?`<div class="pp-toolbar"><span>资料与签章 · 左右滑动翻页</span><button type="button" data-passport-close>合上护照</button></div><div class="pp-spread-stage"><div class="pp-book">${identity}${visas}</div></div><div class="pp-navigation"><button type="button" data-passport-prev ${PASSPORT.sheet===0?'disabled':''} aria-label="上一页签章">← 上一页</button><span>${PASSPORT.sheet+1} / ${pages}</span><button type="button" data-passport-next ${PASSPORT.sheet===pages-1?'disabled':''} aria-label="下一页签章">下一页 →</button></div><div class="pp-footer"><span>${visit.length?`已到访 ${visit.length} 家餐厅 · ${countries.length} 个国家和地区`:'这本护照，等待你的第一枚签章。'}</span></div>`:`<div class="pp-cover-stage">${cover}<div class="pp-cover-caption"><span>世界很大，值得一口一口去认识。</span><span>向左滑动或轻触封面，翻开护照 →</span></div></div><div class="pp-cover-summary">${stats}</div>`}<button type="button" class="passport-share-trigger" data-passport-share><span>生成我的米其林结算地图<small>一张长图 · 足迹地图 · 到访清单 · 我的评分</small></span><b>↗</b></button></div>`;
+  const visas=`<section class="pp-page pp-visas" aria-label="护照签章页"><div class="pp-page-header"><span>VISAS / 味觉签章</span><span>${String(PASSPORT.sheet+2).padStart(2,'0')}</span></div><h4>世界的味道，逐页收藏。</h4><p class="pp-visa-sub">一家餐厅，一枚专属章；点击查看每次用餐。</p><div class="pp-stamp-grid">${stamps||(visit.length?'<p class="pp-filter-empty">暂无此类签章，试试其他荣誉分类。</p>':empty)}</div><p class="pp-stamp-hint">${visit.length?'不同荣誉，不同印记；日期可随时补记。':'真正的旅程，从你喜欢的那一家开始。'}</p><div class="pp-page-nav"><span>签章 ${PASSPORT.sheet+1} / ${pages}</span><span>FOOD PASSPORT</span></div></section>`;
+  $('passportContent').innerHTML=`<div class="pp ${PASSPORT.open?'is-open':''}"><div class="pp-heading"><div><span class="pp-kicker">THE TASTE OF EVERY JOURNEY</span><h3>我的美食护照</h3></div></div>${PASSPORT.open?`${honorFilters}<div class="pp-toolbar"><span>资料与签章 · 左右滑动翻页</span><button type="button" data-passport-close>合上护照</button></div><div class="pp-spread-stage"><div class="pp-book">${identity}${visas}</div></div><div class="pp-navigation"><button type="button" data-passport-prev ${PASSPORT.sheet===0?'disabled':''} aria-label="上一页签章">← 上一页</button><span>${PASSPORT.sheet+1} / ${pages}</span><button type="button" data-passport-next ${PASSPORT.sheet===pages-1?'disabled':''} aria-label="下一页签章">下一页 →</button></div><div class="pp-footer"><span>${visit.length?`已到访 ${visit.length} 家餐厅 · ${countries.length} 个国家和地区`:'这本护照，等待你的第一枚签章。'}</span></div>`:`<div class="pp-cover-stage">${cover}<div class="pp-cover-caption"><span>世界很大，值得一口一口去认识。</span><span>向左滑动或轻触封面，翻开护照 →</span></div></div><div class="pp-cover-summary">${stats}</div>`}${upPassportGrowth(visit)}<button type="button" class="passport-share-trigger" data-passport-share><span>生成我的米其林结算地图<small>一张长图 · 足迹地图 · 到访清单 · 我的评分</small></span><b>↗</b></button></div>`;
   PASSPORT.observer?.disconnect();
   const stage=$('passportContent').querySelector('.pp-spread-stage');
   if(stage){const resize=()=>{const scale=Math.min(1,stage.clientWidth/840);stage.style.setProperty('--pp-scale',scale);stage.style.height=(600*scale)+'px';};resize();PASSPORT.observer=new ResizeObserver(resize);PASSPORT.observer.observe(stage);}
@@ -107,7 +127,10 @@ function upBindPassport(){
   root.addEventListener('touchstart',e=>{gesture=null;if(e.touches.length!==1||!e.target.closest('.pp-cover,.pp-book')||e.target.closest('button:not(.pp-cover)'))return;gesture={x:e.touches[0].clientX,y:e.touches[0].clientY};},{passive:true});
   root.addEventListener('touchend',e=>{if(!gesture)return;const dx=e.changedTouches[0].clientX-gesture.x,dy=e.changedTouches[0].clientY-gesture.y;gesture=null;if(Math.abs(dx)<38||Math.abs(dx)<Math.abs(dy)*1.25)return;suppress=performance.now()+400;upTurnPassport(PASSPORT.open?(dx<0?'next':'prev'):'open');},{passive:true});
   root.addEventListener('touchcancel',()=>{gesture=null;});
-  root.addEventListener('click',e=>{const control=e.target.closest('[data-passport-open],[data-passport-close],[data-passport-prev],[data-passport-next],[data-passport-browse]');if(!control)return;if(performance.now()<suppress){e.preventDefault();return;}if(control.hasAttribute('data-passport-browse')){goTab('list');return;}for(const action of ['open','close','prev','next'])if(control.hasAttribute('data-passport-'+action)){upTurnPassport(action);break;}});
+  root.addEventListener('click',e=>{
+    const stamp=e.target.closest('[data-passport-restaurant]');if(stamp){if(performance.now()<suppress)return;upOpenDetail(stamp.dataset.passportRestaurant);return;}
+    const honor=e.target.closest('[data-passport-honor]');if(honor){PASSPORT.honor=honor.dataset.passportHonor;PASSPORT.sheet=0;upPassport(DB.rows.filter(r=>favOf(r.u)===2));return;}
+    const control=e.target.closest('[data-passport-open],[data-passport-close],[data-passport-prev],[data-passport-next],[data-passport-browse]');if(!control)return;if(performance.now()<suppress){e.preventDefault();return;}if(control.hasAttribute('data-passport-browse')){goTab('list');return;}for(const action of ['open','close','prev','next'])if(control.hasAttribute('data-passport-'+action)){upTurnPassport(action);break;}});
 
 }
 
