@@ -12,6 +12,8 @@ const MGI18n=(()=>{
 
   // ---- whole-text matches (exact node / attribute text, trimmed) ----
   const FULL={
+"数据与同步":"Data and sync","多端同步，独立备份":"Sync across devices, keep a separate backup","高级选项":"Advanced options","导出备份 · 从备份恢复":"Export backup \u00b7 Restore from backup","手动备份":"Manual backup","导出备份":"Export backup","保存一份独立副本":"Save a separate copy","从备份恢复":"Restore from backup","选择备份文件或粘贴内容":"Choose a backup file or paste its contents","手动保存一份记录副本；误删或更换设备时，可从文件恢复。":"Save a separate copy of your records to recover from accidental deletion or move to a new device.","在“数据与同步”连接手机与电脑；展开“高级选项”，可导出独立备份或从文件恢复。":"Connect your phone and computer in Data and sync. Open Advanced options to export a separate backup or restore from a file.",
+
     '探索下一站 ↗':'Explore your next stop ↗',
 "把每一餐，变成你的世界。":"A world of memories, one table at a time.","枚纪念徽章":"milestone badges","枚专属章":"restaurant stamps","下一枚纪念章":"Your next milestone","珍藏仍在继续":"Your collection continues","家餐厅后，点亮下一枚纪念章":"more restaurants to your next badge","每一次到访，都是新的篇章。":"Every visit begins a new chapter.","城市足迹":"City footprints","一座城，从一张餐桌开始。":"A city begins with a single table.","家已探索":"restaurants explored","已去过 / 当前名录":"Visited / current directory","探索进度以当前名录为参考，随名录更新。":"Exploration reflects the current directory and changes with it.","旅程纪念章":"Journey keepsakes","值得记住的，不止是星级。":"Every discovery is worth remembering.","签章如何获得":"How stamps are earned","世界很大，第一站由你决定。":"A world to discover. Choose your first stop.","标记一家“去过”，留下第一枚足迹。":"Mark a restaurant as visited to begin your journey.","发现下一张餐桌 ↗":"Find your next table \u2197","查看全部城市":"View all cities",
 
