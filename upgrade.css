@@ -584,3 +584,5 @@ button.ub-r:hover{color:var(--red)}.ub-r.gone{color:var(--muted);text-decoration
 .pp-stamp{color:#783747}.pp-signature{border-color:#c9b58d}.pp-dataset-note{line-height:1.7}
 .pp-cover:focus-visible{outline:3px solid #b68a45;outline-offset:8px}
 @media(prefers-reduced-motion:reduce){.pp-cover,.pp-cover:hover{transition:none;transform:none}}
+
+.pp .passport-share-trigger{margin:22px 0 0;box-sizing:border-box;white-space:normal;gap:12px}.passport-share-trigger>span{min-width:0}.passport-share-trigger>b{flex-shrink:0}
