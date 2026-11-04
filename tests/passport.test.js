@@ -13,11 +13,16 @@ test('same-day same-city restaurants earn separate stable stamps, repeat meals s
 test('undated visited restaurant earns a stamp; want-only restaurants do not',()=>{
  const {run,root}=fixture();run('PERSONAL.records={}; PASSPORT.open=true; upPassport(DB.rows.filter(r=>favOf(r.u)===2))');assert.equal((root.innerHTML.match(/data-passport-restaurant=/g)||[]).length,2);assert(root.innerHTML.includes('日期未填写'));assert(!root.innerHTML.includes('data-passport-restaurant="city/restaurant/c"'));assert(root.innerHTML.includes('2 枚餐厅专属章'));assert(root.innerHTML.includes('第一枚专属章'));
 });
-test('honor filtering, four per page, city denominator and escaped restaurant labels',()=>{
+test('honor filtering, ten per page, city denominator and escaped restaurant labels',()=>{
  const {run,root}=fixture();run('PASSPORT.open=true;PASSPORT.honor="3";upPassport(DB.rows.slice(0,2))');assert.equal((root.innerHTML.match(/data-passport-restaurant=/g)||[]).length,1);assert(root.innerHTML.includes('pp-honor-3'));assert.equal(run('upPassportCities(DB.rows.slice(0,2))[0].total'),3);assert.equal(run('upPassportCities([DB.rows[0],DB.rows[0]])[0].n'),1);
  run('PASSPORT.honor="0";upPassport(DB.rows.slice(0,2))');assert(root.innerHTML.includes('暂无此类签章'));
- run('PASSPORT.honor="all";DB.rows=Array.from({length:5},(_,i)=>({...DB.rows[0],u:"r/restaurant/"+i,n:"<unsafe>",zh:""}));upPassport(DB.rows)');assert.equal((root.innerHTML.match(/data-passport-restaurant=/g)||[]).length,4);assert(!root.innerHTML.includes('<unsafe>'));assert(root.innerHTML.includes('&lt;unsafe>'));run('PASSPORT.sheet=1;upPassport(DB.rows)');assert.equal((root.innerHTML.match(/data-passport-restaurant=/g)||[]).length,1);
+ run('PASSPORT.honor="all";DB.rows=Array.from({length:11},(_,i)=>({...DB.rows[0],u:"r/restaurant/"+i,n:"<unsafe>",zh:""}));upPassport(DB.rows)');assert.equal((root.innerHTML.match(/data-passport-restaurant=/g)||[]).length,10);assert(!root.innerHTML.includes('<unsafe>'));assert(root.innerHTML.includes('&lt;unsafe>'));run('PASSPORT.sheet=2;upPassport(DB.rows)');assert.equal((root.innerHTML.match(/data-passport-restaurant=/g)||[]).length,1);
 });
 test('stamp opens its own restaurant without mutating stored data',()=>{
  const {ctx,run,root}=fixture();let opened;ctx.upOpenDetail=u=>{opened=u};const before=run('JSON.stringify(PERSONAL)');run('upBindPassport()');root.click({target:{closest:q=>q==='[data-passport-restaurant]'?{dataset:{passportRestaurant:'city/restaurant/b'}}:null}});assert.equal(opened,'city/restaurant/b');assert.equal(run('JSON.stringify(PERSONAL)'),before);
+});
+
+test('logical page plan pairs neighbors, keeps an odd final leaf and clamps after filtering',()=>{
+ const {run}=fixture();
+ assert.equal(run('upPassportPlan(22,0,true).total'),4);assert.equal(run('upPassportPlan(22,1,true).start'),1);assert.equal(run('upPassportPlan(22,1,false).start'),0);assert.equal(run('upPassportPlan(22,3,false).start'),2);assert.equal(run('upPassportPlan(22,3,false).next'),true);assert.equal(run('upPassportPlan(0,100,true).page'),1);assert.equal(run('upPassportPlan(11,2,false).total'),3);
 });
