@@ -3,10 +3,10 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>米其林全球美食护照</title>
+<title>米其林全球名录</title>
 <meta name="description" content="全球约 2 万家米其林餐厅的中文名录：三星、二星、一星、必比登、入选，附地图、官网、历年记录和黑珍珠对照。">
 <meta property="og:type" content="website">
-<meta property="og:title" content="米其林全球美食护照">
+<meta property="og:title" content="米其林全球名录">
 <meta property="og:description" content="全球约 2 万家米其林餐厅：中文店名、地图、官网、历年记录，按大洲、国家、城市筛选。">
 <meta property="og:image" content="https://sparrowcinema.github.io/michelin-guide/og.png">
 <meta property="og:url" content="https://sparrowcinema.github.io/michelin-guide/">
@@ -15,10 +15,10 @@
 <meta name="theme-color" content="#161312" media="(prefers-color-scheme: dark)">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-title" content="米其林美食护照">
+<meta name="apple-mobile-web-app-title" content="米其林全球名录">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <!-- ?v= must match ASSET_VER in sw.js: a new page must never run with an old cached script -->
-<link rel="stylesheet" href="upgrade.css?v=46">
+<link rel="stylesheet" href="upgrade.css?v=49">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" href="icon.svg" type="image/svg+xml">
 <link rel="icon" href="icon-192.png" sizes="192x192" type="image/png">
@@ -196,10 +196,7 @@ dialog::backdrop{background:var(--shade)}
 .leaflet-container{font-family:var(--body)}
 #locate{position:absolute;right:10px;top:10px;z-index:500}
 
-@media (min-width:701px){
-  #tabsTop{display:inline-flex}
-}
-@media (max-width:700px){
+/* One app shell on every device; width changes content layout, not navigation. */
   :root{--tabh:58px}
   .wrap{padding-top:0}
   .intro{padding-top:14px}
@@ -214,8 +211,8 @@ dialog::backdrop{background:var(--shade)}
   /* the filter panel becomes a bottom sheet */
   .panel{position:fixed;left:0;right:0;bottom:0;z-index:2500;background:var(--surface);border-radius:16px 16px 0 0;
     padding:6px 16px calc(14px + env(safe-area-inset-bottom,0px));max-height:82vh;overflow-y:auto;box-shadow:0 -8px 30px rgb(0 0 0 / .18);
-    transform:translateY(105%);transition:transform .25s ease;visibility:hidden}
-  body.sheet .panel{transform:none;visibility:visible}
+    transform:translate(-50%,105%);transition:transform .25s ease;visibility:hidden;left:50%;right:auto;width:min(720px,100%);box-sizing:border-box}
+  body.sheet .panel{transform:translate(-50%,0);visibility:visible}
   #shade{position:fixed;inset:0;background:var(--shade);z-index:2400;opacity:0;pointer-events:none;transition:opacity .2s}
   body.sheet #shade{opacity:1;pointer-events:auto}
   body.sheet{overflow:hidden}
@@ -239,7 +236,6 @@ dialog::backdrop{background:var(--shade)}
   .tabbar button[aria-current="page"]{color:var(--red)}
   .tabbar button b{position:absolute;margin:-18px 0 0 22px;min-width:16px;height:16px;line-height:16px;border-radius:8px;background:var(--red);color:#fff;font-size:10px;font-weight:600;padding:0 4px;box-sizing:border-box}
   .mestats{grid-template-columns:repeat(2,1fr)}
-}
 @media (max-width:520px){.totals{gap:4px}.tot{padding:7px 6px;text-align:center}.tot b{font-size:16px}.tot span{font-size:11px}.lv{flex-basis:50px}}
 @media (prefers-reduced-motion:reduce){.panel,#shade,#toast{transition:none}}
 </style>
@@ -247,7 +243,7 @@ dialog::backdrop{background:var(--shade)}
 <body>
 
 <div class="wrap">
-  <div class="page-language-bar"><span class="page-language-brand"><img src="icon-192.png" width="28" height="28" alt=""><span>米其林全球美食护照</span></span><button type="button" class="page-language-toggle" data-lang-switch translate="no" aria-label="Switch language / 切换语言"><b data-lang-option="zh">中</b><b data-lang-option="en">EN</b></button></div>
+  <div class="page-language-bar"><span class="page-language-brand"><img src="icon-192.png" width="28" height="28" alt=""><span id="pageBrand">米其林全球名录</span></span><button type="button" class="page-language-toggle" data-lang-switch translate="no" aria-label="Switch language / 切换语言"><b data-lang-option="zh">中</b><b data-lang-option="en">EN</b></button></div>
   <div class="intro" id="intro">
     <h1>米其林全球名录</h1>
     <p class="sub">全球 50 多个国家和地区、约 2 万家米其林餐厅：三星、二星、一星、必比登推介和入选餐厅。可按大洲、国家、城市筛选，在地图上找附近的店，也能把筛选结果发给朋友。</p>
@@ -332,7 +328,7 @@ dialog::backdrop{background:var(--shade)}
   </div>
 
   <section id="mePage" hidden aria-label="我的">
-    <div class="mehead"><img src="icon-192.png" alt=""><div><h2>我的</h2><p>想去和去过的餐厅，保存在这台设备上</p></div></div>
+    <div class="mehead"><img src="icon-192.png" alt=""><div><h2>美食护照</h2><p>想去和去过的餐厅，保存在这台设备上</p></div></div>
     <div class="mestats" id="meStats"></div>
     <div class="lvbar" id="meLv"></div>
     <div class="metabs">
@@ -441,31 +437,31 @@ dialog::backdrop{background:var(--shade)}
 <div id="inappBar" hidden><span>在微信等 App 里无法添加到主屏幕，也可能打不开地图。</span><button type="button" id="inappHow">怎么办</button><button type="button" id="inappX" aria-label="关闭">×</button></div>
 <div id="toast" role="status" aria-live="polite"></div>
 
-<script src="i18n.js?v=46"></script>
-<script src="city-names.js?v=46"></script>
-<script src="my-navigation.js?v=46"></script>
-<script src="search-aliases.js?v=46"></script>
-<script src="guide-core.js?v=46"></script>
-<script src="address-localization.js?v=46"></script>
-<script src="restaurant-intro.js?v=46"></script>
-<script src="upgrade.js?v=46"></script>
-<script src="passport-share.js?v=46"></script>
-<script src="meal-photos.js?v=46"></script>
-<script src="trip-route.js?v=46"></script>
-<script src="cloud-sync.js?v=46"></script>
-<script src="guide-updates.js?v=46"></script>
+<script src="i18n.js?v=49"></script>
+<script src="city-names.js?v=49"></script>
+<script src="my-navigation.js?v=49"></script>
+<script src="search-aliases.js?v=49"></script>
+<script src="guide-core.js?v=49"></script>
+<script src="address-localization.js?v=49"></script>
+<script src="restaurant-intro.js?v=49"></script>
+<script src="upgrade.js?v=49"></script>
+<script src="passport-share.js?v=49"></script>
+<script src="meal-photos.js?v=49"></script>
+<script src="trip-route.js?v=49"></script>
+<script src="cloud-sync.js?v=49"></script>
+<script src="guide-updates.js?v=49"></script>
 <script>
 const CONT=["亚洲","欧洲","北美洲","南美洲","大洋洲"];
 const LVN=["三星","二星","一星","必比登","入选"];
 const LVC=["#7a0d0a","#b3261e","#e0574d","#c98a00","#9a9390"];
 const PIN=["中国内地","中国香港","中国澳门","中国台湾"];
 const REPO="https://github.com/SparrowCinema/michelin-guide";
-const ASSET_VER="46"; // = ?v= on the asset tags above, UPGRADE_VER in upgrade.js and ASSET_VER in sw.js
+const ASSET_VER="49"; // = ?v= on the asset tags above, UPGRADE_VER in upgrade.js and ASSET_VER in sw.js
 const DATA_VER="20261103-2"; // bump whenever data.json changes so browsers skip their cached copy
 const $=id=>document.getElementById(id);
 const esc=s=>String(s).replace(/[&<>"]/g,ch=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[ch]));
 const sum=a=>a.reduce((x,y)=>x+y,0);
-const isPhone=()=>matchMedia("(max-width:700px)").matches;
+
 
 // ---- state ----
 const S={v:"list",l:"all",c:"",co:"",ci:"",q:"",cu:"",p:"",f:new Set(),near:false,trip:"",change:"",budget:0,currency:"EUR"};
@@ -729,6 +725,10 @@ function renderMe(){
 function updateBadge(){const n=Object.values(FAV).filter(x=>x[0]===1).length;$("meBadge").hidden=!n;$("meBadge").textContent=n>99?"99+":n}
 
 // ---- top-level render ----
+function updatePageIdentity(){
+  const label=S.v==="me"?"美食护照":"米其林全球名录",title=typeof MGI18n!=="undefined"?MGI18n.tr(label):label;
+  $("pageBrand").textContent=title;if(!$("detailDlg")?.open)document.title=title;
+}
 function currentTab(){return S.v==="me"?"me":S.v==="map"?"map":S.near?"near":"list"}
 function render(opts={}){
   upRender();
@@ -740,9 +740,9 @@ function render(opts={}){
   document.querySelectorAll("#tabsTop button").forEach(b=>b.setAttribute("aria-pressed",b.dataset.tab===tab));
   document.querySelectorAll("#tabbar button").forEach(b=>{if(b.dataset.tab===tab)b.setAttribute("aria-current","page");else b.removeAttribute("aria-current")});
 
-  const me=S.v==="me";
+  const me=S.v==="me";updatePageIdentity();
   if(typeof MGMe!=="undefined")MGMe.enter(me);
-  $("mePage").hidden=!me;$("browse").hidden=me;$("controls").hidden=me&&isPhone();$("intro").hidden=me&&isPhone();
+  $("mePage").hidden=!me;$("browse").hidden=me;$("controls").hidden=me;$("intro").hidden=me;
   $("footer").hidden=me;
   $("mapbox").hidden=S.v!=="map";$("statsBox").hidden=S.v!=="list"||S.near;
   $("mapResults").hidden=S.v!=="map";
@@ -890,7 +890,7 @@ function copyText(t){
 }
 function share(){
   const url=shareURL(),title="米其林全球名录 · "+$("scope").textContent.split("　")[0];
-  if(navigator.share&&isPhone()){navigator.share({title,url}).catch(()=>{});return}
+  if(navigator.share){navigator.share({title,url}).catch(()=>{});return}
   copyText(url).then(()=>toast("链接已复制，发给朋友打开就是同样的筛选结果"),()=>toast("没能复制，请直接复制地址栏里的链接"));
 }
 function openSheet(){document.body.classList.add("sheet");$("more-f").hidden=false}
