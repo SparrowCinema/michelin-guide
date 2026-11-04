@@ -31,3 +31,20 @@ test('journey next goal and badges reflect distinct restaurants at empty, one, f
  const {run}=fixture();assert.equal(run('upPassportJourney([]).next.at'),1);assert.equal(run('upPassportJourney([]).earned'),0);assert.equal(run('upPassportJourney([DB.rows[1],DB.rows[1]]).n'),1);assert.equal(run('upPassportJourney([DB.rows[1]]).next.at'),5);assert.equal(run('upPassportJourney([DB.rows[1]]).earned'),2);
  run('DB.rows=Array.from({length:100},(_,i)=>({u:"r/restaurant/"+i,ci:i%3,co:i%2,l:i%5}));DB.T=[["A"],["B"],["C"]]');assert.equal(run('upPassportJourney(DB.rows.slice(0,5)).next.at'),10);assert.equal(run('upPassportJourney(DB.rows).next'),null);assert.equal(run('upPassportJourney(DB.rows).earned'),9);assert.equal(run('upPassportJourney(DB.rows).cities.length'),3);assert.equal(run('upPassportJourney(DB.rows).countries'),2);
 });
+
+test('horizontal swipe locks scrolling even if it drifts vertically, and suppresses ghost clicks',()=>{
+ const {ctx,run,root}=fixture(),turns=[];ctx.upTurnPassport=a=>turns.push(a);let opened=false;ctx.upOpenDetail=()=>opened=true;run('PASSPORT.open=true;upBindPassport()');
+ const target={closest:q=>q==='.pp-cover,.pp-book'?{}:null},t=(x,y)=>({clientX:x,clientY:y,identifier:1});let blocked=false;
+ root.touchstart({target,touches:[t(200,200)]});root.touchmove({touches:[t(180,205)],cancelable:true,preventDefault:()=>blocked=true});assert(blocked);root.touchend({changedTouches:[t(130,290)]});assert.deepEqual(turns,['next']);
+ root.click({target:{closest:q=>q==='[data-passport-restaurant]'?{dataset:{passportRestaurant:'city/restaurant/a'}}:null}});assert(!opened);
+});
+test('vertical-first movement never turns a page after diagonal drift; taps still open stamps',()=>{
+ const {ctx,run,root}=fixture(),turns=[];ctx.upTurnPassport=a=>turns.push(a);let opened=false;ctx.upOpenDetail=()=>opened=true;run('upBindPassport()');const target={closest:q=>q==='.pp-cover,.pp-book'?{}:null},t=(x,y)=>({clientX:x,clientY:y,identifier:1});let blocked=false;
+ root.touchstart({target,touches:[t(200,200)]});root.touchmove({touches:[t(204,220)],cancelable:true,preventDefault:()=>blocked=true});root.touchend({changedTouches:[t(100,250)]});assert(!blocked);assert.deepEqual(turns,[]);
+ root.touchstart({target,touches:[t(200,200)]});root.touchend({changedTouches:[t(201,200)]});root.click({target:{closest:q=>q==='[data-passport-restaurant]'?{dataset:{passportRestaurant:'city/restaurant/a'}}:null}});assert(opened);
+});
+test('multitouch and cancellation abandon a pending flip without blocking pinch',()=>{
+ const {ctx,run,root}=fixture(),turns=[];ctx.upTurnPassport=a=>turns.push(a);run('upBindPassport()');const target={closest:q=>q==='.pp-cover,.pp-book'?{}:null},t=(x,id=1)=>({clientX:x,clientY:200,identifier:id});
+ root.touchstart({target,touches:[t(200)]});root.touchmove({touches:[t(180),t(220,2)],cancelable:true,preventDefault:()=>assert.fail('pinch must not be blocked')});root.touchend({changedTouches:[t(100)]});assert.deepEqual(turns,[]);
+ root.touchstart({target,touches:[t(200)]});root.touchcancel();root.touchend({changedTouches:[t(100)]});assert.deepEqual(turns,[]);
+});

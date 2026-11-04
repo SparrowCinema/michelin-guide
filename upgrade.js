@@ -1,6 +1,6 @@
 /* Travel, details, passport and snapshot views. Existing restaurant IDs remain unchanged. */
 // Must equal ASSET_VER in index.html and sw.js; index.html reloads fresh files when they disagree.
-const UPGRADE_VER="52";
+const UPGRADE_VER="53";
 let PERSONAL={version:2,trips:[],records:Object.create(null)},PRICE_DB={items:{}},upSelected='',upPickU='',upLoaded=false,upReadError=false;
 function upSave(next){
   if(upReadError){toast('已有旅行存储无法读取，已阻止覆盖。请先导出原始备份再恢复。');return false;}
@@ -150,9 +150,29 @@ function upTurnPassport(action){
 }
 function upBindPassport(){
   let gesture=null,suppress=0;const root=$('passportContent');
-  root.addEventListener('touchstart',e=>{gesture=null;if(e.touches.length!==1||!e.target.closest('.pp-cover,.pp-book')||e.target.closest('button:not(.pp-cover):not(.pp-restaurant-stamp)'))return;gesture={x:e.touches[0].clientX,y:e.touches[0].clientY};},{passive:true});
-  root.addEventListener('touchend',e=>{if(!gesture)return;const dx=e.changedTouches[0].clientX-gesture.x,dy=e.changedTouches[0].clientY-gesture.y;gesture=null;if(Math.abs(dx)<38||Math.abs(dx)<Math.abs(dy)*1.25)return;suppress=performance.now()+400;upTurnPassport(PASSPORT.open?(dx<0?'next':'prev'):'open');},{passive:true});
-  root.addEventListener('touchcancel',()=>{gesture=null;});
+  root.addEventListener('touchstart',e=>{
+    gesture=null;if(e.touches.length!==1||!e.target.closest('.pp-cover,.pp-book')||e.target.closest('button:not(.pp-cover):not(.pp-restaurant-stamp)'))return;
+    const t=e.touches[0];gesture={x:t.clientX,y:t.clientY,id:t.identifier,axis:null};
+  },{passive:true});
+  // Decide before native scrolling starts. Once chosen, the axis cannot change mid-swipe.
+  root.addEventListener('touchmove',e=>{
+    if(!gesture)return;
+    if(e.touches.length!==1||e.touches[0].identifier!==gesture.id){gesture=null;return;}
+    const dx=Math.abs(e.touches[0].clientX-gesture.x),dy=Math.abs(e.touches[0].clientY-gesture.y);
+    if(!gesture.axis){
+      if(Math.max(dx,dy)<8)return;
+      if(dx>dy*1.2)gesture.axis='x';
+      else if(dy>dx*1.2||Math.max(dx,dy)>=16)gesture.axis='y';
+    }
+    if(gesture.axis==='x'){if(e.cancelable)e.preventDefault();suppress=performance.now()+400;}
+  },{passive:false});
+  root.addEventListener('touchend',e=>{
+    if(!gesture)return;const g=gesture,t=e.changedTouches[0];gesture=null;
+    if(g.axis!=='x'||!t||t.identifier!==g.id)return;
+    suppress=performance.now()+400;const dx=t.clientX-g.x;
+    if(Math.abs(dx)>=38)upTurnPassport(PASSPORT.open?(dx<0?'next':'prev'):'open');
+  },{passive:true});
+  root.addEventListener('touchcancel',()=>{gesture=null;},{passive:true});
   root.addEventListener('click',e=>{
     const stamp=e.target.closest('[data-passport-restaurant]');if(stamp){if(performance.now()<suppress)return;upOpenDetail(stamp.dataset.passportRestaurant);return;}
     const honor=e.target.closest('[data-passport-honor]');if(honor){PASSPORT.honor=honor.dataset.passportHonor;PASSPORT.sheet=upPassportSingle()?1:0;upPassport(DB.rows.filter(r=>favOf(r.u)===2));return;}

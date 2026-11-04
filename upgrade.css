@@ -635,7 +635,7 @@ body[data-tab="me"] #controls,body[data-tab="me"] #intro{display:none!important}
 @media(prefers-reduced-motion:reduce){.pp-cover-atlas,.pp-cover-atlas:hover{transform:none;transition:none}}
 
 /* A self-hosted four-character title cut; reading text keeps the system stack. */
-@font-face{font-family:"Passport Calligraphy";src:url("assets/fonts/passport-calligraphy.ttf?v=52") format("truetype");font-style:normal;font-weight:400;font-display:swap;unicode-range:U+7F8E,U+98DF,U+62A4,U+7167}
+@font-face{font-family:"Passport Calligraphy";src:url("assets/fonts/passport-calligraphy.ttf?v=53") format("truetype");font-style:normal;font-weight:400;font-display:swap;unicode-range:U+7F8E,U+98DF,U+62A4,U+7167}
 .pp-cover-atlas .pp-cover-name{font-family:"Passport Calligraphy","Kaiti SC","STKaiti",var(--display);font-weight:400;font-size:42px;line-height:1.35;letter-spacing:.14em;margin-left:.14em;text-shadow:0 1px 0 #f9e9b638,0 2px 1px #230c18;}
 .pp-cover-atlas .pp-cover-en{font-family:Georgia,"Times New Roman",serif;font-size:11px;line-height:1.7;font-weight:400;letter-spacing:.26em;margin-top:10px}
 .pp-cover-atlas .pp-cover-publisher{font-size:12px;letter-spacing:.2em}.pp-cover-atlas .pp-cover-motto{letter-spacing:.2em;margin-top:12px}.pp-cover-atlas .pp-cover-bottom{font-family:var(--display);letter-spacing:.16em}
