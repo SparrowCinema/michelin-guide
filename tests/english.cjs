@@ -54,7 +54,7 @@ const assert=require('node:assert/strict'),http=require('http'),fs=require('fs')
     for(const fn of ['()=>toast("已复制地址")','()=>toast("链接已复制，发给朋友打开就是同样的筛选结果")']){await page.evaluate(`(${fn})()`);await sweep('toast');}
     for(const [k,v] of left)console.log(`LEFT [${v}] ${k}`);
     // switching back to Chinese
-    await page.locator('#tabbar [data-tab="me"]').click();await page.locator('[data-me-jump="meSettings"]').click();await page.locator('#langSeg [data-lang="zh"]').click();await page.waitForLoadState('load');await page.waitForFunction(()=>typeof DB!=='undefined'&&DB&&DB.rows.length>1000);
+    await page.locator('#tabbar [data-tab="me"]').click();await page.locator('.page-language-toggle:visible').first().click();await page.waitForLoadState('load');await page.waitForFunction(()=>typeof DB!=='undefined'&&DB&&DB.rows.length>1000);
     assert.equal(await page.evaluate(()=>document.documentElement.lang),'zh-CN');assert.equal(await page.evaluate(()=>localStorage.getItem('mg-lang')),'zh');
     assert.deepEqual(errors,[]);assert.equal(left.size,0,left.size+' untranslated strings');
     console.log('PASS: English interface — list, filters, map, nearby, me, about, install, import, detail (intro/address/meal log), visit sheet, trips, route, passport, recap canvas, search, toasts; switch back to Chinese.');
