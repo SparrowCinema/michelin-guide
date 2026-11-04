@@ -1,6 +1,6 @@
 /* Travel, details, passport and snapshot views. Existing restaurant IDs remain unchanged. */
 // Must equal ASSET_VER in index.html and sw.js; index.html reloads fresh files when they disagree.
-const UPGRADE_VER="47";
+const UPGRADE_VER="48";
 let PERSONAL={version:2,trips:[],records:Object.create(null)},PRICE_DB={items:{}},upSelected='',upPickU='',upLoaded=false,upReadError=false;
 function upSave(next){
   if(upReadError){toast('已有旅行存储无法读取，已阻止覆盖。请先导出原始备份再恢复。');return false;}
@@ -402,7 +402,7 @@ function upInit(){
     if(el.id==='copyRestaurant')copyText(upDetailURL($('detailDlg').dataset.u)).then(()=>toast('已复制餐厅链接'),()=>toast('无法复制，请从地址栏复制链接'));
   });
   ['detailDlg','visitDlg','tripDlg','tripPickDlg'].forEach(id=>{const dlg=$(id);dlg.addEventListener('click',e=>{if(e.target===dlg||e.target.closest('[data-close]'))closeAppDialog(dlg);});});
-  $('detailDlg').addEventListener('close',()=>{const url=new URL(location.href);url.searchParams.delete('restaurant');history.replaceState(null,'',url);document.title='米其林全球名录';});
+  $('detailDlg').addEventListener('close',()=>{const url=new URL(location.href);url.searchParams.delete('restaurant');history.replaceState(null,'',url);updatePageIdentity();});
   upBindDetailSwipe();upBindDetailSwipe('visitDlg');upBindVisitForms();upInitShare();
   window.addEventListener('popstate',upRestoreDetail);
 
