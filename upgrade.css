@@ -774,3 +774,6 @@ body[data-tab="me"] #controls,body[data-tab="me"] #intro{display:none!important}
 .pp-cities-empty{text-align:center;color:var(--muted);font-size:13px;padding:36px 0}
 @media(max-width:700px){.pp-cities-dlg{width:100vw;height:100dvh;border-radius:0}}
 @media(prefers-reduced-motion:reduce){.pp-cityrow-chev{transition:none}}
+
+/* Quiet shared page action, above the app bar and below dialogs/filter sheets. */
+.back-to-top{position:fixed;right:max(16px,calc((100vw - 1120px)/2 + 16px),env(safe-area-inset-right,0px));bottom:calc(var(--tabh) + env(safe-area-inset-bottom,0px) + 16px);z-index:1800;display:grid;place-items:center;box-sizing:border-box;width:44px;height:44px;padding:0;border:1px solid var(--line);border-radius:50%;background:var(--surface);color:var(--red);box-shadow:0 3px 14px #2117151a;cursor:pointer;touch-action:manipulation;-webkit-tap-highlight-color:transparent}.back-to-top svg{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}.back-to-top:hover{background:var(--hover)}.back-to-top:focus-visible{outline:2px solid var(--red);outline-offset:3px}@media print{.back-to-top{display:none}}

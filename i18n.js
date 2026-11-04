@@ -12,6 +12,7 @@ const MGI18n=(()=>{
 
   // ---- whole-text matches (exact node / attribute text, trimmed) ----
   const FULL={
+    '回到顶部':'Back to top',
 "数据与同步":"Data and sync","多端同步，独立备份":"Sync across devices, keep a separate backup","高级选项":"Advanced options","导出备份 · 从备份恢复":"Export backup \u00b7 Restore from backup","手动备份":"Manual backup","导出备份":"Export backup","保存一份独立副本":"Save a separate copy","从备份恢复":"Restore from backup","选择备份文件或粘贴内容":"Choose a backup file or paste its contents","手动保存一份记录副本；误删或更换设备时，可从文件恢复。":"Save a separate copy of your records to recover from accidental deletion or move to a new device.","在“数据与同步”连接手机与电脑；展开“高级选项”，可导出独立备份或从文件恢复。":"Connect your phone and computer in Data and sync. Open Advanced options to export a separate backup or restore from a file.",
 
     '探索下一站 ↗':'Explore your next stop ↗',

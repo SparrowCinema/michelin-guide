@@ -9,7 +9,7 @@ const {chromium}=require(process.env.PLAYWRIGHT_MODULE||'playwright');
   const cacheName=fs.readFileSync(path.join(base,'sw.js'),'utf8').match(/const CACHE = "([^"]+)"/)[1];
   // A new page must never load an old cached script: index.html asset versions must match sw.js.
   const swText=fs.readFileSync(path.join(base,'sw.js'),'utf8'),assetVer=swText.match(/const ASSET_VER = "([^"]+)"/)[1],indexText=fs.readFileSync(path.join(base,'index.html'),'utf8');
-  for(const f of ['upgrade.css','search-aliases.js','guide-core.js','upgrade.js','passport-share.js','city-names.js','my-navigation.js'])assert(indexText.includes(f+'?v='+assetVer),f+' must be referenced as '+f+'?v='+assetVer);
+  for(const f of ['back-to-top.js','upgrade.css','search-aliases.js','guide-core.js','upgrade.js','passport-share.js','city-names.js','my-navigation.js'])assert(indexText.includes(f+'?v='+assetVer),f+' must be referenced as '+f+'?v='+assetVer);
   assert.equal(cacheName,'mg-v'+assetVer);
   assert(indexText.includes('const ASSET_VER="'+assetVer+'"'),'index.html ASSET_VER');
   assert(fs.readFileSync(path.join(base,'upgrade.js'),'utf8').includes('const UPGRADE_VER="'+assetVer+'"'),'upgrade.js UPGRADE_VER');
