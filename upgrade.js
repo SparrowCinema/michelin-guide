@@ -1,6 +1,6 @@
 /* Travel, details, passport and snapshot views. Existing restaurant IDs remain unchanged. */
 // Must equal ASSET_VER in index.html and sw.js; index.html reloads fresh files when they disagree.
-const UPGRADE_VER="54";
+const UPGRADE_VER="55";
 let PERSONAL={version:2,trips:[],records:Object.create(null)},PRICE_DB={items:{}},upSelected='',upPickU='',upLoaded=false,upReadError=false;
 function upSave(next){
   if(upReadError){toast('已有旅行存储无法读取，已阻止覆盖。请先导出原始备份再恢复。');return false;}
@@ -135,7 +135,7 @@ function upPassport(visit){
   const tabs=`<div class="pp-tabs" role="tablist" aria-label="护照视图"><button type="button" role="tab" data-passport-tab="book" aria-selected="${PASSPORT.tab!=='growth'}">签章</button><button type="button" role="tab" data-passport-tab="growth" aria-selected="${PASSPORT.tab==='growth'}">成长${pend.length&&PASSPORT.tab!=='growth'?'<i class="pp-tab-dot" role="img" aria-label="有新纪念章"></i>':''}</button></div>`,teaser=journey.next?`<button type="button" class="pp-teaser" data-passport-tab="growth"><span>${en?'Next milestone':'下一枚纪念章'} · <b>${journey.next.label}</b></span><span>${journey.n} / ${journey.next.at} →</span></button>`:'';
   const stats=`<div class="pp-tallies"><span><b>${String(countries.length).padStart(2,'0')}</b>国家 / 地区</span><span><b>${String(cities.size).padStart(2,'0')}</b>到访城市</span><span><b>${String(visit.length).padStart(2,'0')}</b>去过的餐厅</span></div>`;
   const stampHTML=(entry,i)=>{
-    const {r,date,count,code}=entry,city=DB.T[r.ci][0],name=r.zh||r.n,symbol=['★★★','★★','★','BIB','米'][r.l],seed=parseInt(code,36),tilt=(seed%37)-18,dx=(seed>>>3)%15-7,dy=(seed>>>7)%11-5,position=[[18,10],[51,7],[82,58],[21,105],[54,120],[82,165],[17,213],[53,230],[27,294],[76,299]][i];
+    const {r,date,count,code}=entry,city=DB.T[r.ci][0],name=r.zh||r.n,symbol=['★★★','★★','★','BIB',typeof MGI18n!=='undefined'&&MGI18n.en?'Selected':'入选'][r.l],seed=parseInt(code,36),tilt=(seed%37)-18,dx=(seed>>>3)%15-7,dy=(seed>>>7)%11-5,position=[[18,10],[51,7],[82,58],[21,105],[54,120],[82,165],[17,213],[53,230],[27,294],[76,299]][i];
     return `<button type="button" class="pp-stamp pp-restaurant-stamp pp-honor-${r.l}" data-passport-restaurant="${esc(r.u)}" style="--tilt:${tilt}deg;--stamp-x:${position[0]}%;--stamp-y:${position[1]}px;--stamp-dx:${dx}px;--stamp-dy:${dy}px;--stamp-opacity:${.83+(seed%12)/100}" aria-label="${esc(name)} · ${esc(LVN[r.l])} · ${esc(date||'日期未填写')} · ${count} 次用餐 · 查看用餐记录"><span class="pp-stamp-top">RESTAURANT · ${code}</span><span class="pp-honor-symbol" aria-hidden="true">${symbol}</span><strong translate="no">${esc(name)}</strong><span class="pp-stamp-en">${esc(city)} · ${esc(LVN[r.l])}</span><span class="pp-stamp-date">${upStampDate(date)}</span><span class="pp-stamp-count">${count?`${count} 次用餐`:'已去过'} · 点击查看</span></button>`;
   };
   const empty=`<div class="pp-blank-stamp"><span>YOUR FIRST STAMP</span><b>下一站，吃点什么？</b><p>在餐厅下点“去过”，<br>为护照盖下第一枚签章。</p><button type="button" data-passport-browse>去发现餐厅 ↗</button></div>`;
