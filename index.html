@@ -18,7 +18,7 @@
 <meta name="apple-mobile-web-app-title" content="米其林名录">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <!-- ?v= must match ASSET_VER in sw.js: a new page must never run with an old cached script -->
-<link rel="stylesheet" href="upgrade.css?v=41">
+<link rel="stylesheet" href="upgrade.css?v=42">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" href="icon.svg" type="image/svg+xml">
 <link rel="icon" href="icon-192.png" sizes="192x192" type="image/png">
@@ -38,7 +38,7 @@ body{margin:0}
    on phones, a fixed bottom tab bar: 名录 / 地图 / 附近 / 我的. Wide screens get the same four
    tabs as a segmented control and show the filter panel inline instead of as a bottom sheet. */
 :root{
-  --bg:#faf8f6; --surface:#ffffff; --fg:#1f1b1a; --muted:#7a716e; --line:#e8e1dd; --hover:#f3eeeb;
+  --lbh:calc(54px + max(8px,env(safe-area-inset-top,0px))); --bg:#faf8f6; --surface:#ffffff; --fg:#1f1b1a; --muted:#7a716e; --line:#e8e1dd; --hover:#f3eeeb;
   --red:#b3261e; --red-soft:#f6e3e1; --bib:#8a5a00; --bib-soft:#f6ecd6; --green:#2f7a3d; --green-soft:#e2f0e4;
   --pearl:#3b3f6b; --pearl-soft:#e6e7f2; --shade:rgb(0 0 0 / .4);
   --display:"Songti SC","STSong","Noto Serif CJK SC","Source Han Serif SC","SimSun",serif;
@@ -55,7 +55,7 @@ body{margin:0}
   --red:#ef6b60; --red-soft:#3a1d1b; --bib:#e0b35a; --bib-soft:#33291a; --green:#7cc68a; --green-soft:#1d2e20;
   --pearl:#b6b9e8; --pearl-soft:#262842; --shade:rgb(0 0 0 / .6); color-scheme:dark}
 body{background:var(--bg);color:var(--fg);font-family:var(--body);font-size:15px;line-height:1.5;-webkit-text-size-adjust:100%;-webkit-tap-highlight-color:transparent}
-.wrap{max-width:860px;margin:0 auto;padding-top:max(20px,env(safe-area-inset-top,0px));padding-bottom:calc(60px + var(--tabh));padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.wrap{max-width:860px;margin:0 auto;padding-top:0;padding-bottom:calc(60px + var(--tabh));padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
 h1{font-family:var(--display);font-weight:900;font-size:clamp(26px,6vw,38px);line-height:1.15;margin:0;text-wrap:balance}
 .sub{color:var(--muted);margin:8px 0 6px;font-size:14px;max-width:62ch}
 .toplinks{display:flex;flex-wrap:wrap;gap:4px 16px;font-size:13px;color:var(--muted);margin-bottom:14px}
@@ -66,7 +66,7 @@ h1{font-family:var(--display);font-weight:900;font-size:clamp(26px,6vw,38px);lin
 .tot{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:10px 12px;min-width:0}
 .tot b{display:block;font-family:var(--display);font-size:22px;font-variant-numeric:tabular-nums}
 .tot span{font-size:12px;color:var(--muted);letter-spacing:.04em}
-.controls{position:sticky;top:0;z-index:1001;background:var(--bg);padding-top:max(10px,env(safe-area-inset-top,0px));padding-bottom:10px;display:flex;flex-direction:column;gap:8px;border-bottom:1px solid var(--line)}
+.controls{position:sticky;top:var(--lbh);z-index:1001;background:var(--bg);padding-top:10px;padding-bottom:10px;display:flex;flex-direction:column;gap:8px;border-bottom:1px solid var(--line)}
 /* 16px on inputs/selects stops iOS Safari from zooming the page when they get focus */
 input,select,textarea{font:inherit;font-size:16px}
 #q{width:100%;box-sizing:border-box;padding:9px 14px;border:1px solid var(--line);border-radius:10px;background:var(--surface);color:var(--fg)}
@@ -202,7 +202,7 @@ dialog::backdrop{background:var(--shade)}
 @media (max-width:700px){
   :root{--tabh:58px}
   .wrap{padding-top:0}
-  .intro{padding-top:max(14px,env(safe-area-inset-top,0px))}
+  .intro{padding-top:14px}
   .sub,.toplinks,footer{display:none}
   h1{font-size:24px}
   #tabsTop,#viewRow{display:none!important}
@@ -247,7 +247,7 @@ dialog::backdrop{background:var(--shade)}
 <body>
 
 <div class="wrap">
-  <div class="page-language-bar"><span class="page-language-brand">美食护照</span><button type="button" class="page-language-toggle" data-lang-switch translate="no" aria-label="Switch language / 切换语言"><b data-lang-option="zh">中</b><b data-lang-option="en">EN</b></button></div>
+  <div class="page-language-bar"><span class="page-language-brand"><img src="icon-192.png" width="28" height="28" alt=""><span>米其林美食护照</span></span><button type="button" class="page-language-toggle" data-lang-switch translate="no" aria-label="Switch language / 切换语言"><b data-lang-option="zh">中</b><b data-lang-option="en">EN</b></button></div>
   <div class="intro" id="intro">
     <h1>米其林全球名录</h1>
     <p class="sub">全球 50 多个国家和地区、约 2 万家米其林餐厅：三星、二星、一星、必比登推介和入选餐厅。可按大洲、国家、城市筛选，在地图上找附近的店，也能把筛选结果发给朋友。</p>
@@ -442,26 +442,26 @@ dialog::backdrop{background:var(--shade)}
 <div id="inappBar" hidden><span>在微信等 App 里无法添加到主屏幕，也可能打不开地图。</span><button type="button" id="inappHow">怎么办</button><button type="button" id="inappX" aria-label="关闭">×</button></div>
 <div id="toast" role="status" aria-live="polite"></div>
 
-<script src="i18n.js?v=41"></script>
-<script src="city-names.js?v=41"></script>
-<script src="my-navigation.js?v=41"></script>
-<script src="search-aliases.js?v=41"></script>
-<script src="guide-core.js?v=41"></script>
-<script src="address-localization.js?v=41"></script>
-<script src="restaurant-intro.js?v=41"></script>
-<script src="upgrade.js?v=41"></script>
-<script src="passport-share.js?v=41"></script>
-<script src="meal-photos.js?v=41"></script>
-<script src="trip-route.js?v=41"></script>
-<script src="cloud-sync.js?v=41"></script>
-<script src="guide-updates.js?v=41"></script>
+<script src="i18n.js?v=42"></script>
+<script src="city-names.js?v=42"></script>
+<script src="my-navigation.js?v=42"></script>
+<script src="search-aliases.js?v=42"></script>
+<script src="guide-core.js?v=42"></script>
+<script src="address-localization.js?v=42"></script>
+<script src="restaurant-intro.js?v=42"></script>
+<script src="upgrade.js?v=42"></script>
+<script src="passport-share.js?v=42"></script>
+<script src="meal-photos.js?v=42"></script>
+<script src="trip-route.js?v=42"></script>
+<script src="cloud-sync.js?v=42"></script>
+<script src="guide-updates.js?v=42"></script>
 <script>
 const CONT=["亚洲","欧洲","北美洲","南美洲","大洋洲"];
 const LVN=["三星","二星","一星","必比登","入选"];
 const LVC=["#7a0d0a","#b3261e","#e0574d","#c98a00","#9a9390"];
 const PIN=["中国内地","中国香港","中国澳门","中国台湾"];
 const REPO="https://github.com/SparrowCinema/michelin-guide";
-const ASSET_VER="41"; // = ?v= on the asset tags above, UPGRADE_VER in upgrade.js and ASSET_VER in sw.js
+const ASSET_VER="42"; // = ?v= on the asset tags above, UPGRADE_VER in upgrade.js and ASSET_VER in sw.js
 const DATA_VER="20261103-2"; // bump whenever data.json changes so browsers skip their cached copy
 const $=id=>document.getElementById(id);
 const esc=s=>String(s).replace(/[&<>"]/g,ch=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[ch]));
