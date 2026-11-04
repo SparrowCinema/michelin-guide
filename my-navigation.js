@@ -25,9 +25,10 @@ const MGMe=(()=>{
     if($('syncCard'))fold('meSync','云端同步','手机与电脑，共享一份收藏',[$('syncCard')]);
     fold('meBackup','备份与恢复','导出一份，安心保留',[backup]);
     fold('meSettings','偏好与关于','主题、语言与使用帮助',[appearance,about]);
-    const friends=document.createElement('section');friends.className='card me-friends';friends.setAttribute('aria-labelledby','meFriendsTitle');
-    friends.innerHTML='<h3 id="meFriendsTitle">友情链接</h3><a href="https://sparrowcinema.github.io/SparrowTribe/?v=2&amp;lang=zh#my" target="_blank" rel="noopener noreferrer"><span><strong>麻雀观影护照</strong><small>记录光影足迹，收藏每一次观影。</small></span><span aria-hidden="true">↗</span></a>';
+    const friends=document.createElement('section');friends.className='me-friends';
+    friends.innerHTML='<a href="https://sparrowcinema.github.io/SparrowTribe/?v=2&amp;lang=zh#my" target="_blank" rel="noopener noreferrer"><span><strong>麻雀观影护照</strong><small>记录光影足迹，收藏每一次观影。</small></span><span aria-hidden="true">↗</span></a>';
     $('meSettings').after(friends);
+    fold('meFriends','友情链接','发现更多生活记录',[friends]);
     nav.addEventListener('click',e=>{
       const b=e.target.closest('[data-me-jump]');if(!b)return;const target=$(b.dataset.meJump);if(!target)return;
       if(b.dataset.meMode){meTab=+b.dataset.meMode;meLimit=12;renderMe();}
