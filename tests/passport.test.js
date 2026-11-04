@@ -26,3 +26,8 @@ test('logical page plan pairs neighbors, keeps an odd final leaf and clamps afte
  const {run}=fixture();
  assert.equal(run('upPassportPlan(22,0,true).total'),4);assert.equal(run('upPassportPlan(22,1,true).start'),1);assert.equal(run('upPassportPlan(22,1,false).start'),0);assert.equal(run('upPassportPlan(22,3,false).start'),2);assert.equal(run('upPassportPlan(22,3,false).next'),true);assert.equal(run('upPassportPlan(0,100,true).page'),1);assert.equal(run('upPassportPlan(11,2,false).total'),3);
 });
+
+test('journey next goal and badges reflect distinct restaurants at empty, one, five and complete states',()=>{
+ const {run}=fixture();assert.equal(run('upPassportJourney([]).next.at'),1);assert.equal(run('upPassportJourney([]).earned'),0);assert.equal(run('upPassportJourney([DB.rows[1],DB.rows[1]]).n'),1);assert.equal(run('upPassportJourney([DB.rows[1]]).next.at'),5);assert.equal(run('upPassportJourney([DB.rows[1]]).earned'),2);
+ run('DB.rows=Array.from({length:100},(_,i)=>({u:"r/restaurant/"+i,ci:i%3,co:i%2,l:i%5}));DB.T=[["A"],["B"],["C"]]');assert.equal(run('upPassportJourney(DB.rows.slice(0,5)).next.at'),10);assert.equal(run('upPassportJourney(DB.rows).next'),null);assert.equal(run('upPassportJourney(DB.rows).earned'),9);assert.equal(run('upPassportJourney(DB.rows).cities.length'),3);assert.equal(run('upPassportJourney(DB.rows).countries'),2);
+});

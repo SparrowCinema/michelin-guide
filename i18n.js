@@ -12,6 +12,9 @@ const MGI18n=(()=>{
 
   // ---- whole-text matches (exact node / attribute text, trimmed) ----
   const FULL={
+    '探索下一站 ↗':'Explore your next stop ↗',
+"把每一餐，变成你的世界。":"A world of memories, one table at a time.","枚纪念徽章":"milestone badges","枚专属章":"restaurant stamps","下一枚纪念章":"Your next milestone","珍藏仍在继续":"Your collection continues","家餐厅后，点亮下一枚纪念章":"more restaurants to your next badge","每一次到访，都是新的篇章。":"Every visit begins a new chapter.","城市足迹":"City footprints","一座城，从一张餐桌开始。":"A city begins with a single table.","家已探索":"restaurants explored","已去过 / 当前名录":"Visited / current directory","探索进度以当前名录为参考，随名录更新。":"Exploration reflects the current directory and changes with it.","旅程纪念章":"Journey keepsakes","值得记住的，不止是星级。":"Every discovery is worth remembering.","签章如何获得":"How stamps are earned","世界很大，第一站由你决定。":"A world to discover. Choose your first stop.","标记一家“去过”，留下第一枚足迹。":"Mark a restaurant as visited to begin your journey.","发现下一张餐桌 ↗":"Find your next table \u2197","查看全部城市":"View all cities",
+
 "单页阅读 · 左右滑动翻页":"Single page \u00b7 Swipe to turn","双页展开 · 左右滑动翻页":"Open spread \u00b7 Swipe to turn","下一餐，新的故事。":"Another table, another story.","每家去过的餐厅都有专属章，每页十枚；手机竖屏单页阅读，横屏或平板展开双页，左右滑动翻页。":"Each visited restaurant earns its own stamp, ten per page. Read one page on a portrait phone, or an open spread on landscape screens and tablets. Swipe to turn.",
 
 "一餐一印，珍藏世界":"Every table, a memory of the world","以一餐，":"Through a meal,","与世界相遇。":"meet the world.","从街巷小馆到远方餐桌，":"From neighborhood kitchens to faraway tables,","每一次到访，都值得珍藏。":"every visit deserves a place in your story.","轻触封面，开启味觉旅程 →":"Tap the cover to begin your culinary journey \u2192",
