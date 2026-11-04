@@ -635,7 +635,7 @@ body[data-tab="me"] #controls,body[data-tab="me"] #intro{display:none!important}
 @media(prefers-reduced-motion:reduce){.pp-cover-atlas,.pp-cover-atlas:hover{transform:none;transition:none}}
 
 /* A self-hosted four-character title cut; reading text keeps the system stack. */
-@font-face{font-family:"Passport Calligraphy";src:url("assets/fonts/passport-calligraphy.ttf?v=60") format("truetype");font-style:normal;font-weight:400;font-display:swap;unicode-range:U+7F8E,U+98DF,U+62A4,U+7167}
+@font-face{font-family:"Passport Calligraphy";src:url("assets/fonts/passport-calligraphy.ttf?v=61") format("truetype");font-style:normal;font-weight:400;font-display:swap;unicode-range:U+7F8E,U+98DF,U+62A4,U+7167}
 .pp-cover-atlas .pp-cover-name{font-family:"Passport Calligraphy","Kaiti SC","STKaiti",var(--display);font-weight:400;font-size:42px;line-height:1.35;letter-spacing:.14em;margin-left:.14em;text-shadow:0 1px 0 #f9e9b638,0 2px 1px #230c18;}
 .pp-cover-atlas .pp-cover-en{font-family:Georgia,"Times New Roman",serif;font-size:11px;line-height:1.7;font-weight:400;letter-spacing:.26em;margin-top:10px}
 .pp-cover-atlas .pp-cover-publisher{font-size:12px;letter-spacing:.2em}.pp-cover-atlas .pp-cover-motto{letter-spacing:.2em;margin-top:12px}.pp-cover-atlas .pp-cover-bottom{font-family:var(--display);letter-spacing:.16em}
@@ -805,3 +805,17 @@ body[data-tab="me"] #controls,body[data-tab="me"] #intro{display:none!important}
 .pp-growth-panel .pp-almost{padding:0 0 24px;margin-bottom:24px}.pp-growth-panel .pp-almost ul{margin-bottom:0}.pp-growth-panel .pp-city-progress{grid-template-columns:repeat(2,minmax(0,1fr))}.pp-growth-panel .pp-tracks{grid-template-columns:repeat(2,minmax(0,1fr));align-items:start}.pp-growth-panel .pp-track[open]{grid-column:1/-1}.pp-growth-panel .pp-track[open] .pp-milestones{grid-template-columns:repeat(5,minmax(0,1fr));gap:18px 10px;padding:8px}
 @media(max-width:700px){.pp-honor-filters{grid-template-columns:repeat(3,minmax(0,1fr))}.pp-honor-filters button{font-size:12px}.pp-growth-tabs{margin:18px 18px 0}.pp-journey .pp-journey-body{padding:22px 18px}.pp-level-list,.pp-growth-panel .pp-city-progress,.pp-growth-panel .pp-tracks{grid-template-columns:1fr}.pp-growth-panel .pp-track[open] .pp-milestones{grid-template-columns:repeat(3,minmax(0,1fr));padding:4px;gap:18px 8px}.pp-level-list li{padding:13px 14px}.pp-growth-panel .pp-journey-section-head h5{font-size:19px}}
 @media(max-width:360px){.pp-growth-tabs{margin-inline:14px}.pp-journey .pp-journey-body{padding-inline:14px}.pp-growth-tabs button{font-size:13px}.pp-honor-filters{gap:6px}.pp-honor-filters button{gap:6px}}
+
+/* Editorial typography: real variable weights, a restrained logo bar and clear reading text. */
+@font-face{font-family:"Passport Editorial";src:url("assets/fonts/passport-editorial.woff2?v=61") format("woff2");font-style:normal;font-weight:200 900;font-display:swap}
+.page-language-brand{position:relative;flex:none;gap:0}.page-language-brand img{width:32px;height:32px;border-radius:8px}.page-language-brand #pageBrand{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap;border:0}
+#intro{padding-top:18px;padding-bottom:14px}#intro h1{font:800 clamp(26px,3.5vw,36px)/1.35 var(--display);letter-spacing:.025em;text-wrap:balance}
+.mehead h2{font:800 clamp(26px,3.5vw,34px)/1.4 var(--display);letter-spacing:.025em}
+.ctry{font-weight:800;font-size:24px;line-height:1.45;letter-spacing:.015em}.city h3{font-weight:700;font-size:17px;line-height:1.5}
+a.restaurant-title{font:700 16px/1.55 var(--display);letter-spacing:.01em;overflow-wrap:anywhere}.orig,.meta,.links{font-family:var(--body)}
+.me-menu>.me-fold>:is(summary,.me-entry) strong{font-weight:750;line-height:1.45;letter-spacing:.02em}
+.section-heading h3,.feature-card h3,.travel-map-title,.map-results h2,.dlg h2,.dlg h3,.pp-cities-head h3{font-weight:750;line-height:1.45;letter-spacing:.015em}
+.detail-title{font-weight:800;line-height:1.4;letter-spacing:.01em}.pp-journey .pp-growth-head h4{font-weight:750;letter-spacing:.04em}.pp-next-copy h5,.pp-journey-section-head h5,.pp-destination h6,.pp-level-list strong,.pp-track-info strong,.install-intro h3,.trip-card h4{font-weight:750;letter-spacing:.015em}
+.pp-identity-head h4,.pp-visas>h4{font-weight:800}.pp-intro{font-weight:600}.pp-cover-publisher{font-weight:650}.mehead p,.sub{line-height:1.75}
+@media(max-width:700px){#intro{padding-top:14px;padding-bottom:12px}#intro h1{font-size:27px}.mehead h2{font-size:27px}.ctry{font-size:22px}a.restaurant-title{font-size:15px}}
+.lang-en #intro h1,.lang-en .mehead h2{letter-spacing:0;line-height:1.3}.lang-en a.restaurant-title{letter-spacing:0}
