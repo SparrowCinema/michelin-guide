@@ -32,6 +32,7 @@ test('long journey: levels, distinct-restaurant medals, slams and sticky medals'
  run('DB.rows=Array.from({length:100},(_,i)=>({u:"r/restaurant/"+i,ci:i%3,co:i%2,l:i%5}));DB.T=[["A"],["B"],["C"]]');assert.equal(run('upPassportJourney(DB.rows).cities.length'),3);assert.equal(run('upPassportJourney(DB.rows).countries'),2);assert.equal(run('upPassportJourney(DB.rows).points'),240);assert.equal(run('upPassportJourney(DB.rows).level.title'),'评鉴官');
  assert.equal(run('upPassportJourney(DB.rows).medals.find(m=>m.label==="大满贯").ok'),true);assert.equal(run('upPassportJourney(DB.rows.slice(0,10)).medals.find(m=>m.label==="大满贯").ok'),false);
  assert.equal(run('upPassportJourney([],{"小满贯":"2026-01-01"}).medals.find(m=>m.label==="小满贯").ok'),true);
+ assert.equal(run('upPassportJourney([],null,{city:{"A":"2026-01-01","B":"","C":""},country:{}}).medals.find(m=>m.label==="小满贯·三连").ok'),true);assert.equal(run('upPassportJourney(DB.rows).slam.city.done.length'),3);assert.equal(run('upPassportJourney(DB.rows.slice(0,10)).slam.city.rows.length>=1'),true);
 });
 
 test('horizontal swipe locks scrolling even if it drifts vertically, and suppresses ghost clicks',()=>{

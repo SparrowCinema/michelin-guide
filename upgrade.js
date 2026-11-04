@@ -1,6 +1,6 @@
 /* Travel, details, passport and snapshot views. Existing restaurant IDs remain unchanged. */
 // Must equal ASSET_VER in index.html and sw.js; index.html reloads fresh files when they disagree.
-const UPGRADE_VER="56";
+const UPGRADE_VER="57";
 let PERSONAL={version:2,trips:[],records:Object.create(null)},PRICE_DB={items:{}},upSelected='',upPickU='',upLoaded=false,upReadError=false;
 function upSave(next){
   if(upReadError){toast('已有旅行存储无法读取，已阻止覆盖。请先导出原始备份再恢复。');return false;}
@@ -35,7 +35,7 @@ function upNewTrip(name,u){
   return t;
 }
 // Passport presentation state is intentionally separate from saved travel data.
-const PASSPORT={tab:'book',tracks:new Set(),open:false,sheet:0,busy:false,observer:null,honor:'all'};
+const PASSPORT={tab:'book',tracks:new Set(),cityView:{q:'',sort:'near'},open:false,sheet:0,busy:false,observer:null,honor:'all'};
 const passportEmblem=`<svg viewBox="0 0 64 64" fill="none" aria-hidden="true"><g><circle cx="32" cy="32" r="27.6" fill="none" stroke="#d9ae62" stroke-width="1.15"/><circle cx="32" cy="32" r="24.9" fill="none" stroke="#d9ae62" stroke-width=".7"/><g stroke="#f4e7cd" stroke-width="3.5" stroke-linecap="butt"><line x1="32" y1="18.6" x2="32" y2="50.3"/><line x1="13.9" y1="30.4" x2="50.7" y2="30.4"/><line x1="21.1" y1="19.4" x2="43.3" y2="44.2"/><line x1="43.0" y1="19.4" x2="20.8" y2="44.2"/></g><g fill="#f4e7cd"><circle cx="32" cy="50.3" r="2.7"/><circle cx="13.9" cy="30.4" r="2.7"/><circle cx="50.7" cy="30.4" r="2.7"/><circle cx="21.1" cy="19.4" r="2.7"/><circle cx="43.0" cy="19.4" r="2.7"/><circle cx="20.8" cy="44.2" r="2.7"/><circle cx="43.3" cy="44.2" r="2.7"/><path d="M32 9.4 Q32.9 12.2 35.7 13.1 Q32.9 14 32 16.8 Q31.1 14 28.3 13.1 Q31.1 12.2 32 9.4Z"/></g><circle cx="14.4" cy="30.2" r="1.15" fill="#d8532e" stroke="none"/></g></svg>`;
 // Original vector engraving: a world served on a plate, framed by cutlery.
 const passportTableEmblem=`<svg viewBox="0 0 240 210" fill="none" aria-hidden="true"><g stroke="currentColor" stroke-width=".85"><circle cx="120" cy="104" r="76"/><circle cx="120" cy="104" r="69"/><circle cx="120" cy="104" r="62" stroke-dasharray=".5 4" stroke-linecap="round"/><ellipse cx="120" cy="104" rx="31" ry="62" opacity=".36"/><path d="M58 104h124M66 74h108M66 134h108M120 42v124" opacity=".32"/><path d="M25 49v37q0 10 9 10t9-10V49M31 49v35m6-35v35M34 96v66M205 49q-13 25-13 48h13m0-48v113" stroke-width="1.5" stroke-linecap="round"/><path d="M66 182q54 27 108 0M71 181l-6 2m16 3-5 4m16-1-3 5m16-2-1 5m16-4v5m15-6 1 5m13-8 3 5m10-11 5 4m5-10 6 2"/><path d="m120 13 2.7 6.3 6.3 2.7-6.3 2.7L120 31l-2.7-6.3-6.3-2.7 6.3-2.7Z" fill="currentColor" stroke="none"/><path d="M52 29h34m68 0h34" opacity=".5"/></g><circle cx="120" cy="104" r="35" fill="#652632"/><g transform="translate(85 69) scale(1.09375)">${passportEmblem.replace(/^<svg[^>]*>/,'').replace(/<\/svg>$/,'')}</g></svg>`;
@@ -93,14 +93,15 @@ const PP_TRACKS=[
   {id:'city',title:'城市漫游',sub:'去过的不同城市',rule:'去过餐厅的不同城市数量。',glyph:'compass',val:j=>j.cities.length,steps:[[2,'双城记'],[3,'三城寻味'],[5,'五城漫游'],[10,'十城行者'],[20,'二十城名册'],[30,'三十城环游'],[50,'五十城传说']]},
   {id:'country',title:'环球足迹',sub:'去过的不同国家和地区',rule:'去过餐厅的不同国家或地区数量。',glyph:'globe',val:j=>j.countries,steps:[[2,'跨国一餐'],[3,'三国滋味'],[5,'五国漫游'],[10,'十国环球'],[15,'十五国远行'],[20,'二十国传说']]}
 ];
+const upT=(zh,en)=>typeof MGI18n!=='undefined'&&MGI18n.en?en:zh;
 function upSlamStats(visited){
   const city=new Map(),country=new Map();let all3=0,done3=0,allS=0,doneS=0;
   for(const r of DB.rows){
     if(r.l>2)continue;const v=visited.has(r.u);allS++;if(v)doneS++;if(r.l===0){all3++;if(v)done3++;}
     for(const [m,k] of [[city,r.ci],[country,r.co]]){let e=m.get(k);if(!e){e={all:0,done:0};m.set(k,e);}e.all++;if(v)e.done++;}
   }
-  const sweep=(m,min)=>{let full=0,best=null;for(const [k,e] of m){if(e.all<min)continue;if(e.done===e.all)full++;else if(!best||e.done/e.all>best.e.done/best.e.all)best={k,e};}return {full,best};};
-  return {city:sweep(city,3),country:sweep(country,10),all3,done3,allS,doneS};
+  const sweep=(m,min,nameOf)=>{const fullNames=[],list=[];let best=null;for(const [k,e] of m){if(e.all<min)continue;const name=nameOf(k);if(e.done===e.all)fullNames.push(name);else if(e.done>0&&(!best||e.done/e.all>best.e.done/best.e.all))best={k,name,e};if(e.done>0)list.push({name,done:e.done,all:e.all});}return {fullNames,list,best};};
+  return {city:sweep(city,3,k=>DB.T[k]?DB.T[k][0]:String(k)),country:sweep(country,10,k=>DB.C&&DB.C[k]?DB.C[k][0]:String(k)),all3,done3,allS,doneS};
 }
 function upGrowthStore(key){try{const v=JSON.parse(localStorage.getItem(key)||'null');return Array.isArray(v)?v:null}catch(e){return null}}
 function upGrowthSave(key,v){try{localStorage.setItem(key,JSON.stringify(v))}catch(e){}}
@@ -109,21 +110,26 @@ function upGrowthHall(){
   try{const v=JSON.parse(localStorage.getItem('mg-pp-hall')||'null');if(v&&typeof v==='object'&&!Array.isArray(v))return v;}catch(e){}
   const old=upGrowthStore('mg-pp-earned');return old?Object.fromEntries(old.map(l=>[l,''])):null;
 }
-function upPassportJourney(visit,hall){
+function upGrowthSweeps(){
+  try{const v=JSON.parse(localStorage.getItem('mg-pp-sweeps')||'null');if(v&&typeof v==='object'&&v.city&&v.country)return v;}catch(e){}
+  return null;
+}
+function upPassportJourney(visit,hall,sweeps){
   const rows=[...new Map(visit.map(r=>[r.u,r])).values()],cities=upPassportCities(rows),n=rows.length,countries=new Set(rows.map(r=>r.co)).size;
   const byL=[0,0,0,0,0];rows.forEach(r=>{byL[r.l]++;});
   const j={n,cities,countries,byL,stars:byL[0]+byL[1]+byL[2],points:byL.reduce((a,c,i)=>a+c*PP_POINTS[i],0)};
-  const EN=typeof MGI18n!=='undefined'&&MGI18n.en,S=upSlamStats(new Set(rows.map(r=>r.u)));
-  const cityName=k=>DB.T[k]?DB.T[k][0]:'',countryName=k=>DB.C&&DB.C[k]?DB.C[k][0]:'';
-  const hint=(b,name)=>b?`${name(b.k)} ${b.e.done}/${b.e.all}`:'';
+  const EN=typeof MGI18n!=='undefined'&&MGI18n.en,S=upSlamStats(new Set(rows.map(r=>r.u))),sw=sweeps||{city:{},country:{}};
+  const scope=(k)=>{const full=new Set([...S[k].fullNames,...Object.keys(sw[k]||{})]);const rows=S[k].list.filter(x=>!full.has(x.name)).sort((a,b)=>b.done/b.all-a.done/a.all||b.done-a.done);const done=[...full].map(name=>{const l=S[k].list.find(x=>x.name===name);return {name,done:l?l.done:0,all:l?l.all:0,date:(sw[k]||{})[name]||''};}).sort((a,b)=>b.date.localeCompare(a.date)||a.name.localeCompare(b.name));return {full,done,rows};};
+  const SC={city:scope('city'),country:scope('country')};
+    const hint=b=>b?`${b.name} ${b.e.done}/${b.e.all}`:'';
   const covered=byL.slice(0,4).filter(x=>x>0).length;
   const slamSteps=[
     {label:'四味俱全',desc:'三星、二星、一星、必比登，每一档都去过至少一家。',now:covered,at:4},
-    {label:'小满贯',desc:'吃遍一座城市的所有星级餐厅（该城星级餐厅须有 3 家以上）。',now:Math.min(S.city.full,1),at:1,frac:S.city.full?1:S.city.best?S.city.best.e.done/S.city.best.e.all:0,hint:S.city.full?'':hint(S.city.best,cityName)},
-    {label:'小满贯·三连',desc:'集齐 3 座城市的小满贯。',now:Math.min(S.city.full,3),at:3},
-    {label:'小满贯·十全',desc:'集齐 10 座城市的小满贯。',now:Math.min(S.city.full,10),at:10},
-    {label:'中满贯',desc:'吃遍一个国家或地区的所有星级餐厅（须有 10 家以上）。',now:Math.min(S.country.full,1),at:1,frac:S.country.full?1:S.country.best?S.country.best.e.done/S.country.best.e.all:0,hint:S.country.full?'':hint(S.country.best,countryName)},
-    {label:'中满贯·三连',desc:'集齐 3 个国家或地区的中满贯。',now:Math.min(S.country.full,3),at:3},
+    {label:'小满贯',desc:'吃遍一座城市的所有星级餐厅（该城星级餐厅须有 3 家以上）。',now:Math.min(SC.city.full.size,1),at:1,frac:SC.city.full.size?1:S.city.best?S.city.best.e.done/S.city.best.e.all:0,hint:SC.city.full.size?'':hint(S.city.best)},
+    {label:'小满贯·三连',desc:'集齐 3 座城市的小满贯。',now:Math.min(SC.city.full.size,3),at:3},
+    {label:'小满贯·十全',desc:'集齐 10 座城市的小满贯。',now:Math.min(SC.city.full.size,10),at:10},
+    {label:'中满贯',desc:'吃遍一个国家或地区的所有星级餐厅（须有 10 家以上）。',now:Math.min(SC.country.full.size,1),at:1,frac:SC.country.full.size?1:S.country.best?S.country.best.e.done/S.country.best.e.all:0,hint:SC.country.full.size?'':hint(S.country.best)},
+    {label:'中满贯·三连',desc:'集齐 3 个国家或地区的中满贯。',now:Math.min(SC.country.full.size,3),at:3},
     {label:'大满贯',desc:'吃遍全球所有三星餐厅。',now:S.done3,at:Math.max(S.all3,1)},
     {label:'超级大满贯',desc:'吃遍全球所有星级餐厅，传说中的终点。',now:S.doneS,at:Math.max(S.allS,1)}
   ];
@@ -135,42 +141,50 @@ function upPassportJourney(visit,hall){
   const closest=tracks.map(t=>t.next).filter(Boolean).sort((a,b)=>b.frac-a.frac||(a.at-a.now)-(b.at-b.now)).slice(0,3);
   let li=0;PP_LEVELS.forEach(([p],i)=>{if(j.points>=p)li=i;});
   const cur=PP_LEVELS[li],nxt=PP_LEVELS[li+1]||null;
-  return {...j,tracks,medals,goals:medals,earned:medals.filter(m=>m.ok).length,total:medals.length,closest,next:closest[0]||null,level:{idx:li,title:cur[1],next:nxt?nxt[1]:null,toNext:nxt?nxt[0]-j.points:0,ratio:nxt?(j.points-cur[0])/(nxt[0]-cur[0]):1},EN};
+  return {...j,tracks,medals,goals:medals,earned:medals.filter(m=>m.ok).length,total:medals.length,closest,next:closest[0]||null,slam:{city:SC.city,country:SC.country,sweepNow:{city:S.city.fullNames,country:S.country.fullNames}},level:{idx:li,title:cur[1],next:nxt?nxt[1]:null,toNext:nxt?nxt[0]-j.points:0,ratio:nxt?(j.points-cur[0])/(nxt[0]-cur[0]):1},EN};
 }
-function upGrowthSync(journey,hall){
+function upGrowthSync(journey,hall,sweeps){
   const today=new Date().toLocaleDateString('sv-SE'),cond=journey.medals.filter(m=>m.cond),fresh=[];
   let h=hall;
   if(!h){h={};if(journey.n)cond.forEach(m=>{h[m.label]='';});upGrowthSave('mg-pp-hall',h);}
   else{cond.forEach(m=>{if(!(m.label in h)){h[m.label]=today;fresh.push(m.label);}});if(fresh.length)upGrowthSave('mg-pp-hall',h);if(fresh.length)upGrowthSave('mg-pp-new',[...new Set([...(upGrowthStore('mg-pp-new')||[]),...fresh])]);}
+  const freshSw=[],nowSw=journey.slam.sweepNow;let sw=sweeps;
+  if(!sw){sw={city:{},country:{}};['city','country'].forEach(k=>nowSw[k].forEach(nm=>{sw[k][nm]='';}));upGrowthSave('mg-pp-sweeps',sw);}
+  else{['city','country'].forEach(k=>nowSw[k].forEach(nm=>{if(!(nm in sw[k])){sw[k][nm]=today;freshSw.push((k==='city'?'小满贯 · ':'中满贯 · ')+nm);}}));if(freshSw.length)upGrowthSave('mg-pp-sweeps',sw);}
   let up=null;try{const prev=localStorage.getItem('mg-pp-level');if(prev===null)localStorage.setItem('mg-pp-level',String(journey.level.idx));else if(journey.level.idx>+prev){up=journey.level.title;localStorage.setItem('mg-pp-level',String(journey.level.idx));}else if(journey.level.idx<+prev)localStorage.setItem('mg-pp-level',String(journey.level.idx));}catch(e){}
-  return {fresh,up};
+  return {fresh,up,sweeps:freshSw};
 }
 function upGrowthGlyph(kind){
   const paths={star:'m12 3 2.8 5.7 6.2.9-4.5 4.4 1.1 6.2-5.6-3-5.6 3 1.1-6.2L3 9.6l6.2-.9Z',table:'M5 3v6q0 3 3 3t3-3V3M8 3v18M19 3q-4 5-4 10h4m0-10v18',compass:'M12 2a10 10 0 1 0 0 20 10 10 0 1 0 0-20Zm4 6-2 6-6 2 2-6Z',globe:'M12 2a10 10 0 1 0 0 20 10 10 0 1 0 0-20ZM2 12h20M12 2q-8 10 0 20 8-10 0-20Z',crown:'M3 18h18l-1.6-9-4.4 4-3-7-3 7-4.4-4Zm1 3h16',trophy:'M7 4h10v5a5 5 0 0 1-10 0V4Zm0 2H4v2a3 3 0 0 0 3 3m10-5h3v2a3 3 0 0 1-3 3M12 14v4m-4 3h8'};
   return `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="${paths[kind]||paths.compass}"/></svg>`;
 }
+function upCityStar(c){const sa=c.tiers.filter(t=>t.l<3).reduce((a,t)=>a+t.all,0),sd=c.tiers.filter(t=>t.l<3).reduce((a,t)=>a+t.done,0);return {sa,sd,q:sa>=3,full:sa>=3&&sd===sa,ratio:sa>=3?sd/sa:0};}
+function upCityOrder(cities){return [...cities].sort((a,b)=>{const x=upCityStar(a),y=upCityStar(b),ax=x.q&&!x.full?x.ratio:-1,ay=y.q&&!y.full?y.ratio:-1;return ay-ax||b.n-a.n||a.ci-b.ci;});}
+function upTierRows(c){const names=['三星','二星','一星','必比登','入选'],shown=c.tiers.filter(t=>t.l<4&&t.all>0),rows=shown.length?shown:c.tiers.filter(t=>t.all>0).slice(0,1);return `<ul class="pp-tiers" aria-label="${esc(DB.T[c.ci][0])}按荣誉探索">${rows.map(t=>`<li><span>${names[t.l]}</span><progress value="${t.done}" max="${t.all}" aria-label="${names[t.l]} ${t.done} / ${t.all}"></progress><b>${t.done}/${t.all}</b></li>`).join('')}</ul>`;}
 function upPassportGrowth(visit,journey,pending){
   const {n,cities,countries,earned,total,level,tracks,closest,EN}=journey,tierName=['三星','二星','一星','必比登','入选'];
   const L=PP_LEVELS.map(x=>x[1]),stroke=(Math.min(level.ratio,1)*263.9).toFixed(1);
   const fmtDate=d=>d?(EN?`Earned ${d.replaceAll('-','.')}`:`${d.replaceAll('-','.')} 获得`):(EN?'Earned':'已达成');
   const cityCard=c=>{
-    const shown=c.tiers.filter(t=>t.l<4&&t.all>0),rows=shown.length?shown:c.tiers.filter(t=>t.all>0).slice(0,1);
-    const sa=c.tiers.filter(t=>t.l<3).reduce((a,t)=>a+t.all,0),sd=c.tiers.filter(t=>t.l<3).reduce((a,t)=>a+t.done,0);
-    const badge=sa>=3?(sd===sa?`<em class="pp-city-badge is-full">小满贯 ✓</em>`:`<em class="pp-city-badge">${EN?`Stars ${sd}/${sa}`:`星级 ${sd}/${sa}`}</em>`):'';
-    return `<article class="pp-destination"><div class="pp-destination-top"><span class="pp-destination-icon">${upGrowthGlyph('globe')}</span><div><h6>${esc(DB.T[c.ci][0])}</h6><span>${EN?`Visited <b>${c.n}</b>`:`已去过 <b>${c.n}</b> 家`}</span></div>${badge}</div><ul class="pp-tiers" aria-label="${esc(DB.T[c.ci][0])}按荣誉探索">${rows.map(t=>`<li><span>${tierName[t.l]}</span><progress value="${t.done}" max="${t.all}" aria-label="${tierName[t.l]} ${t.done} / ${t.all}"></progress><b>${t.done}/${t.all}</b></li>`).join('')}</ul></article>`;
+    const st=upCityStar(c),badge=st.q?(st.full?`<em class="pp-city-badge is-full">小满贯 ✓</em>`:`<em class="pp-city-badge">${EN?`Stars ${st.sd}/${st.sa}`:`星级 ${st.sd}/${st.sa}`}</em>`):'';
+    return `<article class="pp-destination"><div class="pp-destination-top"><span class="pp-destination-icon">${upGrowthGlyph('globe')}</span><div><h6>${esc(DB.T[c.ci][0])}</h6><span>${EN?`Visited <b>${c.n}</b>`:`已去过 <b>${c.n}</b> 家`}</span></div>${badge}</div>${upTierRows(c)}</article>`;
   };
+  const ordered=upCityOrder(cities);
   const status=m=>m.ok?fmtDate(m.date):(m.hint||`${m.now} / ${m.at}`);
   const medal=(m,t)=>{
     const isNext=t.next&&t.next.label===m.label,cls=[m.ok?'is-earned':'is-pending',isNext?'is-next':'',pending.includes(m.label)?'is-new':''].filter(Boolean).join(' ');
     return `<li class="${cls}" aria-label="${esc(m.label)} · ${status(m)}${isNext?(EN?' · next':' · 下一枚'):''}"><span class="pp-medallion">${/^\d+$/.test(m.mark)?`<b>${m.mark}</b>`:upGrowthGlyph(m.mark)}${m.ok?'<i aria-hidden="true">✓</i>':''}</span><strong>${m.label}</strong><small>${isNext?(EN?'Next · ':'下一枚 · ')+status(m):status(m)}</small></li>`;
   };
+  const scopeRows=(rows,full)=>rows.map(x=>`<li class="${full?'is-full':''}"><span class="pp-scope-name">${esc(x.name)}</span><progress value="${full&&!x.all?1:x.done}" max="${full&&!x.all?1:x.all}" aria-label="${esc(x.name)}"></progress><b>${full?'✓':`${x.done}/${x.all}`}</b></li>`).join('');
+  const scopePanel=(title,note,sc,none)=>`<section class="pp-scope"><h6>${title}</h6><p>${note}</p>${sc.done.length?`<div class="pp-scope-group"><span>${EN?'Completed':'已集齐'} · ${sc.done.length}</span><ul class="pp-scope-list">${sc.done.slice(0,5).map(x=>`<li class="is-full"><span class="pp-scope-name">${esc(x.name)}</span><progress value="1" max="1" aria-label="${esc(x.name)}"></progress><b>✓${x.date?` <small>${x.date.replaceAll('-','.')}</small>`:''}</b></li>`).join('')}</ul>${sc.done.length>5?`<details class="pp-scope-more"><summary>${EN?'More':'更多'}</summary><ul class="pp-scope-list">${sc.done.slice(5).map(x=>`<li class="is-full"><span class="pp-scope-name">${esc(x.name)}</span><progress value="1" max="1"></progress><b>✓</b></li>`).join('')}</ul></details>`:''}</div>`:''}${sc.rows.length?`<div class="pp-scope-group"><span>${EN?'In progress':'进行中'} · ${sc.rows.length}</span><ul class="pp-scope-list">${scopeRows(sc.rows.slice(0,5))}</ul>${sc.rows.length>5?`<details class="pp-scope-more"><summary>${EN?`Show ${sc.rows.length-5} more`:`再看 ${sc.rows.length-5} 个`}</summary><ul class="pp-scope-list">${scopeRows(sc.rows.slice(5))}</ul></details>`:''}</div>`:''}${sc.done.length||sc.rows.length?'':`<p class="pp-scope-none">${none}</p>`}</section>`;
+  const slamScopes=()=>`<div class="pp-slam-scopes">${scopePanel(EN?'Mini Slam · by city':'小满贯 · 各城市',EN?'Counts cities with 3 or more starred restaurants.':'只统计星级餐厅 3 家以上的城市。',journey.slam.city,EN?'Pick a city and visit every starred restaurant in it.':'选一座城市，吃遍它的所有星级餐厅。')}${scopePanel(EN?'Country Slam · by country or region':'中满贯 · 各国家 / 地区',EN?'Counts countries or regions with 10 or more starred restaurants.':'只统计星级餐厅 10 家以上的国家或地区。',journey.slam.country,EN?'Visit every starred restaurant in one country or region.':'吃遍一个国家或地区的所有星级餐厅。')}</div>`;
   const track=t=>{
     const nx=t.next;
-    return `<details class="pp-track${t.slam?' pp-track-slam':''}" data-track="${t.id}"${PASSPORT.tracks.has(t.id)?' open':''}><summary><span class="pp-track-ico">${upGrowthGlyph(t.glyph||'star')}</span><span class="pp-track-info"><strong>${t.title}</strong><small>${t.sub}</small>${nx?`<span class="pp-track-next"><i style="width:${Math.min(nx.frac,1)*100}%"></i></span>`:''}</span><span class="pp-track-count"><b>${t.earned}</b>/${t.items.length}</span></summary><div class="pp-track-body"><p class="pp-track-rule">${t.rule}</p><ul class="pp-milestones">${t.items.map(m=>medal(m,t)).join('')}</ul>${t.slam?`<ul class="pp-slam-rules">${t.items.map(m=>`<li><b>${m.label}</b><span>${m.desc}</span></li>`).join('')}</ul>`:''}</div></details>`;
+    return `<details class="pp-track${t.slam?' pp-track-slam':''}" data-track="${t.id}"${PASSPORT.tracks.has(t.id)?' open':''}><summary><span class="pp-track-ico">${upGrowthGlyph(t.glyph||'star')}</span><span class="pp-track-info"><strong>${t.title}</strong><small>${t.sub}</small>${nx?`<span class="pp-track-next-label">${EN?'Next':'下一枚'} · <span>${nx.label}</span> · ${nx.hint||`${nx.now}/${nx.at}`}</span><span class="pp-track-next"><i style="width:${Math.min(nx.frac,1)*100}%"></i></span>`:`<span class="pp-track-next-label">${EN?'All earned':'全部集齐'}</span>`}</span><span class="pp-track-count"><b>${t.earned}</b>/${t.items.length}</span></summary><div class="pp-track-body"><p class="pp-track-rule">${t.rule}</p><ul class="pp-milestones">${t.items.map(m=>medal(m,t)).join('')}</ul>${t.slam?slamScopes():''}${t.slam?`<ul class="pp-slam-rules">${t.items.map(m=>`<li><b>${m.label}</b><span>${m.desc}</span></li>`).join('')}</ul>`:''}</div></details>`;
   };
   const almost=closest.length?`<section class="pp-almost"><div class="pp-journey-section-head"><div><span translate="no">ALMOST THERE</span><h5>接近达成</h5></div></div><ul>${closest.map(m=>`<li><span class="pp-almost-ico">${/^\d+$/.test(m.mark)?`<b>${m.mark}</b>`:upGrowthGlyph(m.mark)}</span><div><strong>${m.label}</strong><div class="pp-almost-meter" role="progressbar" aria-label="${esc(m.label)}" aria-valuemin="0" aria-valuemax="${m.at}" aria-valuenow="${m.now}"><i style="width:${Math.min(m.frac,1)*100}%"></i></div></div><b class="pp-almost-num">${m.hint||`${m.now} / ${m.at}`}</b></li>`).join('')}</ul></section>`:'';
   const lvCopy=level.next?(EN?`<b>${level.toNext}</b> more points to become “${L[level.idx+1]}”`:`再得 <b>${level.toNext}</b> 分，升为「${level.next}」`):(EN?'You have reached the top title.':'已登顶，继续珍藏每一餐。');
-  return `<section class="pp-growth pp-journey" aria-label="护照成长"><header class="pp-growth-hero"><div class="pp-growth-head"><span class="pp-growth-eyebrow" translate="no">YOUR CULINARY JOURNAL</span><h4>护照成长</h4><p>把每一餐，变成你的世界。</p><div class="pp-journey-stats"><span><b>${n}</b> 家餐厅</span><span><b>${cities.length}</b> 座城市</span><span><b>${countries}</b> 国家 / 地区</span></div></div><div class="pp-next-goal"><div class="pp-journey-ring"><svg viewBox="0 0 100 100" aria-hidden="true"><circle class="pp-ring-track" cx="50" cy="50" r="42"/><circle class="pp-ring-fill" cx="50" cy="50" r="42" stroke-dasharray="${stroke} 263.9"/></svg><span><b>Lv.${level.idx+1}</b><small>${journey.points} 分</small></span></div><div class="pp-next-copy"><span>当前称号</span><h5>${level.title}</h5><p>${lvCopy}</p><div class="pp-next-meter" role="progressbar" aria-label="${esc(level.title)}" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${Math.round(Math.min(level.ratio,1)*100)}"><i style="width:${Math.min(level.ratio,1)*100}%"></i></div><small class="pp-points-rule">三星 5 分 · 二星 3 分 · 一星 2 分 · 必比登 / 入选 1 分</small><button type="button" class="pp-next-action" data-passport-browse>探索下一站 ↗</button></div></div></header>${almost}<div class="pp-journey-body"><section class="pp-journey-cities"><div class="pp-journey-section-head"><div><span translate="no">PLACES & MEMORIES</span><h5>城市足迹</h5></div><span>${cities.length} 座城市</span></div><p class="pp-journey-caption">一座城，从一张餐桌开始。</p><div class="pp-city-progress">${cities.slice(0,3).map(cityCard).join('')||`<div class="pp-journey-empty">${upGrowthGlyph('globe')}<h6>世界很大，第一站由你决定。</h6><p>标记一家“去过”，留下第一枚足迹。</p><button type="button" data-passport-browse>发现下一张餐桌 ↗</button></div>`}</div>${cities.length>3?`<details class="pp-more-cities"><summary>查看全部城市 · ${cities.length}</summary><div class="pp-city-progress">${cities.slice(3).map(cityCard).join('')}</div></details>`:''}</section><section class="pp-journey-awards"><div class="pp-journey-section-head"><div><span translate="no">COLLECTIONS</span><h5>纪念章系列</h5></div><span>${earned} / ${total}</span></div><p class="pp-journey-caption">慢慢集，十年二十年也不嫌长。</p><div class="pp-tracks">${tracks.map(track).join('')}</div></section></div><details class="pp-journey-rules"><summary>签章与进度如何计算</summary><p>标记“去过”即获章，日期可后补；仅“想去”不盖章。重复到访保存在店铺记录中。纪念章一旦获得会一直保留；城市与满贯的星级进度按当前名录统计，名录更新后分母可能变化。</p></details></section>`;
+  return `<section class="pp-growth pp-journey" aria-label="护照成长"><header class="pp-growth-hero"><div class="pp-growth-head"><span class="pp-growth-eyebrow" translate="no">YOUR CULINARY JOURNAL</span><h4>护照成长</h4><p>把每一餐，变成你的世界。</p><div class="pp-journey-stats"><span><b>${n}</b> 家餐厅</span><span><b>${cities.length}</b> 座城市</span><span><b>${countries}</b> 国家 / 地区</span></div></div><div class="pp-next-goal"><div class="pp-journey-ring"><svg viewBox="0 0 100 100" aria-hidden="true"><circle class="pp-ring-track" cx="50" cy="50" r="42"/><circle class="pp-ring-fill" cx="50" cy="50" r="42" stroke-dasharray="${stroke} 263.9"/></svg><span><b>Lv.${level.idx+1}</b><small>${journey.points} 分</small></span></div><div class="pp-next-copy"><span>当前称号</span><h5>${level.title}</h5><p>${lvCopy}</p><div class="pp-next-meter" role="progressbar" aria-label="${esc(level.title)}" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${Math.round(Math.min(level.ratio,1)*100)}"><i style="width:${Math.min(level.ratio,1)*100}%"></i></div><small class="pp-points-rule">三星 5 分 · 二星 3 分 · 一星 2 分 · 必比登 / 入选 1 分</small><button type="button" class="pp-next-action" data-passport-browse>探索下一站 ↗</button></div></div></header>${almost}<div class="pp-journey-body"><section class="pp-journey-cities"><div class="pp-journey-section-head"><div><span translate="no">PLACES & MEMORIES</span><h5>城市足迹</h5></div><span>${cities.length} 座城市</span></div><p class="pp-journey-caption">一座城，从一张餐桌开始。</p><div class="pp-city-progress">${ordered.slice(0,3).map(cityCard).join('')||`<div class="pp-journey-empty">${upGrowthGlyph('globe')}<h6>世界很大，第一站由你决定。</h6><p>标记一家“去过”，留下第一枚足迹。</p><button type="button" data-passport-browse>发现下一张餐桌 ↗</button></div>`}</div>${cities.length>3?`<button type="button" class="pp-all-cities" data-passport-cities><span>${EN?'View all cities':'查看全部城市'}</span><b>${cities.length} ›</b></button>`:''}</section><section class="pp-journey-awards"><div class="pp-journey-section-head"><div><span translate="no">COLLECTIONS</span><h5>纪念章系列</h5></div><span>${earned} / ${total}</span></div><p class="pp-journey-caption">慢慢集，十年二十年也不嫌长。</p><div class="pp-tracks">${tracks.map(track).join('')}</div></section></div><details class="pp-journey-rules"><summary>签章与进度如何计算</summary><p>标记“去过”即获章，日期可后补；仅“想去”不盖章。重复到访保存在店铺记录中。纪念章一旦获得会一直保留；城市与满贯的星级进度按当前名录统计，名录更新后分母可能变化。</p></details></section>`;
 }
 function upPassportSingle(){return typeof matchMedia==='function'&&matchMedia('(max-width:700px) and (orientation:portrait)').matches;}
 function upPassportPlan(count,sheet,single){
@@ -184,10 +198,11 @@ function upPassport(visit){
   const honorFilters=`<div class="pp-honor-filters" role="group" aria-label="签章荣誉分类">${[['all','全部'],...LVN.map((v,i)=>[String(i),v])].map(([key,label])=>`<button type="button" data-passport-honor="${key}" aria-pressed="${PASSPORT.honor===key}">${esc(label)} <span>${key==='all'?allEntries.length:allEntries.filter(e=>e.r.l===+key).length}</span></button>`).join('')}</div>`;
   const single=upPassportSingle(),plan=upPassportPlan(entries.length,PASSPORT.sheet,single);PASSPORT.sheet=plan.page;
   const lv=LVN.map((name,l)=>({name,n:visit.filter(r=>r.l===l).length})).filter(x=>x.n);
-  const en=typeof MGI18n!=='undefined'&&MGI18n.en,hall=upGrowthHall(),journey=upPassportJourney(visit,hall),sync=upGrowthSync(journey,hall),pend=upGrowthStore('mg-pp-new')||[];
-  if((sync.fresh.length||sync.up)&&typeof toast==='function'){
+  const en=typeof MGI18n!=='undefined'&&MGI18n.en,hall=upGrowthHall(),sweepsStore=upGrowthSweeps(),journey=upPassportJourney(visit,hall,sweepsStore),sync=upGrowthSync(journey,hall,sweepsStore),pend=upGrowthStore('mg-pp-new')||[];
+  if((sync.fresh.length||sync.sweeps.length||sync.up)&&typeof toast==='function'){
     const tl=l=>en?MGI18n.tr(l):l,parts=[];
     if(sync.fresh.length)parts.push(en?'Medal unlocked · '+sync.fresh.slice(0,2).map(tl).join(', ')+(sync.fresh.length>2?` +${sync.fresh.length-2}`:''):'解锁纪念章 · '+sync.fresh.slice(0,2).join('、')+(sync.fresh.length>2?` 等 ${sync.fresh.length} 枚`:''));
+    if(sync.sweeps.length)parts.push(en?sync.sweeps.slice(0,2).map(x=>(x.startsWith('小')?'Mini Slam · ':'Country Slam · ')+tl(x.split(' · ')[1])).join(', '):sync.sweeps.slice(0,2).join('、'));
     if(sync.up)parts.push(en?'Level up · '+tl(sync.up):'升级 · 称号「'+sync.up+'」');
     toast(parts.join(' ｜ '));
   }
@@ -232,6 +247,35 @@ function upTurnPassport(action){
   const reverse=action==='prev';const animation=leaf.animate([{transform:`rotateY(${reverse?-180:0}deg)`},{transform:`rotateY(${reverse?0:-180}deg)`}],{duration:650,easing:'cubic-bezier(.22,.7,.25,1)',fill:'forwards'});
   const done=()=>{leaf.remove();PASSPORT.busy=false;};animation.finished.then(done,done);
 }
+function upCitiesPageRows(visit,journey,st){
+  const q=st.q.trim().toLowerCase(),entries=upPassportEntries(visit),last=new Map();entries.forEach(e=>{if(e.date&&(last.get(e.r.ci)||'')<e.date)last.set(e.r.ci,e.date);});
+  const country=c=>DB.C&&DB.C[DB.T[c.ci][1]]?DB.C[DB.T[c.ci][1]][0]:'';
+  let list=journey.cities.filter(c=>!q||(DB.T[c.ci][0]+' '+(DB.T[c.ci][2]||'')+' '+country(c)).toLowerCase().includes(q));
+  const row=c=>{const s=upCityStar(c),pct=Math.round(s.ratio*100);return `<details class="pp-cityrow"><summary><span class="pp-cityrow-name"><strong>${esc(DB.T[c.ci][0])}</strong><small>${upT(`已去过 ${c.n} 家`,`Visited ${c.n}`)}${country(c)?' · '+esc(country(c)):''}</small></span>${s.q?`<span class="pp-cityrow-star${s.full?' is-full':''}"><i class="pp-mini-ring" style="--p:${pct}"></i>${s.full?upT('小满贯 ✓','Mini Slam ✓'):upT(`星级 ${s.sd}/${s.sa}`,`Stars ${s.sd}/${s.sa}`)}</span>`:''}<svg class="pp-cityrow-chev" viewBox="0 0 24 24" aria-hidden="true"><path d="m8 5 7 7-7 7"/></svg></summary>${upTierRows(c)}</details>`;};
+  if(st.sort==='country'){const g=new Map();list.forEach(c=>{const k=country(c)||'—';if(!g.has(k))g.set(k,[]);g.get(k).push(c);});return [...g].sort((a,b)=>b[1].reduce((x,c)=>x+c.n,0)-a[1].reduce((x,c)=>x+c.n,0)).map(([k,cs])=>`<section class="pp-citygroup"><h6>${esc(k)}<small>${cs.length}</small></h6>${cs.sort((a,b)=>b.n-a.n).map(row).join('')}</section>`).join('')||`<p class="pp-cities-empty">${upT('没有找到匹配的城市。','No matching cities.')}</p>`;}
+  if(st.sort==='count')list=[...list].sort((a,b)=>b.n-a.n||a.ci-b.ci);else if(st.sort==='recent')list=[...list].sort((a,b)=>(last.get(b.ci)||'').localeCompare(last.get(a.ci)||'')||b.n-a.n);else list=upCityOrder(list);
+  return list.map(row).join('')||`<p class="pp-cities-empty">${upT('没有找到匹配的城市。','No matching cities.')}</p>`;
+}
+function upOpenCities(){
+  let d=document.getElementById('passportCitiesDlg');
+  if(!d){
+    d=document.createElement('dialog');d.id='passportCitiesDlg';d.className='pp-cities-dlg';d.setAttribute('aria-labelledby','ppCitiesTitle');
+    d.innerHTML='<div class="pp-cities-head"><h3 id="ppCitiesTitle"></h3><button type="button" class="pp-cities-close" data-close></button></div><div class="pp-cities-tools"><input type="search" class="pp-cities-search" autocomplete="off"><div class="pp-cities-sort" role="group"></div></div><div class="pp-cities-list"></div>';
+    document.body.append(d);
+    d.addEventListener('click',e=>{if(e.target===d||e.target.closest('[data-close]'))d.close();const b=e.target.closest('[data-sort]');if(b){PASSPORT.cityView.sort=b.dataset.sort;d.__paint();}});
+    d.querySelector('.pp-cities-search').addEventListener('input',e=>{PASSPORT.cityView.q=e.target.value;d.__list();});
+  }
+  const visit=DB.rows.filter(r=>favOf(r.u)===2),journey=upPassportJourney(visit,upGrowthHall(),upGrowthSweeps());
+  function paintList(){d.querySelector('.pp-cities-list').innerHTML=upCitiesPageRows(visit,journey,PASSPORT.cityView);}
+  function paint(){
+    d.querySelector('#ppCitiesTitle').textContent=upT('城市足迹','City footprints')+' · '+journey.cities.length;
+    const x=d.querySelector('.pp-cities-close');x.textContent=upT('关闭','Close');
+    const si=d.querySelector('.pp-cities-search');si.placeholder=upT('搜索城市或国家','Search cities or countries');si.value=PASSPORT.cityView.q;
+    d.querySelector('.pp-cities-sort').innerHTML=[['near',upT('最近满贯','Closest slam')],['count',upT('去过最多','Most visited')],['recent',upT('最近去过','Recent')],['country',upT('按国家','By country')]].map(([k,l])=>`<button type="button" data-sort="${k}" aria-pressed="${PASSPORT.cityView.sort===k}">${l}</button>`).join('');
+    paintList();
+  }
+  d.__paint=paint;d.__list=paintList;paint();if(!d.open)showAppDialog(d);
+}
 function upBindPassport(){
   let gesture=null,suppress=0;const root=$('passportContent');
   root.addEventListener('toggle',e=>{const d=e.target;if(d.classList&&d.classList.contains('pp-track')){if(d.open)PASSPORT.tracks.add(d.dataset.track);else PASSPORT.tracks.delete(d.dataset.track);}},true);
@@ -261,7 +305,7 @@ function upBindPassport(){
   root.addEventListener('click',e=>{
     const stamp=e.target.closest('[data-passport-restaurant]');if(stamp){if(performance.now()<suppress)return;upOpenDetail(stamp.dataset.passportRestaurant);return;}
     const honor=e.target.closest('[data-passport-honor]');if(honor){PASSPORT.honor=honor.dataset.passportHonor;PASSPORT.sheet=upPassportSingle()?1:0;upPassport(DB.rows.filter(r=>favOf(r.u)===2));return;}
-    const tab=e.target.closest('[data-passport-tab]');if(tab){PASSPORT.tab=tab.dataset.passportTab==='growth'?'growth':'book';PASSPORT.open=false;upRender();return;}const control=e.target.closest('[data-passport-open],[data-passport-close],[data-passport-prev],[data-passport-next],[data-passport-browse]');if(!control)return;if(performance.now()<suppress){e.preventDefault();return;}if(control.hasAttribute('data-passport-browse')){goTab('list');return;}for(const action of ['open','close','prev','next'])if(control.hasAttribute('data-passport-'+action)){upTurnPassport(action);break;}});
+    const cb=e.target.closest('[data-passport-cities]');if(cb){upOpenCities();return;}const tab=e.target.closest('[data-passport-tab]');if(tab){PASSPORT.tab=tab.dataset.passportTab==='growth'?'growth':'book';PASSPORT.open=false;upRender();return;}const control=e.target.closest('[data-passport-open],[data-passport-close],[data-passport-prev],[data-passport-next],[data-passport-browse]');if(!control)return;if(performance.now()<suppress){e.preventDefault();return;}if(control.hasAttribute('data-passport-browse')){goTab('list');return;}for(const action of ['open','close','prev','next'])if(control.hasAttribute('data-passport-'+action)){upTurnPassport(action);break;}});
 
 }
 
