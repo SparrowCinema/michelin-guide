@@ -602,3 +602,6 @@ button.ub-r:hover{color:var(--red)}.ub-r.gone{color:var(--muted);text-decoration
 @media(prefers-color-scheme:dark){:root:not([data-theme="light"]) .me-menu>.me-fold>summary .me-ico{stroke:#6fb5b0}}
 :root[data-theme="dark"] .me-menu>.me-fold>summary .me-ico{stroke:#6fb5b0}
 .me-friends a{justify-content:flex-start}.me-friends .friend-logo{width:44px;height:44px;border-radius:10px;flex-shrink:0;object-fit:cover}.me-friends .friend-text{flex:1;min-width:0}.me-friends a>span[aria-hidden]{margin-left:auto}
+
+/* Shared page-top language control across all four bottom navigation views. */
+.page-language-bar{display:flex;align-items:center;justify-content:space-between;gap:16px;margin-bottom:18px}.page-language-brand{font:600 13px var(--display);letter-spacing:.12em;color:var(--red)}.page-language-toggle{display:inline-flex;align-items:center;flex:none;border:1px solid var(--line);border-radius:999px;background:var(--surface);padding:2px;font:600 11px/1 var(--body);color:var(--muted);cursor:pointer}.page-language-toggle b{font-weight:600;padding:8px 10px;border-radius:999px;min-width:16px;text-align:center}.page-language-toggle b.on{background:var(--red);color:#fffaf0}.page-language-toggle:focus-visible{outline:2px solid var(--red);outline-offset:3px}@media print{.page-language-toggle{display:none}}
