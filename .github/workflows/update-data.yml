@@ -68,7 +68,9 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git checkout -B "$BRANCH"
-          git add -A data.json updates.json tools/editions.json index.html tools/overrides photos city-names.js tools/city_names.json
+          # retired overrides are already staged by `git rm`; only pass paths that still exist so an emptied folder cannot fail the job
+          PATHS=""; for p in data.json updates.json tools/editions.json index.html tools/overrides photos city-names.js tools/city_names.json; do [ -e "$p" ] && PATHS="$PATHS $p"; done
+          git add -A -- $PATHS
           git commit -m "data: rolling MICHELIN update $(date -u +%F)"
           git push -f origin "$BRANCH"
           gh pr create --head "$BRANCH" --base main --title "数据更新：米其林名单与指南版本 $(date -u +%F)" --body-file /tmp/pr-body.md \
