@@ -189,13 +189,15 @@
      "released": "2025-11-27",
      "source": "https://guide.michelin.com/th/en/article/michelin-guide-ceremony/michelin-guide-thailand-2026",
      "synced": true
+    },
+    {
+     "year": 2027,
+     "released": "2026-11-10",
+     "source": "https://guide.michelin.com/en/th/restaurants",
+     "synced": true,
+     "synced_on": "2026-11-20"
     }
-   ],
-   "scheduled": {
-    "year": 2027,
-    "date": "2026-11-10",
-    "source": "https://guide.michelin.com/th/en/article/michelin-guide-ceremony/save-the-date-the-michelin-guide-thailand-2027"
-   }
+   ]
   },
   {
    "id": "malaysia",
@@ -218,6 +220,13 @@
      "released": "2025-11-11",
      "source": "https://guide.michelin.com/th/en/article/michelin-guide-ceremony/malaysia-full-selection-2026",
      "synced": true
+    },
+    {
+     "year": 2027,
+     "released": "2026-11-04",
+     "source": "https://guide.michelin.com/en/my/restaurants",
+     "synced": true,
+     "synced_on": "2026-11-20"
     }
    ]
   },
@@ -634,6 +643,13 @@
      "released": "2025-11-19",
      "source": "https://guide.michelin.com/it/it/notizia/michelin-guide-ceremony/le-nuove-stelle-della-guida-michelin-italia-2026",
      "synced": true
+    },
+    {
+     "year": 2027,
+     "released": "2026-11-12",
+     "source": "https://guide.michelin.com/en/it/restaurants",
+     "synced": true,
+     "synced_on": "2026-11-20"
     }
    ]
   },

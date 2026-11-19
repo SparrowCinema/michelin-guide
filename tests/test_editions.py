@@ -21,6 +21,7 @@ class Editions(unittest.TestCase):
         self.assertEqual(gid(["Montréal", "Canada"]), "quebec"); self.assertEqual(gid(["Toronto", "Canada"]), "toronto"); self.assertEqual(gid(["Dubai"]), "dubai")
     def test_watch_adds_released_editions_and_ignores_save_the_date(self):
         doc = copy.deepcopy(self.doc)
+        th0 = next(g for g in doc["guides"] if g["id"] == "thailand"); th0["editions"] = [e for e in th0["editions"] if e["year"] < 2027]  # fixture: before the 2027 release
         hits = [{"title": "The MICHELIN Guide Thailand 2027 Selection Is to Take Place on 10 November 2026", "published_date": ms("2026-10-15T10:00:00"), "url": "/x"},
                 {"title": "Thailand Shines with New MICHELIN Stars in The MICHELIN Guide Thailand 2027", "published_date": ms("2026-11-10T12:00:00"), "url": "/th/en/a"},
                 {"title": "The MICHELIN Guide Taiwan 2025 Unveiled", "published_date": ms("2025-08-19T10:00:00"), "url": "/old"},
