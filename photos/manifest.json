@@ -1,5 +1,5 @@
 {
-  "updated": "2026-11-09",
+  "updated": "2026-11-20",
   "source": "https://raw.githubusercontent.com/abobabo91/michelin-map/main/outputs/michelin_all.csv",
   "source_page": "https://github.com/abobabo91/michelin-map",
   "supplement": "Direct public MICHELIN restaurant gallery links in tools/photo_supplement.json",
@@ -57,11 +57,6 @@
       "country": "Chinese Mainland",
       "matched": 893,
       "total": 893
-    },
-    {
-      "country": "Switzerland",
-      "matched": 516,
-      "total": 523
     },
     {
       "country": "Netherlands",
@@ -264,14 +259,19 @@
       "total": 26
     },
     {
-      "country": "Liechtenstein",
-      "matched": 4,
-      "total": 4
-    },
-    {
       "country": "Saudi Arabia",
       "matched": 49,
       "total": 49
+    },
+    {
+      "country": "Switzerland",
+      "matched": 516,
+      "total": 523
+    },
+    {
+      "country": "Liechtenstein",
+      "matched": 4,
+      "total": 4
     }
   ],
   "alias_matches": [
@@ -590,13 +590,6 @@
     "liege/heusy/restaurant/la-croustade",
     "hainaut/mons/restaurant/origines-1193572",
     "hainaut/mouscron/restaurant/le-vugo",
-    "solothurn-region/grenchen/restaurant/chappeli",
-    "schwyz/riemenstalden/restaurant/kaiserstock",
-    "geneve-region/geneve/restaurant/le-dorian",
-    "neuchatel/auvernier/restaurant/brasserie-du-poisson",
-    "graubunden/lostallo/restaurant/groven",
-    "solothurn-region/olten/restaurant/national-da-sergio",
-    "solothurn-region/olten/restaurant/salmen",
     "noord-brabant/%E2%80%AChelmond/restaurant/bistro-margaux",
     "zeeland/groede/restaurant/etablissement-1880",
     "fryslan/grou/restaurant/oostergoo",
@@ -709,7 +702,14 @@
     "aksaray/aksaray-merkez_2810363/restaurant/kardesler-restoran",
     "istanbul-province/istanbul/restaurant/rumelihisari-iskele",
     "nigde/nigde-merkez_2821454/restaurant/sofram-restaurant",
-    "izmir/izmir_2809416/restaurant/terakki"
+    "izmir/izmir_2809416/restaurant/terakki",
+    "solothurn-region/grenchen/restaurant/chappeli",
+    "schwyz/riemenstalden/restaurant/kaiserstock",
+    "geneve-region/geneve/restaurant/le-dorian",
+    "neuchatel/auvernier/restaurant/brasserie-du-poisson",
+    "graubunden/lostallo/restaurant/groven",
+    "solothurn-region/olten/restaurant/national-da-sergio",
+    "solothurn-region/olten/restaurant/salmen"
   ],
   "notice": "Exact MICHELIN restaurant URL matches only. Image rights remain with original owners. Missing is not proof the official page has no photo."
 }
