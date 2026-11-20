@@ -1,5 +1,5 @@
 {
- "_note": "Guide editions. year = the guide's own year; released = official release date (from MICHELIN's announcement, see source); synced = whether data.json already reflects that edition. tools/editions_watch.py adds newly announced editions; tools/update_editions.py marks them synced when the data changes.",
+ "_note": "Guide editions. year = the guide's own year; released = official release date (from MICHELIN's announcement, see source); synced = whether data.json already reflects that edition. tools/editions_watch.py adds newly announced editions; tools/update_editions.py marks them synced when the data changes. scheduled = the next edition's announced date (date may be YYYY-MM when only the month is known; confirmed:false = media report or MICHELIN's approximate timing, not a fixed date). A guide with no editions yet is a new destination whose first selection is scheduled.",
  "checked": "2026-10-27",
  "guides": [
   {
@@ -24,7 +24,12 @@
      "source": "https://guide.michelin.com/th/en/article/michelin-guide-ceremony/michelin-guide-tokyo-2026-stars-reveal",
      "synced": true
     }
-   ]
+   ],
+   "scheduled": {
+    "year": 2027,
+    "date": "2027-02-16",
+    "source": "https://guide.michelin.com/us/en/article/news-and-views/michelin-guide-ceremony-tokyo-kyoto-osaka-nara-2027-selection-save-the-date"
+   }
   },
   {
    "id": "kyoto-osaka",
@@ -50,7 +55,12 @@
      "source": "https://guide.michelin.com/th/en/article/michelin-guide-ceremony/michelin-guide-kyoto-osaka-2026-stars-reveal",
      "synced": true
     }
-   ]
+   ],
+   "scheduled": {
+    "year": 2027,
+    "date": "2027-02-16",
+    "source": "https://guide.michelin.com/us/en/article/news-and-views/michelin-guide-ceremony-tokyo-kyoto-osaka-nara-2027-selection-save-the-date"
+   }
   },
   {
    "id": "nara",
@@ -74,7 +84,12 @@
      "source": "https://guide.michelin.com/th/en/article/michelin-guide-ceremony/michelin-guide-nara-2026-restaurants",
      "synced": true
     }
-   ]
+   ],
+   "scheduled": {
+    "year": 2027,
+    "date": "2027-02-16",
+    "source": "https://guide.michelin.com/us/en/article/news-and-views/michelin-guide-ceremony-tokyo-kyoto-osaka-nara-2027-selection-save-the-date"
+   }
   },
   {
    "id": "hk-macau",
@@ -252,7 +267,13 @@
      "source": "https://guide.michelin.com/th/en/article/michelin-guide-ceremony/michelin-guide-vietnam-2026",
      "synced": true
     }
-   ]
+   ],
+   "scheduled": {
+    "year": 2027,
+    "date": "2027-06",
+    "source": "https://guide.michelin.com/vn/en/article/news-and-views/the-michelin-guide-phu-quoc-vietnam",
+    "confirmed": false
+   }
   },
   {
    "id": "philippines",
@@ -275,6 +296,12 @@
      "released": "2025-10-30",
      "source": "https://guide.michelin.com/th/en/article/michelin-guide-ceremony/philippines-full-selection-2026",
      "synced": true
+    },
+    {
+     "year": 2027,
+     "released": "2026-10-29",
+     "source": "https://guide.michelin.com/th/en/article/michelin-guide-ceremony/philippines-full-selection-2027",
+     "synced": false
     }
    ]
   },
@@ -422,6 +449,31 @@
    ]
   },
   {
+   "id": "hunan",
+   "zh": "湖南",
+   "en": "Hunan Province",
+   "coverage": [
+    [
+     "Chinese Mainland",
+     [
+      "Changsha",
+      "Hengyang",
+      "Yiyang"
+     ]
+    ]
+   ],
+   "keywords": [
+    "Hunan",
+    "Changsha"
+   ],
+   "editions": [],
+   "scheduled": {
+    "year": 2027,
+    "date": "2026-11-25",
+    "source": "https://guide.michelin.com/en/article/news-and-views/michelin-guide-hunan-province-host-city-changsha"
+   }
+  },
+  {
    "id": "abu-dhabi",
    "zh": "阿布扎比",
    "en": "Abu Dhabi",
@@ -544,7 +596,12 @@
      "source": "https://guide.michelin.com/gb/en/article/michelin-guide-ceremony/the-michelin-guide-turkiye-reveals-its-2026-restaurant-selection",
      "synced": true
     }
-   ]
+   ],
+   "scheduled": {
+    "year": 2027,
+    "date": "2026-12-03",
+    "source": "https://www.24saatgazetesi.com/2027-michelin-rehberi-turkiye-ulusal-seckisinin-aciklanacagi-tarih-belli-oldu"
+   }
   },
   {
    "id": "france",
@@ -570,7 +627,13 @@
      "source": "https://guide.michelin.com/fr/fr/article/michelin-guide-ceremony/le-palmares-du-guide-michelin-france-et-monaco-2026",
      "synced": true
     }
-   ]
+   ],
+   "scheduled": {
+    "year": 2027,
+    "date": "2027-03-15",
+    "source": "https://www.lyonmag.com/article/154964/guide-michelin-2027-lyon-devrait-accueillir-la-ceremonie-des-etoiles-pour-la-premiere-fois-de-son-histoire",
+    "confirmed": false
+   }
   },
   {
    "id": "spain",
@@ -598,7 +661,12 @@
      "source": "https://guide.michelin.com/es/es/articulo/michelin-guide-ceremony/todo-sobre-la-guia-michelin-espana-andorra-2026",
      "synced": true
     }
-   ]
+   ],
+   "scheduled": {
+    "year": 2027,
+    "date": "2026-12-01",
+    "source": "https://guide.michelin.com/es/es/articulo/news-and-views/huesca-sede-de-la-gala-de-la-guia-michelin-espana-2027"
+   }
   },
   {
    "id": "portugal",
@@ -902,6 +970,12 @@
      "released": "2025-10-22",
      "source": "https://guide.michelin.com/dk/en/article/michelin-guide-ceremony/the-michelin-guide-latvia-riga-2026-winners-michelin-guide-ceremony",
      "synced": true
+    },
+    {
+     "year": 2027,
+     "released": "2026-11-05",
+     "source": "https://guide.michelin.com/dk/en/article/michelin-guide-ceremony/the-michelin-guide-latvia-riga-2027-winners-michelin-guide-ceremony",
+     "synced": false
     }
    ]
   },
@@ -969,7 +1043,12 @@
      "source": "https://guide.michelin.com/en/article/michelin-guide-ceremony/the-michelin-guide-czechia-2025-is-out",
      "synced": true
     }
-   ]
+   ],
+   "scheduled": {
+    "year": 2026,
+    "date": "2026-12",
+    "source": "https://www.businessinfo.cz/clanky/pruvodce-michelin-predstavi-aktualizovany-vyber-restauraci-z-celeho-ceska-pribudou-dalsi-michelinske-restaurace/"
+   }
   },
   {
    "id": "hungary",
@@ -1140,6 +1219,33 @@
    ]
   },
   {
+   "id": "great-lakes",
+   "zh": "美国五大湖",
+   "en": "American Great Lakes",
+   "coverage": [
+    [
+     "USA",
+     [
+      "Detroit",
+      "Cleveland",
+      "Indianapolis",
+      "Milwaukee",
+      "Minneapolis",
+      "Pittsburgh"
+     ]
+    ]
+   ],
+   "keywords": [
+    "Great Lakes"
+   ],
+   "editions": [],
+   "scheduled": {
+    "year": 2027,
+    "date": "2027-04-21",
+    "source": "https://visitdetroit.com/media/press-releases/detroit-to-host-the-inaugural-michelin-guide-american-great-lakes-ceremony/"
+   }
+  },
+  {
    "id": "us-northeast",
    "zh": "纽约·芝加哥·华盛顿·波士顿·费城",
    "en": "Northeast Cities (New York, Chicago, D.C., Boston, Philadelphia)",
@@ -1171,7 +1277,12 @@
      "source": "https://guide.michelin.com/us/en/article/michelin-guide-ceremony/all-the-stars-in-the-michelin-guide-to-new-york-city-2025",
      "synced": true
     }
-   ]
+   ],
+   "scheduled": {
+    "year": 2026,
+    "date": "2026-12",
+    "source": "https://www.inquirer.com/food/restaurants/michelin-2026-announcement-restaurants-new-york-20260811.html"
+   }
   },
   {
    "id": "florida",
