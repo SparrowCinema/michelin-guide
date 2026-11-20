@@ -5,8 +5,8 @@
   "supplement": "Direct public MICHELIN restaurant gallery links in tools/photo_supplement.json",
   "source_sha256": "f5787880308dac0ccd55ebf33e99a8b831a263e01e73cfb426b0dab7cdc87050",
   "image_origin": "https://prod-pics.guide.michelin.com",
-  "matched": 19528,
-  "total": 19950,
+  "matched": 19525,
+  "total": 19959,
   "countries": [
     {
       "country": "Hong Kong SAR",
@@ -239,11 +239,6 @@
       "total": 6
     },
     {
-      "country": "Latvia",
-      "matched": 26,
-      "total": 26
-    },
-    {
       "country": "Saudi Arabia",
       "matched": 49,
       "total": 49
@@ -252,6 +247,11 @@
       "country": "Italy",
       "matched": 1913,
       "total": 1989
+    },
+    {
+      "country": "Latvia",
+      "matched": 23,
+      "total": 35
     },
     {
       "country": "Malaysia",
@@ -701,6 +701,18 @@
     "piemonte/stresa/restaurant/villa-pizzini",
     "veneto/cortina-d-ampezzo/restaurant/baita-pie-tofana",
     "piemonte/vacciago_1801852/restaurant/la-darbia",
+    "riga-region/riga_1991577/restaurant/balta-kaza",
+    "riga-region/riga_1991577/restaurant/cafe-mimosa",
+    "riga-region/riga_1991577/restaurant/maijas-braserija",
+    "riga-region/riga_1991577/restaurant/sakhli",
+    "pieriga/baltezers_4121049/restaurant/vistinas-karbonades-steiki",
+    "riga-region/riga_1991577/restaurant/kice",
+    "kurzeme/kuldiga_1989824/restaurant/duna-taproom-kitchen",
+    "riga-region/riga_1991577/restaurant/shichirin",
+    "riga-region/riga_1991577/restaurant/shiyuzu",
+    "riga-region/riga_1991577/restaurant/madame-mei",
+    "riga-region/riga_1991577/restaurant/gongu",
+    "pieriga/jurmala_1989403/restaurant/faces",
     "kuala-lumpur-region/kuala-lumpur/restaurant/jhol-1249450",
     "kuala-lumpur-region/kuala-lumpur/restaurant/yellow-fin-horse",
     "pulau-pinang/my-george-town/restaurant/deens-maju-jalan-gurdwara",
