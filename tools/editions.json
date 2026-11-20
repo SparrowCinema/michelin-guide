@@ -301,7 +301,8 @@
      "year": 2027,
      "released": "2026-10-29",
      "source": "https://guide.michelin.com/th/en/article/michelin-guide-ceremony/philippines-full-selection-2027",
-     "synced": false
+     "synced": true,
+     "synced_on": "2026-11-20"
     }
    ]
   },
@@ -975,7 +976,8 @@
      "year": 2027,
      "released": "2026-11-05",
      "source": "https://guide.michelin.com/dk/en/article/michelin-guide-ceremony/the-michelin-guide-latvia-riga-2027-winners-michelin-guide-ceremony",
-     "synced": false
+     "synced": true,
+     "synced_on": "2026-11-20"
     }
    ]
   },
