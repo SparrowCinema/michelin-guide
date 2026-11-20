@@ -5,9 +5,10 @@ const MGUpdates=(()=>{
   'use strict';
   const EN=()=>typeof MGI18n!=='undefined'&&MGI18n.en;
   const MON=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-  const day=d=>{if(!d)return '';const [y,m,dd]=d.split('-');return EN()?`${MON[+m-1]} ${+dd}, ${y}`:`${y} 年 ${+m} 月 ${+dd} 日`;};
+  // dates are YYYY-MM-DD, or YYYY-MM when MICHELIN has only given the month
+  const day=d=>{if(!d)return '';const [y,m,dd]=d.split('-');if(!dd)return EN()?`${MON[+m-1]} ${y}`:`${y} 年 ${+m} 月`;return EN()?`${MON[+m-1]} ${+dd}, ${y}`:`${y} 年 ${+m} 月 ${+dd} 日`;};
   const dot=d=>d?d.replaceAll('-','.'):'';
-  const short=d=>{if(!d)return '';const [y,m,dd]=d.split('-');return EN()?`${MON[+m-1]} ${+dd}`:`${+m} 月 ${+dd} 日`;};
+  const short=d=>{if(!d)return '';const [y,m,dd]=d.split('-');if(!dd)return EN()?`${MON[+m-1]} ${y}`:`${y} 年 ${+m} 月`;return EN()?`${MON[+m-1]} ${+dd}`:`${+m} 月 ${+dd} 日`;};
   const h=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
   const LV_ZH=['三星','二星','一星','必比登','入选'],LV_EN=['3 Stars','2 Stars','1 Star','Bib Gourmand','Selected'];
   const lv=l=>(EN()?LV_EN:LV_ZH)[l];
@@ -43,7 +44,7 @@ const MGUpdates=(()=>{
     const u=UPD.updates[0];if(!u){box.hidden=true;return;}
     let seen='';try{seen=localStorage.getItem('mg-upd-seen')||'';}catch(e){}
     const gs=u.guides,pending=(DB.E||[]).flatMap(g=>(g[6]||[]).filter(p=>p[1]).map(p=>[g,p])).sort((a,b)=>b[1][1].localeCompare(a[1][1]));
-    const sched=(DB.E||[]).filter(g=>g[7]).map(g=>[g,g[7]]);
+    const today=new Date().toISOString().slice(0,10),sched=(DB.E||[]).filter(g=>g[7]&&g[7][1]>=today.slice(0,g[7][1].length)).map(g=>[g,g[7]]).sort((a,b)=>a[1][1].localeCompare(b[1][1]));
     const fresh=(DB.E||[]).filter(g=>g[4]&&u.from&&g[4]>u.from&&g[4]<=u.data);
     box.hidden=false;
     if(seen===u.data&&!open){box.classList.add('ub-compact');
@@ -59,16 +60,44 @@ const MGUpdates=(()=>{
       <details class="ub-more-wrap"${open?' open':''}><summary>${EN()?`Changes by guide (${gs.length})`:`按指南查看变化（${gs.length} 个地区）`}</summary><div class="ub-guides">${gs.map(guideBlock).join('')}</div><p class="ub-note">${EN()?'Removed means no longer in the source list (closed, moved or not yet republished), not necessarily stripped of a distinction.':'“移出”指不在最新名单中（可能闭店、迁址或该地区名单尚未发布），不一定是被摘星。'}</p></details>
       <button type="button" class="ub-all" data-ub="guides">${EN()?`All ${DB.E.length} guide editions & release dates`:`全部 ${DB.E.length} 本指南的版本与发布日期`} →</button>`;
   }
+  // Next edition of a guide: released but not yet in the data > announced date > estimate from last year's release month.
+  function nextOf(g,today){
+    const p=(g[6]||[]).filter(x=>x[1]).slice(-1)[0];
+    if(p)return {kind:'out',year:p[0],date:p[1],src:p[2],key:'0'+p[1]};
+    const s=g[7];
+    if(s)return {kind:s[3]===false?'about':'set',year:s[0],date:s[1],src:s[2],key:'1'+s[1]};
+    if(!g[4])return {kind:'none',key:'9'};
+    const [y,m]=g[4].split('-'),est=`${+y+1}-${m}`;
+    return est<today.slice(0,7)?{kind:'late',year:(g[3]||+y)+1,month:+m,key:'3'+est}:{kind:'est',year:(g[3]||+y)+1,date:est,key:'2'+est};
+  }
+  function nextHTML(n){
+    const lnk=(t,src)=>src?`<a href="${h(src)}" target="_blank" rel="noopener">${t}</a>`:t;
+    const ed=y=>EN()?`${y}\u00a0edition`:`${y}\u00a0版`;
+    const row=(cls,main,y,note)=>`<b class="gt-n ${cls}">${main}</b><small>${y?ed(y)+' · ':''}${note}</small>`;
+    if(n.kind==='out')return row('out',lnk(h(dot(n.date)),n.src),n.year,EN()?'released, syncing':'已发布 · 待同步');
+    if(n.kind==='set')return row('set',lnk(h(dot(n.date)),n.src),n.year,EN()?'announced':'官方已公布');
+    if(n.kind==='about')return row('about',lnk((EN()?'c. ':'约 ')+h(dot(n.date)),n.src),n.year,EN()?'not fixed yet':'暂未定档');
+    if(n.kind==='est')return row('est',`${EN()?'est.':'预计'} ${h(dot(n.date))}`,n.year,EN()?'from last year':'按往年推算');
+    if(n.kind==='late')return row('est',EN()?'TBA':'待公布',n.year,EN()?`usually ${MON[n.month-1]}`:`往年 ${n.month} 月`);
+    return row('est',EN()?'TBA':'待公布',0,'');
+  }
+  let GSORT='next';
   function guidesDialog(){
     let dlg=document.getElementById('guidesDlg');
-    if(!dlg){document.body.insertAdjacentHTML('beforeend','<dialog id="guidesDlg" class="guides-dlg" aria-labelledby="guidesTitle"><div class="dlg"><button type="button" class="close" data-close>关闭</button><h2 id="guidesTitle"></h2><p class="note" id="guidesNote"></p><div id="guidesBody"></div></div></dialog>');dlg=document.getElementById('guidesDlg');
-      dlg.addEventListener('click',e=>{if(e.target===dlg||e.target.closest('[data-close]'))closeAppDialog(dlg);});}
+    if(!dlg){document.body.insertAdjacentHTML('beforeend','<dialog id="guidesDlg" class="guides-dlg" aria-labelledby="guidesTitle"><div class="dlg"><button type="button" class="close" data-close>关闭</button><h2 id="guidesTitle"></h2><p class="note" id="guidesNote"></p><div class="gt-sort" id="guidesSort" role="group"></div><div id="guidesBody"></div></div></dialog>');dlg=document.getElementById('guidesDlg');
+      dlg.addEventListener('click',e=>{if(e.target===dlg||e.target.closest('[data-close]'))closeAppDialog(dlg);const b=e.target.closest('[data-gsort]');if(b){GSORT=b.dataset.gsort;fillGuides();}});}
+    fillGuides();showAppDialog(dlg);
+  }
+  function fillGuides(){
     const count=new Map();DB.rows.forEach(r=>{const c=DB.T[r.ci];if(c&&c.length>3)count.set(c[3],(count.get(c[3])||0)+1);});
-    const rows=(DB.E||[]).map((g,i)=>({g,i,n:count.get(i)||0})).sort((a,b)=>(b.g[4]||'').localeCompare(a.g[4]||''));
+    const today=new Date().toISOString().slice(0,10);
+    const rows=(DB.E||[]).map((g,i)=>({g,i,n:count.get(i)||0,nx:nextOf(g,today)}));
+    if(GSORT==='next')rows.sort((a,b)=>a.nx.key.localeCompare(b.nx.key)||(b.g[4]||'').localeCompare(a.g[4]||''));
+    else rows.sort((a,b)=>(b.g[4]||'').localeCompare(a.g[4]||''));
     document.getElementById('guidesTitle').textContent=EN()?'Guide editions':'各地指南版本';
-    document.getElementById('guidesNote').textContent=EN()?'Guide year and official release date for every guide in this directory, newest first. Dates come from MICHELIN’s own announcements.':'每本指南的“指南年份”和“实际发布日期”，按发布日期从新到旧。日期取自米其林官网的发布会文章。';
-    document.getElementById('guidesBody').innerHTML=`<table class="guides-table"><thead><tr><th>${EN()?'Guide':'指南'}</th><th>${EN()?'Edition':'版本'}</th><th>${EN()?'Released':'发布日期'}</th><th>${EN()?'Restaurants':'餐厅'}</th></tr></thead><tbody>${rows.map(({g,n})=>`<tr><td>${h(EN()?g[2]:g[1])}${(g[6]||[]).filter(p=>p[1]).map(p=>`<small class="gt-next">${EN()?`${p[0]} released ${dot(p[1])}, syncing`:`${p[0]} 版 ${dot(p[1])} 已发布 · 待同步`}</small>`).join('')}${g[7]?`<small class="gt-soon">${EN()?`${g[7][0]} due ${dot(g[7][1])}`:`${g[7][0]} 版定于 ${dot(g[7][1])} 发布`}</small>`:''}</td><td>${g[3]||'—'}</td><td>${g[4]?(g[5]?`<a href="${h(g[5])}" target="_blank" rel="noopener">${h(dot(g[4]))}</a>`:h(dot(g[4]))):(EN()?'to confirm':'待核实')}</td><td>${n}</td></tr>`).join('')}</tbody></table>`;
-    showAppDialog(dlg);
+    document.getElementById('guidesNote').textContent=EN()?'Current edition and official release date of every guide, plus the next edition. Announced dates come from MICHELIN (a few from press reports, marked “c.”); the rest are estimated from the previous year’s release month.':'每本指南的当前版本、实际发布日期和下一版。已公布的日期取自米其林官方公告（个别来自媒体报道或官方只给了大致时间，标“约”）；其余按往年发布月份推算，仅供参考。';
+    document.getElementById('guidesSort').innerHTML=[['next',EN()?'Coming up':'即将发布'],['recent',EN()?'Latest released':'最近发布']].map(([k,t])=>`<button type="button" data-gsort="${k}" aria-pressed="${GSORT===k}">${t}</button>`).join('');
+    document.getElementById('guidesBody').innerHTML=`<table class="guides-table"><thead><tr><th>${EN()?'Guide':'指南'}</th><th>${EN()?'Edition':'版本'}</th><th>${EN()?'Released':'发布日期'}</th><th>${EN()?'Next':'下一版'}</th><th>${EN()?'Restaurants':'餐厅'}</th></tr></thead><tbody>${rows.map(({g,n,nx})=>`<tr><td>${h(EN()?g[2]:g[1])}${g[3]?'':`<small class="gt-new">${EN()?'New destination':'新目的地 · 首版'}</small>`}<div class="gt-nl">${nextHTML(nx)}</div></td><td>${g[3]||'—'}</td><td>${g[4]?(g[5]?`<a href="${h(g[5])}" target="_blank" rel="noopener">${h(dot(g[4]))}</a>`:h(dot(g[4]))):'—'}</td><td class="gt-nc">${nextHTML(nx)}</td><td>${n}</td></tr>`).join('')}</tbody></table>`;
   }
   function start(){
     if(!DB||!DB.E)return;

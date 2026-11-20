@@ -36,12 +36,13 @@ def current(g):
     return (synced[-1] if synced else None), pending
 
 def export(doc):
-    """Compact list for data.json: [id, zh, en, year, released, source, pending[[year, released, source]], scheduled]."""
+    """Compact list for data.json: [id, zh, en, year, released, source, pending[[year, released, source]], scheduled].
+    scheduled = [year, date (YYYY-MM-DD or YYYY-MM), source, confirmed] or None."""
     out = []
     for g in doc["guides"]:
         cur, pending = current(g)
         cur = cur or {}
         out.append([g["id"], g["zh"], g["en"], cur.get("year"), cur.get("released"), cur.get("source"),
                     [[p["year"], p["released"], p["source"]] for p in pending],
-                    [g["scheduled"]["year"], g["scheduled"]["date"], g["scheduled"]["source"]] if g.get("scheduled") else None])
+                    [g["scheduled"]["year"], g["scheduled"]["date"], g["scheduled"]["source"], g["scheduled"].get("confirmed", True)] if g.get("scheduled") else None])
     return out
