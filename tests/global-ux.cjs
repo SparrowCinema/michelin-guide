@@ -277,9 +277,27 @@ const {chromium}=require('playwright');
       await enPage.waitForTimeout(80);
       assert(await enPage.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),'horizontal overflow at width '+width);
     }
+    // Mobile Me-page layout checks across 320 / 360 / 390: full-width sync code, no vertical text breaks, single-accordion focus
+    await enPage.goto(url+'/?lang=zh#v=me');
+    await enPage.waitForFunction(()=>typeof DB!=='undefined'&&DB&&document.getElementById('meSync'));
+    for(const w of [320,360,390]){
+      await enPage.setViewportSize({width:w,height:800});
+      await enPage.waitForTimeout(80);
+      if(!await enPage.evaluate(()=>document.getElementById('meSync').open))await enPage.locator('#meSync>summary').click();
+      if(!await enPage.evaluate(()=>!!MGSync.state()?.code)){await enPage.locator('[data-sync="start"]').click();await enPage.waitForFunction(()=>!!MGSync.state()?.code);}
+      const codeBox=await enPage.locator('#syncCard .sync-code code').boundingBox();
+      assert(codeBox.width>=190,`sync code should span full card width at ${w}px, got ${codeBox.width}`);
+      assert(codeBox.height<=60,`sync code should stay within 1-2 tidy lines at ${w}px, got height ${codeBox.height}`);
+      await enPage.locator('#meSettings>summary').click();
+      await enPage.waitForTimeout(60);
+      assert(await enPage.evaluate(()=>!document.getElementById('meSync').open),`mobile accordion should auto-close sibling meSync at ${w}px`);
+      const maxSegH=await enPage.evaluate(()=>Math.max(...[...document.querySelectorAll('#themeSeg button,#langSeg button')].map(b=>b.getBoundingClientRect().height)));
+      assert(maxSegH<=42,`theme/lang segment buttons should not wrap vertically at ${w}px, got ${maxSegH}`);
+      assert(await enPage.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),'no overflow in Me settings at '+w);
+    }
     await enCtx.close();
 
     assert.deepEqual(errors,[]);
-    console.log('PASS: global-ux — font version parity, ranked autocomplete, / shortcut, 4-lang header menu, clickable guides, active filter chips, directory sort, saved filters, desktop map split-view & clustering, list->map locate, booking/hours/Apple+Google+AMap links, nearby fallback, route reorder/slot/localized text, sync QR/privacy/cloud-delete, en/ja/fr i18n, 320–1600 zero overflow.');
+    console.log('PASS: global-ux — font version parity, ranked autocomplete, / shortcut, 4-lang header menu, clickable guides, active filter chips, directory sort, saved filters, desktop map split-view & clustering, list->map locate, booking/hours/Apple+Google+AMap links, nearby fallback, route reorder/slot/localized text, sync QR/privacy/cloud-delete, mobile Me 320–390 typography/sync-code/settings/accordion, en/ja/fr i18n, 320–1600 zero overflow.');
   }finally{await browser.close();server.close();}
 })().catch(e=>{console.error(e.stack||e);process.exit(1);});

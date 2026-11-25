@@ -61,6 +61,18 @@ const MGMe=(()=>{
     $('meSettings').after(friends);
     fold('meFriends','友情链接','发现更多生活记录',[friends],'friends');
     const menu=document.createElement('div');menu.id='meMenu';menu.className='me-menu';$('mePassport').before(menu);['mePassport','meRecap','meTrips','meCollection','meSync','meInstall','meGuide','meSettings','meFriends'].forEach(id=>{if($(id))menu.append($(id));});
+    menu.addEventListener('click',e=>{
+      const sum=e.target.closest('details.me-fold > summary');if(!sum)return;
+      const item=sum.parentElement;
+      if(item.parentElement!==menu||item.open)return;
+      if(matchMedia('(max-width:700px)').matches){
+        menu.querySelectorAll(':scope > details.me-fold[open]').forEach(other=>{if(other!==item)other.open=false;});
+        requestAnimationFrame(()=>{
+          const top=item.getBoundingClientRect().top,bar=document.querySelector('.page-language-bar')?.getBoundingClientRect().bottom||56;
+          if(top<bar||top>innerHeight*0.62)item.scrollIntoView({behavior:matchMedia('(prefers-reduced-motion: reduce)').matches?'instant':'smooth',block:'start'});
+        });
+      }
+    });
     nav.addEventListener('click',e=>{
       const b=e.target.closest('[data-me-jump]');if(!b)return;const target=$(b.dataset.meJump);if(!target)return;
       if(b.dataset.meMode){meTab=+b.dataset.meMode;meLimit=12;renderMe();}
