@@ -1,6 +1,6 @@
 /* Travel, details, passport and snapshot views. Existing restaurant IDs remain unchanged. */
 // Must equal ASSET_VER in index.html and sw.js; index.html reloads fresh files when they disagree.
-const UPGRADE_VER="65";
+const UPGRADE_VER="66";
 let PERSONAL={version:2,trips:[],records:Object.create(null)},PRICE_DB={items:{}},upSelected='',upPickU='',upLoaded=false,upReadError=false;
 function upSave(next){
   if(upReadError){toast('已有旅行存储无法读取，已阻止覆盖。请先导出原始备份再恢复。');return false;}
@@ -417,7 +417,7 @@ function upRenderMealLog(log,editing){
   const u=log.dataset.u,p=log.dataset.prefix;log.outerHTML=upVisitHTML(u,p,editing);
   const next=document.getElementById(p+'mealLog');return next;
 }
-function upVisitDirty(form){if(form?.querySelector('.visit-feedback'))form.querySelector('.visit-feedback').textContent='有修改尚未保存';}
+function upVisitDirty(form){if(!form)return;form.dataset.dirty='1';if(form.querySelector('.visit-feedback'))form.querySelector('.visit-feedback').textContent='有修改尚未保存';}
 function upVisitValues(form){
   return {date:/^\d{4}-\d{2}-\d{2}$/.test(form.querySelector('input[type=date]').value)?form.querySelector('input[type=date]').value:'',
     rating:+form.querySelector('[data-rating-input]').value||0,note:form.querySelector('textarea').value.trim().slice(0,3000),
@@ -435,7 +435,7 @@ function upSaveVisit(u,values,markBeen,entryID){
     oldPersonal=localStorage.getItem('mg-personal');oldFav=localStorage.getItem('mg-fav');
     localStorage.setItem('mg-personal',JSON.stringify(nextPersonal));localStorage.setItem('mg-fav',JSON.stringify(nextFav));
   }catch(e){try{if(oldPersonal!==undefined)oldPersonal===null?localStorage.removeItem('mg-personal'):localStorage.setItem('mg-personal',oldPersonal);if(oldFav!==undefined)oldFav===null?localStorage.removeItem('mg-fav'):localStorage.setItem('mg-fav',oldFav);}catch(rollback){}toast('保存失败，更改未生效，请检查存储空间');return false;}
-  PERSONAL=nextPersonal;FAV=nextFav;if(typeof MP!=='undefined')MP.gc();return true;
+  PERSONAL=nextPersonal;FAV=nextFav;document.querySelectorAll(`.visit-form[data-u="${CSS.escape(u)}"][data-dirty]`).forEach(f=>delete f.dataset.dirty);if(typeof MP!=='undefined')MP.gc();return true;
 }
 function upRefreshVisit(u){
   // keep every visible "去过" button, the detail sheet and the 我的 page in step
@@ -471,6 +471,8 @@ function upBindDetailSwipe(id='detailDlg'){
 }
 function upBindVisitForms(){
   document.addEventListener('click',e=>{
+    if(e.target.closest('[data-log-meal]')){const rec=$('detailBody').querySelector('.detail-record');if(!rec)return;rec.open=true;let log=rec.querySelector('.meal-log');
+      if(!log.querySelector('.visit-form'))log=upRenderMealLog(log,'new');const form=log.querySelector('.visit-form');form?.scrollIntoView({block:'start',behavior:'smooth'});form?.querySelector('.star-rating')?.focus({preventScroll:true});return;}
     const log=e.target.closest('.meal-log');if(!log)return;const u=log.dataset.u;
     if(e.target.closest('[data-add-visit]')){const next=upRenderMealLog(log,'new');next.querySelector('.meal-new')?.scrollIntoView({block:'nearest',behavior:'smooth'});return;}
     const edit=e.target.closest('[data-edit-visit]');if(edit){const next=upRenderMealLog(log,edit.dataset.editVisit);next.querySelector('.is-editing')?.scrollIntoView({block:'nearest',behavior:'smooth'});return;}
@@ -569,6 +571,17 @@ function upDietaryTag(r){
   if(/vegetarian|shojin|素食|精进/.test(s))return '<span class="tag g">素食友好</span>';
   return '';
 }
+// Where people check reviews, photos and hours locally: Google Maps everywhere, plus the platform each region relies on.
+function upPlatformLinks(r){
+  const c=DB.C[r.co][1],city=DB.T[r.ci][2]||DB.T[r.ci][0],nonZh=typeof MGI18n!=='undefined'&&MGI18n.nonZh,q=s=>encodeURIComponent(s);
+  const cn=/Chinese Mainland|Hong Kong|Macau|Taiwan/.test(c),local=r.zh||r.n,links=[];
+  links.push(['Google 地图',`https://www.google.com/maps/search/?api=1&query=${q(r.n+' '+city)}`]);
+  if(cn)links.push(['大众点评',`https://www.dianping.com/search/keyword/0/0_${q(local)}`]);
+  if(c==='Japan')links.push(['Tabelog',`https://tabelog.com/rstLst/?vs=1&sw=${q(r.n)}`]);
+  if(c==='USA'||c==='Canada')links.push(['Yelp',`https://www.yelp.com/search?find_desc=${q(r.n)}&find_loc=${q(city)}`]);
+  if(!nonZh)links.push(['小红书',`https://www.xiaohongshu.com/search_result?keyword=${q(local+' '+DB.T[r.ci][0])}`]);
+  return `<p class="detail-platforms"><span>评价与照片</span>${links.map(([t,h])=>`<a href="${esc(h)}" target="_blank" rel="noopener">${t} ↗</a>`).join('')}</p>`;
+}
 function upHoursLink(r){
   const hl=typeof MGI18n!=='undefined'&&MGI18n.mapHL?MGI18n.mapHL():'zh-CN',nonZh=typeof MGI18n!=='undefined'&&MGI18n.nonZh;
   if(r.ml&&!nonZh)return `<a href="${esc(mapLink(r).href)}" target="_blank" rel="noopener">营业时间与路线 · 高德 ↗</a>`;
@@ -586,20 +599,42 @@ async function upLoadDetailPhoto(r){
   const current=()=>$('detailDlg').open&&$('detailDlg').dataset.u===r.u&&$('detailBody').querySelector('.detail-hero')===hero;
   const items=await upPhotoIndex(r.co);if(!current()||!items)return;
   const file=items[r.u];if(typeof file!=='string'||!/^[a-f0-9]{32}\.(jpeg|jpg|png|webp)$/.test(file))return;
-  img.onload=()=>{if(!current())return;img.hidden=false;hero.classList.add('has-photo');credit.hidden=false;};
-  img.onerror=()=>{if(!current())return;img.hidden=true;hero.classList.remove('has-photo');credit.hidden=true;};
-  img.src=`https://prod-pics.guide.michelin.com/api/public/content/${file}?format=webp&w=1200&h=800`;
+  // Shimmer while the photo loads; request roughly the size the sheet shows instead of always 1200px.
+  hero.classList.add('is-photo-loading');
+  img.onload=()=>{hero.classList.remove('is-photo-loading');if(!current())return;img.hidden=false;hero.classList.add('has-photo');credit.hidden=false;};
+  img.onerror=()=>{hero.classList.remove('is-photo-loading');if(!current())return;img.hidden=true;hero.classList.remove('has-photo');credit.hidden=true;};
+  const w=Math.min(1200,Math.max(600,Math.ceil(hero.clientWidth*Math.min(2,devicePixelRatio||1)/200)*200));
+  img.src=`https://prod-pics.guide.michelin.com/api/public/content/${file}?format=webp&w=${w}&h=${Math.round(w*2/3)}`;
+}
+// Structured data, canonical URL and description for the open restaurant, so search engines that render
+// the page can show it as its own result; restored to the directory's own values on close.
+const UP_SEO={desc:null};
+function upCanonicalURL(u){const url=new URL(location.origin+location.pathname);if(u)url.searchParams.set('restaurant',u);return url.href;}
+function upSetSEO(r){
+  let canon=document.querySelector('link[rel="canonical"]');if(!canon){canon=document.createElement('link');canon.rel='canonical';document.head.append(canon);}
+  const meta=document.querySelector('meta[name="description"]');let ld=document.getElementById('restaurantLd');
+  if(UP_SEO.desc===null)UP_SEO.desc=meta?.content||'';
+  if(!r){canon.href=upCanonicalURL('');if(meta)meta.content=UP_SEO.desc;ld?.remove();return;}
+  const c=DB.C[r.co],t=DB.T[r.ci],award=['3 MICHELIN Stars','2 MICHELIN Stars','1 MICHELIN Star','MICHELIN Guide Bib Gourmand','MICHELIN Guide Selected'][r.l];
+  canon.href=upCanonicalURL(r.u);
+  if(meta)meta.content=`${r.zh||r.n}（${r.n}）：${t[0]} · ${c[0]} · ${LVN[r.l]}${r.cu?' · '+r.cu:''}。地址、地图、官网与历年米其林记录。`;
+  const data={'@context':'https://schema.org','@type':'Restaurant',name:r.n,alternateName:r.zh&&r.zh!==r.n?r.zh:undefined,url:upCanonicalURL(r.u),
+    address:{'@type':'PostalAddress',streetAddress:r.a||undefined,addressLocality:t[2]||t[0],addressCountry:c[1]},
+    geo:r.lat!=null&&r.lng!=null?{'@type':'GeoCoordinates',latitude:r.lat,longitude:r.lng}:undefined,
+    servesCuisine:r.cue||undefined,priceRange:r.p?'$'.repeat(r.p):undefined,sameAs:r.w||undefined,award};
+  if(!ld){ld=document.createElement('script');ld.type='application/ld+json';ld.id='restaurantLd';document.head.append(ld);}
+  ld.textContent=JSON.stringify(data);
 }
 function upOpenDetail(u,push=true){
   const r=DB.byU[u];if(!r){toast('这家餐厅不在现有名单中，请核对链接');return;}
   if(push){const url=upDetailURL(u);if(url!==location.href)history.pushState(null,'',url);}
   $('detailDlg').dataset.u=u;const m=mapLink(r),mLoc=typeof MGI18n!=='undefined'&&MGI18n.michelinLocale?MGI18n.michelinLocale():'en';
-  $('detailBody').innerHTML=`<header class="detail-hero"><img class="detail-photo" alt="${esc(r.zh||r.n)} · 米其林指南配图" decoding="async" referrerpolicy="no-referrer" hidden><div class="detail-hero-content"><span class="detail-hero-kicker">THE MICHELIN SELECTION</span><h2 class="detail-title" id="detailTitle" tabindex="-1">${esc(r.zh||r.n)}</h2>${r.zh?`<p class="detail-origin">${esc(r.n)}${r.kind===2?' · 参考译名，非官方中文名':''}</p>`:r.zhn&&r.zhn!==r.n?`<p class="detail-origin" translate="no" lang="zh">${esc(r.zhn)}</p>`:''}<p>${esc(DB.C[r.co][0])} · ${esc(DB.T[r.ci][0])}</p>${badge(r)} ${tagsHTML(r)}</div></header><p class="detail-photo-credit" hidden><a href="https://guide.michelin.com/${esc(mLoc)}/${esc(r.u)}" target="_blank" rel="noopener">图片来源：米其林指南 ↗</a><span>摄影版权归原权利人</span></p><dl class="detail-facts">${r.cu?`<dt>菜系</dt><dd>${esc(r.cu)}${upDietaryTag(r)}</dd>`:''}${r.a?`<dt>地址</dt><dd data-detail-address>${upAddressHTML(r)}</dd>`:''}${r.p?`<dt>价位</dt><dd>${'$'.repeat(r.p)} · 当地价位</dd>`:''}</dl>${typeof MGUpdates!=='undefined'?MGUpdates.detailHTML(r):''}${upIntroHTML(r)}<div class="detail-actions"><a href="https://guide.michelin.com/${esc(mLoc)}/${esc(r.u)}" target="_blank" rel="noopener">米其林页面</a><a href="${esc(m.href)}" target="_blank" rel="noopener">导航</a>${r.w?`<a href="${esc(r.w)}" target="_blank" rel="noopener">${esc(upBookingLabel(r.w))}</a>`:''}${upHoursLink(r)}<button class="linkbtn" id="copyRestaurant">复制餐厅链接</button></div><div class="links"><button class="fav" data-u="${esc(u)}" data-v="1" aria-pressed="${favOf(u)===1}">想去</button><button class="linkbtn" data-trip-pick="${esc(u)}">加入旅行</button></div><details class="detail-prices" ${(PRICE_DB.items[r.u]||[]).length?'':'hidden'}><summary>参考消费</summary><div class="price-note">${upPrice(r)}</div></details>${upHistory(r)}<details class="detail-record" open><summary id="visitHeading">${favOf(u)===2?'我的用餐记录':'记录一次用餐'}<span>${favOf(u)===2?upVisits(u).length+' 次':'评分 · 日期 · 笔记'}</span></summary>${upVisitHTML(u)}</details><p class="note">保存在本设备，可在“我的”里开启云端同步或导出备份。</p>`;
-  document.title=(r.zh||r.n)+' · 米其林全球名录';if(!$('detailDlg').open)showAppDialog($('detailDlg'));$('detailDlg').scrollTop=0;$('detailTitle').focus({preventScroll:true});upLoadDetailPhoto(r);
+  $('detailBody').innerHTML=`<header class="detail-hero"><img class="detail-photo" alt="${esc(r.zh||r.n)} · 米其林指南配图" decoding="async" referrerpolicy="no-referrer" hidden><div class="detail-hero-content"><span class="detail-hero-kicker">THE MICHELIN SELECTION</span><h2 class="detail-title" id="detailTitle" tabindex="-1">${esc(r.zh||r.n)}</h2>${r.zh?`<p class="detail-origin">${esc(r.n)}${r.kind===2?' · 参考译名，非官方中文名':''}</p>`:r.zhn&&r.zhn!==r.n?`<p class="detail-origin" translate="no" lang="zh">${esc(r.zhn)}</p>`:''}<p>${esc(DB.C[r.co][0])} · ${esc(DB.T[r.ci][0])}</p>${badge(r)} ${tagsHTML(r)}</div></header><button type="button" class="detail-log" data-log-meal>＋ 记一笔<span>评分 · 照片 · 笔记</span></button><p class="detail-photo-credit" hidden><a href="https://guide.michelin.com/${esc(mLoc)}/${esc(r.u)}" target="_blank" rel="noopener">图片来源：米其林指南 ↗</a><span>摄影版权归原权利人</span></p><dl class="detail-facts">${r.cu?`<dt>菜系</dt><dd>${esc(r.cu)}${upDietaryTag(r)}</dd>`:''}${r.a?`<dt>地址</dt><dd data-detail-address>${upAddressHTML(r)}</dd>`:''}${r.p?`<dt>价位</dt><dd>${'$'.repeat(r.p)} · 当地价位</dd>`:''}</dl>${typeof MGUpdates!=='undefined'?MGUpdates.detailHTML(r):''}${upIntroHTML(r)}<div class="detail-actions"><a href="https://guide.michelin.com/${esc(mLoc)}/${esc(r.u)}" target="_blank" rel="noopener">米其林页面</a><a href="${esc(m.href)}" target="_blank" rel="noopener">导航</a>${r.w?`<a href="${esc(r.w)}" target="_blank" rel="noopener">${esc(upBookingLabel(r.w))}</a>`:''}${upHoursLink(r)}<button class="linkbtn" id="copyRestaurant">复制餐厅链接</button></div><div class="links"><button class="fav" data-u="${esc(u)}" data-v="1" aria-pressed="${favOf(u)===1}">想去</button><button class="linkbtn" data-trip-pick="${esc(u)}">加入旅行</button></div>${upPlatformLinks(r)}<details class="detail-prices" ${(PRICE_DB.items[r.u]||[]).length?'':'hidden'}><summary>参考消费</summary><div class="price-note">${upPrice(r)}</div></details>${upHistory(r)}<details class="detail-record" open><summary id="visitHeading">${favOf(u)===2?'我的用餐记录':'记录一次用餐'}<span>${favOf(u)===2?upVisits(u).length+' 次':'评分 · 日期 · 笔记'}</span></summary>${upVisitHTML(u)}</details><p class="note">保存在本设备，可在“我的”里开启云端同步或导出备份。</p>`;
+  document.title=(r.zh||r.n)+' · 米其林全球名录';upSetSEO(r);if(!$('detailDlg').open)showAppDialog($('detailDlg'));$('detailDlg').scrollTop=0;$('detailTitle').focus({preventScroll:true});upLoadDetailPhoto(r);
 }
 function upRestoreDetail(){
   if(!DB)return;const u=new URL(location.href).searchParams.get('restaurant');
-  if(u)upOpenDetail(u,false);else if($('detailDlg').open)closeAppDialog($('detailDlg'));
+  if(u)upOpenDetail(u,false);else if($('detailDlg').open&&!closeAppDialog($('detailDlg')))history.pushState(null,'',upDetailURL($('detailDlg').dataset.u));
 }
 function upInit(){
   document.body.insertAdjacentHTML('beforeend',`<dialog id="detailDlg" aria-labelledby="detailTitle"><div class="dlg"><div class="detail-sheet-head"><button type="button" class="detail-drag" tabindex="-1" data-close aria-label="下滑或点击关闭餐厅详情"><span></span></button><button type="button" class="close" data-close>关闭</button></div><div id="detailBody"></div></div></dialog><dialog id="visitDlg" class="visit-sheet" aria-labelledby="visitTitle"><div class="dlg"><div class="detail-sheet-head"><button type="button" class="detail-drag" tabindex="-1" data-close aria-label="下滑或点击关闭用餐记录"><span></span></button><button type="button" class="close" data-close>关闭</button></div><p class="visit-kicker">去过 · 我的评分</p><h2 id="visitTitle"></h2><p class="detail-origin" id="visitMeta"></p><div id="visitBody"></div></div></dialog><dialog id="tripDlg" aria-labelledby="tripTitle"><div class="dlg"><button type="button" class="close" data-close>关闭</button><h2 id="tripTitle"></h2><form id="tripForm" class="upgrade-form"><label>旅行名称<input id="tripName" maxlength="100" required placeholder="例如：2026 欧洲旅行"></label><button class="btn primary" type="submit">保存名称</button></form><div class="row"><button class="btn primary" id="tripRoute" data-trip-route="">排路线</button><button class="btn" id="tripMap">在地图上查看</button><button class="btn danger" id="tripDelete">删除旅行清单</button></div><div id="tripItems" class="trip-content"></div></div></dialog><dialog id="tripPickDlg" aria-labelledby="tripPickTitle"><div class="dlg"><button type="button" class="close" data-close>关闭</button><h2 id="tripPickTitle"></h2><form id="tripPickForm" class="upgrade-form"><div id="tripPickChoices"></div><label>或创建新旅行<input id="tripQuickName" maxlength="100" placeholder="输入旅行名称"></label><button type="submit" class="btn primary">保存到所选旅行</button></form></div></dialog>`);
@@ -636,7 +671,7 @@ function upInit(){
     if(el.id==='copyRestaurant')copyText(upDetailURL($('detailDlg').dataset.u)).then(()=>toast('已复制餐厅链接'),()=>toast('无法复制，请从地址栏复制链接'));
   });
   ['detailDlg','visitDlg','tripDlg','tripPickDlg'].forEach(id=>{const dlg=$(id);dlg.addEventListener('click',e=>{if(e.target===dlg||e.target.closest('[data-close]'))closeAppDialog(dlg);});});
-  $('detailDlg').addEventListener('close',()=>{const url=new URL(location.href);url.searchParams.delete('restaurant');history.replaceState(null,'',url);updatePageIdentity();});
+  $('detailDlg').addEventListener('close',()=>{upSetSEO(null);const url=new URL(location.href);url.searchParams.delete('restaurant');history.replaceState(null,'',url);updatePageIdentity();});
   upBindDetailSwipe();upBindDetailSwipe('visitDlg');upBindVisitForms();upInitShare();
   window.addEventListener('popstate',upRestoreDetail);
 

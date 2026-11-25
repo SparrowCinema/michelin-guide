@@ -347,7 +347,7 @@ html.modal-scroll-locked{overscroll-behavior:none}
 .mp-strip .mp-tile{border-radius:10px}
 .mp-more{position:absolute;inset:0;display:grid;place-items:center;font:600 18px/1 var(--serif,Georgia,serif);color:#fff;background:rgb(20 14 13 / .5);backdrop-filter:blur(2px);-webkit-backdrop-filter:blur(2px);letter-spacing:.04em}
 dialog.mp-viewer{width:100vw;height:100dvh;max-width:none;max-height:none;margin:0;border:0;border-radius:0;background:rgb(10 8 8 / .96);color:#fff;padding:0;overflow:hidden}
-dialog.mp-viewer[open]{display:grid;grid-template-rows:minmax(0,1fr) auto}
+dialog.mp-viewer[open]{display:grid;grid-template-rows:minmax(0,1fr) auto auto}
 dialog.mp-viewer::backdrop{background:rgb(0 0 0 / .7)}
 .mp-stage{position:relative;display:grid;place-items:center;min-height:0;padding:max(16px,env(safe-area-inset-top)) 12px 0}
 .mp-stage img{max-width:100%;max-height:100%;object-fit:contain;border-radius:4px;box-shadow:0 20px 60px rgb(0 0 0 / .5);transition:opacity .25s}
@@ -657,7 +657,7 @@ body[data-tab="me"] #controls,body[data-tab="me"] #intro{display:none!important}
 @media(prefers-reduced-motion:reduce){.pp-cover-atlas,.pp-cover-atlas:hover{transform:none;transition:none}}
 
 /* A self-hosted four-character title cut; reading text keeps the system stack. */
-@font-face{font-family:"Passport Calligraphy";src:url("assets/fonts/passport-calligraphy.ttf?v=65") format("truetype");font-style:normal;font-weight:400;font-display:swap;unicode-range:U+7F8E,U+98DF,U+62A4,U+7167}
+@font-face{font-family:"Passport Calligraphy";src:url("assets/fonts/passport-calligraphy.ttf?v=66") format("truetype");font-style:normal;font-weight:400;font-display:swap;unicode-range:U+7F8E,U+98DF,U+62A4,U+7167}
 .pp-cover-atlas .pp-cover-name{font-family:"Passport Calligraphy","Kaiti SC","STKaiti",var(--display);font-weight:400;font-size:42px;line-height:1.35;letter-spacing:.14em;margin-left:.14em;text-shadow:0 1px 0 #f9e9b638,0 2px 1px #230c18;}
 .pp-cover-atlas .pp-cover-en{font-family:Georgia,"Times New Roman",serif;font-size:11px;line-height:1.7;font-weight:400;letter-spacing:.26em;margin-top:10px}
 .pp-cover-atlas .pp-cover-publisher{font-size:12px;letter-spacing:.2em}.pp-cover-atlas .pp-cover-motto{letter-spacing:.2em;margin-top:12px}.pp-cover-atlas .pp-cover-bottom{font-family:var(--display);letter-spacing:.16em}
@@ -829,7 +829,7 @@ body[data-tab="me"] #controls,body[data-tab="me"] #intro{display:none!important}
 @media(max-width:360px){.pp-growth-tabs{margin-inline:14px}.pp-journey .pp-journey-body{padding-inline:14px}.pp-growth-tabs button{font-size:13px}.pp-honor-filters{gap:6px}.pp-honor-filters button{gap:6px}}
 
 /* Editorial typography: real variable weights, a restrained logo bar and clear reading text. */
-@font-face{font-family:"Passport Editorial";src:url("assets/fonts/passport-editorial.woff2?v=65") format("woff2");font-style:normal;font-weight:200 900;font-display:swap}
+@font-face{font-family:"Passport Editorial";src:url("assets/fonts/passport-editorial-latin.woff2?v=66") format("woff2");font-style:normal;font-weight:200 900;font-display:swap;unicode-range:U+0000-2E7F}@font-face{font-family:"Passport Editorial";src:url("assets/fonts/passport-editorial-cjk.woff2?v=66") format("woff2");font-style:normal;font-weight:200 900;font-display:swap;unicode-range:U+2E80-FFFF}
 .page-language-brand{position:relative;flex:none;gap:0}.page-language-brand img{width:32px;height:32px;border-radius:8px}.page-language-brand #pageBrand{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap;border:0}
 #intro{padding-top:18px;padding-bottom:14px}#intro h1{font:800 clamp(26px,3.5vw,36px)/1.35 var(--display);letter-spacing:.025em;text-wrap:balance}
 .mehead h2{font:800 clamp(26px,3.5vw,34px)/1.4 var(--display);letter-spacing:.025em}
@@ -916,3 +916,77 @@ a.restaurant-title{font:700 16px/1.55 var(--display);letter-spacing:.01em;overfl
 .route-mv:disabled{opacity:.3;cursor:default}
 @media(max-width:420px){.route-slot-btn{padding:2px 6px;font-size:10.5px}.route-mv{padding:2px 5px}.route-stop-tools{gap:4px}}
 @media(prefers-reduced-motion:reduce){.map-cluster{transition:none}}
+/* v65 photo editor: reorder, undo, larger hit areas */
+.mp-edit .mp-tile[data-photo-tile]{touch-action:pan-y;-webkit-touch-callout:none;-webkit-user-select:none;user-select:none}
+.mp-edit .mp-open{cursor:grab}.mp-edit.is-sorting .mp-open{cursor:grabbing}
+.mp-edit.is-sorting .mp-tile[data-photo-tile]{touch-action:none}
+.mp-tile.is-placeholder{opacity:.28;outline:2px dashed color-mix(in srgb,var(--red) 55%,transparent);outline-offset:-2px}
+.mp-ghost{border-radius:12px;box-shadow:0 18px 36px -10px rgb(30 10 10 / .45);opacity:.95;transition:none!important;animation:none!important}
+.mp-ghost img{opacity:1!important;transform:none!important}
+.mp-remove::before{content:"";position:absolute;inset:-8px -8px 0 0}
+@media(max-width:480px){.mp-grid{grid-template-columns:repeat(3,minmax(0,1fr))}.mp-remove{width:28px;height:28px}}
+.mp-undo{display:grid;animation:none;background:var(--hover)}
+.mp-undo button{all:unset;display:grid;place-content:center;justify-items:center;gap:4px;width:100%;height:100%;font-size:10px;color:var(--muted);cursor:pointer;text-align:center;border:1px dashed var(--line);border-radius:12px;box-sizing:border-box}
+.mp-undo button b{font-size:12px;color:var(--red);font-weight:600}
+.mp-undo button:focus-visible{outline:2px solid var(--red);outline-offset:-2px}
+.mp-sort-hint{display:block;margin-bottom:3px}.mp-sort-hint[hidden]{display:none}
+.mp-live{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);margin:0}
+.mp-date-note{display:block;margin-top:5px;font-size:11px;color:var(--green,#3d7a4f)}
+.mp-tools{display:flex;justify-content:center;flex-wrap:wrap;gap:8px;padding:10px 16px 0}
+.mp-tools[hidden]{display:none}
+.mp-tools button{font:inherit;font-size:13px;padding:8px 14px;border-radius:999px;border:1px solid rgb(255 255 255 / .28);background:rgb(255 255 255 / .08);color:#fff;cursor:pointer;min-height:40px}
+.mp-tools button:disabled{opacity:.35;cursor:default}
+.mp-tools .mp-tool-remove{color:#ffb4a8;border-color:rgb(255 140 120 / .4)}
+.mp-stage img{transition:opacity .25s,transform .25s;cursor:zoom-in}
+.mp-stage img.is-zoomed{transform:scale(2.2);cursor:zoom-out}
+.mp-stage{overflow:hidden}
+.discard-dlg{width:min(360px,calc(100% - 40px));border-radius:18px}.discard-dlg h3{margin:4px 0 8px;font:600 18px/1.4 var(--display)}.discard-dlg p{margin:0 0 18px;font-size:13px;color:var(--muted);line-height:1.6}
+.discard-actions{display:flex;gap:10px;justify-content:flex-end}.discard-actions .btn{min-height:42px;padding:0 16px}.discard-actions .danger{background:var(--red);color:#fff;border-color:var(--red)}
+.backup-nudge{display:flex;gap:14px;align-items:center;justify-content:space-between;flex-wrap:wrap;margin:14px 0;padding:14px 16px;border:1px solid color-mix(in srgb,var(--red) 30%,var(--line));border-radius:16px;background:color-mix(in srgb,var(--red-soft) 50%,var(--surface))}
+.backup-nudge strong{font-size:14px}.backup-nudge p{margin:4px 0 0;font-size:12px;color:var(--muted);line-height:1.6}
+.backup-nudge-actions{display:flex;gap:10px;align-items:center}
+/* v65: update banner folds to one line and only shows on the directory */
+body:not([data-tab="list"]) #updateBanner{display:none}
+.update-banner.ub-compact{margin-top:14px;border:1px solid var(--line);border-radius:14px}
+.ub-bar>span:not(.ub-dot):not(.ub-bar-stats){min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.update-banner.ub-compact:not(.ub-unseen) .ub-dot{background:var(--muted);box-shadow:none}
+.links .log-meal{color:var(--red);font-weight:600}
+.detail-platforms{display:flex;flex-wrap:wrap;align-items:center;gap:6px 14px;margin:10px 0 0;font-size:12px}
+.detail-platforms span{color:var(--muted)}.detail-platforms a{color:var(--red);text-decoration:none}.detail-platforms a:hover{text-decoration:underline}
+/* v65: wide screens get a top navigation, a full-height map beside the list and a dialog without the phone drag handle. */
+@media(min-width:1024px){
+  :root{--tabh:0px}
+  #tabbar.tabbar{top:max(8px,env(safe-area-inset-top,0px));bottom:auto;left:50%;right:auto;transform:translateX(-50%);height:46px;padding:4px;gap:2px;border:1px solid var(--line);border-radius:999px;background:color-mix(in srgb,var(--surface) 94%,transparent);box-shadow:0 4px 14px -10px rgb(40 20 20 / .35);z-index:2100}
+  #tabbar.tabbar button{flex:0 0 auto;flex-direction:row;gap:7px;height:38px;min-height:38px;padding:0 18px;border-radius:999px;font-size:14px}
+  #tabbar.tabbar button svg{width:18px;height:18px}
+  #tabbar.tabbar button[aria-current="page"]{background:color-mix(in srgb,var(--red) 11%,var(--surface));color:var(--red);font-weight:600}
+  #tabbar.tabbar button:hover:not([aria-current]){background:var(--hover);color:var(--fg)}
+  #tabbar.tabbar button b{position:static;margin:0 0 0 2px}
+  .tabbar [data-tab="list"]{order:1}.tabbar [data-tab="map"]{order:2}.tabbar [data-tab="near"]{order:3}.tabbar [data-tab="me"]{order:4}
+  body[data-tab="map"] #intro{display:none}
+  body[data-tab="map"] #mapbox #map{height:calc(100dvh - var(--lbh) - 230px);min-height:420px;max-height:none}
+  #detailDlg .detail-drag,#visitDlg .detail-drag{visibility:hidden}
+}
+@media(min-width:1024px) and (max-width:1180px){#tabbar.tabbar button{padding:0 13px}}
+@media(min-width:1024px){
+  body[data-tab="map"] .travel-map-title{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+  body[data-tab="map"] .journey-tools{margin-top:12px;padding-bottom:10px}
+  body[data-tab="map"] .map-heading{padding:10px 16px}
+  body[data-tab="map"] #mapbox{top:calc(var(--lbh) + 112px)}
+  body[data-tab="map"] #mapbox #map{height:calc(100dvh - var(--lbh) - 260px)}
+}
+.detail-hero.is-photo-loading:before{content:"";position:absolute;inset:0;z-index:-2;background:linear-gradient(110deg,transparent 30%,rgb(255 255 255 / .45) 50%,transparent 70%) 0 0/250% 100%;animation:mp-shimmer 1.4s linear infinite}
+@media(prefers-reduced-motion:reduce){.detail-hero.is-photo-loading:before{animation:none}}
+/* v65 filter sheet: full-width menus (no clipped labels), a type-to-find place box, one clear button */
+.panel #country,.panel #city{flex:1 1 100%}
+.place-find{flex:1 1 100%;box-sizing:border-box;font:inherit;font-size:14px;padding:10px 14px;border:1px solid var(--line);border-radius:12px;background:var(--surface);color:var(--fg)}
+.place-find:focus{outline:2px solid color-mix(in srgb,var(--red) 50%,transparent);outline-offset:1px}
+/* v65 Me page: lists first, setup and help grouped below a small heading */
+.me-menu-label{margin:0;padding:14px 16px 6px;font-size:12px;letter-spacing:.08em;color:var(--muted);border-bottom:1px solid var(--line);background:var(--bg)}
+.me-menu>.me-fold-minor>:is(summary,.me-entry){padding-block:12px}
+.me-menu>.me-fold-minor>:is(summary,.me-entry) strong{font-size:15px}
+@media(min-width:900px),(min-width:700px) and (orientation:landscape){.me-menu-label{grid-column:1/-1;border:0;background:none;padding:12px 2px 0}}
+.ub-bar b{white-space:nowrap}
+.detail-log{display:flex;align-items:center;justify-content:center;gap:10px;width:100%;margin:12px 0 4px;min-height:46px;border:0;border-radius:14px;background:var(--red);color:#fff;font:inherit;font-size:15px;font-weight:600;cursor:pointer}
+.detail-log span{font-size:12px;font-weight:400;opacity:.8}
+.detail-log:focus-visible{outline:2px solid var(--fg);outline-offset:2px}

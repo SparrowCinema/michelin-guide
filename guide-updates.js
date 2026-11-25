@@ -47,9 +47,10 @@ const MGUpdates=(()=>{
     const today=new Date().toISOString().slice(0,10),sched=(DB.E||[]).filter(g=>g[7]&&g[7][1]>=today.slice(0,g[7][1].length)).map(g=>[g,g[7]]).sort((a,b)=>a[1][1].localeCompare(b[1][1]));
     const fresh=(DB.E||[]).filter(g=>g[4]&&u.from&&g[4]>u.from&&g[4]<=u.data);
     box.hidden=false;
-    if(seen===u.data&&!open){box.classList.add('ub-compact');
-      box.innerHTML=`<button type="button" class="ub-bar" data-ub="open" aria-expanded="false"><span class="ub-dot" aria-hidden="true"></span><b>${EN()?'This update':'本次更新'}</b><span>${h(short(u.data))}</span><span class="ub-bar-stats">${sum(gs,'added')?`+${sum(gs,'added')}`:''} ${sum(gs,'removed')?`−${sum(gs,'removed')}`:''} ${sum(gs,'up')?`↑${sum(gs,'up')}`:''}</span><i aria-hidden="true">›</i></button>`;return;}
-    box.classList.remove('ub-compact');
+    // Folded to one line by default so the search box and restaurants lead the page; tap to expand.
+    if(!open){box.classList.add('ub-compact');box.classList.toggle('ub-unseen',seen!==u.data);
+      box.innerHTML=`<button type="button" class="ub-bar" data-ub="open" aria-expanded="false"><span class="ub-dot" aria-hidden="true"></span><b>${EN()?'This update':'本次更新'}</b><span>${h(short(u.data))}${fresh.length?` · ${fresh.map(g=>h(EN()?g[2]:g[1])+' '+g[3]).slice(0,2).join('、')}`:''}</span><span class="ub-bar-stats">${sum(gs,'added')?`+${sum(gs,'added')}`:''} ${sum(gs,'removed')?`−${sum(gs,'removed')}`:''} ${sum(gs,'up')?`↑${sum(gs,'up')}`:''}</span><i aria-hidden="true">›</i></button>`;return;}
+    box.classList.remove('ub-compact','ub-unseen');
     box.innerHTML=`<div class="ub-head"><span class="ub-dot" aria-hidden="true"></span><div><p class="ub-kicker">${EN()?'THIS UPDATE':'本次更新'}</p><h2>${EN()?`Data as of ${day(u.data)}`:`名单更新至 ${day(u.data)}`}</h2></div><button type="button" class="ub-close" data-ub="close" aria-label="${EN()?'Hide':'收起'}">×</button></div>
       <div class="ub-stats">${chip(EN()?'new':'家新增',sum(gs,'added'),'add')}${chip(EN()?'removed':'家移出',sum(gs,'removed'),'rm')}${chip(EN()?'promoted':'家升星',sum(gs,'up'),'up')}${chip(EN()?'moved down':'家降级',sum(gs,'down'),'down')}</div>
       ${fresh.length?`<p class="ub-line"><b>${EN()?'New editions':'新版指南'}</b>${fresh.map(g=>`<span class="ub-tag new">${h(EN()?g[2]:g[1])} ${g[3]} · ${short(g[4])}</span>`).join('')}</p>`:''}
@@ -117,7 +118,7 @@ const MGUpdates=(()=>{
 }
     document.addEventListener('click',e=>{const b=e.target.closest('[data-ub]');if(!b)return;const a=b.dataset.ub;
       if(a==='close'){open=false;try{localStorage.setItem('mg-upd-seen',UPD.updates[0].data);}catch(err){}render();}
-      if(a==='open'){open=true;render();document.getElementById('updateBanner')?.scrollIntoView({block:'nearest',behavior:'smooth'});}
+      if(a==='open'){open=true;try{localStorage.setItem('mg-upd-seen',UPD.updates[0].data);}catch(err){}render();document.getElementById('updateBanner')?.scrollIntoView({block:'nearest',behavior:'smooth'});}
       if(a==='guides')guidesDialog();});
     fetch('updates.json?v='+(typeof DATA_VER!=='undefined'?DATA_VER:'')).then(r=>r.ok?r.json():null).then(j=>{UPD=j;render();}).catch(()=>{});
   }
