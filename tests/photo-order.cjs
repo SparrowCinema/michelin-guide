@@ -31,6 +31,10 @@ const {chromium}=require('playwright');
       const files=[];for(let i=0;i<4;i++)files.push({name:i+'.png',mimeType:'image/png',buffer:await make(i*80)});
       const u=await page.evaluate(()=>{const r=DB.rows.find(r=>r.l===3&&r.ml);upOpenDetail(r.u);return r.u;});
       await page.waitForSelector('#detailDlg .mp-edit');
+      // Detail sheets carry structured data and a canonical URL for search engines; platform links are present.
+      const seo=await page.evaluate(()=>({ld:JSON.parse(document.getElementById('restaurantLd')?.textContent||'{}'),canon:document.querySelector('link[rel=canonical]').href}));
+      assert.equal(seo.ld['@type'],'Restaurant');assert(seo.ld.award.includes('MICHELIN'));assert(seo.canon.includes('restaurant='));
+      assert(await page.locator('#detailDlg .detail-platforms a').count()>=1);
       await page.locator('#detailDlg [data-photo-input]').setInputFiles([{name:'e.jpg',mimeType:'image/jpeg',buffer:exifJpeg},...files]);
       await page.waitForFunction(()=>document.querySelectorAll('#detailDlg .mp-edit .mp-tile.is-loaded').length===5);
       assert.equal(await page.inputValue('#visitDate'),'2025-03-14','EXIF date fills the empty meal date');
@@ -89,6 +93,7 @@ const {chromium}=require('playwright');
       assert.deepEqual(await page.evaluate(u=>PERSONAL.records[u].visits[0].photos,u),saved);
       await page.locator('#detailDlg .detail-sheet-head .close').click();await page.waitForTimeout(150);
       assert(!(await page.evaluate(()=>document.getElementById('detailDlg').open)),'saved sheet closes without asking');
+      assert(!(await page.evaluate(()=>!!document.getElementById('restaurantLd'))),'structured data is removed with the sheet');
       // Discarding a new meal's photos cleans them out of storage.
       await page.evaluate(u=>upOpenDetail(u),u);await page.locator('#detailDlg [data-add-visit]').click();
       await page.locator('#detailDlg .meal-new [data-photo-input]').setInputFiles([files[0]]);
