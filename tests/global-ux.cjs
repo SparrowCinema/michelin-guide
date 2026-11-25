@@ -33,6 +33,21 @@ const {chromium}=require('playwright');
       await ctx.route(/https:\/\/.*leaflet.*\.(js|css)$/,r=>r.fulfill({path:path.join(leaflet,r.request().url().endsWith('.css')?'leaflet.css':'leaflet.js')}));
     };
 
+    const assertCenteredMapLabels=async (page,selector)=>{
+      const geometry=await page.locator('#map '+selector).evaluateAll(labels=>labels.map(label=>{
+        const range=document.createRange();
+        range.selectNodeContents(label);
+        const text=range.getBoundingClientRect(),circle=label.getBoundingClientRect();
+        return {label:label.textContent,x:text.left+text.width/2-circle.left-circle.width/2,
+          y:text.top+text.height/2-circle.top-circle.height/2,width:text.width,diameter:circle.width,height:circle.height};
+      }));
+      assert(geometry.length>0,'map should render '+selector);
+      for(const {label,x,y,width,diameter,height} of geometry){
+        assert(Math.abs(x)<=1&&Math.abs(y)<=2,`map label ${label} should be centered inside its circle (${x}, ${y})`);
+        assert(width<diameter&&Math.abs(diameter-height)<=1,`map label ${label} should fit a circular marker`);
+      }
+    };
+
     // ---- 1. Desktop zh UX: autocomplete, active filters, sort, saved filters, map clustering + split-view ----
     const ctx=await browser.newContext({locale:'zh-CN',viewport:{width:1280,height:900}});
     await stubRoutes(ctx);
@@ -81,6 +96,7 @@ const {chromium}=require('playwright');
     await page.waitForFunction(()=>MAP.ready&&MAP.layer);
     assert.equal(await page.locator('#browseStage').evaluate(el=>getComputedStyle(el).display),'grid','desktop map tab should use 2-column split view');
     assert((await page.locator('.map-cluster').count())>0,'overview map with >80 points should render clusters');
+    await assertCenteredMapLabels(page,'.map-cluster-badge');
     if(shots)await page.screenshot({path:path.join(shots,'zh-desktop-map-split.png')});
     await page.locator('[data-map-focus]').first().click();
     await page.waitForFunction(()=>!!document.querySelector('.leaflet-popup-content'));
@@ -181,6 +197,8 @@ const {chromium}=require('playwright');
     assert(await zohos.isVisible());
     await denyPage.locator('#cityView').click();
     await denyPage.waitForFunction(()=>MAP.ready&&MAP.layer);
+    await denyPage.waitForSelector('#map .restaurant-pin-face',{state:'attached'});
+    await assertCenteredMapLabels(denyPage,'.restaurant-pin-face');
     await denyPage.locator('#mapInteract').click();
     await denyPage.evaluate(()=>MAP.m.panBy([24,20],{animate:false}));
     await denyPage.waitForFunction(()=>$('list').querySelector('a[data-restaurant$="/zohos"]')&&MAP.m.getBounds().contains([DB.byU['attica/athens/restaurant/zohos'].lat,DB.byU['attica/athens/restaurant/zohos'].lng]));

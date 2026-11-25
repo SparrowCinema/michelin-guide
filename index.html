@@ -19,8 +19,8 @@
 <meta name="apple-mobile-web-app-title" content="米其林全球名录">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <!-- ?v= must match ASSET_VER in sw.js: a new page must never run with an old cached script -->
-<link rel="stylesheet" href="upgrade.css?v=68">
-<link rel="preload" href="assets/fonts/passport-editorial-latin.woff2?v=68" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="upgrade.css?v=69">
+<link rel="preload" href="assets/fonts/passport-editorial-latin.woff2?v=69" as="font" type="font/woff2" crossorigin>
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" href="icon.svg" type="image/svg+xml">
 <link rel="icon" href="icon-192.png" sizes="192x192" type="image/png">
@@ -471,27 +471,27 @@ dialog::backdrop{background:var(--shade)}
 <div id="inappBar" hidden><span>在微信等 App 里无法添加到主屏幕，也可能打不开地图。</span><button type="button" id="inappHow">怎么办</button><button type="button" id="inappX" aria-label="关闭">×</button></div>
 <div id="toast" role="status" aria-live="polite"></div>
 
-<script src="i18n.js?v=68"></script>
-<script src="back-to-top.js?v=68"></script>
-<script src="city-names.js?v=68"></script>
-<script src="my-navigation.js?v=68"></script>
-<script src="search-aliases.js?v=68"></script>
-<script src="guide-core.js?v=68"></script>
-<script src="address-localization.js?v=68"></script>
-<script src="restaurant-intro.js?v=68"></script>
-<script src="upgrade.js?v=68"></script>
-<script src="passport-share.js?v=68"></script>
-<script src="meal-photos.js?v=68"></script>
-<script src="trip-route.js?v=68"></script>
-<script src="cloud-sync.js?v=68"></script>
-<script src="guide-updates.js?v=68"></script>
+<script src="i18n.js?v=69"></script>
+<script src="back-to-top.js?v=69"></script>
+<script src="city-names.js?v=69"></script>
+<script src="my-navigation.js?v=69"></script>
+<script src="search-aliases.js?v=69"></script>
+<script src="guide-core.js?v=69"></script>
+<script src="address-localization.js?v=69"></script>
+<script src="restaurant-intro.js?v=69"></script>
+<script src="upgrade.js?v=69"></script>
+<script src="passport-share.js?v=69"></script>
+<script src="meal-photos.js?v=69"></script>
+<script src="trip-route.js?v=69"></script>
+<script src="cloud-sync.js?v=69"></script>
+<script src="guide-updates.js?v=69"></script>
 <script>
 const CONT=["亚洲","欧洲","北美洲","南美洲","大洋洲"];
 const LVN=["三星","二星","一星","必比登","入选"];
 const LVC=["#7a0d0a","#b3261e","#e0574d","#c98a00","#9a9390"];
 const PIN=["中国内地","中国香港","中国澳门","中国台湾"];
 const REPO="https://github.com/SparrowCinema/michelin-guide";
-const ASSET_VER="68"; // = ?v= on the asset tags above, UPGRADE_VER in upgrade.js and ASSET_VER in sw.js
+const ASSET_VER="69"; // = ?v= on the asset tags above, UPGRADE_VER in upgrade.js and ASSET_VER in sw.js
 const DATA_VER="20261125-1"; // bump whenever data.json changes so browsers skip their cached copy
 const $=id=>document.getElementById(id);
 const esc=s=>String(s).replace(/[&<>"]/g,ch=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[ch]));
@@ -960,7 +960,7 @@ function drawMarkers(){
         const label=n>=1000?(n/1000).toFixed(1)+"k":String(n);
         const mk=L.marker([lat,lng],{
           alt:`${n} 家餐厅聚在一起，点击放大查看`,
-          icon:L.divIcon({className:`map-cluster cl-${b.best}`,html:`<span>${label}</span>`,iconSize:[sz,sz],iconAnchor:[sz/2,sz/2]})
+          icon:L.divIcon({className:`map-cluster cl-${b.best}`,html:`<span class="map-cluster-badge">${label}</span>`,iconSize:[sz,sz],iconAnchor:[sz/2,sz/2]})
         });
         mk.on("click",()=>{const pts=b.items.map(x=>x[1]);MAP.m.fitBounds(L.latLngBounds(pts),{padding:[36,36],maxZoom:Math.max(z+2,13),animate:true});});
         layers.push(mk);
@@ -972,7 +972,7 @@ function drawMarkers(){
   const visible=rs.length>80&&MAP.m?(()=>{const b=MAP.m.getBounds().pad(0.35);return rs.filter(r=>b.contains(MAP.amap?[r.glat,r.glng]:[r.lat,r.lng]));})():rs;
   MAP.layer=L.layerGroup(visible.slice().reverse().map(r=>{
     const ll=MAP.amap?[r.glat,r.glng]:[r.lat,r.lng],n=MAP.numbers.get(r.u);
-    const marker=n?L.marker(ll,{title:(r.zh||r.n),alt:`${n} · ${r.zh||r.n}`,icon:L.divIcon({className:`restaurant-pin pin-${r.l}`,html:`<span>${n}</span>`,iconSize:[32,38],iconAnchor:[16,38],popupAnchor:[0,-32]})})
+    const marker=n?L.marker(ll,{title:(r.zh||r.n),alt:`${n} · ${r.zh||r.n}`,icon:L.divIcon({className:`restaurant-pin pin-${r.l}`,html:`<span class="restaurant-pin-face">${n}</span>`,iconSize:[32,38],iconAnchor:[16,38],popupAnchor:[0,-32]})})
       :L.circleMarker(ll,{renderer:MAP.canvas,radius:R[r.l],color:"#fff",weight:1.5,fillColor:LVC[r.l],fillOpacity:.92});
     MAP.markers.set(r.u,marker);
     return marker.bindPopup(()=>popupHTML(r),{maxWidth:280});
