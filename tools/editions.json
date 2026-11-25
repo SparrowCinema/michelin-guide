@@ -467,12 +467,15 @@
     "Hunan",
     "Changsha"
    ],
-   "editions": [],
-   "scheduled": {
-    "year": 2027,
-    "date": "2026-11-25",
-    "source": "https://guide.michelin.com/en/article/news-and-views/michelin-guide-hunan-province-host-city-changsha"
-   }
+   "editions": [
+    {
+     "year": 2027,
+     "released": "2026-11-25",
+     "source": "https://guide.michelin.com/en/article/news-and-views/michelin-guide-hunan-province-host-city-changsha",
+     "synced": true,
+     "synced_on": "2026-11-25"
+    }
+   ]
   },
   {
    "id": "abu-dhabi",
