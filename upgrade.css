@@ -930,3 +930,11 @@ a.restaurant-title{font:700 16px/1.55 var(--display);letter-spacing:.01em;overfl
 .backup-nudge{display:flex;gap:14px;align-items:center;justify-content:space-between;flex-wrap:wrap;margin:14px 0;padding:14px 16px;border:1px solid color-mix(in srgb,var(--red) 30%,var(--line));border-radius:16px;background:color-mix(in srgb,var(--red-soft) 50%,var(--surface))}
 .backup-nudge strong{font-size:14px}.backup-nudge p{margin:4px 0 0;font-size:12px;color:var(--muted);line-height:1.6}
 .backup-nudge-actions{display:flex;gap:10px;align-items:center}
+/* v65: update banner folds to one line and only shows on the directory */
+body:not([data-tab="list"]) #updateBanner{display:none}
+.update-banner.ub-compact{margin-top:14px;border:1px solid var(--line);border-radius:14px}
+.ub-bar>span:not(.ub-dot):not(.ub-bar-stats){min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.update-banner.ub-compact:not(.ub-unseen) .ub-dot{background:var(--muted);box-shadow:none}
+.links .log-meal{color:var(--red);font-weight:600}
+.detail-platforms{display:flex;flex-wrap:wrap;align-items:center;gap:6px 14px;margin:10px 0 0;font-size:12px}
+.detail-platforms span{color:var(--muted)}.detail-platforms a{color:var(--red);text-decoration:none}.detail-platforms a:hover{text-decoration:underline}
