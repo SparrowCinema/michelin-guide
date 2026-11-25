@@ -17,6 +17,11 @@ const MGI18n=(()=>{
 
   // ---- whole-text matches (exact node / attribute text, trimmed) ----
   const FULL={
+    '请选择图片文件':'Choose an image file','此浏览器无法读取 HEIC 照片，请在相册中导出为 JPG 后再添加':'This browser can’t read HEIC photos — export them as JPG from your photo library first','用餐与到店':'Plan your visit','看菜单':'View menu','在线订位':'Book a table','电话咨询':'Call restaurant','餐厅官网':'Restaurant website',
+    '当地相对价位':'Relative local price tier','价格来源':'Price source','到店提示':'Getting there','到店信息来源':'Visit information source',
+    '城市快捷筛选':'City filters','查看地图':'View map','查看列表':'View list','手动选城市':'Choose a city',
+    '地图暂时无法加载，仍可浏览餐厅清单。':'Map unavailable. You can still browse the list.','重试地图':'Retry map',
+    '简介由本站依据名单资料与菜系模板生成。':'This site generates the overview from listing data and cuisine templates.',
     "纪念章":"Medals",
     "桌面像 App 一样打开":"Open like an app",
     "点页面顶部右侧的“中 / EN”即可切换界面语言。":"Tap the language toggle at the top right of the page to switch languages.",
@@ -249,7 +254,7 @@ const MGI18n=(()=>{
     '张照片（封面），可拖动调整顺序':'(cover), drag to reorder','张照片，可拖动调整顺序':', drag to reorder','用餐照片':'Meal photo','已移除':'Removed','撤销':'Undo','已恢复照片':'Photo restored','张照片，可撤销':'removed — undo available','已移除第':'Removed photo',
     '设为封面':'Set as cover','前移':'Move earlier','后移':'Move later','移除':'Remove','往前移一位':'Move one place earlier','往后移一位':'Move one place later','封面':'Cover','已设为封面':'Set as cover','已移到第':'Moved to position',
     '正在处理照片':'Processing photo','已添加':'Added','张照片':'photos','已按照片拍摄日期填写，可修改':'Filled in from the photo’s capture date — you can change it',
-    '此浏览器无法读取 HEIC 照片，请在相册中导出为 JPG 后再添加':'This browser can’t read HEIC photos — export them as JPG from your photo library first','这张图片无法读取，请换一张试试':'This image can’t be read — try another one',
+    '这张图片无法读取，请换一张试试':'This image can’t be read — try another one',
     '放弃这次修改？':'Discard your changes?','评分、日期、笔记和刚添加的照片都还没有保存。':'The rating, date, notes and photos you just added haven’t been saved.','继续编辑':'Keep editing','放弃修改':'Discard',
     '导出备份（不含照片）':'Export backup (without photos)','文件小，便于发给自己':'Small file, easy to send to yourself','上次备份：':'Last backup:','还没有备份过':'Never backed up','含':'includes','张照片，约':'photos, about',
     '天前':'days ago','个月前':'months ago','距上次备份已有':'Last backup was','你的用餐记录还没有备份':'Your meal records aren’t backed up yet','已有':'You have','条用餐记录':'meal records','，只保存在这台设备上。清理浏览器或换手机前请导出备份，或在“数据与同步”里开启同步。':', stored only on this device. Export a backup before clearing your browser or changing phones, or turn on sync under “Data and sync”.',
@@ -330,6 +335,7 @@ const MGI18n=(()=>{
   };
   const OVERLAY=lang==='ja'?JA:lang==='fr'?FR:null;
   const EXTRA_PATTERNS=[
+    [/^同步失败：(.+)$/,(m,reason)=>'Sync failed: '+tr(reason)],
     [/^通过 (.+) 预约 ↗$/,(m,p)=>lang==='ja'?`${p} で予約 ↗`:lang==='fr'?`Réserver via ${p} ↗`:`Book via ${p} ↗`],
     [/^想去 (\d+) · 去过 (\d+)$/,(m,a,b)=>lang==='ja'?`行きたい ${a} · 訪問済み ${b}`:lang==='fr'?`À essayer ${a} · Visité ${b}`:`Want to go ${a} · Been ${b}`],
     [/^(\d+) 家想去 · (\d+) 家去过 · (\d+) 城 · 累计 (\d+)★$/,(m,w,b,c,s)=>lang==='ja'?`行きたい ${w} · 訪問済み ${b} · ${c} 都市 · 計 ${s}★`:lang==='fr'?`${w} à essayer · ${b} visités · ${c} villes · ${s}★`:`${w} want to go · ${b} been · ${c} cities · ${s}★`],

@@ -658,7 +658,7 @@ body[data-tab="me"] #controls,body[data-tab="me"] #intro{display:none!important}
 @media(prefers-reduced-motion:reduce){.pp-cover-atlas,.pp-cover-atlas:hover{transform:none;transition:none}}
 
 /* A self-hosted four-character title cut; reading text keeps the system stack. */
-@font-face{font-family:"Passport Calligraphy";src:url("assets/fonts/passport-calligraphy.ttf?v=67") format("truetype");font-style:normal;font-weight:400;font-display:swap;unicode-range:U+7F8E,U+98DF,U+62A4,U+7167}
+@font-face{font-family:"Passport Calligraphy";src:url("assets/fonts/passport-calligraphy.ttf?v=68") format("truetype");font-style:normal;font-weight:400;font-display:swap;unicode-range:U+7F8E,U+98DF,U+62A4,U+7167}
 .pp-cover-atlas .pp-cover-name{font-family:"Passport Calligraphy","Kaiti SC","STKaiti",var(--display);font-weight:400;font-size:42px;line-height:1.35;letter-spacing:.14em;margin-left:.14em;text-shadow:0 1px 0 #f9e9b638,0 2px 1px #230c18;}
 .pp-cover-atlas .pp-cover-en{font-family:Georgia,"Times New Roman",serif;font-size:11px;line-height:1.7;font-weight:400;letter-spacing:.26em;margin-top:10px}
 .pp-cover-atlas .pp-cover-publisher{font-size:12px;letter-spacing:.2em}.pp-cover-atlas .pp-cover-motto{letter-spacing:.2em;margin-top:12px}.pp-cover-atlas .pp-cover-bottom{font-family:var(--display);letter-spacing:.16em}
@@ -830,7 +830,7 @@ body[data-tab="me"] #controls,body[data-tab="me"] #intro{display:none!important}
 @media(max-width:360px){.pp-growth-tabs{margin-inline:14px}.pp-journey .pp-journey-body{padding-inline:14px}.pp-growth-tabs button{font-size:13px}.pp-honor-filters{gap:6px}.pp-honor-filters button{gap:6px}}
 
 /* Editorial typography: real variable weights, a restrained logo bar and clear reading text. */
-@font-face{font-family:"Passport Editorial";src:url("assets/fonts/passport-editorial-latin.woff2?v=67") format("woff2");font-style:normal;font-weight:200 900;font-display:swap;unicode-range:U+0000-2E7F}@font-face{font-family:"Passport Editorial";src:url("assets/fonts/passport-editorial-cjk.woff2?v=67") format("woff2");font-style:normal;font-weight:200 900;font-display:swap;unicode-range:U+2E80-FFFF}
+@font-face{font-family:"Passport Editorial";src:url("assets/fonts/passport-editorial-latin.woff2?v=68") format("woff2");font-style:normal;font-weight:200 900;font-display:swap;unicode-range:U+0000-2E7F}@font-face{font-family:"Passport Editorial";src:url("assets/fonts/passport-editorial-cjk.woff2?v=68") format("woff2");font-style:normal;font-weight:200 900;font-display:swap;unicode-range:U+2E80-FFFF}
 .page-language-brand{position:relative;flex:none;gap:0}.page-language-brand img{width:32px;height:32px;border-radius:8px}.page-language-brand #pageBrand{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap;border:0}
 #intro{padding-top:18px;padding-bottom:14px}#intro h1{font:800 clamp(26px,3.5vw,36px)/1.35 var(--display);letter-spacing:.025em;text-wrap:balance}
 .mehead h2{font:800 clamp(26px,3.5vw,34px)/1.4 var(--display);letter-spacing:.025em}
@@ -1087,3 +1087,28 @@ body:not([data-tab="list"]) #updateBanner{display:none}
 .detail-log{display:flex;align-items:center;justify-content:center;gap:10px;width:100%;margin:12px 0 4px;min-height:46px;border:0;border-radius:14px;background:var(--red);color:#fff;font:inherit;font-size:15px;font-weight:600;cursor:pointer}
 .detail-log span{font-size:12px;font-weight:400;opacity:.8}
 .detail-log:focus-visible{outline:2px solid var(--fg);outline-offset:2px}
+
+/* City filters and practical information above the restaurant write-up. */
+.city-quick{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin:0 0 12px}
+.city-quick[hidden]{display:none}
+.city-quick>.chip,.city-quick>select{min-height:44px;max-width:100%;font-size:13px}
+.city-quick>select{padding-inline:12px 24px}
+.detail-plan{display:grid;gap:10px;margin:14px 0 0;padding:14px;border:1px solid var(--line);border-radius:14px;background:var(--surface)}
+.detail-plan-actions,.detail-plan-secondary{display:flex;flex-wrap:wrap;gap:8px}
+.detail-plan-link{display:inline-flex;align-items:center;justify-content:center;min-height:44px;padding:6px 12px;border-radius:9px;color:var(--fg);overflow-wrap:anywhere;line-height:1.25;text-align:center}
+.detail-plan-actions .detail-plan-link{flex:1 1 auto;border:1px solid var(--line);text-decoration:none;font-weight:650}
+.detail-plan-actions .is-primary{background:var(--red);border-color:var(--red);color:white}
+.detail-plan-secondary .detail-plan-link{padding-inline:2px;font-size:13px;color:var(--muted)}
+.detail-plan-tier,.detail-plan-source,.detail-arrival,.detail-menu-prices p{margin:0}
+.detail-plan-tier,.detail-menu-prices p,.detail-menu-prices small,.detail-plan-source{font-size:12px;color:var(--muted)}
+.detail-plan-tier b{color:var(--fg)}
+.detail-menu-prices{list-style:none;margin:0;padding:0}
+.detail-menu-prices li{padding:8px 0;border-top:1px solid var(--line)}
+.detail-menu-prices li>div{display:flex;flex-wrap:wrap;justify-content:space-between;gap:4px 12px;font-size:14px}
+.detail-menu-prices li strong{white-space:nowrap;font-variant-numeric:tabular-nums}
+.detail-menu-prices p{margin:3px 0}
+.detail-plan-source a,.detail-menu-prices small a{color:inherit;text-decoration:underline;text-underline-offset:2px}
+.detail-arrival{padding:10px 12px;border-radius:9px;background:var(--hover);font-size:13px;line-height:1.5}
+.detail-arrival strong{margin-inline-end:6px}
+.detail-plan a:focus-visible,.city-quick :focus-visible{outline:2px solid var(--red);outline-offset:2px}
+.map-fallback{padding:28px 16px;text-align:center}

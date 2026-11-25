@@ -1,7 +1,7 @@
 /* Travel, details, passport and snapshot views. Existing restaurant IDs remain unchanged. */
 // Must equal ASSET_VER in index.html and sw.js; index.html reloads fresh files when they disagree.
-const UPGRADE_VER="67";
-let PERSONAL={version:2,trips:[],records:Object.create(null)},PRICE_DB={items:{}},upSelected='',upPickU='',upLoaded=false,upReadError=false;
+const UPGRADE_VER="68";
+let PERSONAL={version:2,trips:[],records:Object.create(null)},PRICE_DB={items:{},details:{}},upSelected='',upPickU='',upLoaded=false,upReadError=false;
 function upSave(next){
   if(upReadError){toast('已有旅行存储无法读取，已阻止覆盖。请先导出原始备份再恢复。');return false;}
   try{localStorage.setItem('mg-personal',JSON.stringify(next));PERSONAL=next;return true;}
@@ -371,10 +371,51 @@ function upPickTrip(u){
   $('tripPickChoices').innerHTML=PERSONAL.trips.map(t=>`<label class="check-row"><input type="checkbox" value="${t.id}" ${t.items.includes(u)?'checked':''}>${esc(t.name)}</label>`).join('')||'<p>还没有旅行清单，可以在下方创建。</p>';
   $('tripQuickName').value='';showAppDialog($('tripPickDlg'));
 }
-function upPrice(r){
-  const entry=PRICE_DB.items[r.u],items=Array.isArray(entry)?entry:[];
-  if(!items.length)return '<p>暂无已核实的人均或套餐价格。</p><p class="note">米其林的 $ 符号仅表示当地价位，不能换算为具体金额。请到官网查看最新菜单及预约条件。</p>';
-  return items.map(p=>`<p><b>${esc(p.meal)} · ${esc(p.currency)} ${p.min}${p.max!==p.min?'–'+p.max:''}</b></p><p>${esc(p.basis)} · ${esc(p.includes)}</p><p class="note">价格会变动，预订前请复核。核实于 ${esc(p.checked)} · <a href="${esc(p.source)}" target="_blank" rel="noopener">价格来源</a></p>`).join('');
+function upVisitPlan(r){
+  const visit=PRICE_DB.details[r.u]||{},items=PRICE_DB.items[r.u]||[];
+  const locale=typeof MGI18n!=='undefined'?MGI18n.lang:'zh';
+  const amount=new Intl.NumberFormat(locale,{maximumFractionDigits:2});
+  const link=(href,label,cls='')=>href?`<a class="detail-plan-link ${cls}" href="${esc(href)}" ${href.startsWith('tel:')?'':'target="_blank" rel="noopener"'}>${label}</a>`:'';
+  const fallback=upSafeWebURL(r.w,true),platform=upBookingPlatform(fallback);
+  const booking=visit.booking||(platform?fallback:'');
+  const menu=visit.menu||items[0]?.source;
+  const website=visit.website||(!platform?fallback:'');
+  const prices=items.map(p=>{
+    const copy=locale==='zh'?p:(p.en||p);
+    const value=amount.format(p.min)+(p.max!==p.min?'–'+amount.format(p.max):'');
+    return `<li><div><span>${esc(copy.meal)}</span><strong>${esc(p.currency)} ${esc(value)}</strong></div><p>${esc(copy.basis)} · ${esc(copy.includes)}</p><small><time datetime="${esc(p.checked)}">${esc(p.checked)}</time> · <a href="${esc(p.source)}" target="_blank" rel="noopener">价格来源</a></small></li>`;
+  }).join('');
+  const arrival=visit.arrival?.[locale==='zh'?'zh':'en']||'';
+  return `<div class="detail-plan-actions">
+    ${link(menu,'看菜单')}
+    ${booking?link(booking,'在线订位','is-primary'):visit.phone?link('tel:'+visit.phone,'电话咨询','is-primary'):''}
+    ${link(mapLink(r).href,'导航')}
+  </div>
+  ${website||booking&&visit.phone?`<div class="detail-plan-secondary">${link(website,'餐厅官网')}${booking&&visit.phone?link('tel:'+visit.phone,'电话咨询'):''}</div>`:''}
+  ${r.p?`<p class="detail-plan-tier"><b>${'$'.repeat(r.p)}</b> <span>当地相对价位</span></p>`:''}
+  ${prices?`<ul class="detail-menu-prices">${prices}</ul>`:''}
+  ${arrival?`<p class="detail-arrival"><strong>到店提示</strong> <span${locale!=='zh'?' lang="en"':''}>${esc(arrival)}</span></p>`:''}
+  ${visit.source?`<p class="detail-plan-source"><a href="${esc(visit.source)}" target="_blank" rel="noopener">到店信息来源</a> · <time datetime="${esc(visit.checked)}">${esc(visit.checked)}</time></p>`:''}`;
+}
+function upSafeWebURL(value,allowHttp=false){
+  try{const url=new URL(value);return (url.protocol==='https:'||allowHttp&&url.protocol==='http:')&&url.hostname&&!url.username&&!url.password?url.href:'';}
+  catch{return '';}
+}
+function upLoadPriceData(data,restaurants){
+  const items=Object.create(null),details=Object.create(null);
+  const dated=x=>x&&typeof x.checked==='string'&&/^\d{4}-\d{2}-\d{2}$/.test(x.checked)&&upSafeWebURL(x.source);
+  for(const [u,rows] of Object.entries(data.items||{})){
+    if(!Object.hasOwn(restaurants,u)||!Array.isArray(rows))continue;
+    items[u]=rows.filter(x=>dated(x)&&/^[A-Z]{3}$/.test(x.currency)&&Number.isFinite(x.min)&&Number.isFinite(x.max)&&x.min>=0&&x.max>=x.min&&['meal','basis','includes'].every(k=>typeof x[k]==='string'));
+  }
+  for(const [u,visit] of Object.entries(data.details||{})){
+    if(!Object.hasOwn(restaurants,u)||!dated(visit))continue;
+    const {arrival}=visit;
+    details[u]={source:upSafeWebURL(visit.source),checked:visit.checked,website:upSafeWebURL(visit.website),menu:upSafeWebURL(visit.menu),booking:upSafeWebURL(visit.booking),
+      phone:typeof visit.phone==='string'&&/^\+[1-9]\d{6,14}$/.test(visit.phone)?visit.phone:'',
+      arrival:arrival&&typeof arrival.zh==='string'&&typeof arrival.en==='string'?arrival:null};
+  }
+  return {items,details};
 }
 function upHistory(r){
   const entries=[...r.h.padEnd(4,'?').slice(0,4),String(r.l)].map((code,i)=>({year:2022+i,code})).filter(x=>/^[0-4]$/.test(x.code));
@@ -537,7 +578,7 @@ function upIntroHTML(r){
   const nonZh=typeof MGI18n!=='undefined'&&MGI18n.nonZh,uiLang=typeof MGI18n!=='undefined'?MGI18n.lang:'zh';
   const t=DB.T[r.ci],c=DB.C[r.co],ctx={city:t[0],country:c[0],cityEn:t[2]||t[0],countryEn:c[1],cuisineEn:r.cue||'',stats:upIntroStats(r)};
   const links=MGIntro.links(r,c[1],uiLang).map(l=>`<a href="${esc(l.href)}" target="_blank" rel="noopener">${esc(l.label)} ↗</a>`).join('');
-  return `<section class="detail-intro" aria-labelledby="introTitle"><div class="intro-head"><h3 id="introTitle">简介${nonZh?'':' <span lang="en">About</span>'}</h3></div><p class="intro-zh" lang="zh-CN" translate="no">${esc(MGIntro.zh(r,ctx))}</p><p class="intro-en" lang="en">${esc(MGIntro.en(r,ctx))}</p><div class="intro-review"><span>阅读米其林官方点评</span>${links}</div><p class="intro-note">简介由本站依据名单信息整理，并非米其林评审原文。</p></section>`;
+  return `<section class="detail-intro" aria-labelledby="introTitle"><div class="intro-head"><h3 id="introTitle">简介${nonZh?'':' <span lang="en">About</span>'}</h3></div><p class="intro-zh" lang="zh-CN" translate="no">${esc(MGIntro.zh(r,ctx))}</p><p class="intro-en" lang="en">${esc(MGIntro.en(r,ctx))}</p><div class="intro-review"><span>阅读米其林官方点评</span>${links}</div><p class="intro-note">简介由本站依据名单资料与菜系模板生成。</p></section>`;
 }
 function upLocalAddress(r){
   // Official address from the MICHELIN Guide's own Chinese / Japanese site; else the rule-based reference.
@@ -559,11 +600,6 @@ function upBookingPlatform(w){
   const platforms=[[/tablecheck\.com/i,'TableCheck'],[/omakase\.in|omakaseje/i,'OMAKASE'],[/pocket-concierge\.jp/i,'Pocket Concierge'],[/resy\.com/i,'Resy'],[/exploretock\.com/i,'Tock'],[/opentable\./i,'OpenTable'],[/sevenrooms\.com/i,'SevenRooms'],[/thefork\.|lafourchette\./i,'TheFork'],[/quandoo\./i,'Quandoo'],[/zenchef\.com/i,'Zenchef'],[/formitable\.com/i,'Formitable'],[/inline\.app/i,'inline'],[/chope\.co/i,'Chope'],[/tableall\.com/i,'TABLEALL']];
   for(const [re,name] of platforms)if(re.test(w))return name;
   return '';
-}
-function upBookingLabel(w){
-  if(!w)return '';
-  const name=upBookingPlatform(w);
-  return name?`通过 ${name} 预约 ↗`:'官网 / 查询预约';
 }
 function upDietaryTag(r){
   const s=(r.cue||r.cu||'').toLowerCase();
@@ -628,8 +664,8 @@ function upSetSEO(r){
 function upOpenDetail(u,push=true){
   const r=DB.byU[u];if(!r){toast('这家餐厅不在现有名单中，请核对链接');return;}
   if(push){const url=upDetailURL(u);if(url!==location.href)history.pushState(null,'',url);}
-  $('detailDlg').dataset.u=u;const m=mapLink(r),mLoc=typeof MGI18n!=='undefined'&&MGI18n.michelinLocale?MGI18n.michelinLocale():'en';
-  $('detailBody').innerHTML=`<header class="detail-hero"><img class="detail-photo" alt="${esc(r.zh||r.n)} · 米其林指南配图" decoding="async" referrerpolicy="no-referrer" hidden><div class="detail-hero-content"><span class="detail-hero-kicker">THE MICHELIN SELECTION</span><h2 class="detail-title" id="detailTitle" tabindex="-1">${esc(r.zh||r.n)}</h2>${r.zh?`<p class="detail-origin">${esc(r.n)}${r.kind===2?' · 参考译名，非官方中文名':''}</p>`:r.zhn&&r.zhn!==r.n?`<p class="detail-origin" translate="no" lang="zh">${esc(r.zhn)}</p>`:''}<p>${esc(DB.C[r.co][0])} · ${esc(DB.T[r.ci][0])}</p>${badge(r)} ${tagsHTML(r)}</div></header><button type="button" class="detail-log" data-log-meal>＋ 记一笔<span>评分 · 照片 · 笔记</span></button><p class="detail-photo-credit" hidden><a href="https://guide.michelin.com/${esc(mLoc)}/${esc(r.u)}" target="_blank" rel="noopener">图片来源：米其林指南 ↗</a><span>摄影版权归原权利人</span></p><dl class="detail-facts">${r.cu?`<dt>菜系</dt><dd>${esc(r.cu)}${upDietaryTag(r)}</dd>`:''}${r.a?`<dt>地址</dt><dd data-detail-address>${upAddressHTML(r)}</dd>`:''}${r.p?`<dt>价位</dt><dd>${'$'.repeat(r.p)} · 当地价位</dd>`:''}</dl>${typeof MGUpdates!=='undefined'?MGUpdates.detailHTML(r):''}${upIntroHTML(r)}<div class="detail-actions"><a href="https://guide.michelin.com/${esc(mLoc)}/${esc(r.u)}" target="_blank" rel="noopener">米其林页面</a><a href="${esc(m.href)}" target="_blank" rel="noopener">导航</a>${r.w?`<a href="${esc(r.w)}" target="_blank" rel="noopener">${esc(upBookingLabel(r.w))}</a>`:''}${upHoursLink(r)}<button class="linkbtn" id="copyRestaurant">复制餐厅链接</button></div><div class="links"><button class="fav" data-u="${esc(u)}" data-v="1" aria-pressed="${favOf(u)===1}">想去</button><button class="linkbtn" data-trip-pick="${esc(u)}">加入旅行</button></div>${upPlatformLinks(r)}<details class="detail-prices" ${(PRICE_DB.items[r.u]||[]).length?'':'hidden'}><summary>参考消费</summary><div class="price-note">${upPrice(r)}</div></details>${upHistory(r)}<details class="detail-record" open><summary id="visitHeading">${favOf(u)===2?'我的用餐记录':'记录一次用餐'}<span>${favOf(u)===2?upVisits(u).length+' 次':'评分 · 日期 · 笔记'}</span></summary>${upVisitHTML(u)}</details><p class="note">保存在本设备，可在“我的”里开启云端同步或导出备份。</p>`;
+  $('detailDlg').dataset.u=u;const mLoc=typeof MGI18n!=='undefined'&&MGI18n.michelinLocale?MGI18n.michelinLocale():'en';
+  $('detailBody').innerHTML=`<header class="detail-hero"><img class="detail-photo" alt="${esc(r.zh||r.n)} · 米其林指南配图" decoding="async" referrerpolicy="no-referrer" hidden><div class="detail-hero-content"><span class="detail-hero-kicker">THE MICHELIN SELECTION</span><h2 class="detail-title" id="detailTitle" tabindex="-1">${esc(r.zh||r.n)}</h2>${r.zh?`<p class="detail-origin">${esc(r.n)}${r.kind===2?' · 参考译名，非官方中文名':''}</p>`:r.zhn&&r.zhn!==r.n?`<p class="detail-origin" translate="no" lang="zh">${esc(r.zhn)}</p>`:''}<p>${esc(DB.C[r.co][0])} · ${esc(DB.T[r.ci][0])}</p>${badge(r)} ${tagsHTML(r)}</div></header><section class="detail-plan" aria-label="用餐与到店" data-detail-plan>${upVisitPlan(r)}</section><p class="detail-photo-credit" hidden><a href="https://guide.michelin.com/${esc(mLoc)}/${esc(r.u)}" target="_blank" rel="noopener">图片来源：米其林指南 ↗</a><span>摄影版权归原权利人</span></p><dl class="detail-facts">${r.cu?`<dt>菜系</dt><dd>${esc(r.cu)}${upDietaryTag(r)}</dd>`:''}${r.a?`<dt>地址</dt><dd data-detail-address>${upAddressHTML(r)}</dd>`:''}</dl>${typeof MGUpdates!=='undefined'?MGUpdates.detailHTML(r):''}${upIntroHTML(r)}<div class="detail-actions"><a href="https://guide.michelin.com/${esc(mLoc)}/${esc(r.u)}" target="_blank" rel="noopener">米其林页面</a>${upHoursLink(r)}<button class="linkbtn" id="copyRestaurant">复制餐厅链接</button></div><div class="links"><button class="fav" data-u="${esc(u)}" data-v="1" aria-pressed="${favOf(u)===1}">想去</button><button class="linkbtn" data-trip-pick="${esc(u)}">加入旅行</button></div>${upPlatformLinks(r)}${upHistory(r)}<button type="button" class="detail-log" data-log-meal>＋ 记一笔<span>评分 · 照片 · 笔记</span></button><details class="detail-record" open><summary id="visitHeading">${favOf(u)===2?'我的用餐记录':'记录一次用餐'}<span>${favOf(u)===2?upVisits(u).length+' 次':'评分 · 日期 · 笔记'}</span></summary>${upVisitHTML(u)}</details><p class="note">保存在本设备，可在“我的”里开启云端同步或导出备份。</p>`;
   document.title=(r.zh||r.n)+' · 米其林全球名录';upSetSEO(r);if(!$('detailDlg').open)showAppDialog($('detailDlg'));$('detailDlg').scrollTop=0;$('detailTitle').focus({preventScroll:true});upLoadDetailPhoto(r);
 }
 function upRestoreDetail(){
@@ -676,10 +712,13 @@ function upInit(){
   window.addEventListener('popstate',upRestoreDetail);
 
   upRender();upRestoreDetail();
-  fetch('prices.json').then(r=>{if(!r.ok)throw new Error('prices');return r.json();}).then(p=>{
-    PRICE_DB={items:{}};for(const [u,items] of Object.entries(p.items||{}))if(DB.byU[u]&&Array.isArray(items))PRICE_DB.items[u]=items.filter(x=>x&&/^https:\/\//.test(x.source)&&/^\d{4}-\d{2}-\d{2}$/.test(x.checked)&&/^[A-Z]{3}$/.test(x.currency)&&Number.isFinite(x.min)&&Number.isFinite(x.max)&&x.min>=0&&x.max>=x.min&&['meal','basis','includes'].every(k=>typeof x[k]==='string'));
-
-    if($('detailDlg').open){const r=DB.byU[$('detailDlg').dataset.u];$('detailBody').querySelector('.price-note').innerHTML=upPrice(r);$('detailBody').querySelector('.detail-prices').hidden=!(PRICE_DB.items[r.u]||[]).length;}
-
+  fetch('prices.json?v='+UPGRADE_VER).then(r=>{if(!r.ok)throw new Error('prices');return r.json();}).then(data=>{
+    PRICE_DB=upLoadPriceData(data,DB.byU);
+    const dlg=$('detailDlg'),r=DB.byU[dlg.dataset.u];
+    if(!dlg.open||!r)return;
+    const plan=$('detailBody').querySelector('[data-detail-plan]');
+    const href=plan.querySelector(':focus')?.getAttribute('href');
+    plan.innerHTML=upVisitPlan(r);
+    if(href)([...plan.querySelectorAll('a')].find(a=>a.getAttribute('href')===href)||plan.querySelector('a'))?.focus({preventScroll:true});
   }).catch(()=>{});
 }

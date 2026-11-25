@@ -19,8 +19,8 @@
 <meta name="apple-mobile-web-app-title" content="米其林全球名录">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <!-- ?v= must match ASSET_VER in sw.js: a new page must never run with an old cached script -->
-<link rel="stylesheet" href="upgrade.css?v=67">
-<link rel="preload" href="assets/fonts/passport-editorial-latin.woff2?v=67" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="upgrade.css?v=68">
+<link rel="preload" href="assets/fonts/passport-editorial-latin.woff2?v=68" as="font" type="font/woff2" crossorigin>
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" href="icon.svg" type="image/svg+xml">
 <link rel="icon" href="icon-192.png" sizes="192x192" type="image/png">
@@ -327,6 +327,13 @@ dialog::backdrop{background:var(--shade)}
         <option value="name">名称 A–Z</option>
       </select>
     </div>
+    <div class="city-quick" id="cityQuick" role="group" aria-label="城市快捷筛选" hidden>
+      <button class="chip" id="cityBib" type="button" aria-pressed="false">必比登</button>
+      <select id="cityPrice" aria-label="当地相对价位">
+        <option value="">全部价位</option><option value="1">$</option><option value="2">$</option><option value="3">$$</option><option value="4">$$</option>
+      </select>
+      <button class="chip" id="cityView" type="button">查看地图</button>
+    </div>
     <details class="stats" id="statsBox">
       <summary id="statsTitle">各大洲统计</summary>
       <div class="tbl"><table><thead><tr><th id="statsCol">地区</th><th>三星</th><th>二星</th><th>一星</th><th>必比登</th><th>入选</th><th>合计</th></tr></thead><tbody id="stats"></tbody></table></div>
@@ -464,27 +471,27 @@ dialog::backdrop{background:var(--shade)}
 <div id="inappBar" hidden><span>在微信等 App 里无法添加到主屏幕，也可能打不开地图。</span><button type="button" id="inappHow">怎么办</button><button type="button" id="inappX" aria-label="关闭">×</button></div>
 <div id="toast" role="status" aria-live="polite"></div>
 
-<script src="i18n.js?v=67"></script>
-<script src="back-to-top.js?v=67"></script>
-<script src="city-names.js?v=67"></script>
-<script src="my-navigation.js?v=67"></script>
-<script src="search-aliases.js?v=67"></script>
-<script src="guide-core.js?v=67"></script>
-<script src="address-localization.js?v=67"></script>
-<script src="restaurant-intro.js?v=67"></script>
-<script src="upgrade.js?v=67"></script>
-<script src="passport-share.js?v=67"></script>
-<script src="meal-photos.js?v=67"></script>
-<script src="trip-route.js?v=67"></script>
-<script src="cloud-sync.js?v=67"></script>
-<script src="guide-updates.js?v=67"></script>
+<script src="i18n.js?v=68"></script>
+<script src="back-to-top.js?v=68"></script>
+<script src="city-names.js?v=68"></script>
+<script src="my-navigation.js?v=68"></script>
+<script src="search-aliases.js?v=68"></script>
+<script src="guide-core.js?v=68"></script>
+<script src="address-localization.js?v=68"></script>
+<script src="restaurant-intro.js?v=68"></script>
+<script src="upgrade.js?v=68"></script>
+<script src="passport-share.js?v=68"></script>
+<script src="meal-photos.js?v=68"></script>
+<script src="trip-route.js?v=68"></script>
+<script src="cloud-sync.js?v=68"></script>
+<script src="guide-updates.js?v=68"></script>
 <script>
 const CONT=["亚洲","欧洲","北美洲","南美洲","大洋洲"];
 const LVN=["三星","二星","一星","必比登","入选"];
 const LVC=["#7a0d0a","#b3261e","#e0574d","#c98a00","#9a9390"];
 const PIN=["中国内地","中国香港","中国澳门","中国台湾"];
 const REPO="https://github.com/SparrowCinema/michelin-guide";
-const ASSET_VER="67"; // = ?v= on the asset tags above, UPGRADE_VER in upgrade.js and ASSET_VER in sw.js
+const ASSET_VER="68"; // = ?v= on the asset tags above, UPGRADE_VER in upgrade.js and ASSET_VER in sw.js
 const DATA_VER="20261125-1"; // bump whenever data.json changes so browsers skip their cached copy
 const $=id=>document.getElementById(id);
 const esc=s=>String(s).replace(/[&<>"]/g,ch=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[ch]));
@@ -752,11 +759,15 @@ function listRows(){
 }
 function renderList(){
   renderActiveFilters();
+  $('cityQuick').hidden=S.ci===''||S.near;
+  $('cityBib').setAttribute('aria-pressed',String(S.l==='3'));
+  $('cityPrice').value=S.p;
+  $('cityView').textContent=S.v==='map'?'查看列表':'查看地图';
   const sortEl=$("dirSort");if(sortEl){sortEl.hidden=S.v!=="list"||S.near;sortEl.value=S.so;}
   if(S.near&&!ME&&S.nearErr){
     $("scope").textContent="附近";$("count").textContent="";$("doneSheet").textContent="查看结果";
     const n=activeFilterCount();$("filterBtn").innerHTML="筛选"+(n?`<b>${n}</b>`:"");
-    $("list").innerHTML=`<div class="near-fallback"><h3>无法获取你的位置</h3><p>请在浏览器设置中允许定位权限，或直接按地区浏览名录。</p><div class="near-fallback-actions"><button type="button" class="btn primary" id="retryNear">重新获取定位</button><button type="button" class="btn" id="browseNearRegion">按地区筛选</button></div></div>`;
+    $("list").innerHTML=`<div class="near-fallback"><h3>无法获取你的位置</h3><p>请在浏览器设置中允许定位权限，或直接按地区浏览名录。</p><div class="near-fallback-actions"><button type="button" class="btn primary" id="retryNear">重新获取定位</button><button type="button" class="btn" id="browseNearRegion">手动选城市</button></div></div>`;
     $("more").hidden=true;return;
   }
   const all=filtered(),rs=listRows();
@@ -895,7 +906,7 @@ function loadLeaflet(){
     const timer=setTimeout(()=>{s.remove();css.remove();tryOne(i+1).then(ok,no)},8000);
     s.onload=()=>{clearTimeout(timer);ok()};s.onerror=()=>{clearTimeout(timer);s.remove();css.remove();tryOne(i+1).then(ok,no)};
     document.head.appendChild(s)});
-  return MAP.loading=tryOne(0);
+  return MAP.loading=tryOne(0).catch(err=>{MAP.loading=null;throw err;});
 }
 function setTiles(amap){
   if(MAP.amap===amap&&MAP.tiles)return false;
@@ -1009,7 +1020,9 @@ function drawMe(){
 let fitPending=false;
 function showMap(fit){
   if(fit)fitPending=true;
+  if(!MAP.m)$("map").querySelector(".map-fallback")?.remove();
   loadLeaflet().then(()=>{
+    if(S.v!=="map")return;
     if(!MAP.m){
       MAP.m=L.map("map",{zoomControl:true,worldCopyJump:false,minZoom:0,maxBounds:[[-85,-180],[85,180]],maxBoundsViscosity:1,preferCanvas:true,dragging:false,touchZoom:false,scrollWheelZoom:false,doubleClickZoom:false,boxZoom:false,keyboard:false}).setView([30,15],2);
       MAP.m.zoomControl.setPosition("bottomright");
@@ -1031,7 +1044,10 @@ function showMap(fit){
     setTiles(wantAmap());
     const rs=drawMarkers();drawMe();
     setTimeout(()=>{MAP.m.invalidateSize();if(fitPending){fitPending=false;fitMapView(rs)}else{page=1;renderList()}},0);
-  }).catch(()=>{$("map").innerHTML='<p class="empty">地图组件没能载入，请检查网络后刷新再试。</p>'});
+  }).catch(()=>{
+    if(S.v!=="map")return;
+    $("map").innerHTML='<div class="map-fallback"><p role="status">地图暂时无法加载，仍可浏览餐厅清单。</p><button type="button" class="btn" data-retry-map>重试地图</button></div>';
+  });
 }
 
 // ---- toast / share / sheet ----
@@ -1141,9 +1157,29 @@ function placeOptions(){
   PLACE_OPTS=opts;$("placeList").innerHTML=[...opts].sort((a,b)=>b[1].n-a[1].n).map(([k])=>`<option value="${esc(k)}"></option>`).join("");return opts;
 }
 $("placeFind").addEventListener("focus",placeOptions,{once:true});
-$("placeFind").addEventListener("input",e=>{const hit=placeOptions().get(e.target.value.trim());if(!hit)return;S.c="";S.co=hit.co;S.ci=hit.ci;e.target.value="";e.target.blur();reset();render();toast(`已定位到 ${hit.ci?DB.T[+hit.ci][0]:DB.C[+hit.co][0]}`)});
+function selectPlace(input,hit){
+  S.c="";S.co=hit.co;S.ci=hit.ci;input.value="";input.blur();reset();render();
+  toast(`已定位到 ${hit.ci!==""?DB.T[+hit.ci][0]:DB.C[+hit.co][0]}`);
+}
+$("placeFind").addEventListener("input",e=>{
+  const hit=placeOptions().get(e.target.value.trim());
+  if(hit)selectPlace(e.target,hit);
+});
+$("placeFind").addEventListener("keydown",e=>{
+  if(e.key!=="Enter"||e.isComposing)return;
+  const query=MG.norm(e.target.value.trim());if(!query)return;
+  const matches=[...placeOptions()].filter(([label,{co,ci}])=>{
+    const names=ci!==""?[DB.T[ci][0],DB.T[ci][2]]:DB.C[co].slice(0,2);
+    return [label,...names].some(name=>MG.norm(name)===query);
+  });
+  if(matches.length===1){e.preventDefault();selectPlace(e.target,matches[0][1]);}
+});
 $("cuisine").addEventListener("change",e=>{S.cu=e.target.value;reset();render()});
-$("price").addEventListener("change",e=>{S.p=e.target.value;reset();render()});
+function setPrice(value){S.p=value;reset();render();}
+$("price").addEventListener("change",e=>setPrice(e.target.value));
+$("cityPrice").addEventListener("change",e=>setPrice(e.target.value));
+$("cityBib").addEventListener("click",()=>{S.l=S.l==="3"?"all":"3";reset();render();});
+$("cityView").addEventListener("click",()=>goTab(S.v==="map"?"list":"map"));
 $("dirSort").addEventListener("change",e=>{S.so=e.target.value;reset();render()});
 $("flags").addEventListener("click",e=>{const b=e.target.closest(".chip");if(!b)return;const f=b.dataset.f;S.f.has(f)?S.f.delete(f):S.f.add(f);reset();render()});
 $("savedFlags").addEventListener("click",e=>{const b=e.target.closest(".chip");if(!b)return;const sv=b.dataset.sv;S.sv=S.sv===sv?"":sv;reset();render()});
@@ -1205,7 +1241,8 @@ $("map").addEventListener("keydown",e=>{if(e.key==="Escape"){setMapInteraction(f
 document.addEventListener("click",e=>{
   const locBtn=e.target.closest("[data-map-focus]");if(locBtn){focusMapRestaurant(locBtn.dataset.mapFocus);return;}
   if(e.target.closest("#retryNear")){goTab("near");return;}
-  if(e.target.closest("#browseNearRegion")){S.near=false;S.nearErr=false;render();openSheet();return;}
+  if(e.target.closest("#browseNearRegion")){S.near=false;S.nearErr=false;render();openSheet();requestAnimationFrame(()=>$("placeFind").focus());return;}
+  if(e.target.closest("[data-retry-map]")){showMap(true);return;}
   const b=e.target.closest(".fav");if(!b)return;
   if(b.dataset.v==="2"){upOpenVisit(b.dataset.u);return}
   const u=b.dataset.u,v=+b.dataset.v,previous=FAV[u];if(favOf(u)===v)delete FAV[u];else FAV[u]=[v,Date.now()];if(!saveFav()){if(previous)FAV[u]=previous;else delete FAV[u];return;}updateBadge();
