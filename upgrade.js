@@ -566,9 +566,12 @@ async function upLoadDetailPhoto(r){
   const current=()=>$('detailDlg').open&&$('detailDlg').dataset.u===r.u&&$('detailBody').querySelector('.detail-hero')===hero;
   const items=await upPhotoIndex(r.co);if(!current()||!items)return;
   const file=items[r.u];if(typeof file!=='string'||!/^[a-f0-9]{32}\.(jpeg|jpg|png|webp)$/.test(file))return;
-  img.onload=()=>{if(!current())return;img.hidden=false;hero.classList.add('has-photo');credit.hidden=false;};
-  img.onerror=()=>{if(!current())return;img.hidden=true;hero.classList.remove('has-photo');credit.hidden=true;};
-  img.src=`https://prod-pics.guide.michelin.com/api/public/content/${file}?format=webp&w=1200&h=800`;
+  // Shimmer while the photo loads; request roughly the size the sheet shows instead of always 1200px.
+  hero.classList.add('is-photo-loading');
+  img.onload=()=>{hero.classList.remove('is-photo-loading');if(!current())return;img.hidden=false;hero.classList.add('has-photo');credit.hidden=false;};
+  img.onerror=()=>{hero.classList.remove('is-photo-loading');if(!current())return;img.hidden=true;hero.classList.remove('has-photo');credit.hidden=true;};
+  const w=Math.min(1200,Math.max(600,Math.ceil(hero.clientWidth*Math.min(2,devicePixelRatio||1)/200)*200));
+  img.src=`https://prod-pics.guide.michelin.com/api/public/content/${file}?format=webp&w=${w}&h=${Math.round(w*2/3)}`;
 }
 function upOpenDetail(u,push=true){
   const r=DB.byU[u];if(!r){toast('这家餐厅不在现有名单中，请核对链接');return;}
