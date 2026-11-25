@@ -362,7 +362,8 @@ dialog::backdrop{background:var(--shade)}
 
     <div class="card">
       <h3>手动备份</h3>
-      <button type="button" class="cell" id="exportBtn">导出备份<span class="r">保存一份独立副本</span></button>
+      <button type="button" class="cell" id="exportBtn">导出备份<span class="r" id="exportInfo">保存一份独立副本</span></button>
+      <button type="button" class="cell" id="exportLiteBtn" hidden>导出备份（不含照片）<span class="r">文件小，便于发给自己</span></button>
       <button type="button" class="cell" id="importBtn">从备份恢复<span class="r">选择备份文件或粘贴内容</span></button>
       <p class="note">手动保存一份记录副本；误删或更换设备时，可从文件恢复。</p>
     </div>
@@ -781,7 +782,7 @@ function renderList(){
 
 // ---- 我的 ----
 function renderMe(){
-  upRender();
+  upRender();try{renderBackupInfo()}catch(e){}
   const mine=Object.keys(FAV).map(u=>DB.byU[u]?[DB.byU[u],FAV[u]]:null).filter(Boolean);
   const want=mine.filter(x=>x[1][0]===1),been=mine.filter(x=>x[1][0]===2);
   const bc=new Set(been.map(x=>x[0].co)),bt=new Set(been.map(x=>x[0].ci));
@@ -1170,17 +1171,40 @@ if(typeof MGI18n!=="undefined"){
 }
 
 // backup
-$("exportBtn").addEventListener("click",async()=>{
-  let photos;try{photos=typeof MP!=="undefined"?await MP.exportAll():undefined}catch(e){toast("照片未能读取，本次只导出文字记录")}
+// Photos on this device, the last backup and a gentle reminder when records are not backed up or synced.
+function backupPhotoCount(){const ids=new Set();if(typeof MP==="undefined")return 0;for(const r of Object.values(PERSONAL.records||{}))for(const v of (r.visits||[]))for(const id of MP.clean(v.photos))ids.add(id);return ids.size;}
+function lastBackupAt(){try{return +localStorage.getItem("mg-last-backup")||0}catch(e){return 0}}
+function backupAgo(t){const d=Math.floor((Date.now()-t)/864e5);return d<1?"今天":d<60?`${d} 天前`:`${Math.round(d/30)} 个月前`;}
+function renderBackupInfo(){
+  const n=backupPhotoCount(),t=lastBackupAt(),mb=Math.max(1,Math.round(n*0.45));
+  if($("exportInfo"))$("exportInfo").textContent=[t?`上次备份：${backupAgo(t)}`:"还没有备份过",n?`含 ${n} 张照片，约 ${mb} MB`:""].filter(Boolean).join(" · ");
+  if($("exportLiteBtn"))$("exportLiteBtn").hidden=!n;
+  let synced=false;try{synced=!!localStorage.getItem("mg-sync")}catch(e){}
+  let snooze=0;try{snooze=+localStorage.getItem("mg-backup-snooze")||0}catch(e){}
+  const meals=Object.values(PERSONAL.records||{}).reduce((k,r)=>k+(r.visits||[]).length,0);
+  const due=!synced&&(meals>=3||n>0)&&Date.now()-t>30*864e5&&Date.now()>snooze;
+  let nudge=$("backupNudge");
+  if(!due){if(nudge)nudge.remove();return;}
+  if(!nudge){nudge=document.createElement("div");nudge.id="backupNudge";nudge.className="backup-nudge";nudge.setAttribute("role","note");$("mePage").querySelector(".mestats").after(nudge);
+    nudge.addEventListener("click",e=>{if(e.target.closest("[data-backup-now]"))exportBackup(true);else if(e.target.closest("[data-backup-later]")){try{localStorage.setItem("mg-backup-snooze",Date.now()+7*864e5)}catch(err){}renderBackupInfo();}});}
+  nudge.innerHTML=`<div><strong>${t?`距上次备份已有 ${backupAgo(t).replace("前","")}`:"你的用餐记录还没有备份"}</strong><p>已有 ${meals} 条用餐记录${n?`和 ${n} 张照片`:""}，只保存在这台设备上。清理浏览器或换手机前请导出备份，或在“数据与同步”里开启同步。</p></div><div class="backup-nudge-actions"><button type="button" class="btn primary" data-backup-now>导出备份</button><button type="button" class="linkbtn" data-backup-later>7 天后提醒</button></div>`;
+}
+async function exportBackup(withPhotos){
+  let photos;if(withPhotos){try{photos=typeof MP!=="undefined"?await MP.exportAll():undefined}catch(e){toast("照片未能读取，本次只导出文字记录")}}
   const nPhotos=photos?Object.keys(photos).length:0;if(!nPhotos)photos=undefined;
   const data={app:"michelin-guide",version:2,personal:PERSONAL,personalRecovery:upReadError?localStorage.getItem("mg-personal"):undefined,exported:new Date().toISOString(),
     items:Object.entries(FAV).map(([u,[s,t]])=>({u,state:s===1?"want":"been",at:t,name:DB&&DB.byU[u]?(DB.byU[u].zh||DB.byU[u].n):""}))};
   if(photos)data.photos=photos;
   const txt=JSON.stringify(data,null,photos?0:1);
-  try{const a=document.createElement("a");a.href=URL.createObjectURL(new Blob([txt],{type:"application/json"}));a.download=`米其林清单-${fmtDate(Date.now())}.json`;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(a.href),4000)}catch(e){}
+  try{const a=document.createElement("a");a.href=URL.createObjectURL(new Blob([txt],{type:"application/json"}));a.download=`米其林清单-${fmtDate(Date.now())}${withPhotos||!backupPhotoCount()?"":"-不含照片"}.json`;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(a.href),4000)}catch(e){}
+  if(withPhotos||!backupPhotoCount()){try{localStorage.setItem("mg-last-backup",Date.now())}catch(e){}}
+  renderBackupInfo();
   if(nPhotos){toast(`已导出 ${data.items.length} 家和 ${nPhotos} 张照片`);return}
+  if(txt.length>300000){toast(`已导出 ${data.items.length} 家`);return}
   copyText(txt).then(()=>toast(`已导出 ${data.items.length} 家，同时复制到了剪贴板`),()=>toast(`已导出 ${data.items.length} 家`));
-});
+}
+$("exportBtn").addEventListener("click",()=>exportBackup(true));
+$("exportLiteBtn").addEventListener("click",()=>exportBackup(false));
 let impRaw="";
 $("importBtn").addEventListener("click",()=>{impRaw="";$("impText").value="";$("impText").placeholder="或粘贴备份内容";$("impFile").value="";showAppDialog($("importDlg"))});
 // Backups with photos can be tens of MB: keep them out of the textarea.

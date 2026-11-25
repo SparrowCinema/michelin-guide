@@ -927,3 +927,6 @@ a.restaurant-title{font:700 16px/1.55 var(--display);letter-spacing:.01em;overfl
 .mp-stage{overflow:hidden}
 .discard-dlg{width:min(360px,calc(100% - 40px));border-radius:18px}.discard-dlg h3{margin:4px 0 8px;font:600 18px/1.4 var(--display)}.discard-dlg p{margin:0 0 18px;font-size:13px;color:var(--muted);line-height:1.6}
 .discard-actions{display:flex;gap:10px;justify-content:flex-end}.discard-actions .btn{min-height:42px;padding:0 16px}.discard-actions .danger{background:var(--red);color:#fff;border-color:var(--red)}
+.backup-nudge{display:flex;gap:14px;align-items:center;justify-content:space-between;flex-wrap:wrap;margin:14px 0;padding:14px 16px;border:1px solid color-mix(in srgb,var(--red) 30%,var(--line));border-radius:16px;background:color-mix(in srgb,var(--red-soft) 50%,var(--surface))}
+.backup-nudge strong{font-size:14px}.backup-nudge p{margin:4px 0 0;font-size:12px;color:var(--muted);line-height:1.6}
+.backup-nudge-actions{display:flex;gap:10px;align-items:center}
