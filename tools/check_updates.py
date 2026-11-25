@@ -65,14 +65,29 @@ def main():
     p=argparse.ArgumentParser();p.add_argument('--candidate');p.add_argument('--out',default='update-report.json');p.add_argument('--validate-only',action='store_true');a=p.parse_args()
     d=json.loads((ROOT/'data.json').read_text());validate(d)
     prices=json.loads((ROOT/'prices.json').read_text())
+    restaurant_ids = {r[7] for r in d['r']}
     for u,items in prices['items'].items():
-        assert u in {r[7] for r in d['r']}, 'unknown price ID'
+        assert u in restaurant_ids, f'unknown price ID: {u}'
         for x in items:
             assert re.fullmatch('[A-Z]{3}',x['currency']) and 0<=x['min']<=x['max'], 'invalid amount'
             assert urlsplit(x['source']).scheme=='https', 'missing HTTPS price source'
             datetime.date.fromisoformat(x['checked'])
             assert all(isinstance(x[k],str) and x[k] for k in ['meal','basis','includes']), 'missing price context'
-    if a.validate_only: print(f"Validated {len(d['r'])} restaurants and price provenance"); return
+            if 'en' in x:
+                assert all(isinstance(x['en'].get(k), str) and x['en'][k] for k in ('meal', 'basis', 'includes')), f'incomplete English price context: {u}'
+    for u, visit in prices.get('details', {}).items():
+        assert u in restaurant_ids, f'unknown visit details ID: {u}'
+        datetime.date.fromisoformat(visit['checked'])
+        for field in ('source', 'website', 'menu', 'booking'):
+            if field != 'source' and field not in visit:
+                continue
+            url = urlsplit(visit[field])
+            assert url.scheme == 'https' and url.hostname and not url.username and not url.password, f'invalid {field} URL: {u}'
+        if 'phone' in visit:
+            assert re.fullmatch(r'\+[1-9]\d{6,14}', visit['phone']), f'invalid telephone number: {u}'
+        if 'arrival' in visit:
+            assert all(isinstance(visit['arrival'].get(k), str) and visit['arrival'][k] for k in ('zh', 'en')), f'incomplete arrival text: {u}'
+    if a.validate_only: print(f"Validated {len(d['r'])} restaurants, menu prices and visit information"); return
     if a.candidate: text=pathlib.Path(a.candidate).read_text(encoding='utf-8-sig')
     else:
         req=urllib.request.Request(SOURCE,headers={'User-Agent':'michelin-guide-update-check'})

@@ -33,6 +33,21 @@ const {chromium}=require('playwright');
       await ctx.route(/https:\/\/.*leaflet.*\.(js|css)$/,r=>r.fulfill({path:path.join(leaflet,r.request().url().endsWith('.css')?'leaflet.css':'leaflet.js')}));
     };
 
+    const assertCenteredMapLabels=async (page,selector)=>{
+      const geometry=await page.locator('#map '+selector).evaluateAll(labels=>labels.map(label=>{
+        const range=document.createRange();
+        range.selectNodeContents(label);
+        const text=range.getBoundingClientRect(),circle=label.getBoundingClientRect();
+        return {label:label.textContent,x:text.left+text.width/2-circle.left-circle.width/2,
+          y:text.top+text.height/2-circle.top-circle.height/2,width:text.width,diameter:circle.width,height:circle.height};
+      }));
+      assert(geometry.length>0,'map should render '+selector);
+      for(const {label,x,y,width,diameter,height} of geometry){
+        assert(Math.abs(x)<=1&&Math.abs(y)<=2,`map label ${label} should be centered inside its circle (${x}, ${y})`);
+        assert(width<diameter&&Math.abs(diameter-height)<=1,`map label ${label} should fit a circular marker`);
+      }
+    };
+
     // ---- 1. Desktop zh UX: autocomplete, active filters, sort, saved filters, map clustering + split-view ----
     const ctx=await browser.newContext({locale:'zh-CN',viewport:{width:1280,height:900}});
     await stubRoutes(ctx);
@@ -81,6 +96,7 @@ const {chromium}=require('playwright');
     await page.waitForFunction(()=>MAP.ready&&MAP.layer);
     assert.equal(await page.locator('#browseStage').evaluate(el=>getComputedStyle(el).display),'grid','desktop map tab should use 2-column split view');
     assert((await page.locator('.map-cluster').count())>0,'overview map with >80 points should render clusters');
+    await assertCenteredMapLabels(page,'.map-cluster-badge');
     if(shots)await page.screenshot({path:path.join(shots,'zh-desktop-map-split.png')});
     await page.locator('[data-map-focus]').first().click();
     await page.waitForFunction(()=>!!document.querySelector('.leaflet-popup-content'));
@@ -90,7 +106,7 @@ const {chromium}=require('playwright');
     if(bookingU){
       await page.evaluate(u=>upOpenDetail(u),bookingU);
       await page.waitForSelector('#detailDlg[open]');
-      assert((await page.locator('#detailDlg .detail-actions').innerText()).includes('预约'),'booking platform should be detected');
+      assert((await page.locator('#detailDlg .detail-plan-actions').innerText()).includes('在线订位'),'booking platform should be detected');
       await page.evaluate(()=>closeAppDialog(document.getElementById('detailDlg')));
     }
     const mlU=await page.evaluate(()=>DB.rows.find(r=>r.ml)?.u);
@@ -161,6 +177,51 @@ const {chromium}=require('playwright');
     await denyPage.waitForSelector('.near-fallback');
     assert(await denyPage.locator('#retryNear').isVisible());
     assert(await denyPage.locator('#browseNearRegion').isVisible());
+    await denyPage.locator('#browseNearRegion').click();
+    await denyPage.waitForFunction(()=>document.activeElement.id==='placeFind');
+    await denyPage.locator('#placeFind').fill('雅典');
+    await denyPage.locator('#placeFind').press('Enter');
+    await denyPage.locator('#doneSheet').click();
+    await denyPage.locator('#cityBib').click();
+    assert.equal(await denyPage.locator('#cityBib').getAttribute('aria-pressed'),'true');
+    await denyPage.locator('#cityPrice').selectOption('2');
+    const zohos=denyPage.locator('#list a[data-restaurant$="/zohos"]');
+    await zohos.click();
+    const zhPlan=denyPage.locator('#detailDlg [data-detail-plan]');
+    await zhPlan.locator('a', {hasText:'看菜单'}).waitFor();
+    assert((await zhPlan.innerText()).includes('EUR 7–24'));
+    assert((await zhPlan.innerText()).includes('Electra Palace Athens'));
+    assert.match(await zhPlan.getByRole('link',{name:'在线订位'}).getAttribute('href'),/i-host\.gr/);
+    await denyPage.evaluate(()=>closeAppDialog(document.getElementById('detailDlg')));
+    assert.equal(await denyPage.locator('#cityPrice').inputValue(),'2');
+    assert(await zohos.isVisible());
+    await denyPage.locator('#cityView').click();
+    await denyPage.waitForFunction(()=>MAP.ready&&MAP.layer);
+    await denyPage.waitForSelector('#map .restaurant-pin-face',{state:'attached'});
+    await assertCenteredMapLabels(denyPage,'.restaurant-pin-face');
+    await denyPage.locator('#mapInteract').click();
+    await denyPage.evaluate(()=>MAP.m.panBy([24,20],{animate:false}));
+    await denyPage.waitForFunction(()=>$('list').querySelector('a[data-restaurant$="/zohos"]')&&MAP.m.getBounds().contains([DB.byU['attica/athens/restaurant/zohos'].lat,DB.byU['attica/athens/restaurant/zohos'].lng]));
+    const mapState=()=>denyPage.evaluate(()=>[MAP.m.getCenter().lat,MAP.m.getCenter().lng,MAP.m.getZoom(),window.scrollY]);
+    const mapLink=denyPage.locator('#list a[data-restaurant$="/zohos"]');
+    await mapLink.scrollIntoViewIfNeeded();
+    const beforeRestaurant=await mapState();
+    await mapLink.click();
+    await denyPage.evaluate(()=>closeAppDialog(document.getElementById('detailDlg')));
+    await denyPage.waitForFunction(()=>!document.querySelector('#detailDlg').open);
+    assert.deepEqual(await mapState(),beforeRestaurant,'closing details restores map and list position');
+    const weakPage=await denyCtx.newPage();
+    const leafletRequests=/https:\/\/.*leaflet.*\.(js|css)$/;
+    await weakPage.route(leafletRequests,route=>route.abort());
+    await weakPage.goto(url+'/?lang=zh#v=map&co=%E5%B8%8C%E8%85%8A&ci=Athens');
+    await weakPage.locator('[data-retry-map]').waitFor();
+    await weakPage.locator('#list a[data-restaurant$="/zohos"]').click();
+    assert(await weakPage.locator('#detailDlg [data-copy-address]').isVisible());
+    assert(await weakPage.locator('#detailDlg .detail-plan-actions a[href*="google.com/maps"]').isVisible());
+    await weakPage.evaluate(()=>closeAppDialog(document.getElementById('detailDlg')));
+    await weakPage.unroute(leafletRequests);
+    await weakPage.locator('[data-retry-map]').click();
+    await weakPage.waitForFunction(()=>MAP.ready&&MAP.layer);
     await denyCtx.close();
 
     // ---- 3. International checks (en / ja / fr) ----
@@ -170,6 +231,29 @@ const {chromium}=require('playwright');
     enPage.on('pageerror',e=>errors.push('en: '+e.message));
     await enPage.goto(url+'/?lang=en');
     await enPage.waitForFunction(()=>typeof DB!=='undefined'&&DB&&document.getElementById('meInstall'));
+
+    const zohosU='attica/athens/restaurant/zohos';
+    await enPage.locator('#q').fill('zohos');
+    await enPage.locator('#searchSuggest [data-sg-u="'+zohosU+'"]').click();
+    const enPlan=enPage.locator('#detailDlg [data-detail-plan]');
+    await enPlan.getByRole('link',{name:'View menu'}).waitFor();
+    assert((await enPlan.innerText()).includes('Savoury à la carte dishes'));
+    assert(await enPlan.getByRole('link',{name:'Book a table'}).isVisible());
+    assert(await enPage.locator('#detailDlg [data-copy-address]').isVisible());
+    const photoInput=enPage.locator('#detailDlg [data-photo-input]');
+    await photoInput.setInputFiles({name:'unreadable.heic',mimeType:'image/heic',buffer:Buffer.from('not an image')});
+    await enPage.locator('#toast').getByText(/cannot read HEIC|HEIC photo/i).waitFor();
+    const photo=Buffer.from('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+aN1sAAAAASUVORK5CYII=','base64');
+    await photoInput.setInputFiles(['one.png','two.png'].map(name=>({name,mimeType:'image/png',buffer:photo})));
+    await enPage.waitForFunction(()=>document.querySelectorAll('#detailDlg [data-photo-tile]').length===2);
+    const secondPhoto=enPage.locator('#detailDlg [data-photo-tile]').nth(1);
+    const coverID=await secondPhoto.getAttribute('data-photo-tile');
+    await secondPhoto.locator('[data-photo-open]').click();
+    await enPage.getByRole('button',{name:'Set as cover'}).click();
+    assert.equal(await enPage.locator('#detailDlg [data-photo-tile]').first().getAttribute('data-photo-tile'),coverID);
+    await enPage.locator('#photoDlg [data-photo-close]').click();
+    await enPage.evaluate(()=>closeAppDialog(document.getElementById('detailDlg'),true));
+    await enPage.locator('#q').fill('');
 
     // China should NOT be pinned first in Asia in English mode (Japan has more restaurants)
     const firstAsia=await enPage.evaluate(()=>DB.C.filter(c=>c[2]==='亚洲').sort((a,b)=>DB.crank[DB.C.indexOf(a)]-DB.crank[DB.C.indexOf(b)])[0][1]);
