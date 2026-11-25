@@ -417,7 +417,7 @@ function upRenderMealLog(log,editing){
   const u=log.dataset.u,p=log.dataset.prefix;log.outerHTML=upVisitHTML(u,p,editing);
   const next=document.getElementById(p+'mealLog');return next;
 }
-function upVisitDirty(form){if(form?.querySelector('.visit-feedback'))form.querySelector('.visit-feedback').textContent='有修改尚未保存';}
+function upVisitDirty(form){if(!form)return;form.dataset.dirty='1';if(form.querySelector('.visit-feedback'))form.querySelector('.visit-feedback').textContent='有修改尚未保存';}
 function upVisitValues(form){
   return {date:/^\d{4}-\d{2}-\d{2}$/.test(form.querySelector('input[type=date]').value)?form.querySelector('input[type=date]').value:'',
     rating:+form.querySelector('[data-rating-input]').value||0,note:form.querySelector('textarea').value.trim().slice(0,3000),
@@ -435,7 +435,7 @@ function upSaveVisit(u,values,markBeen,entryID){
     oldPersonal=localStorage.getItem('mg-personal');oldFav=localStorage.getItem('mg-fav');
     localStorage.setItem('mg-personal',JSON.stringify(nextPersonal));localStorage.setItem('mg-fav',JSON.stringify(nextFav));
   }catch(e){try{if(oldPersonal!==undefined)oldPersonal===null?localStorage.removeItem('mg-personal'):localStorage.setItem('mg-personal',oldPersonal);if(oldFav!==undefined)oldFav===null?localStorage.removeItem('mg-fav'):localStorage.setItem('mg-fav',oldFav);}catch(rollback){}toast('保存失败，更改未生效，请检查存储空间');return false;}
-  PERSONAL=nextPersonal;FAV=nextFav;if(typeof MP!=='undefined')MP.gc();return true;
+  PERSONAL=nextPersonal;FAV=nextFav;document.querySelectorAll(`.visit-form[data-u="${CSS.escape(u)}"][data-dirty]`).forEach(f=>delete f.dataset.dirty);if(typeof MP!=='undefined')MP.gc();return true;
 }
 function upRefreshVisit(u){
   // keep every visible "去过" button, the detail sheet and the 我的 page in step
@@ -566,7 +566,7 @@ function upOpenDetail(u,push=true){
 }
 function upRestoreDetail(){
   if(!DB)return;const u=new URL(location.href).searchParams.get('restaurant');
-  if(u)upOpenDetail(u,false);else if($('detailDlg').open)closeAppDialog($('detailDlg'));
+  if(u)upOpenDetail(u,false);else if($('detailDlg').open&&!closeAppDialog($('detailDlg')))history.pushState(null,'',upDetailURL($('detailDlg').dataset.u));
 }
 function upInit(){
   document.body.insertAdjacentHTML('beforeend',`<dialog id="detailDlg" aria-labelledby="detailTitle"><div class="dlg"><div class="detail-sheet-head"><button type="button" class="detail-drag" tabindex="-1" data-close aria-label="下滑或点击关闭餐厅详情"><span></span></button><button type="button" class="close" data-close>关闭</button></div><div id="detailBody"></div></div></dialog><dialog id="visitDlg" class="visit-sheet" aria-labelledby="visitTitle"><div class="dlg"><div class="detail-sheet-head"><button type="button" class="detail-drag" tabindex="-1" data-close aria-label="下滑或点击关闭用餐记录"><span></span></button><button type="button" class="close" data-close>关闭</button></div><p class="visit-kicker">去过 · 我的评分</p><h2 id="visitTitle"></h2><p class="detail-origin" id="visitMeta"></p><div id="visitBody"></div></div></dialog><dialog id="tripDlg" aria-labelledby="tripTitle"><div class="dlg"><button type="button" class="close" data-close>关闭</button><h2 id="tripTitle"></h2><form id="tripForm" class="upgrade-form"><label>旅行名称<input id="tripName" maxlength="100" required placeholder="例如：2026 欧洲旅行"></label><button class="btn primary" type="submit">保存名称</button></form><div class="row"><button class="btn primary" id="tripRoute" data-trip-route="">排路线</button><button class="btn" id="tripMap">在地图上查看</button><button class="btn danger" id="tripDelete">删除旅行清单</button></div><div id="tripItems" class="trip-content"></div></div></dialog><dialog id="tripPickDlg" aria-labelledby="tripPickTitle"><div class="dlg"><button type="button" class="close" data-close>关闭</button><h2 id="tripPickTitle"></h2><form id="tripPickForm" class="upgrade-form"><div id="tripPickChoices"></div><label>或创建新旅行<input id="tripQuickName" maxlength="100" placeholder="输入旅行名称"></label><button type="submit" class="btn primary">保存到所选旅行</button></form></div></dialog>`);

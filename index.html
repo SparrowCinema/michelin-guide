@@ -511,7 +511,20 @@ function syncModalScroll(){
   document.documentElement.classList.remove('modal-scroll-locked');MODAL_SCROLL.locked=false;
   window.scrollTo({left:MODAL_SCROLL.x,top:MODAL_SCROLL.y,behavior:'instant'});
 }
-function closeAppDialog(dialog){dialog.close();syncModalScroll();}
+// A meal form with unsaved changes asks before its sheet closes (button, backdrop, swipe, Esc, back).
+function dialogUnsaved(d){return !!d?.querySelector?.('.visit-form[data-dirty]');}
+function askDiscard(){return new Promise(res=>{
+  let dlg=document.getElementById('discardDlg');
+  if(!dlg){document.body.insertAdjacentHTML('beforeend','<dialog id="discardDlg" class="discard-dlg" aria-labelledby="discardTitle" aria-describedby="discardText"><div class="dlg"><h3 id="discardTitle">放弃这次修改？</h3><p id="discardText">评分、日期、笔记和刚添加的照片都还没有保存。</p><div class="discard-actions"><button type="button" class="btn" data-keep>继续编辑</button><button type="button" class="btn danger" data-discard>放弃修改</button></div></div></dialog>');dlg=document.getElementById('discardDlg');}
+  const done=v=>{dlg.removeEventListener('click',on);dlg.removeEventListener('cancel',oc);dlg.close();res(v);};
+  const on=e=>{if(e.target.closest('[data-discard]'))done(true);else if(e.target.closest('[data-keep]')||e.target===dlg)done(false);};
+  const oc=e=>{e.preventDefault();done(false);};
+  dlg.addEventListener('click',on);dlg.addEventListener('cancel',oc);dlg.showModal();dlg.querySelector('[data-keep]').focus();});}
+function closeAppDialog(dialog,force){
+  if(!force&&dialog.open&&dialogUnsaved(dialog)){askDiscard().then(ok=>{if(ok){dialog.querySelectorAll('.visit-form[data-dirty]').forEach(f=>delete f.dataset.dirty);closeAppDialog(dialog,true);}});return false;}
+  dialog.close();syncModalScroll();return true;}
+document.addEventListener('cancel',e=>{const d=e.target;if(d.tagName==='DIALOG'&&d.id!=='discardDlg'&&dialogUnsaved(d)){e.preventDefault();closeAppDialog(d);}},true);
+addEventListener('beforeunload',e=>{if([...document.querySelectorAll('dialog[open]')].some(dialogUnsaved)){e.preventDefault();e.returnValue='';}});
 function showAppDialog(dialog){
   lockModalScroll();try{dialog.showModal();}catch(e){syncModalScroll();throw e;}
 }
