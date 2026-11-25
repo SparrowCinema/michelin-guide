@@ -22,3 +22,10 @@ test('three-way merge keeps both devices’ edits and carries deletions',()=>{
   // unchanged on one side → the other side's edit wins, including deletion
   assert.deepEqual(S.merge(base,base,phone),phone);
 });
+test('offline QR encoder produces valid square matrices and SVG for pairing URLs',()=>{
+  const url='https://sparrowcinema.github.io/michelin-guide/?sync='+S.newCode()+'#v=me';
+  const m=S.qrMatrix(url);assert(m&&m.length>=29&&m.length===m[0].length);
+  // Finder patterns exist in top-left, top-right, and bottom-left corners.
+  assert.equal(m[0][0],1);assert.equal(m[0][m.length-1],1);assert.equal(m[m.length-1][0],1);
+  const svg=S.qrSVG(url);assert(svg.startsWith('<svg')&&svg.endsWith('</svg>')&&svg.includes('<path'));
+});

@@ -45,24 +45,35 @@ const MGRoute=(()=>{
   function leg(a,b){const straight=km(a,b),road=straight*1.3;
     const walk=road<=2.2,min=walk?Math.round(road/4.8*60):Math.round(road/22*60+6);
     return {km:straight,road,walk,min:Math.max(1,min)};}
-  function plan(points,{perDay=2,start=null}={}){
-    const path=order(points,start),days=[];
+  function planFromOrder(path,{perDay=2,start=null}={}){
+    const days=[];
     for(let i=0;i<path.length;i+=perDay)days.push(path.slice(i,i+perDay));
     return days.map((stops,d)=>{const legs=stops.slice(1).map((s,i)=>leg(stops[i],s));
       const first=d===0&&start?leg(start,stops[0]):null;
       return {stops,legs,first,road:legs.reduce((t,l)=>t+l.road,0)+(first?first.road:0)};});
   }
+  function plan(points,{perDay=2,start=null}={}){
+    return planFromOrder(order(points,start),{perDay,start});
+  }
   const fmtKm=v=>v<1?Math.round(v*1000/10)*10+' 米':v.toFixed(v<10?1:0)+' 公里';
   const fmtMin=m=>m<60?m+' 分钟':Math.floor(m/60)+' 小时'+(m%60?(m%60)+' 分':'');
-  return {km,order,plan,leg,fmtKm,fmtMin,pathLen};
+  return {km,order,plan,planFromOrder,leg,fmtKm,fmtMin,pathLen};
 })();
 if(typeof module!=='undefined')module.exports=MGRoute;
 
 if(typeof window!=='undefined')(()=>{
   const ST={trip:'',city:'',perDay:2,skip:true,start:null};
   const SLOT={1:['晚餐'],2:['午餐','晚餐'],3:['早午餐','午餐','晚餐'],4:['早午餐','午餐','下午','晚餐']};
+  const ALL_SLOTS=['早午餐','午餐','下午','晚餐'];
   const COLORS=['#b3261e','#1f6f8b','#7a5c00','#5b3f8c','#2f7a3d','#a14d00','#38507a'];
+  const CUSTOM_KEY='mg-route-custom';
   const html=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+  const hl=()=>typeof MGI18n!=='undefined'&&MGI18n.mapHL?MGI18n.mapHL():'zh-CN';
+  function loadCustom(){try{const v=JSON.parse(localStorage.getItem(CUSTOM_KEY)||'{}');return v&&typeof v==='object'?v:{};}catch(e){return {};}}
+  function saveCustom(all){try{localStorage.setItem(CUSTOM_KEY,JSON.stringify(all));}catch(e){}}
+  const cKey=()=>ST.trip+'::'+ST.city;
+  function getCustom(){return loadCustom()[cKey()]||null;}
+  function setCustom(val){const all=loadCustom();if(val)all[cKey()]=val;else delete all[cKey()];saveCustom(all);}
   function ensure(){
     if(document.getElementById('routeDlg'))return;
     document.body.insertAdjacentHTML('beforeend',`<dialog id="routeDlg" class="route-sheet" aria-labelledby="routeTitle"><div class="dlg"><div class="detail-sheet-head"><button type="button" class="detail-drag" tabindex="-1" data-close aria-label="关闭路线"><span></span></button><button type="button" class="close" data-close>关闭</button></div><p class="route-kicker">旅行路线 · ROUTE</p><h2 id="routeTitle"></h2><div class="route-cities" id="routeCities" role="tablist" aria-label="选择城市"></div><div class="route-controls"><div class="route-step"><span>每天</span><button type="button" data-per="-1" aria-label="每天少一家">−</button><b id="routePer">2</b><button type="button" data-per="1" aria-label="每天多一家">＋</button><span>家</span></div><label class="route-toggle"><input type="checkbox" id="routeSkip" checked>跳过去过的</label><button type="button" class="route-here" id="routeHere">从我的位置出发</button></div><div id="routeBody"></div></div></dialog>`);
@@ -72,6 +83,13 @@ if(typeof window!=='undefined')(()=>{
       if(e.target===dlg||e.target.closest('[data-close]')){closeAppDialog(dlg);return;}
       const c=e.target.closest('[data-route-city]');if(c){ST.city=c.dataset.routeCity;ST.start=null;draw();return;}
       const p=e.target.closest('[data-per]');if(p){ST.perDay=Math.max(1,Math.min(4,ST.perDay+ +p.dataset.per));draw();return;}
+      const mv=e.target.closest('[data-route-move]');if(mv){
+        const {days}=current(),seq=days.flatMap(d=>d.stops).map(r=>r.u),idx=seq.indexOf(mv.dataset.u),dir=+mv.dataset.routeMove,to=idx+dir;
+        if(idx>=0&&to>=0&&to<seq.length){[seq[idx],seq[to]]=[seq[to],seq[idx]];const cur=getCustom()||{};setCustom({...cur,order:seq});draw();}return;}
+      const sl=e.target.closest('[data-route-slot]');if(sl){
+        const u=sl.dataset.routeSlot,curSlot=sl.dataset.slot||'',next=ALL_SLOTS[(ALL_SLOTS.indexOf(curSlot)+1)%ALL_SLOTS.length];
+        const cur=getCustom()||{};setCustom({...cur,slots:{...(cur.slots||{}),[u]:next}});draw();return;}
+      if(e.target.closest('[data-route-reset]')){setCustom(null);draw();toast('已恢复最优路线');return;}
       if(e.target.closest('#routeHere')){
         if(ST.start){ST.start=null;draw();return;}
         if(!navigator.geolocation){toast('这个浏览器无法获取位置');return;}
@@ -86,18 +104,26 @@ if(typeof window!=='undefined')(()=>{
   function cities(){const m=new Map();rows().forEach(r=>m.set(r.ci,(m.get(r.ci)||0)+1));return [...m].sort((a,b)=>b[1]-a[1]);}
   function current(){
     const all=rows().filter(r=>String(r.ci)===ST.city),pts=ST.skip?all.filter(r=>favOf(r.u)!==2):all;
-    return {all,days:pts.length?MGRoute.plan(pts,{perDay:ST.perDay,start:ST.start}):[],skipped:all.length-pts.length};
+    if(!pts.length)return {all,days:[],skipped:all.length,custom:null};
+    const custom=getCustom();
+    if(custom?.order?.length){
+      const byU=new Map(pts.map(r=>[r.u,r])),ordered=[];
+      for(const u of custom.order)if(byU.has(u)){ordered.push(byU.get(u));byU.delete(u);}
+      if(byU.size)ordered.push(...MGRoute.order([...byU.values()],ordered.at(-1)||ST.start));
+      return {all,days:MGRoute.planFromOrder(ordered,{perDay:ST.perDay,start:ST.start}),skipped:all.length-pts.length,custom};
+    }
+    return {all,days:MGRoute.plan(pts,{perDay:ST.perDay,start:ST.start}),skipped:all.length-pts.length,custom};
   }
   const name=r=>r.zh||r.n;
   function navLink(a,b,walk){
     const mode=walk?'walk':'car';
     if(b.ml||a.ml)return `https://uri.amap.com/navigation?${a.me?'':`from=${a.lng},${a.lat},${encodeURIComponent(name(a))}&`}to=${b.lng},${b.lat},${encodeURIComponent(name(b))}&mode=${mode}&coordinate=wgs84&callnative=1`;
-    return `https://www.google.com/maps/dir/?api=1${a.me?'':`&origin=${a.lat},${a.lng}`}&destination=${b.lat},${b.lng}&travelmode=${walk?'walking':'driving'}&hl=zh-CN`;
+    return `https://www.google.com/maps/dir/?api=1${a.me?'':`&origin=${a.lat},${a.lng}`}&destination=${b.lat},${b.lng}&travelmode=${walk?'walking':'driving'}&hl=${encodeURIComponent(hl())}`;
   }
   function dayLink(day){
     const s=day.stops;if(s.length<2||s[0].ml)return '';
     const o=s[0],d=s[s.length-1],w=s.slice(1,-1).map(x=>x.lat+','+x.lng).join('|');
-    return `https://www.google.com/maps/dir/?api=1&origin=${o.lat},${o.lng}&destination=${d.lat},${d.lng}${w?'&waypoints='+encodeURIComponent(w):''}&hl=zh-CN`;
+    return `https://www.google.com/maps/dir/?api=1&origin=${o.lat},${o.lng}&destination=${d.lat},${d.lng}${w?'&waypoints='+encodeURIComponent(w):''}&hl=${encodeURIComponent(hl())}`;
   }
   function sketch(days){
     const pts=days.flatMap(d=>d.stops).concat(ST.start?[ST.start]:[]);if(!pts.length)return '';
@@ -125,17 +151,19 @@ if(typeof window!=='undefined')(()=>{
     const here=document.getElementById('routeHere');here.textContent=ST.start?'✓ 从我的位置出发':'从我的位置出发';here.setAttribute('aria-pressed',!!ST.start);
     const body=document.getElementById('routeBody');
     if(!cs.length){body.innerHTML='<p class="empty">这份清单里还没有能定位的餐厅。</p>';return;}
-    const {days,skipped}=current();
+    const {days,skipped,custom}=current();
     if(!days.length){body.innerHTML=`<p class="empty">这座城市的餐厅都去过了${skipped?`（${skipped} 家）`:''}。关掉“跳过去过的”可以看到全部。</p>`;return;}
     const total=days.reduce((t,d)=>t+d.road,0),stops=days.reduce((t,d)=>t+d.stops.length,0);let n=0;
-    const slots=SLOT[ST.perDay];
-    body.innerHTML=`<div class="route-summary"><div><b>${days.length}</b><span>天</span></div><div><b>${stops}</b><span>家餐厅</span></div><div><b>${MGRoute.fmtKm(total)}</b><span>总路程（估）</span></div></div>${sketch(days)}<ol class="route-days">${days.map((d,i)=>{
+    const slots=SLOT[ST.perDay],customSlots=custom?.slots||{};
+    const isCustom=!!(custom&&(custom.order?.length||Object.keys(customSlots).length));
+    const resetBar=isCustom?`<div class="route-custom-bar"><span>自定义顺序</span><button type="button" class="linkbtn" data-route-reset>恢复最优路线</button></div>`:'';
+    body.innerHTML=`<div class="route-summary"><div><b>${days.length}</b><span>天</span></div><div><b>${stops}</b><span>家餐厅</span></div><div><b>${MGRoute.fmtKm(total)}</b><span>总路程（估）</span></div></div>${resetBar}${sketch(days)}<ol class="route-days">${days.map((d,i)=>{
       const col=COLORS[i%COLORS.length],gl=dayLink(d);
-      return `<li class="route-day" style="--day:${col}"><header><b>第 ${i+1} 天</b><span>${d.stops.length} 家 · 约 ${MGRoute.fmtKm(d.road)}</span>${gl?`<a href="${html(gl)}" target="_blank" rel="noopener">谷歌地图看全天 ↗</a>`:''}</header><ol class="route-stops">${d.first?legHTML(d.first,ST.start,d.stops[0]):''}${d.stops.map((r,j)=>{n++;return `${j?legHTML(d.legs[j-1],d.stops[j-1],r):''}<li class="route-stop"><span class="route-num">${n}</span><button type="button" class="route-name" data-route-open="${html(r.u)}"><b>${html(name(r))}</b><small>${slots[j]||''}${slots[j]?' · ':''}${r.zh&&r.zh!==r.n?html(r.n)+' · ':''}${html(r.cu||'')}</small></button>${badge(r)}</li>`;}).join('')}</ol></li>`;}).join('')}</ol><div class="route-foot"><button type="button" class="btn" data-route-copy>复制行程文字</button><p>距离按直线 × 1.3 估算，步行按每小时 4.8 公里、车程按城市平均车速估算，出发前以导航为准。${skipped?`已跳过 ${skipped} 家去过的餐厅。`:''}</p></div>`;
+      return `<li class="route-day" style="--day:${col}"><header><b>第 ${i+1} 天</b><span>${d.stops.length} 家 · 约 ${MGRoute.fmtKm(d.road)}</span>${gl?`<a href="${html(gl)}" target="_blank" rel="noopener">谷歌地图看全天 ↗</a>`:''}</header><ol class="route-stops">${d.first?legHTML(d.first,ST.start,d.stops[0]):''}${d.stops.map((r,j)=>{n++;const idx=n,slot=customSlots[r.u]||slots[j]||'';return `${j?legHTML(d.legs[j-1],d.stops[j-1],r):''}<li class="route-stop"><span class="route-num">${n}</span><button type="button" class="route-name" data-route-open="${html(r.u)}"><b>${html(name(r))}</b><small>${slot}${slot?' · ':''}${r.zh&&r.zh!==r.n?html(r.n)+' · ':''}${html(r.cu||'')}</small></button><span class="route-stop-tools">${slot?`<button type="button" class="route-slot-btn" data-route-slot="${html(r.u)}" data-slot="${html(slot)}" title="点击餐次可切换时段" aria-label="点击餐次可切换时段">${html(slot)}</button>`:''}${stops>1?`<span class="route-move-grp"><button type="button" class="route-mv" data-route-move="-1" data-u="${html(r.u)}"${idx===1?' disabled':''} aria-label="将 ${html(name(r))} 上移">↑</button><button type="button" class="route-mv" data-route-move="1" data-u="${html(r.u)}"${idx===stops?' disabled':''} aria-label="将 ${html(name(r))} 下移">↓</button></span>`:''}${badge(r)}</span></li>`;}).join('')}</ol></li>`;}).join('')}</ol><div class="route-foot"><button type="button" class="btn" data-route-copy>复制行程文字</button><p>距离按直线 × 1.3 估算，步行按每小时 4.8 公里、车程按城市平均车速估算，出发前以导航为准。${skipped?`已跳过 ${skipped} 家去过的餐厅。`:''}</p></div>`;
   }
   function textPlan(){
-    const t=upTrip(ST.trip),{days}=current(),slots=SLOT[ST.perDay];let n=0;
-    return [`${t.name} · ${DB.T[+ST.city][0]} 美食路线`,...days.map((d,i)=>[`\n第 ${i+1} 天（约 ${MGRoute.fmtKm(d.road)}）`,...d.stops.map((r,j)=>{n++;const l=j?d.legs[j-1]:null;return `${l?`  ↓ ${l.walk?'步行':'车程'}约 ${MGRoute.fmtMin(l.min)}\n`:''}${n}. ${slots[j]?slots[j]+' · ':''}${name(r)}（${LVN[r.l]}）`;})].join('\n')),'\n—— 来自 米其林全球名录'].join('\n');
+    const t=upTrip(ST.trip),{days,custom}=current(),slots=SLOT[ST.perDay],customSlots=custom?.slots||{};let n=0;
+    return [`${t.name} · ${DB.T[+ST.city][0]} 美食路线`,...days.map((d,i)=>[`\n第 ${i+1} 天（约 ${MGRoute.fmtKm(d.road)}）`,...d.stops.map((r,j)=>{n++;const l=j?d.legs[j-1]:null,slot=customSlots[r.u]||slots[j]||'';return `${l?`  ↓ ${l.walk?'步行':'车程'}约 ${MGRoute.fmtMin(l.min)}\n`:''}${n}. ${slot?slot+' · ':''}${name(r)}（${LVN[r.l]}）`;})].join('\n')),'\n—— 来自 米其林全球名录'].join('\n');
   }
   function open(tripID,city){ensure();ST.trip=tripID;ST.city=city!=null?String(city):'';ST.start=null;draw();const d=document.getElementById('routeDlg');if(!d.open)showAppDialog(d);d.scrollTop=0;}
   const rad=d=>d*Math.PI/180;
