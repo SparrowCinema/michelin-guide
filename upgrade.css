@@ -455,10 +455,11 @@ html.lang-en .address-zh{font-size:13px;font-weight:400;color:var(--muted)}
 .sync-dot{width:9px;height:9px;border-radius:50%;flex:none;background:var(--green)}
 .sync-dot.busy{background:var(--bib);animation:mp-rot 1s linear infinite;border-radius:2px}
 .sync-dot.err{background:var(--red)}
-.sync-code{display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:10px;margin:0 16px 12px;padding:12px 14px;border-radius:12px;border:1px dashed color-mix(in srgb,var(--red) 35%,var(--line));background:var(--surface)}
-.sync-code>span{font-size:11px;color:var(--muted);letter-spacing:.06em}
-.sync-code code{font:600 13.5px ui-monospace,"SF Mono",Menlo,monospace;letter-spacing:.03em;overflow-wrap:anywhere;color:var(--fg)}
-.sync-code div{display:flex;gap:12px;font-size:12.5px}
+.sync-code{display:flex;flex-direction:column;gap:8px;margin:0 16px 12px;padding:12px 14px;border-radius:12px;border:1px dashed color-mix(in srgb,var(--red) 35%,var(--line));background:var(--surface)}
+.sync-code-head{display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap}
+.sync-code-head>span{font-size:11.5px;color:var(--muted);letter-spacing:.05em}
+.sync-code-ops{display:flex;align-items:center;gap:12px;font-size:12.5px;flex-wrap:wrap}
+.sync-code code{display:block;width:100%;box-sizing:border-box;padding:8px 10px;border-radius:8px;background:var(--hover);font:600 13px/1.5 ui-monospace,"SF Mono",Menlo,monospace;letter-spacing:.03em;overflow-wrap:anywhere;word-break:break-word;color:var(--fg);text-align:center}
 
 /* This-update banner */
 .update-banner{position:relative;margin:18px 0 6px;padding:18px 18px 14px;border-radius:20px;background:radial-gradient(120% 140% at 0% 0%,color-mix(in srgb,var(--red-soft) 85%,var(--surface)) 0%,var(--surface) 62%);border:1px solid color-mix(in srgb,var(--red) 18%,var(--line));box-shadow:0 14px 34px -24px rgb(120 30 30 / .45)}
@@ -657,7 +658,7 @@ body[data-tab="me"] #controls,body[data-tab="me"] #intro{display:none!important}
 @media(prefers-reduced-motion:reduce){.pp-cover-atlas,.pp-cover-atlas:hover{transform:none;transition:none}}
 
 /* A self-hosted four-character title cut; reading text keeps the system stack. */
-@font-face{font-family:"Passport Calligraphy";src:url("assets/fonts/passport-calligraphy.ttf?v=66") format("truetype");font-style:normal;font-weight:400;font-display:swap;unicode-range:U+7F8E,U+98DF,U+62A4,U+7167}
+@font-face{font-family:"Passport Calligraphy";src:url("assets/fonts/passport-calligraphy.ttf?v=67") format("truetype");font-style:normal;font-weight:400;font-display:swap;unicode-range:U+7F8E,U+98DF,U+62A4,U+7167}
 .pp-cover-atlas .pp-cover-name{font-family:"Passport Calligraphy","Kaiti SC","STKaiti",var(--display);font-weight:400;font-size:42px;line-height:1.35;letter-spacing:.14em;margin-left:.14em;text-shadow:0 1px 0 #f9e9b638,0 2px 1px #230c18;}
 .pp-cover-atlas .pp-cover-en{font-family:Georgia,"Times New Roman",serif;font-size:11px;line-height:1.7;font-weight:400;letter-spacing:.26em;margin-top:10px}
 .pp-cover-atlas .pp-cover-publisher{font-size:12px;letter-spacing:.2em}.pp-cover-atlas .pp-cover-motto{letter-spacing:.2em;margin-top:12px}.pp-cover-atlas .pp-cover-bottom{font-family:var(--display);letter-spacing:.16em}
@@ -829,7 +830,7 @@ body[data-tab="me"] #controls,body[data-tab="me"] #intro{display:none!important}
 @media(max-width:360px){.pp-growth-tabs{margin-inline:14px}.pp-journey .pp-journey-body{padding-inline:14px}.pp-growth-tabs button{font-size:13px}.pp-honor-filters{gap:6px}.pp-honor-filters button{gap:6px}}
 
 /* Editorial typography: real variable weights, a restrained logo bar and clear reading text. */
-@font-face{font-family:"Passport Editorial";src:url("assets/fonts/passport-editorial-latin.woff2?v=66") format("woff2");font-style:normal;font-weight:200 900;font-display:swap;unicode-range:U+0000-2E7F}@font-face{font-family:"Passport Editorial";src:url("assets/fonts/passport-editorial-cjk.woff2?v=66") format("woff2");font-style:normal;font-weight:200 900;font-display:swap;unicode-range:U+2E80-FFFF}
+@font-face{font-family:"Passport Editorial";src:url("assets/fonts/passport-editorial-latin.woff2?v=67") format("woff2");font-style:normal;font-weight:200 900;font-display:swap;unicode-range:U+0000-2E7F}@font-face{font-family:"Passport Editorial";src:url("assets/fonts/passport-editorial-cjk.woff2?v=67") format("woff2");font-style:normal;font-weight:200 900;font-display:swap;unicode-range:U+2E80-FFFF}
 .page-language-brand{position:relative;flex:none;gap:0}.page-language-brand img{width:32px;height:32px;border-radius:8px}.page-language-brand #pageBrand{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap;border:0}
 #intro{padding-top:18px;padding-bottom:14px}#intro h1{font:800 clamp(26px,3.5vw,36px)/1.35 var(--display);letter-spacing:.025em;text-wrap:balance}
 .mehead h2{font:800 clamp(26px,3.5vw,34px)/1.4 var(--display);letter-spacing:.025em}
@@ -839,7 +840,7 @@ a.restaurant-title{font:700 16px/1.55 var(--display);letter-spacing:.01em;overfl
 .section-heading h3,.feature-card h3,.travel-map-title,.map-results h2,.dlg h2,.dlg h3,.pp-cities-head h3{font-weight:750;line-height:1.45;letter-spacing:.015em}
 .detail-title{font-weight:800;line-height:1.4;letter-spacing:.01em}.pp-journey .pp-growth-head h4{font-weight:750;letter-spacing:.04em}.pp-next-copy h5,.pp-journey-section-head h5,.pp-destination h6,.pp-level-list strong,.pp-track-info strong,.install-intro h3,.trip-card h4{font-weight:750;letter-spacing:.015em}
 .pp-identity-head h4,.pp-visas>h4{font-weight:800}.pp-intro{font-weight:600}.pp-cover-publisher{font-weight:650}.mehead p,.sub{line-height:1.75}
-@media(max-width:700px){#intro{padding-top:14px;padding-bottom:12px}#intro h1{font-size:27px}.mehead h2{font-size:27px}.ctry{font-size:22px}a.restaurant-title{font-size:15px}}
+@media(max-width:700px){#intro{padding-top:14px;padding-bottom:12px}#intro h1{font-size:27px}.mehead h2{font-size:21px;line-height:1.3}.ctry{font-size:22px}a.restaurant-title{font-size:15px}}
 .lang-en #intro h1,.lang-en .mehead h2{letter-spacing:0;line-height:1.3}.lang-en a.restaurant-title{letter-spacing:0}
 
 /* Search autocomplete, active filter pills, sort bar, map clustering & desktop split-view */
@@ -897,7 +898,9 @@ a.restaurant-title{font:700 16px/1.55 var(--display);letter-spacing:.01em;overfl
 .gt-jump{font:inherit;font-weight:600;color:var(--fg);background:none;border:0;padding:0;text-align:left;cursor:pointer}
 .gt-jump:hover{color:var(--red);text-decoration:underline}
 .mehead-summary{margin:4px 0 0!important;font-size:12.5px;color:var(--red)!important;font-variant-numeric:tabular-nums}
-.lang-cell{flex-wrap:wrap;gap:8px 12px}.lang-cell .r{margin-left:auto}.lang-cell .seg{flex-wrap:wrap}.lang-cell .seg button{padding:5px 10px;font-size:12px}
+.lang-cell{flex-wrap:wrap;gap:8px 12px}.lang-cell .r{margin-left:auto}.lang-cell .seg button{padding:5px 10px;font-size:12px;white-space:nowrap}
+#meSettings .cell.nochev{flex-wrap:wrap;gap:8px 10px}#meSettings .cell.nochev>span:first-child{white-space:nowrap;flex-shrink:0}#meSettings .seg button{white-space:nowrap}
+.install-actions #installBtn .r::after{content:""!important}
 .sync-qr-box{margin:0 16px 14px;padding:16px;border-radius:12px;background:var(--hover);display:flex;flex-direction:column;align-items:center;gap:10px;text-align:center}
 .sync-qr-svg{display:block;border-radius:8px;box-shadow:0 2px 10px rgb(0 0 0 / .08)}
 .sync-qr-box p{margin:0;font-size:12px;color:var(--muted);line-height:1.6}
@@ -914,7 +917,101 @@ a.restaurant-title{font:700 16px/1.55 var(--display);letter-spacing:.01em;overfl
 .route-mv{font:inherit;font-size:12px;border:0;background:none;color:var(--muted);padding:3px 7px;cursor:pointer;line-height:1.2}
 .route-mv:hover:not(:disabled){background:var(--hover);color:var(--fg)}
 .route-mv:disabled{opacity:.3;cursor:default}
-@media(max-width:420px){.route-slot-btn{padding:2px 6px;font-size:10.5px}.route-mv{padding:2px 5px}.route-stop-tools{gap:4px}}
+
+/* Mobile Me-page typography, spacing & anti-cramping refinements across 320px–700px phones */
+@media(max-width:700px){
+  #mePage{padding-top:4px}
+  #mePage .mehead{gap:12px;margin-bottom:12px}
+  #mePage .mehead img{width:44px;height:44px;border-radius:11px}
+  #mePage .mehead p{font-size:12px;line-height:1.5}
+  #mePage .mehead-summary{font-size:12px;margin-top:3px!important}
+  #meMenu{margin:10px 0;border-radius:13px}
+  #meMenu>.me-fold{scroll-margin-top:calc(var(--lbh) + 8px)}
+  #meMenu>.me-fold>:is(summary,.me-entry){grid-template-columns:22px minmax(0,1fr) 16px;gap:11px;padding:13px 14px}
+  #meMenu>.me-fold>:is(summary,.me-entry) .me-ico{width:21px;height:21px}
+  #meMenu>.me-fold>:is(summary,.me-entry) strong{font-size:15.5px;line-height:1.35;letter-spacing:.01em}
+  #meMenu>.me-fold>:is(summary,.me-entry) small{font-size:12px;line-height:1.45;margin-top:2px}
+  #meMenu .me-menu-label{padding:11px 14px 6px;font-size:11.5px}
+  #meMenu>.me-fold-minor>:is(summary,.me-entry){padding:11px 14px}
+  #meMenu>.me-fold-minor>:is(summary,.me-entry) strong{font-size:14.5px}
+  #meMenu .me-fold-body{padding:0 11px 14px}
+  #meMenu .me-fold-body .card{margin-top:10px;border-radius:11px}
+  #meMenu .me-fold-body .card h3{font-size:12px;padding:10px 12px 4px}
+  #meMenu .me-fold-body .cell{font-size:13.5px;padding:10px 12px;gap:8px}
+  #meMenu .me-fold-body .cell .r{font-size:12.5px}
+  #meMenu .me-fold-body .note{font-size:11.5px;padding:0 12px 10px;line-height:1.6}
+  /* Cloud sync inside Me */
+  #syncCard .sync-lead,#syncCard .sync-note,#syncCard .sync-warn,#syncCard .sync-status,#syncCard .sync-code,#syncCard .sync-qr-box,#syncCard .sync-privacy{margin-left:12px;margin-right:12px}
+  #syncCard .sync-lead,#syncCard .sync-note,#syncCard .sync-warn{font-size:12px;line-height:1.6}
+  #syncCard .sync-status{font-size:12.5px;margin-bottom:10px}
+  #syncCard .sync-code{padding:10px 11px;gap:7px}
+  #syncCard .sync-code-ops{gap:10px;font-size:12px}
+  #syncCard .sync-code code{font-size:12px;padding:8px 8px;letter-spacing:.02em}
+  #syncCard .sync-actions{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;padding:0 12px 12px}
+  #syncCard .sync-actions .btn{width:100%;box-sizing:border-box;font-size:13px;padding:9px 10px}
+  #syncCard .sync-join{padding:0 12px 10px;gap:8px}
+  #syncCard>.linkbtn{margin:0 12px 12px;font-size:13px}
+  #syncCard .sync-danger-row{padding:0 12px 10px}
+  #meBackup>summary{padding:11px 12px}
+  #meBackup>summary strong{font-size:14px}
+  #meBackup>summary small{font-size:11.5px}
+  /* Trips inside Me */
+  #meTrips .travel-section{padding-top:10px}
+  #meTrips .section-heading{justify-content:flex-end;margin-bottom:8px}
+  #meTrips .section-heading h3{display:none}
+  #meTrips #newTrip{font-size:13px;padding:7px 14px}
+  #meTrips .trip-card{padding:12px;gap:8px}
+  #meTrips .trip-card h4{font-size:15.5px;line-height:1.35}
+  #meTrips .trip-card p{font-size:12px}
+  #meTrips .trip-actions{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px!important;padding-top:8px}
+  #meTrips .trip-actions .linkbtn{justify-content:center;font-size:12.5px;padding:7px 8px;height:36px;min-height:36px}
+  /* Collection inside Me */
+  #meCollection .metabs{margin:12px 0 4px;gap:6px}
+  #meCollection .metabs .seg button{padding:5px 10px;font-size:12.5px;white-space:nowrap}
+  #meCollection #meList a.restaurant-title{font-size:14.5px}
+  #meCollection #meList ul.rl li{padding:9px 0;gap:9px}
+  /* Install inside Me */
+  #meInstall .me-install{padding-top:14px}
+  #meInstall .install-intro{gap:11px;margin-bottom:14px}
+  #meInstall .install-intro img{width:42px;height:42px;border-radius:10px}
+  #meInstall .install-intro h3{font-size:16px;line-height:1.35}
+  #meInstall .install-intro p{font-size:12px;margin-top:3px}
+  #meInstall .install-actions{gap:8px;margin-bottom:14px}
+  #meInstall .install-actions #installBtn{flex:1 1 100%;font-size:14px;padding:11px 14px;min-height:44px}
+  #meInstall .install-actions #installCopyLink{flex:1 1 100%;font-size:13.5px;min-height:40px;padding:8px 14px}
+  #meInstall .install-option>summary{padding:12px 13px;font-size:13.5px}
+  #meInstall .install-option ol{margin:10px 13px 13px;font-size:12.5px;line-height:1.65}
+  #meInstall .install-sync-note{margin-top:12px;padding:11px 12px;font-size:11.5px;line-height:1.65}
+  /* Guide & Friends inside Me */
+  #meGuide .me-guide li{grid-template-columns:24px 1fr;column-gap:9px;padding:8px 0}
+  #meGuide .me-guide li::before{width:21px;height:21px;font-size:11px;line-height:21px}
+  #meGuide .me-guide li strong{font-size:13.5px}
+  #meGuide .me-guide li span{font-size:12px;line-height:1.55}
+  #meFriends .me-friends{padding-top:12px}
+  #meFriends .me-friends a{padding:12px;gap:12px}
+  #meFriends .me-friends .friend-logo{width:38px;height:38px}
+  #meFriends .me-friends strong{font-size:13.5px}
+  #meFriends .me-friends small{font-size:11.5px;margin-top:3px}
+}
+@media(max-width:460px){
+  #meSettings .lang-cell .r{width:100%;margin-left:0}
+  #langSeg{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));width:100%;border-radius:10px}
+  #langSeg button{padding:7px 8px;text-align:center;font-size:12.5px;border-right:1px solid var(--line);border-bottom:1px solid var(--line)}
+  #langSeg button:nth-child(2n){border-right:0}
+  #langSeg button:nth-last-child(-n+2){border-bottom:0}
+}
+@media(max-width:420px){
+  .route-slot-btn{padding:2px 6px;font-size:10.5px}.route-mv{padding:2px 5px}.route-stop-tools{gap:4px}
+  #syncCard .sync-join{flex-direction:column}#syncCard .sync-join .btn{width:100%}#syncCard .sync-join input{font-size:15px;padding:9px 11px}
+}
+@media(max-width:360px){
+  #meMenu>.me-fold>:is(summary,.me-entry){padding:12px}#meMenu>.me-fold>:is(summary,.me-entry) strong{font-size:15px}
+  #meMenu .me-fold-body{padding:0 9px 12px}
+  #syncCard .sync-code code{font-size:11px;letter-spacing:.01em}
+  #meSettings .cell.nochev .r{width:100%;margin-left:0}
+  #themeSeg{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));width:100%}
+  #themeSeg button{padding:6px 4px;text-align:center;font-size:12px}
+}
 @media(prefers-reduced-motion:reduce){.map-cluster{transition:none}}
 /* v65 photo editor: reorder, undo, larger hit areas */
 .mp-edit .mp-tile[data-photo-tile]{touch-action:pan-y;-webkit-touch-callout:none;-webkit-user-select:none;user-select:none}
