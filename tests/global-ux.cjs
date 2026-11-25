@@ -187,7 +187,75 @@ const {chromium}=require('playwright');
     await enPage.evaluate(u=>upOpenDetail(u),frU);
     const gHref=await enPage.locator('#detailDlg a[href*="google.com/maps"]').first().getAttribute('href');
     assert(gHref.includes('hl=en')&&!gHref.includes('hl=zh-CN'),'Google Maps should use hl=en in English mode: '+gHref);
+    // Detail intro title should NOT duplicate "About About"
+    assert.equal((await enPage.locator('#introTitle').innerText()).trim(),'About','#introTitle should be "About" without duplication');
     await enPage.evaluate(()=>closeAppDialog(document.getElementById('detailDlg')));
+
+    // Mainland China restaurant detail in EN mode: Apple Maps, Google Maps, and REAL AMap link (no duplicate Apple Maps)
+    const enMlU=await enPage.evaluate(()=>DB.rows.find(r=>r.ml&&r.lat!=null)?.u);
+    await enPage.evaluate(u=>upOpenDetail(u),enMlU);
+    const mlLinks=await enPage.evaluate(()=>[...document.querySelectorAll('#detailDlg .address-tools a')].map(a=>({text:a.textContent.trim(),href:a.href})));
+    assert.equal(mlLinks.length,3,'Mainland China EN detail should have Apple, Google, and AMap links');
+    assert(mlLinks[0].href.includes('maps.apple.com')&&mlLinks[0].text.includes('Apple'));
+    assert(mlLinks[1].href.includes('google.com/maps')&&mlLinks[1].text.includes('Google'));
+    assert(mlLinks[2].href.includes('uri.amap.com')&&mlLinks[2].text.includes('AMap'),'AMap link must point to uri.amap.com, not Apple Maps');
+    await enPage.evaluate(()=>closeAppDialog(document.getElementById('detailDlg')));
+
+    // Filter sheet + filter change + doneSheet preserves history.state (no history leak)
+    await enPage.locator('#filterBtn').click();
+    await enPage.waitForFunction(()=>document.body.classList.contains('sheet'));
+    await enPage.locator('#flags [data-f="green"]').click();
+    assert.equal(await enPage.evaluate(()=>history.state?.mgSheet),1,'writeHash must preserve history.state while filter sheet is open');
+    await enPage.locator('#doneSheet').click();
+    await enPage.waitForFunction(()=>!document.body.classList.contains('sheet'));
+    await enPage.evaluate(()=>clearAll());
+
+    // Ranked search autocomplete: "pa" puts Paris first, "to" puts Tokyo first; "/" focuses search
+    await enPage.fill('#q','pa');
+    await enPage.waitForTimeout(80);
+    const firstPaCity=await enPage.locator('#searchSuggest [data-sg-city] b').first().innerText();
+    assert.equal(firstPaCity,'Paris','Autocomplete for "pa" should rank Paris first');
+    await enPage.fill('#q','to');
+    await enPage.waitForTimeout(80);
+    const firstToCity=await enPage.locator('#searchSuggest [data-sg-city] b').first().innerText();
+    assert.equal(firstToCity,'Tokyo','Autocomplete for "to" should rank Tokyo first');
+    await enPage.fill('#q','');
+    await enPage.evaluate(()=>document.activeElement?.blur());
+    await enPage.keyboard.press('/');
+    assert.equal(await enPage.evaluate(()=>document.activeElement?.id),'q','Pressing / should focus search input');
+
+    // Header 4-language menu popover
+    await enPage.locator('#langMenuBtn').click();
+    assert(await enPage.locator('#langMenu').isVisible(),'Header 4-language dropdown should open');
+    assert.equal(await enPage.locator('#langMenu [data-lang-pick]').count(),4);
+    await enPage.keyboard.press('Escape');
+    assert(await enPage.locator('#langMenu').isHidden(),'Escape should close language menu');
+
+    // Trip route in EN mode: no duplicate meal slot, Apple Maps for Mainland China, localized clipboard text
+    const routeEN=await enPage.evaluate(()=>{
+      const pts=DB.rows.filter(r=>r.ml&&r.lat!=null).slice(0,2);
+      const t=upNewTrip('Shanghai Hop');t.items=pts.map(x=>x.u);upSave(PERSONAL);
+      MGRouteUI.open(t.id,String(pts[0].ci));
+      return {
+        small:document.querySelector('#routeDlg .route-name small')?.textContent||'',
+        slotVisible:getComputedStyle(document.querySelector('#routeDlg .route-slot-btn')).display!=='none',
+        legHref:document.querySelector('#routeDlg .route-leg a')?.href||'',
+        text:MGRouteUI.text()
+      };
+    });
+    assert(!/Lunch|Dinner|午餐|晚餐/.test(routeEN.small),'Meal slot should not be duplicated inside .route-name small');
+    assert(routeEN.slotVisible,'Clickable meal slot button should remain visible at 390px');
+    assert(routeEN.legHref.includes('maps.apple.com'),'Mainland China route nav in EN mode should use Apple Maps');
+    assert(!/[㐀-鿿]/.test(routeEN.text),'Copied itinerary text in EN mode should not contain Chinese: '+routeEN.text);
+    await enPage.evaluate(()=>closeAppDialog(document.getElementById('routeDlg')));
+
+    // Guide editions dialog rows jump to the guide region
+    await enPage.evaluate(()=>MGUpdates.guidesDialog());
+    await enPage.waitForSelector('#guidesDlg[open] [data-guide-jump]');
+    await enPage.locator('#guidesDlg [data-guide-jump]').first().click();
+    await enPage.waitForFunction(()=>!document.getElementById('guidesDlg').open&&S.co!=='');
+    await enPage.evaluate(()=>clearAll());
+
     // WeChat install guide hidden in English non-WeChat UA
     await enPage.locator('#tabbar [data-tab="me"]').click();
     await enPage.locator('#meInstall>summary').click();
@@ -213,6 +281,6 @@ const {chromium}=require('playwright');
     await enCtx.close();
 
     assert.deepEqual(errors,[]);
-    console.log('PASS: global-ux — font version parity, autocomplete, active filter chips, directory sort, saved filters, desktop map split-view & clustering, list->map locate, booking/hours/Apple Maps, nearby fallback, route reorder/slot/reset, sync QR/privacy/cloud-delete, en/ja/fr i18n, 320–1600 zero overflow.');
+    console.log('PASS: global-ux — font version parity, ranked autocomplete, / shortcut, 4-lang header menu, clickable guides, active filter chips, directory sort, saved filters, desktop map split-view & clustering, list->map locate, booking/hours/Apple+Google+AMap links, nearby fallback, route reorder/slot/localized text, sync QR/privacy/cloud-delete, en/ja/fr i18n, 320–1600 zero overflow.');
   }finally{await browser.close();server.close();}
 })().catch(e=>{console.error(e.stack||e);process.exit(1);});
