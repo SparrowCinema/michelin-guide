@@ -962,3 +962,12 @@ body:not([data-tab="list"]) #updateBanner{display:none}
 }
 .detail-hero.is-photo-loading:before{content:"";position:absolute;inset:0;z-index:-2;background:linear-gradient(110deg,transparent 30%,rgb(255 255 255 / .45) 50%,transparent 70%) 0 0/250% 100%;animation:mp-shimmer 1.4s linear infinite}
 @media(prefers-reduced-motion:reduce){.detail-hero.is-photo-loading:before{animation:none}}
+/* v65 filter sheet: full-width menus (no clipped labels), a type-to-find place box, one clear button */
+.panel #country,.panel #city{flex:1 1 100%}
+.place-find{flex:1 1 100%;box-sizing:border-box;font:inherit;font-size:14px;padding:10px 14px;border:1px solid var(--line);border-radius:12px;background:var(--surface);color:var(--fg)}
+.place-find:focus{outline:2px solid color-mix(in srgb,var(--red) 50%,transparent);outline-offset:1px}
+/* v65 Me page: lists first, setup and help grouped below a small heading */
+.me-menu-label{margin:0;padding:14px 16px 6px;font-size:12px;letter-spacing:.08em;color:var(--muted);border-bottom:1px solid var(--line);background:var(--bg)}
+.me-menu>.me-fold-minor>:is(summary,.me-entry){padding-block:12px}
+.me-menu>.me-fold-minor>:is(summary,.me-entry) strong{font-size:15px}
+@media(min-width:900px),(min-width:700px) and (orientation:landscape){.me-menu-label{grid-column:1/-1;border:0;background:none;padding:12px 2px 0}}

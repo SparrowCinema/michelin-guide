@@ -285,7 +285,8 @@ dialog::backdrop{background:var(--shade)}
       <div class="row" id="conts"></div>
       <div class="row">
         <select id="country" aria-label="国家或地区"></select>
-        <select id="city" aria-label="城市"></select><p class="city-name-note">生僻地名采用参考音译，支持中文与原名检索。</p>
+        <select id="city" aria-label="城市"></select>
+        <input id="placeFind" class="place-find" type="search" list="placeList" autocomplete="off" enterkeyhint="go" placeholder="输入国家或城市快速定位" aria-label="输入国家或城市快速定位"><datalist id="placeList"></datalist><p class="city-name-note">生僻地名采用参考音译，支持中文与原名检索。</p>
       </div>
 
         <div class="lbl">菜系与价位</div>
@@ -294,7 +295,7 @@ dialog::backdrop{background:var(--shade)}
           <select id="price" aria-label="价位">
             <option value="">全部价位</option><option value="1">$</option><option value="2">$$</option><option value="3">$$$</option><option value="4">$$$$</option>
           </select>
-          <button type="button" class="morebtn" id="clearAll">清除全部筛选</button>
+          <button type="button" class="morebtn" id="clearAll" hidden>清除全部筛选</button>
         </div>
         <div class="lbl">标签</div>
         <div class="row" id="flags">
@@ -748,7 +749,7 @@ function renderList(){
   renderActiveFilters();
   const sortEl=$("dirSort");if(sortEl){sortEl.hidden=S.v!=="list"||S.near;sortEl.value=S.so;}
   if(S.near&&!ME&&S.nearErr){
-    $("scope").textContent="附近";$("count").textContent="";
+    $("scope").textContent="附近";$("count").textContent="";$("doneSheet").textContent="查看结果";
     const n=activeFilterCount();$("filterBtn").innerHTML="筛选"+(n?`<b>${n}</b>`:"");
     $("list").innerHTML=`<div class="near-fallback"><h3>无法获取你的位置</h3><p>请在浏览器设置中允许定位权限，或直接按地区浏览名录。</p><div class="near-fallback-actions"><button type="button" class="btn primary" id="retryNear">重新获取定位</button><button type="button" class="btn" id="browseNearRegion">按地区筛选</button></div></div>`;
     $("more").hidden=true;return;
@@ -762,6 +763,7 @@ function renderList(){
   }
   if($("searchNote"))$("searchNote").hidden=!searchCache.result?.fuzzy||!S.q.trim()||!all.length;
   $("count").textContent=`${all.length.toLocaleString()} 家`;
+  $("doneSheet").textContent=typeof MGI18n!=="undefined"&&MGI18n.en?`Show ${all.length.toLocaleString()} restaurants`:`查看 ${all.length.toLocaleString()} 家`;
   const tot=[0,0,0,0,0];filtered("level").forEach(r=>tot[r.l]++);
   $("scope").textContent=[S.c||"全球",S.co!==""?DB.C[S.co][0]:"",S.ci!==""?DB.T[S.ci][0]:""].filter(Boolean).join(" › ")+`　共 ${all.length.toLocaleString()} 家`;
   const n=activeFilterCount();$("filterBtn").innerHTML="筛选"+(n?`<b>${n}</b>`:"");
@@ -1094,6 +1096,17 @@ $("levels").addEventListener("click",e=>{const b=e.target.closest(".chip");if(!b
 $("conts").addEventListener("click",e=>{const b=e.target.closest(".chip");if(!b)return;S.c=b.dataset.c;S.co="";S.ci="";reset();render()});
 $("country").addEventListener("change",e=>{S.co=e.target.value;S.ci="";reset();render()});
 $("city").addEventListener("change",e=>{S.ci=e.target.value;reset();render()});
+// Type a country or city instead of scrolling two long menus.
+let PLACE_OPTS=null;
+function placeOptions(){
+  if(PLACE_OPTS)return PLACE_OPTS;const en=typeof MGI18n!=="undefined"&&MGI18n.en,cnt={},opts=new Map();
+  DB.rows.forEach(r=>{cnt["c"+r.co]=(cnt["c"+r.co]||0)+1;cnt["t"+r.ci]=(cnt["t"+r.ci]||0)+1});
+  DB.C.forEach((c,i)=>{if(cnt["c"+i])opts.set(en?c[1]:`${c[0]} ${c[1]}`,{co:String(i),ci:"",n:cnt["c"+i]})});
+  DB.T.forEach((t,i)=>{if(!cnt["t"+i])return;const c=DB.C[t[1]],label=en?`${t[2]}, ${c[1]}`:`${t[0]}${t[2]&&t[2]!==t[0]?" "+t[2]:""} · ${c[0]}`;opts.set(label,{co:String(t[1]),ci:String(i),n:cnt["t"+i]})});
+  PLACE_OPTS=opts;$("placeList").innerHTML=[...opts].sort((a,b)=>b[1].n-a[1].n).map(([k])=>`<option value="${esc(k)}"></option>`).join("");return opts;
+}
+$("placeFind").addEventListener("focus",placeOptions,{once:true});
+$("placeFind").addEventListener("input",e=>{const hit=placeOptions().get(e.target.value.trim());if(!hit)return;S.c="";S.co=hit.co;S.ci=hit.ci;e.target.value="";e.target.blur();reset();render();toast(`已定位到 ${hit.ci?DB.T[+hit.ci][0]:DB.C[+hit.co][0]}`)});
 $("cuisine").addEventListener("change",e=>{S.cu=e.target.value;reset();render()});
 $("price").addEventListener("change",e=>{S.p=e.target.value;reset();render()});
 $("dirSort").addEventListener("change",e=>{S.so=e.target.value;reset();render()});
