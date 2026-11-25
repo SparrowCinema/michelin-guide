@@ -10,4 +10,8 @@ test('route order matches brute force on small trips and splits into days',()=>{
   const me={lat:31.1,lng:121.3,me:true},withStart=M.plan(pts,{perDay:3,start:me});
   assert(withStart[0].first&&withStart[0].first.road>0);assert.equal(withStart[0].stops[0],pts[0]);
   assert.equal(M.fmtKm(.534),'530 米');assert.equal(M.fmtKm(12.4),'12 公里');assert.equal(M.fmtMin(75),'1 小时15 分');
+  const custom=[pts[4],pts[0],pts[2]];
+  const cdays=M.planFromOrder(custom,{perDay:2});
+  assert.deepEqual(cdays[0].stops,[pts[4],pts[0]]);assert.deepEqual(cdays[1].stops,[pts[2]]);
+  assert(cdays[0].road>0);
 });

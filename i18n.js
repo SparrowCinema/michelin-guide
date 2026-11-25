@@ -1,18 +1,42 @@
-/* English interface. The app is written in Chinese; in English mode this layer translates
-   what is shown — text, placeholders, labels, toasts, dialogs and the recap canvas — using
-   (1) whole-text matches, (2) number templates and (3) longest-match phrase translation.
-   A Chinese run is only replaced when it is fully covered, so the user's own words
-   (trip names, notes) and official Chinese addresses stay untouched. */
+/* Multi-language interface (zh / en / ja / fr) with key-based lookup plus automatic DOM
+   and canvas localization. User-entered text (trip names, notes) and official local addresses
+   stay untouched. */
 const MGI18n=(()=>{
   'use strict';
+  const SUPPORTED=['zh','en','ja','fr'];
+  const LOCALES=[['zh','简体中文'],['en','English'],['ja','日本語'],['fr','Français']];
   let lang='zh';
   try{const q=new URLSearchParams(location.search).get('lang');const saved=localStorage.getItem('mg-lang');
-    lang=q==='en'||q==='zh'?q:saved==='en'||saved==='zh'?saved:(/^zh/i.test(navigator.language||'zh')?'zh':'en');}catch(e){}
-  const en=lang==='en';
+    const nav=(navigator.language||'zh').toLowerCase();
+    const auto=/^zh/.test(nav)?'zh':/^ja/.test(nav)?'ja':/^fr/.test(nav)?'fr':'en';
+    lang=SUPPORTED.includes(q)?q:SUPPORTED.includes(saved)?saved:auto;}catch(e){}
+  const en=lang!=='zh',nonZh=lang!=='zh';
+  const MAP_HL={zh:'zh-CN',en:'en',ja:'ja',fr:'fr'};
+  const mapHL=()=>MAP_HL[lang]||'en';
+  const michelinLocale=()=>lang==='ja'?'jp/ja':lang==='fr'?'fr/fr':'en';
 
   // ---- whole-text matches (exact node / attribute text, trimmed) ----
   const FULL={
     "纪念章":"Medals",
+    "桌面像 App 一样打开":"Open like an app",
+    "点页面顶部右侧的“中 / EN”即可切换界面语言。":"Tap the language toggle at the top right of the page to switch languages.",
+    "护照视图":"Passport view","有新纪念章":"New medal unlocked",
+    "星级以现有名单为准。独立私人收藏工具，非米其林官方产品。":"Distinctions follow the current lists. Independent personal tool, not affiliated with MICHELIN.",
+    "语言":"Language","界面语言":"Language","中文":"中文","简体中文":"简体中文","English":"English","日本語":"日本語","Français":"Français",
+    "默认（按地区）":"Default (by region)","按星级优先":"By distinction","最新上榜":"New & promoted","名称 A–Z":"Name A–Z","离我最近":"Nearest",
+    "排序方式":"Sort order","已选筛选":"Active filters","移除筛选":"Remove filter","清除全部筛选":"Clear all filters",
+    "未去过":"Not visited yet","只看想去":"Want to go only","只看去过":"Been only","我的清单":"My lists",
+    "搜索建议":"Search suggestions","最近搜索":"Recent searches","热门城市":"Cities","匹配菜系":"Cuisines","匹配餐厅":"Restaurants",
+    "在地图上看":"Locate on map","地图位置":"Map pin","按住 Ctrl / ⌘ 加滚轮可缩放":"Hold Ctrl / ⌘ + scroll to zoom",
+    "无法获取你的位置":"Couldn’t access your location","请在浏览器设置中允许定位权限，或直接按地区浏览名录。":"Allow location access in your browser settings, or browse by region instead.","重新获取定位":"Try location again","按地区筛选":"Browse by region",
+    "营业时间与评价 · Google ↗":"Hours & reviews · Google ↗","营业时间与路线 · 高德 ↗":"Hours & route · AMap ↗","Apple 地图 ↗":"Apple Maps ↗","Google 地图 ↗":"Google Maps ↗",
+    "素食友好":"Vegetarian-friendly","纯素可选":"Vegan-friendly","官网预约":"Book online",
+    "扫码配对":"Pair via QR","收起二维码":"Hide QR","复制配对链接":"Copy pairing link","配对链接已复制":"Pairing link copied","用另一台设备扫码，自动填入同步码并合并记录":"Scan on another device to connect and merge records automatically",
+    "清除云端副本":"Delete cloud copy","确认清除云端副本？":"Confirm delete cloud copy?","云端副本已清除，本机记录保留":"Cloud copy deleted; local records kept",
+    "隐私与存储说明":"Privacy & data storage","同步数据与用餐照片存储在 Supabase（东京节点 ap-northeast-1），仅以同步码的 SHA-256 哈希作为索引，不收集邮箱或账号信息。随时可点击“清除云端副本”删除云端数据。":"Synced data and meal photos are stored on Supabase (Tokyo, ap-northeast-1), keyed only by the SHA-256 hash of your sync code with no account or email. You can delete the cloud copy anytime.",
+    "检测到同步配对链接，是否连接到云端并合并记录？":"Sync pairing link detected. Connect to the cloud and merge your records?",
+    "上移":"Move up","下移":"Move down","恢复最优路线":"Reset optimal order","已恢复最优路线":"Optimal order restored","点击餐次可切换时段":"Tap meal slot to change","自定义顺序":"Custom order",
+    "探索与收藏":"Collection & trips","同步与偏好":"Sync & preferences",
 "成长分类":"Growth categories","等级":"Level","足迹":"Footprints","味觉进阶":"Your culinary path","每一餐，积累下一段旅程的底气。":"Every meal brings you closer to your next chapter.","待解锁":"To unlock","荣誉分类":"Award category",
 
 "足迹地图、到访清单与评分 · 生成分享长图":"Footprint map, visits and ratings · Create a share image","添加到手机":"Add to your phone","桌面像 App 一样打开 · 微信浮窗与收藏":"Open like an app · WeChat floating windows and favorites","把美食护照带在身边":"Keep your food passport close","放到桌面，随时记录下一餐。":"Add it to your Home Screen, ready for your next meal.","iPhone / iPad · Safari":"iPhone / iPad · Safari","安卓 · 手机浏览器":"Android · Mobile browser","微信 · 浮窗与收藏":"WeChat · Floating windows and favorites","在 Safari 打开本网站，点“分享”（方框加向上箭头）；部分布局需先点页面菜单。":"Open this site in Safari and tap Share (a box with an up arrow). Some layouts put Share in the page menu.","选择“添加到主屏幕”；找不到时，在分享菜单的“编辑操作”中添加。":"Choose Add to Home Screen. If missing, add it through Edit Actions in the share menu.","如有“作为网页 App 打开”，将它开启，再点“添加”。以后从桌面图标进入。":"Turn on Open as Web App if shown, then tap Add. Use the Home Screen icon next time.","在 Chrome 打开本网站，点地址栏旁的“⋮”菜单。":"Open this site in Chrome and tap the ⋮ menu beside the address bar.","选择“安装并创建快捷方式”→“安装”；部分浏览器显示为“安装应用”或“添加到主屏幕”。":"Choose Add to home screen → Install. Some browsers show Install app or Add to Home Screen.","按提示确认。其他浏览器可在菜单中找“添加到桌面”或“创建快捷方式”。":"Follow the prompts. In other browsers, look for Add to Home Screen or Create shortcut in the menu.","在微信中打开本网站，点右上角“···”。":"Open this site in WeChat and tap ··· at the top right.","菜单里如有“浮窗”，点它可暂存页面，之后从微信浮窗入口返回。":"If Floating Window is available, tap it to keep the page handy and return through WeChat’s floating window entry.","没有“浮窗”时，可用“收藏”留存链接；若要添加到手机桌面，请选择“在浏览器中打开”，或复制网址到 Safari / Chrome。":"If Floating Window is missing, save the link to Favorites. To add it to your Home Screen, choose Open in Browser or copy the link into Safari / Chrome.","微信菜单随版本和设备有所不同，以你实际看到的选项为准。":"WeChat menus vary by version and device. Follow the options shown on your phone.","微信、浏览器与桌面入口的记录可能分开保存。已有记录？先在“数据与同步”连接云端，再在新入口连接同一份档案。":"WeChat, your browser and the Home Screen app may store records separately. Already have records? Connect to the cloud in Data and sync, then connect the new entry to the same profile.","在“我的米其林结算地图”生成长图：足迹地图、到访清单和我的评分，可保存分享。":"Open My MICHELIN Recap Map to create an image with your footprint map, visits and ratings, ready to save and share.","展开“添加到手机”，查看主屏幕安装步骤或微信浮窗用法。":"Open Add to your phone for Home Screen installation steps or the WeChat floating window guide.","在打开的浏览器里，再点“我的 → 添加到手机 → 添加到手机主屏幕”看步骤":"In your browser, open Me → Add to your phone → Add to Home Screen for instructions","再回到“我的 → 添加到手机 → 添加到手机主屏幕”":"Then return to Me → Add to your phone → Add to Home Screen","安装并创建快捷方式":"Add to home screen","点右上角“⋮”菜单，选“安装并创建快捷方式”→“安装”，或“安装应用”“添加到主屏幕”。":"Tap the ⋮ menu and choose Add to home screen → Install, Install app or Add to Home Screen.",
@@ -238,11 +262,71 @@ const MGI18n=(()=>{
     '伦敦眼':'London Eye','伦敦塔桥':'Tower Bridge','故宫角楼':'Forbidden City corner tower','中央广播电视塔':'CCTV Tower','东京晴空塔':'Tokyo Skytree','浅草寺五重塔':'Sensō-ji Pagoda','尖沙咀钟楼':'Clock Tower, Tsim Sha Tsui','国际金融中心':'IFC','摩天观景轮':'Singapore Flyer',
     '苏丹回教堂':'Sultan Mosque','布鲁克林大桥':'Brooklyn Bridge','克莱斯勒大厦':'Chrysler Building','京都塔':'Kyoto Tower','通天阁':'Tsūtenkaku','万神殿':'Pantheon','巴塞罗那大教堂':'Barcelona Cathedral','科伊特塔':'Coit Tower','悉尼海港大桥':'Sydney Harbour Bridge',
   };
+  // ---- Japanese & French core UI overlays (fallback to English for uncommon strings) ----
+  const JA={
+    '米其林全球名录':'ミシュラン世界ガイド名簿','美食护照':'グルメパスポート','名录':'名簿','地图':'マップ','附近':'周辺','我的':'マイページ','筛选':'絞り込み','关闭':'閉じる','清除全部':'すべてクリア','查看结果':'結果を見る',
+    '全部等级':'すべて','三星':'三つ星','二星':'二つ星','一星':'一つ星','必比登':'ビブグルマン','入选':'セレクテッド','绿星':'グリーンスター','新上榜':'新規掲載','今年升级':'昇格','本版新上榜':'最新版新規',
+    '想去':'行きたい','去过':'訪問済み','未去过':'未訪問','导航':'ルート','保存':'保存','修改':'編集','取消':'キャンセル','今天':'今日','笔记':'メモ','照片':'写真','复制':'コピー','分享':'共有',
+    '搜店名、城市或菜系，如：新荣记、东京':'店名・都市・料理ジャンルで検索（例：寿司、東京）',
+    '默认（按地区）':'デフォルト（地域別）','按星级优先':'星・評価順','最新上榜':'新着・昇格順','名称 A–Z':'名前順','离我最近':'近い順','排序方式':'並び替え',
+    '移动地图':'地図を動かす','完成移动':'完了','查看餐厅':'リストを見る','定位到我':'現在地','在地图上看':'地図で見る',
+    '旅行美食地图':'旅行グルメマップ','新建旅行':'旅行を作成','排路线':'ルート作成','查看地图':'地図で見る','结算图':'まとめ画像','餐厅清单':'マイリスト',
+    '数据与同步':'データと同期','开启同步':'同期を開始','我有同步码':'同期コードを入力','立即同步':'今すぐ同期','停止同步':'同期を停止','扫码配对':'QRコードで連携','清除云端副本':'クラウドデータを削除',
+    '偏好与关于':'設定・このサイトについて','外观':'外観','主题':'テーマ','跟随系统':'システム','浅色':'ライト','深色':'ダーク','语言':'言語','界面语言':'言語','使用指南':'使い方','添加到手机':'ホーム画面に追加','友情链接':'リンク',
+    '我的美食护照':'マイ・グルメパスポート','生成我的米其林结算地图':'マイ・ミシュランまとめ画像を作成','我的用餐记录':'食事の記録','记录一次用餐':'食事を記録','简介':'概要','菜系':'料理','地址':'住所','价位':'価格帯','官网 / 查询预约':'公式サイト / 予約','米其林页面':'ミシュラン公式',
+    '营业时间与评价 · Google ↗':'営業時間・口コミ · Google ↗','Apple 地图 ↗':'Apple マップ ↗','Google 地图 ↗':'Google マップ ↗','复制地址 Copy':'住所をコピー',
+    '无法获取你的位置':'現在地を取得できませんでした','重新获取定位':'もう一度試す','按地区筛选':'地域から探す',
+    '上移':'上へ','下移':'下へ','恢复最优路线':'最適ルートに戻す','早午餐':'ブランチ','午餐':'ランチ','下午':'午後','晚餐':'ディナー',
+    '亚洲':'アジア','欧洲':'ヨーロッパ','北美洲':'北アメリカ','南美洲':'南アメリカ','大洋洲':'オセアニア','全球':'全世界',
+  };
+  const FR={
+    '米其林全球名录':'Annuaire Mondial MICHELIN','美食护照':'Passeport Gourmand','名录':'Annuaire','地图':'Carte','附近':'À proximité','我的':'Moi','筛选':'Filtres','关闭':'Fermer','清除全部':'Tout effacer','查看结果':'Voir les résultats',
+    '全部等级':'Tous','三星':'3 Étoiles','二星':'2 Étoiles','一星':'1 Étoile','必比登':'Bib Gourmand','入选':'Sélectionné','绿星':'Étoile Verte','新上榜':'Nouveau','今年升级':'Promu','本版新上榜':'Nouveau cette édition',
+    '想去':'À essayer','去过':'Visité','未去过':'Non visité','导航':'Itinéraire','保存':'Enregistrer','修改':'Modifier','取消':'Annuler','今天':'Aujourd’hui','笔记':'Notes','照片':'Photos','复制':'Copier','分享':'Partager',
+    '搜店名、城市或菜系，如：新荣记、东京':'Rechercher un restaurant, une ville ou une cuisine…',
+    '默认（按地区）':'Par région','按星级优先':'Par distinction','最新上榜':'Nouveautés & promotions','名称 A–Z':'Nom A–Z','离我最近':'Plus proches','排序方式':'Trier par',
+    '移动地图':'Déplacer la carte','完成移动':'Terminé','查看餐厅':'Voir la liste','定位到我':'Ma position','在地图上看':'Voir sur la carte',
+    '旅行美食地图':'Cartes de voyage','新建旅行':'Nouveau voyage','排路线':'Itinéraire','查看地图':'Voir la carte','结算图':'Bilan','餐厅清单':'Mes restaurants',
+    '数据与同步':'Données & synchro','开启同步':'Activer la synchro','我有同步码':'J’ai un code','立即同步':'Synchroniser','停止同步':'Arrêter','扫码配对':'Associer par QR','清除云端副本':'Supprimer le cloud',
+    '偏好与关于':'Préférences & à propos','外观':'Apparence','主题':'Thème','跟随系统':'Système','浅色':'Clair','深色':'Sombre','语言':'Langue','界面语言':'Langue','使用指南':'Mode d’emploi','添加到手机':'Ajouter à l’écran','友情链接':'Liens',
+    '我的美食护照':'Mon Passeport Gourmand','生成我的米其林结算地图':'Créer mon bilan MICHELIN','我的用餐记录':'Mes repas','记录一次用餐':'Noter un repas','简介':'À propos','菜系':'Cuisine','地址':'Adresse','价位':'Prix','官网 / 查询预约':'Site / Réserver','米其林页面':'Page MICHELIN',
+    '营业时间与评价 · Google ↗':'Horaires & avis · Google ↗','Apple 地图 ↗':'Apple Plans ↗','Google 地图 ↗':'Google Maps ↗','复制地址 Copy':'Copier l’adresse',
+    '无法获取你的位置':'Position indisponible','重新获取定位':'Réessayer','按地区筛选':'Parcourir par région',
+    '上移':'Monter','下移':'Descendre','恢复最优路线':'Ordre optimal','早午餐':'Brunch','午餐':'Déjeuner','下午':'Après-midi','晚餐':'Dîner',
+    '亚洲':'Asie','欧洲':'Europe','北美洲':'Amérique du Nord','南美洲':'Amérique du Sud','大洋洲':'Océanie','全球':'Monde',
+  };
+  const OVERLAY=lang==='ja'?JA:lang==='fr'?FR:null;
+  const EXTRA_PATTERNS=[
+    [/^通过 (.+) 预约 ↗$/,(m,p)=>lang==='ja'?`${p} で予約 ↗`:lang==='fr'?`Réserver via ${p} ↗`:`Book via ${p} ↗`],
+    [/^想去 (\d+) · 去过 (\d+)$/,(m,a,b)=>lang==='ja'?`行きたい ${a} · 訪問済み ${b}`:lang==='fr'?`À essayer ${a} · Visité ${b}`:`Want to go ${a} · Been ${b}`],
+    [/^(\d+) 家想去 · (\d+) 家去过 · (\d+) 城 · 累计 (\d+)★$/,(m,w,b,c,s)=>lang==='ja'?`行きたい ${w} · 訪問済み ${b} · ${c} 都市 · 計 ${s}★`:lang==='fr'?`${w} à essayer · ${b} visités · ${c} villes · ${s}★`:`${w} want to go · ${b} been · ${c} cities · ${s}★`],
+    [/^(\d+) 家想去 · (\d+) 家去过$/,(m,w,b)=>lang==='ja'?`行きたい ${w} · 訪問済み ${b}`:lang==='fr'?`${w} à essayer · ${b} visités`:`${w} want to go · ${b} been`],
+    [/^移除筛选：(.+)$/,(m,x)=>`Remove filter: ${tr(x)}`],
+    [/^定位到 (.+)$/,(m,x)=>`Locate ${x}`],
+    [/^将 (.+) 上移$/,(m,x)=>`Move ${x} up`],
+    [/^将 (.+) 下移$/,(m,x)=>`Move ${x} down`],
+    [/^(\d+) 家餐厅聚在一起，点击放大查看$/,(m,n)=>`${n} restaurants clustered — tap to zoom in`],
+  ];
+  PATTERNS.unshift(...EXTRA_PATTERNS);
+
+  // ---- structured key-based i18n API (for new & migrated UI) ----
+  const KEYS={
+    'meta.desc':{zh:'全球约 2 万家米其林餐厅的中文名录：三星、二星、一星、必比登、入选，附地图、官网、历年记录和黑珍珠对照。',en:'Global directory of ~20,000 MICHELIN Guide restaurants — 3, 2 and 1 Star, Bib Gourmand and Selected — with interactive maps, personal food passport, trip routes and offline PWA support.',ja:'世界約2万軒のミシュランガイド掲載レストラン名簿。三つ星〜ビブグルマン・セレクテッドを地図・グルメパスポート・旅行ルート機能付きで検索。',fr:'Annuaire mondial d’environ 20 000 restaurants du Guide MICHELIN : Étoiles, Bib Gourmand et Sélectionnés, avec carte interactive, passeport gourmand et itinéraires.'},
+    'meta.title':{zh:'米其林全球名录',en:'MICHELIN Global Directory',ja:'ミシュラン世界ガイド名簿',fr:'Annuaire Mondial MICHELIN'},
+  };
+  function t(key,params){
+    const entry=KEYS[key];
+    let s=entry?(entry[lang]||entry.en||entry.zh):tr(key);
+    if(params&&typeof params==='object')for(const [k,v] of Object.entries(params))s=s.replaceAll('{'+k+'}',String(v));
+    return s;
+  }
+
   // ---- engine ----
   const CJK=/[㐀-鿿]/,RUN=/[㐀-鿿　-〿！-～“”‘’…·—→][㐀-鿿　-〿！-～“”‘’…·—→ ]*/g;
   const dict=new Map(Object.entries(FRAG));let maxLen=Math.max(...Object.keys(FRAG).map(k=>k.length));
   const full=new Map(Object.entries(FULL));
   for(const [k,v] of full)if(!dict.has(k)&&!['次','天','个','家','全部','约','—'].includes(k))dict.set(k,v);
+  if(OVERLAY)for(const [k,v] of Object.entries(OVERLAY)){full.set(k,v);if(!['次','天','个','家','全部','约','—'].includes(k)){dict.set(k,v);if(k.length>maxLen)maxLen=k.length;}}
   const add=(zh,enName)=>{if(zh&&enName&&CJK.test(zh)&&!dict.has(zh)){dict.set(zh,enName);if(zh.length>maxLen)maxLen=zh.length;}if(zh&&enName&&!full.has(zh))full.set(zh,enName);};
   const glue=(a,b)=>!a?b:!b?a:(/[\w)\]’”.,;:!?%]$/.test(a)&&/^[\w(\[“‘]/.test(b))?a+' '+b:a+b;
   // Longest-match a CJK run; null if any CJK character is left uncovered.
@@ -285,10 +369,17 @@ const MGI18n=(()=>{
       else if(!skip(c))for(const a of ATTRS){const v=c.getAttribute(a);if(v&&CJK.test(v)){const t=tr(v);if(t!==v)c.setAttribute(a,t);}}}
   }
   let running=false;
+  function updateMeta(){
+    const desc=t('meta.desc'),title=t('meta.title');
+    const md=document.querySelector('meta[name="description"]');if(md)md.setAttribute('content',desc);
+    const ogt=document.querySelector('meta[property="og:title"]');if(ogt)ogt.setAttribute('content',title);
+    const ogd=document.querySelector('meta[property="og:description"]');if(ogd)ogd.setAttribute('content',desc);
+  }
   function start(){
     if(!en||running)return;running=true;
-    document.documentElement.lang='en';document.documentElement.classList.add('lang-en');
-    const title=()=>{if(CJK.test(document.title)){const t=tr(document.title);if(t!==document.title)document.title=t;}};
+    document.documentElement.lang=lang;document.documentElement.classList.add('lang-en','lang-'+lang);
+    updateMeta();
+    const title=()=>{if(CJK.test(document.title)){const v=tr(document.title);if(v!==document.title)document.title=v;}};
     node(document.body);title();
     new MutationObserver(list=>{for(const m of list){
       if(m.type==='characterData')node(m.target);
@@ -308,8 +399,8 @@ const MGI18n=(()=>{
     d.countries.forEach(c=>add(c[0],c[1]));d.cities.forEach(c=>add(c[0],c[2]||c[0]));
     (d.cuisines_en||[]).forEach((e,i)=>add(d.cuisines[i],e));
   }
-  function set(v){try{localStorage.setItem('mg-lang',v);}catch(e){}const u=new URL(location.href);u.searchParams.delete('lang');if(u.href===location.href)location.reload();else location.replace(u.href);}
+  function set(v){if(!SUPPORTED.includes(v))v='zh';try{localStorage.setItem('mg-lang',v);}catch(e){}const u=new URL(location.href);u.searchParams.delete('lang');if(u.href===location.href)location.reload();else location.replace(u.href);}
   if(en){if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',start);else start();}
-  return {en,lang,tr,data,set,start,_dict:dict};
+  return {en,nonZh,lang,locales:LOCALES,mapHL,michelinLocale,t,tr,data,set,start,_dict:dict};
 })();
 if(typeof module!=='undefined')module.exports=MGI18n;

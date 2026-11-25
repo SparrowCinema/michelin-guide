@@ -16,6 +16,7 @@ const MGMe=(()=>{
   function mount(){
     if(mounted||!$('mePage'))return;mounted=true;
     const head=$('mePage').querySelector('.mehead');
+    if(head&&!$('meSummary')){const sum=document.createElement('p');sum.id='meSummary';sum.className='mehead-summary';sum.hidden=true;head.querySelector('div')?.append(sum);}
     const nav=document.createElement('nav');nav.className='me-jumps';nav.id='meJumps';nav.setAttribute('aria-label','我的页面直达');
     nav.innerHTML=navItems.map(([key,label,target,mode])=>`<button type="button" data-me-jump="${target}"${mode?` data-me-mode="${mode}"`:''} aria-controls="${target}"><span class="me-jump-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="${icons[key]}"/></svg>${mode?`<b data-me-count="${mode}">0</b>`:''}</span><span>${label}</span></button>`).join('');head.after(nav);
     nav.after($('meStats'));$('meStats').after($('meLv'));
@@ -29,24 +30,34 @@ const MGMe=(()=>{
     const more=document.createElement('button');more.id='meMore';more.type='button';more.className='me-more';more.hidden=true;$('meList').after(more);
     more.onclick=()=>{meLimit+=24;renderMe();};
     const backup=$('exportBtn').closest('.card'),appearance=$('themeSeg').closest('.card'),about=$('installBtn').closest('.card');
+    if(appearance&&!$('langSeg')&&typeof MGI18n!=='undefined'&&MGI18n.locales){
+      const row=document.createElement('div');row.className='cell nochev lang-cell';
+      row.innerHTML=`<span>界面语言</span><span class="r"><span class="seg" role="group" aria-label="界面语言" id="langSeg">${MGI18n.locales.map(([code,label])=>`<button type="button" data-lang="${code}" translate="no" aria-pressed="${MGI18n.lang===code}">${label}</button>`).join('')}</span></span>`;
+      appearance.append(row);
+      row.querySelectorAll('button[data-lang]').forEach(b=>b.addEventListener('click',()=>{if(b.dataset.lang!==MGI18n.lang)MGI18n.set(b.dataset.lang);}));
+    }
     const advanced=document.createElement('details');advanced.id='meBackup';advanced.className='me-sync-advanced';
     advanced.innerHTML='<summary><span><strong>高级选项</strong><small>导出备份 · 从备份恢复</small></span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m8 5 7 7-7 7"/></svg></summary><div class="me-sync-advanced-body"></div>';
     backup.before(advanced);advanced.lastElementChild.append(backup);
     fold('meSync','数据与同步','多端同步，独立备份',[...($('syncCard')?[$('syncCard')]:[]),advanced],'sync');
+    $('meSync').classList.add('me-fold-break');
     const guide=document.createElement('section');guide.className='me-guide';guide.innerHTML='<ol>'+GUIDE.map(([t,d])=>`<li><strong>${t}</strong><span>${d}</span></li>`).join('')+'</ol>';
     $('meSync').after(guide);fold('meGuide','使用指南','如何使用米其林全球美食护照',[guide],'guide');
+    const nonZh=typeof MGI18n!=='undefined'&&MGI18n.nonZh;
+    const ua=navigator.userAgent,inWeChat=/MicroMessenger/i.test(ua);
     const install=document.createElement('section');install.className='me-install';
     install.innerHTML='<div class="install-intro"><img src="icon-192.png" width="52" height="52" alt=""><div><h3>把美食护照带在身边</h3><p>放到桌面，随时记录下一餐。</p></div></div><div class="install-actions"></div><div class="install-options"></div><p class="install-sync-note">微信、浏览器与桌面入口的记录可能分开保存。已有记录？先在“数据与同步”连接云端，再在新入口连接同一份档案。</p>';
-    const options=[['apple','iPhone / iPad · Safari',['在 Safari 打开本网站，点“分享”（方框加向上箭头）；部分布局需先点页面菜单。','选择“添加到主屏幕”；找不到时，在分享菜单的“编辑操作”中添加。','如有“作为网页 App 打开”，将它开启，再点“添加”。以后从桌面图标进入。']],['android','安卓 · 手机浏览器',['在 Chrome 打开本网站，点地址栏旁的“⋮”菜单。','选择“安装并创建快捷方式”→“安装”；部分浏览器显示为“安装应用”或“添加到主屏幕”。','按提示确认。其他浏览器可在菜单中找“添加到桌面”或“创建快捷方式”。']],['wechat','微信 · 浮窗与收藏',['在微信中打开本网站，点右上角“···”。','菜单里如有“浮窗”，点它可暂存页面，之后从微信浮窗入口返回。','没有“浮窗”时，可用“收藏”留存链接；若要添加到手机桌面，请选择“在浏览器中打开”，或复制网址到 Safari / Chrome。']]];
-    const ua=navigator.userAgent,current=/MicroMessenger/i.test(ua)?'wechat':/iPhone|iPad|iPod/.test(ua)||(/Macintosh/.test(ua)&&navigator.maxTouchPoints>1)?'apple':/Android/.test(ua)?'android':'';
+    const options=[['apple','iPhone / iPad · Safari',['在 Safari 打开本网站，点“分享”（方框加向上箭头）；部分布局需先点页面菜单。','选择“添加到主屏幕”；找不到时，在分享菜单的“编辑操作”中添加。','如有“作为网页 App 打开”，将它开启，再点“添加”。以后从桌面图标进入。']],['android','安卓 · 手机浏览器',['在 Chrome 打开本网站，点地址栏旁的“⋮”菜单。','选择“安装并创建快捷方式”→“安装”；部分浏览器显示为“安装应用”或“添加到主屏幕”。','按提示确认。其他浏览器可在菜单中找“添加到桌面”或“创建快捷方式”。']],...(!nonZh||inWeChat?[['wechat','微信 · 浮窗与收藏',['在微信中打开本网站，点右上角“···”。','菜单里如有“浮窗”，点它可暂存页面，之后从微信浮窗入口返回。','没有“浮窗”时，可用“收藏”留存链接；若要添加到手机桌面，请选择“在浏览器中打开”，或复制网址到 Safari / Chrome。']]]:[])];
+    const current=inWeChat?'wechat':/iPhone|iPad|iPod/.test(ua)||(/Macintosh/.test(ua)&&navigator.maxTouchPoints>1)?'apple':/Android/.test(ua)?'android':'';
     install.querySelector('.install-options').innerHTML=options.map(([id,title,steps])=>`<details class="install-option"${id===current?' open':''}><summary>${title}<span aria-hidden="true">＋</span></summary><ol>${steps.map(step=>`<li>${step}</li>`).join('')}</ol>${id==='wechat'?'<p>微信菜单随版本和设备有所不同，以你实际看到的选项为准。</p>':''}</details>`).join('');
-    $('meGuide').after(install);fold('meInstall','添加到手机','桌面像 App 一样打开 · 微信浮窗与收藏',[install],'phone');
+    $('meGuide').after(install);fold('meInstall','添加到手机',nonZh&&!inWeChat?'桌面像 App 一样打开':'桌面像 App 一样打开 · 微信浮窗与收藏',[install],'phone');
     install.querySelector('.install-actions').append($('installBtn'));
     const copy=document.createElement('button');copy.type='button';copy.className='btn';copy.textContent='复制网址';copy.id='installCopyLink';
     copy.addEventListener('click',()=>copyText(location.origin+location.pathname).then(()=>toast('网址已复制，粘贴到浏览器地址栏打开'),()=>toast('没能复制，请手动复制地址栏里的网址')));install.querySelector('.install-actions').append(copy);
     fold('meSettings','偏好与关于','主题、语言与使用帮助',[appearance,about],'settings');
     const friends=document.createElement('section');friends.className='me-friends';
-    friends.innerHTML='<a href="https://sparrowcinema.github.io/SparrowTribe/?v=2&amp;lang=zh#my" target="_blank" rel="noopener noreferrer"><img class="friend-logo" src="assets/tribe-logo.png" alt="" width="44" height="44" loading="lazy"><span class="friend-text"><strong>麻雀观影护照</strong><small>记录光影足迹，收藏每一次观影。</small></span><span aria-hidden="true">↗</span></a>';
+    const friendLang=nonZh?'en':'zh';
+    friends.innerHTML=`<a href="https://sparrowcinema.github.io/SparrowTribe/?v=2&amp;lang=${friendLang}#my" target="_blank" rel="noopener noreferrer"><img class="friend-logo" src="assets/tribe-logo.png" alt="" width="44" height="44" loading="lazy"><span class="friend-text"><strong>麻雀观影护照</strong><small>记录光影足迹，收藏每一次观影。</small></span><span aria-hidden="true">↗</span></a>`;
     $('meSettings').after(friends);
     fold('meFriends','友情链接','发现更多生活记录',[friends],'friends');
     const menu=document.createElement('div');menu.id='meMenu';menu.className='me-menu';$('mePassport').before(menu);['mePassport','meRecap','meTrips','meCollection','meSync','meInstall','meGuide','meSettings','meFriends'].forEach(id=>{if($(id))menu.append($(id));});
@@ -59,9 +70,14 @@ const MGMe=(()=>{
     });
     renderMe();
   }
-  function update(want,been,total){
+  function update(want,been,total,cities,stars){
     if(!mounted)return;$('meJumps').querySelectorAll('[data-me-count]').forEach(x=>{const n=x.dataset.meCount==='1'?want:been;x.textContent=n>999?'999+':n;});
     const summary=$('meCollection').querySelector('summary small');summary.textContent=`想去 ${want} · 去过 ${been}`;
+    const headSum=$('meSummary');
+    if(headSum){
+      if(want||been){headSum.hidden=false;headSum.textContent=been?`${want} 家想去 · ${been} 家去过 · ${cities||0} 城 · 累计 ${stars||0}★`:`${want} 家想去 · ${been} 家去过`;}
+      else headSum.hidden=true;
+    }
     const b=$('meMore');b.hidden=total<=meLimit;b.textContent=`再显示 ${Math.min(24,Math.max(0,total-meLimit))} 家（还有 ${Math.max(0,total-meLimit)} 家）`;
   }
   let wasMe=false;

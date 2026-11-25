@@ -18,8 +18,8 @@
 <meta name="apple-mobile-web-app-title" content="米其林全球名录">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <!-- ?v= must match ASSET_VER in sw.js: a new page must never run with an old cached script -->
-<link rel="stylesheet" href="upgrade.css?v=63">
-<link rel="preload" href="assets/fonts/passport-editorial.woff2?v=63" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="upgrade.css?v=64">
+<link rel="preload" href="assets/fonts/passport-editorial.woff2?v=64" as="font" type="font/woff2" crossorigin>
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" href="icon.svg" type="image/svg+xml">
 <link rel="icon" href="icon-192.png" sizes="192x192" type="image/png">
@@ -256,7 +256,10 @@ dialog::backdrop{background:var(--shade)}
 
   <div class="controls" id="controls">
     <div class="searchrow">
-      <input id="q" type="search" placeholder="搜店名、城市或菜系，如：新荣记、东京" autocomplete="off" enterkeyhint="search">
+      <div class="searchbox">
+        <input id="q" type="search" placeholder="搜店名、城市或菜系，如：新荣记、东京" autocomplete="off" enterkeyhint="search" aria-autocomplete="list" aria-controls="searchSuggest">
+        <div id="searchSuggest" class="search-suggest" role="listbox" aria-label="搜索建议" hidden></div>
+      </div>
       <button type="button" id="filterBtn" aria-haspopup="dialog">筛选</button>
     </div>
     <div class="row" id="levels">
@@ -300,32 +303,51 @@ dialog::backdrop{background:var(--shade)}
           <button type="button" class="chip" data-f="green" aria-pressed="false">绿星</button>
           <button type="button" class="chip" data-f="bp" aria-pressed="false">也上了黑珍珠</button>
         </div>
+        <div class="lbl">我的清单</div>
+        <div class="row" id="savedFlags">
+          <button type="button" class="chip" data-sv="want" aria-pressed="false">想去</button>
+          <button type="button" class="chip" data-sv="been" aria-pressed="false">去过</button>
+          <button type="button" class="chip" data-sv="unvisited" aria-pressed="false">未去过</button>
+        </div>
       </div>
       <div class="sheetfoot"><button type="button" class="btn" id="shareSheet">复制筛选链接</button><button type="button" class="btn primary" id="doneSheet">查看结果</button></div>
     </div>
   </div>
 
   <div id="browse">
-    <div class="scope" id="scope" style="margin-top:12px">全球</div>
-    <div id="mapbox" hidden>
-      <div class="map-frame">
-        <div class="map-heading"><div><span class="map-kicker">EXPLORE THE TABLE</span><p id="mapHint">上下滑动页面，查看下方餐厅</p></div><button type="button" id="mapInteract" aria-pressed="false" aria-controls="map">移动地图</button></div>
-        <div class="map-stage"><div id="map" class="map-passive" role="region" aria-label="餐厅地图" aria-describedby="mapHint"></div><div class="map-utilities"><button type="button" id="fitMap" aria-label="显示全部筛选餐厅" title="显示全部筛选餐厅"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 3H3v5m13-5h5v5M3 16v5h5m13-5v5h-5M8 12h8m-4-4v8"/></svg></button><button type="button" id="locate" aria-label="定位到我" title="定位到我"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="6"/><path d="M12 2v4m0 12v4M2 12h4m12 0h4"/></svg></button></div></div>
-        <div class="map-bottom"><span id="mapVisibleCount" aria-live="polite"></span><button type="button" id="mapListJump">查看餐厅 ↓</button></div>
-      </div>
-      <div class="maptools">
-        <span class="legend"><span><i style="background:#7a0d0a"></i>三星</span><span><i style="background:#b3261e"></i>二星</span><span><i style="background:#e0574d"></i>一星</span><span><i style="background:#c98a00"></i>必比登</span><span><i style="background:#9a9390"></i>入选</span></span>
-        <span id="tileNote"></span>
-      </div>
+    <div class="active-filters" id="activeFilters" role="region" aria-label="已选筛选" hidden></div>
+    <div class="scope-bar">
+      <div class="scope" id="scope">全球</div>
+      <select id="dirSort" class="dir-sort" aria-label="排序方式">
+        <option value="region">默认（按地区）</option>
+        <option value="level">按星级优先</option>
+        <option value="new">最新上榜</option>
+        <option value="name">名称 A–Z</option>
+      </select>
     </div>
     <details class="stats" id="statsBox">
       <summary id="statsTitle">各大洲统计</summary>
       <div class="tbl"><table><thead><tr><th id="statsCol">地区</th><th>三星</th><th>二星</th><th>一星</th><th>必比登</th><th>入选</th><th>合计</th></tr></thead><tbody id="stats"></tbody></table></div>
       <button class="more-t" id="moreStats" hidden>显示全部</button>
     </details>
-    <div id="mapResults" class="map-results" hidden><h2>地图内的餐厅</h2><span id="mapResultsCount"></span></div>
-    <div id="list"><p class="loading" id="loading">正在载入约 2 万家餐厅……</p></div>
-    <div class="pager"><button id="more" hidden>再显示 200 家</button></div>
+    <div class="browse-stage" id="browseStage">
+      <div id="mapbox" hidden>
+        <div class="map-frame">
+          <div class="map-heading"><div><span class="map-kicker">EXPLORE THE TABLE</span><p id="mapHint">上下滑动页面，查看下方餐厅</p></div><button type="button" id="mapInteract" aria-pressed="false" aria-controls="map">移动地图</button></div>
+          <div class="map-stage"><div id="map" class="map-passive" role="region" aria-label="餐厅地图" aria-describedby="mapHint"></div><div class="map-utilities"><button type="button" id="fitMap" aria-label="显示全部筛选餐厅" title="显示全部筛选餐厅"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 3H3v5m13-5h5v5M3 16v5h5m13-5v5h-5M8 12h8m-4-4v8"/></svg></button><button type="button" id="locate" aria-label="定位到我" title="定位到我"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="6"/><path d="M12 2v4m0 12v4M2 12h4m12 0h4"/></svg></button></div></div>
+          <div class="map-bottom"><span id="mapVisibleCount" aria-live="polite"></span><button type="button" id="mapListJump">查看餐厅 ↓</button></div>
+        </div>
+        <div class="maptools">
+          <span class="legend"><span><i style="background:#7a0d0a"></i>三星</span><span><i style="background:#b3261e"></i>二星</span><span><i style="background:#e0574d"></i>一星</span><span><i style="background:#c98a00"></i>必比登</span><span><i style="background:#9a9390"></i>入选</span></span>
+          <span id="tileNote"></span>
+        </div>
+      </div>
+      <div class="map-list-pane" id="mapListPane">
+        <div id="mapResults" class="map-results" hidden><h2>地图内的餐厅</h2><span id="mapResultsCount"></span></div>
+        <div id="list"><p class="loading" id="loading">正在载入约 2 万家餐厅……</p></div>
+        <div class="pager"><button id="more" hidden>再显示 200 家</button></div>
+      </div>
+    </div>
   </div>
 
   <section id="mePage" hidden aria-label="我的">
@@ -439,27 +461,27 @@ dialog::backdrop{background:var(--shade)}
 <div id="inappBar" hidden><span>在微信等 App 里无法添加到主屏幕，也可能打不开地图。</span><button type="button" id="inappHow">怎么办</button><button type="button" id="inappX" aria-label="关闭">×</button></div>
 <div id="toast" role="status" aria-live="polite"></div>
 
-<script src="i18n.js?v=63"></script>
-<script src="back-to-top.js?v=63"></script>
-<script src="city-names.js?v=63"></script>
-<script src="my-navigation.js?v=63"></script>
-<script src="search-aliases.js?v=63"></script>
-<script src="guide-core.js?v=63"></script>
-<script src="address-localization.js?v=63"></script>
-<script src="restaurant-intro.js?v=63"></script>
-<script src="upgrade.js?v=63"></script>
-<script src="passport-share.js?v=63"></script>
-<script src="meal-photos.js?v=63"></script>
-<script src="trip-route.js?v=63"></script>
-<script src="cloud-sync.js?v=63"></script>
-<script src="guide-updates.js?v=63"></script>
+<script src="i18n.js?v=64"></script>
+<script src="back-to-top.js?v=64"></script>
+<script src="city-names.js?v=64"></script>
+<script src="my-navigation.js?v=64"></script>
+<script src="search-aliases.js?v=64"></script>
+<script src="guide-core.js?v=64"></script>
+<script src="address-localization.js?v=64"></script>
+<script src="restaurant-intro.js?v=64"></script>
+<script src="upgrade.js?v=64"></script>
+<script src="passport-share.js?v=64"></script>
+<script src="meal-photos.js?v=64"></script>
+<script src="trip-route.js?v=64"></script>
+<script src="cloud-sync.js?v=64"></script>
+<script src="guide-updates.js?v=64"></script>
 <script>
 const CONT=["亚洲","欧洲","北美洲","南美洲","大洋洲"];
 const LVN=["三星","二星","一星","必比登","入选"];
 const LVC=["#7a0d0a","#b3261e","#e0574d","#c98a00","#9a9390"];
 const PIN=["中国内地","中国香港","中国澳门","中国台湾"];
 const REPO="https://github.com/SparrowCinema/michelin-guide";
-const ASSET_VER="63"; // = ?v= on the asset tags above, UPGRADE_VER in upgrade.js and ASSET_VER in sw.js
+const ASSET_VER="64"; // = ?v= on the asset tags above, UPGRADE_VER in upgrade.js and ASSET_VER in sw.js
 const DATA_VER="20261125-1"; // bump whenever data.json changes so browsers skip their cached copy
 const $=id=>document.getElementById(id);
 const esc=s=>String(s).replace(/[&<>"]/g,ch=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[ch]));
@@ -467,7 +489,7 @@ const sum=a=>a.reduce((x,y)=>x+y,0);
 
 
 // ---- state ----
-const S={v:"list",l:"all",c:"",co:"",ci:"",q:"",cu:"",p:"",f:new Set(),near:false,trip:"",change:"",budget:0,currency:"EUR"};
+const S={v:"list",l:"all",c:"",co:"",ci:"",q:"",cu:"",p:"",f:new Set(),sv:"",so:"region",near:false,nearErr:false,trip:"",change:"",budget:0,currency:"EUR"};
 let DB=null,page=1,showAllStats=false,ME=null,meTab=1,meOrder="time",meLimit=12;
 // Native <dialog> makes the background inert, but does not reliably stop page scrolling
 // (especially touch scrolling in Safari). Freeze the page before focus moves into a modal.
@@ -512,16 +534,17 @@ function km(a,b,c,d){const R=6371,p=Math.PI/180,x=Math.sin((c-a)*p/2)**2+Math.co
 
 // ---- data ----
 function prep(d){
-  const C=d.countries,T=d.cities.map(t=>(typeof MGI18n!=="undefined"&&MGI18n.en)?[t[2]||t[0],...t.slice(1)]:t);
+  const nonZh=typeof MGI18n!=="undefined"&&MGI18n.nonZh,loc=nonZh?MGI18n.lang:"zh";
+  const C=d.countries,T=d.cities.map(t=>nonZh?[t[2]||t[0],...t.slice(1)]:t);
   const ctryTot=C.map(()=>0),cityTot=T.map(()=>0);
   d.r.forEach(r=>{cityTot[r[3]]++;ctryTot[T[r[3]][1]]++});
   const corder=C.map((c,i)=>i).sort((a,b)=>CONT.indexOf(C[a][2])-CONT.indexOf(C[b][2])
-    ||((PIN.indexOf(C[a][0])+1||99)-(PIN.indexOf(C[b][0])+1||99))||ctryTot[b]-ctryTot[a]);
+    ||(nonZh?0:((PIN.indexOf(C[a][0])+1||99)-(PIN.indexOf(C[b][0])+1||99)))||ctryTot[b]-ctryTot[a]);
   const crank={};corder.forEach((c,i)=>crank[c]=i);
   const rows=d.r.map(r=>{const t=T[r[3]],c=C[t[1]],cu=r[5]>=0?d.cuisines[r[5]]:"";
-    const o={n:r[0],zh:(typeof MGI18n!=="undefined"&&MGI18n.en)?"":r[1],zhn:r[1],kind:r[2]&3,ci:r[3],co:t[1],l:r[4],cu,cue:r[5]>=0&&d.cuisines_en?d.cuisines_en[r[5]]:"",cui:r[5],p:r[6],u:r[7],w:r[8],a:r[9],
+    const o={n:r[0],zh:nonZh?"":r[1],zhn:r[1],kind:r[2]&3,ci:r[3],co:t[1],l:r[4],cu,cue:r[5]>=0&&d.cuisines_en?d.cuisines_en[r[5]]:"",cui:r[5],p:r[6],u:r[7],w:r[8],a:r[9],
       lat:r[10],lng:r[11],green:!!r[12],h:r[13]||"",bp:r[14]||0,la:r[15]||"",ml:c[1]==="Chinese Mainland",
-      s:(typeof MGI18n!=="undefined"&&MGI18n.en)?r[0]:r[1]||r[0],k:MG.index([r[0],r[1],d.cities[r[3]][0],t[0],t[2]||"",c[0],c[1],cu,r[9],r[15]||""],window.MG_ALIASES)};
+      s:nonZh?r[0]:r[1]||r[0],k:MG.index([r[0],r[1],d.cities[r[3]][0],t[0],t[2]||"",c[0],c[1],cu,r[9],r[15]||""],window.MG_ALIASES)};
     // history: one char per yearly snapshot 2022..2025; current award is o.l
     const cur=String(o.l),prev=o.h.length===4?o.h[3]:"?";
     o.nw=o.ml?!!(r[2]&4):prev==="-";
@@ -532,42 +555,49 @@ function prep(d){
     if(o.l<=3&&o.h.length===4){let n=1;for(let i=3;i>=0;i--){if(o.h[i]===cur)n++;else break}o.streak=n}
     if(o.lat!=null&&o.ml){const g=gcj(o.lat,o.lng);o.glat=g[0];o.glng=g[1]}else{o.glat=o.lat;o.glng=o.lng}
     return o});
-  rows.sort((a,b)=>crank[a.co]-crank[b.co]||cityTot[b.ci]-cityTot[a.ci]||(a.ci-b.ci)||a.l-b.l||a.s.localeCompare(b.s,"zh"));
-  const coByName={};C.forEach((c,i)=>coByName[c[0]]=i);
+  rows.sort((a,b)=>crank[a.co]-crank[b.co]||cityTot[b.ci]-cityTot[a.ci]||(a.ci-b.ci)||a.l-b.l||a.s.localeCompare(b.s,loc));
+  const coByName={},cuByEn={};C.forEach((c,i)=>{coByName[c[0]]=i;coByName[c[1]]=i;});
+  (d.cuisines_en||[]).forEach((e,i)=>{if(e)cuByEn[e]=d.cuisines[i];});
   const byU={};rows.forEach(r=>byU[r.u]=r);
-  return {C,T,rows,crank,cityTot,cuisines:d.cuisines,coByName,updated:d.updated,byU,E:d.editions||[]};
+  return {C,T,rows,crank,cityTot,cuisines:d.cuisines,cuisinesEn:d.cuisines_en||[],coByName,cuByEn,updated:d.updated,byU,E:d.editions||[]};
 }
 
-// ---- URL hash <-> state (country / city stored by Chinese name) ----
+// ---- URL hash <-> state (supports both Chinese and English names) ----
 function readHash(){
   const h=new URLSearchParams(location.hash.slice(1));if(![...h.keys()].length)return false;
   S.budget=0;S.currency="EUR"; // Retired incomplete budget filters never affect old shared links.
   const v=h.get("v");S.v=v==="map"||v==="me"?v:"list";S.l=h.get("l")??"all";S.c=h.get("c")||"";S.q=h.get("q")||"";
   S.cu=h.get("cu")||"";S.p=h.get("p")||"";S.f=new Set((h.get("f")||"").split(",").filter(x=>["new","up","green","bp"].includes(x)));
+  const sv=h.get("sv")||"";S.sv=["want","been","unvisited"].includes(sv)?sv:"";
+  const so=h.get("so")||"region";S.so=["region","level","new","name"].includes(so)?so:"region";
   S._co=h.get("co")||"";S._ci=h.get("ci")||"";return true}
 function resolveNames(){
   if(S._co!==undefined){S.co=S._co&&DB.coByName[S._co]!==undefined?String(DB.coByName[S._co]):"";
     S.ci="";if(S.co!==""&&S._ci){const i=DB.T.findIndex(t=>(t[0]===S._ci||t[2]===S._ci||(typeof MGCity!=="undefined"&&MGCity.info(DB.C[t[1]][1],t[2])?.[0]===S._ci))&&t[1]==S.co);if(i>=0)S.ci=String(i)}
     delete S._co;delete S._ci}
-  if(S.cu&&!DB.cuisines.includes(S.cu))S.cu="";
+  if(S.cu&&!DB.cuisines.includes(S.cu)){S.cu=DB.cuByEn[S.cu]||"";}
 }
 function hashString(){
+  const nonZh=typeof MGI18n!=="undefined"&&MGI18n.nonZh;
   const h=new URLSearchParams();
   if(S.v!=="list")h.set("v",S.v);if(S.l!=="all")h.set("l",S.l);if(S.c)h.set("c",S.c);
-  if(S.co!=="")h.set("co",DB.C[S.co][0]);if(S.ci!=="")h.set("ci",DB.T[S.ci][2]||DB.T[S.ci][0]);
-  if(S.q)h.set("q",S.q);if(S.cu)h.set("cu",S.cu);if(S.p)h.set("p",S.p);
-
+  if(S.co!=="")h.set("co",nonZh?DB.C[S.co][1]:DB.C[S.co][0]);if(S.ci!=="")h.set("ci",DB.T[S.ci][2]||DB.T[S.ci][0]);
+  if(S.q)h.set("q",S.q);
+  if(S.cu){const idx=DB.cuisines.indexOf(S.cu);h.set("cu",nonZh&&idx>=0&&DB.cuisinesEn[idx]?DB.cuisinesEn[idx]:S.cu);}
+  if(S.p)h.set("p",S.p);
   if(S.f.size)h.set("f",[...S.f].join(","));
+  if(S.sv)h.set("sv",S.sv);
+  if(S.so&&S.so!=="region")h.set("so",S.so);
   return h.toString();
 }
 function writeHash(){
   const s=hashString();history.replaceState(null,"",s?"#"+s:location.pathname+location.search);
   try{localStorage.setItem("mg",s)}catch(e){}
 }
-function shareURL(){const v=S.v;if(v==="me")S.v="list";const s=hashString();S.v=v;return location.origin+location.pathname+(s?"#"+s:"")}
+function shareURL(){const v=S.v;if(v==="me")S.v="list";const s=hashString();S.v=v;const langQ=(typeof MGI18n!=="undefined"&&MGI18n.nonZh)?`?lang=${MGI18n.lang}`:"";return location.origin+location.pathname+langQ+(s?"#"+s:"")}
 
 // ---- filtering ----
-function activeFilterCount(){return (S.c?1:0)+(S.co!==""?1:0)+(S.ci!==""?1:0)+(S.cu?1:0)+(S.p?1:0)+S.f.size}
+function activeFilterCount(){return (S.c?1:0)+(S.co!==""?1:0)+(S.ci!==""?1:0)+(S.cu?1:0)+(S.p?1:0)+S.f.size+(S.sv?1:0)}
 let searchCache={q:null,result:null};
 function filtered(ignore){
   if(searchCache.q!==S.q){searchCache={q:S.q,result:MG.matcher(S.q,DB.rows)}}
@@ -576,7 +606,8 @@ function filtered(ignore){
   return DB.rows.filter(r=>(ignore==="level"||S.l==="all"||r.l==+S.l)
     &&(!S.c||DB.C[r.co][2]===S.c)&&(S.co===""||r.co==S.co)&&(S.ci===""||r.ci==S.ci)
     &&match.test(r)&&(!S.trip||(trip&&trip.items.includes(r.u)))&&(!S.change||upChangeMatch(r,S.change))&&(ignore==="cuisine"||cu<0||r.cui===cu)&&(!S.p||r.p==+S.p)
-    &&(!S.f.has("new")||r.nw)&&(!S.f.has("up")||r.up)&&(!S.f.has("green")||r.green)&&(!S.f.has("bp")||r.bp));
+    &&(!S.f.has("new")||r.nw)&&(!S.f.has("up")||r.up)&&(!S.f.has("green")||r.green)&&(!S.f.has("bp")||r.bp)
+    &&(!S.sv||(S.sv==="want"?favOf(r.u)===1:S.sv==="been"?favOf(r.u)===2:favOf(r.u)!==2)));
 }
 
 function fillSelects(){
@@ -596,6 +627,11 @@ function fillSelects(){
   const cks=Object.keys(cc).map(Number).sort((a,b)=>cc[b]-cc[a]);
   $("cuisine").innerHTML=`<option value="">全部菜系（${cks.length}）</option>`+cks.map(i=>`<option value="${esc(DB.cuisines[i])}">${esc(DB.cuisines[i])}　${cc[i]}</option>`).join("");
   $("cuisine").value=S.cu;$("price").value=S.p;
+  const bpBtn=document.querySelector('#flags [data-f="bp"]');
+  if(bpBtn&&typeof MGI18n!=="undefined"&&MGI18n.nonZh){
+    const isML=S.co!==""&&DB.C[S.co]?.[1]==="Chinese Mainland";
+    bpBtn.hidden=!isML&&!S.f.has("bp");
+  }
 }
 
 function renderStats(){
@@ -618,9 +654,14 @@ function renderStats(){
 }
 
 function mapLink(r){
+  const hl=typeof MGI18n!=="undefined"&&MGI18n.mapHL?MGI18n.mapHL():"zh-CN",nonZh=typeof MGI18n!=="undefined"&&MGI18n.nonZh;
+  if(r.ml&&nonZh){
+    const q=encodeURIComponent(r.n+", "+(r.a||DB.T[r.ci][2]||DB.T[r.ci][0]));
+    return{href:`https://maps.apple.com/?q=${q}${r.lat!=null&&r.lng!=null?"&ll="+r.lat+","+r.lng:""}`,label:"Apple Maps"};
+  }
   if(r.ml&&r.lat!=null)return{href:`https://uri.amap.com/marker?position=${r.lng},${r.lat}&name=${encodeURIComponent(r.zhn||r.n)}&coordinate=wgs84&callnative=1`,label:"高德地图"};
   if(r.ml)return{href:`https://uri.amap.com/search?keyword=${encodeURIComponent(r.zhn||r.n)}&city=${encodeURIComponent(DB.T[r.ci][0])}`,label:"高德地图"};
-  return{href:`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(r.n+", "+(r.a||DB.T[r.ci][0]))}`,label:"谷歌地图"};
+  return{href:`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(r.n+", "+(r.a||DB.T[r.ci][0]))}&hl=${encodeURIComponent(hl)}`,label:"谷歌地图"};
 }
 function tagsHTML(r){
   const t=[];
@@ -640,10 +681,12 @@ function itemBody(r,withPlace){
     dist!=null?"距你 "+(dist<1?Math.round(dist*1000)+" 米":dist<100?dist.toFixed(1)+" 公里":Math.round(dist)+" 公里"):"",
     S.v==="me"&&f?(f===1?"加入想去 "+fmtDate(FAV[r.u][1]):"去过"+(upVisitDate(r.u)?" "+upVisitDate(r.u):"")):""].filter(Boolean).join(" · ");
   const m=mapLink(r);
+  const locateBtn=S.v==="map"&&r.lat!=null?`<button type="button" class="row-locate" data-map-focus="${esc(r.u)}" aria-label="定位到 ${esc(r.zh||r.n)}">在地图上看</button>`:"";
   const links=[
     `<button type="button" class="fav" data-u="${esc(r.u)}" data-v="1" aria-pressed="${f===1}">想去</button>`,
     `<button type="button" class="fav" data-u="${esc(r.u)}" data-v="2" aria-pressed="${f===2}">${esc(upVisitLabel(r.u))}</button>`,
-    `<a class="row-navigation" href="${esc(m.href)}" target="_blank" rel="noopener">导航</a>`].join("");
+    `<a class="row-navigation" href="${esc(m.href)}" target="_blank" rel="noopener">导航</a>`,
+    locateBtn].filter(Boolean).join("");
   return `<span class="t">${title}</span>${tagsHTML(r)}${orig}${meta?`<span class="meta">${esc(meta)}</span>`:""}<span class="links">${links}</span>`;
 }
 function badge(r){const cls=r.l<3?"s":r.l===3?"b":"x";return `<span class="lv ${cls}">${r.l<3?"★".repeat(3-r.l):LVN[r.l]}</span>`}
@@ -660,14 +703,42 @@ function grouped(rows,limit){
   return out;
 }
 
+function renderActiveFilters(){
+  const bar=$("activeFilters");if(!bar)return;
+  const pills=[],flagLabels={new:"本版新上榜",up:"今年升级",green:"绿星",bp:"也上了黑珍珠"},svLabels={want:"想去",been:"去过",unvisited:"未去过"};
+  if(S.c)pills.push(["c",S.c]);
+  if(S.co!=="")pills.push(["co",DB.C[S.co][0]]);
+  if(S.ci!=="")pills.push(["ci",DB.T[S.ci][0]]);
+  if(S.cu)pills.push(["cu",S.cu]);
+  if(S.p)pills.push(["p","$".repeat(+S.p)]);
+  for(const f of S.f)pills.push(["f:"+f,flagLabels[f]||f]);
+  if(S.sv)pills.push(["sv",svLabels[S.sv]||S.sv]);
+  bar.hidden=!pills.length;
+  if(!pills.length){bar.innerHTML="";return;}
+  bar.innerHTML=pills.map(([k,label])=>`<button type="button" class="af-pill" data-rm-filter="${esc(k)}" aria-label="移除筛选：${esc(label)}"><span>${esc(label)}</span><i aria-hidden="true">×</i></button>`).join("")
+    +(pills.length>=2?`<button type="button" class="af-clear" data-rm-filter="all">清除全部</button>`:"");
+}
+
 function listRows(){
+  const nonZh=typeof MGI18n!=="undefined"&&MGI18n.nonZh,loc=nonZh?MGI18n.lang:"zh";
   let rs=filtered();
   if(S.v==="map"&&MAP.m&&MAP.ready){const b=MAP.m.getBounds();rs=rs.filter(r=>r.lat!=null&&b.contains([MAP.amap?r.glat:r.lat,MAP.amap?r.glng:r.lng]))}
   if(S.near&&ME)rs=rs.filter(r=>r.lat!=null).map(r=>[km(ME.lat,ME.lng,r.lat,r.lng),r]).sort((a,b)=>a[0]-b[0]).map(x=>x[1]);
   else if(S.v==="map")rs=rs.slice().sort((a,b)=>a.l-b.l);
+  else if(S.so==="level")rs=rs.slice().sort((a,b)=>a.l-b.l||DB.crank[a.co]-DB.crank[b.co]||a.s.localeCompare(b.s,loc));
+  else if(S.so==="new")rs=rs.slice().sort((a,b)=>((b.up?2:b.nw?1:0)-(a.up?2:a.nw?1:0))||a.l-b.l||a.s.localeCompare(b.s,loc));
+  else if(S.so==="name")rs=rs.slice().sort((a,b)=>a.s.localeCompare(b.s,loc));
   return rs;
 }
 function renderList(){
+  renderActiveFilters();
+  const sortEl=$("dirSort");if(sortEl){sortEl.hidden=S.v!=="list"||S.near;sortEl.value=S.so;}
+  if(S.near&&!ME&&S.nearErr){
+    $("scope").textContent="附近";$("count").textContent="";
+    const n=activeFilterCount();$("filterBtn").innerHTML="筛选"+(n?`<b>${n}</b>`:"");
+    $("list").innerHTML=`<div class="near-fallback"><h3>无法获取你的位置</h3><p>请在浏览器设置中允许定位权限，或直接按地区浏览名录。</p><div class="near-fallback-actions"><button type="button" class="btn primary" id="retryNear">重新获取定位</button><button type="button" class="btn" id="browseNearRegion">按地区筛选</button></div></div>`;
+    $("more").hidden=true;return;
+  }
   const all=filtered(),rs=listRows();
   if(S.v==="map"){
     const n=rs.length.toLocaleString();
@@ -681,11 +752,11 @@ function renderList(){
   $("scope").textContent=[S.c||"全球",S.co!==""?DB.C[S.co][0]:"",S.ci!==""?DB.T[S.ci][0]:""].filter(Boolean).join(" › ")+`　共 ${all.length.toLocaleString()} 家`;
   const n=activeFilterCount();$("filterBtn").innerHTML="筛选"+(n?`<b>${n}</b>`:"");
   const shown=rs.slice(0,page*200);let out="";
-  const flat=S.v==="map"||(S.near&&ME);
+  const flat=S.v==="map"||(S.near&&ME)||(S.v==="list"&&S.so!=="region");
   if(flat){
-    const head=(S.v==="map"?"地图范围内 "+rs.length.toLocaleString()+" 家，":"")+(S.near&&ME?"按离你的距离排序":"按等级排序");
-    out+=`${S.v==="map"?"":`<p class="flathead">${head}</p>`}<ul class="rl">`;
-    shown.forEach(r=>{const n=S.v==="map"&&MAP.numbers.get(r.u);out+=`<li>${n?`<span class="map-index" aria-label="地图标记 ${n}">${n}</span>`:""}${badge(r)}<span class="nm">${itemBody(r,true)}</span></li>`});out+="</ul>";
+    const head=S.v==="map"?"":(S.near&&ME?"按离你的距离排序":"");
+    out+=`${head?`<p class="flathead">${head}</p>`:""}<ul class="rl">`;
+    shown.forEach(r=>{const num=S.v==="map"&&MAP.numbers.get(r.u);out+=`<li>${num?`<span class="map-index" aria-label="地图标记 ${num}">${num}</span>`:""}${badge(r)}<span class="nm">${itemBody(r,true)}</span></li>`});out+="</ul>";
     if(!rs.length)out=`<p class="empty">${S.v==="map"?"地图范围内没有符合条件的餐厅，拖动或缩小地图看看。":"没有符合条件的餐厅。"}</p>`;
   }else{
     out=grouped(rs,page*200)||'<p class="empty">没有符合条件的餐厅，换个关键词或放宽筛选试试。</p>';
@@ -709,7 +780,7 @@ function renderMe(){
   document.querySelectorAll("[data-m]").forEach(b=>b.setAttribute("aria-pressed",+b.dataset.m===meTab));
   document.querySelectorAll("[data-o]").forEach(b=>b.setAttribute("aria-pressed",b.dataset.o===meOrder));
   const list=(meTab===1?want:been);
-  if(typeof MGMe!=="undefined")MGMe.update(want.length,been.length,list.length);
+  if(typeof MGMe!=="undefined")MGMe.update(want.length,been.length,list.length,bt.size,stars);
   $("orderScore").hidden=meTab!==2;if(meTab!==2&&meOrder==="score")meOrder="time";
   if(!list.length){$("meList").innerHTML=`<p class="empty">${meTab===1?"还没有想去的餐厅。<br>在名录或地图里点店名下面的“想去”，就会出现在这里。":"还没有去过的餐厅。<br>吃过之后点“去过”打个分，这里会记下来。"}</p>`;return}
   if(meOrder==="score"){
@@ -740,6 +811,7 @@ function render(opts={}){
   document.querySelectorAll("#levels .chip").forEach(b=>b.setAttribute("aria-pressed",b.dataset.l===S.l));
   document.querySelectorAll("#conts .chip").forEach(b=>b.setAttribute("aria-pressed",b.dataset.c===S.c));
   document.querySelectorAll("#flags .chip").forEach(b=>b.setAttribute("aria-pressed",S.f.has(b.dataset.f)));
+  document.querySelectorAll("#savedFlags .chip").forEach(b=>b.setAttribute("aria-pressed",b.dataset.sv===S.sv));
   document.querySelectorAll("#tabsTop button").forEach(b=>b.setAttribute("aria-pressed",b.dataset.tab===tab));
   document.querySelectorAll("#tabbar button").forEach(b=>{if(b.dataset.tab===tab)b.setAttribute("aria-current","page");else b.removeAttribute("aria-current")});
 
@@ -761,21 +833,21 @@ function reset(){page=1;showAllStats=false}
 function goTab(t){
   if(t==="near"){
     if(S.near&&ME&&S.v==="list"){window.scrollTo({top:0,behavior:"smooth"});return}
-    locateMe(()=>{S.v="list";S.near=true;reset();render();window.scrollTo(0,0)});return}
-  if(t==="list"){S.near=false}
+    locateMe(()=>{S.v="list";S.near=true;S.nearErr=false;reset();render();window.scrollTo(0,0)},()=>{S.v="list";S.near=true;S.nearErr=true;reset();render();window.scrollTo(0,0)});return}
+  if(t==="list"){S.near=false;S.nearErr=false}
   const changed=S.v!==t;S.v=t;reset();render();if(changed)window.scrollTo(0,0);
 }
-function locateMe(done){
-  if(!navigator.geolocation){toast("这个浏览器不支持定位");return}
+function locateMe(done,fail){
+  if(!navigator.geolocation){toast("这个浏览器不支持定位");if(fail)fail();return}
   toast("正在获取你的位置……");
   navigator.geolocation.getCurrentPosition(p=>{ME={lat:p.coords.latitude,lng:p.coords.longitude};toast("已找到你的位置");done()},
-    ()=>toast("没能获取位置，请在系统设置里允许浏览器定位"),{enableHighAccuracy:false,timeout:12000,maximumAge:300000});
+    ()=>{toast("没能获取位置，请在系统设置里允许浏览器定位");if(fail)fail();},{enableHighAccuracy:false,timeout:12000,maximumAge:300000});
 }
 
 // ---- map (Leaflet loaded on first use) ----
-const MAP={m:null,ready:false,layer:null,amap:null,tiles:null,me:null,loading:null,interactive:false,numbers:new Map()};
+const MAP={m:null,ready:false,layer:null,amap:null,tiles:null,me:null,loading:null,interactive:false,numbers:new Map(),markers:new Map(),clustered:false};
 // Page scrolling always wins until the reader explicitly chooses to move the map.
-// Wheel zoom stays off in both modes, so a mouse/trackpad never traps the page.
+// Wheel zoom stays off for plain scroll; desktop Ctrl/⌘+wheel zooms without trapping the page.
 function setMapInteraction(on){
   MAP.interactive=!!on;
   if(MAP.m){
@@ -823,16 +895,64 @@ function overseasLayer(){
 function popupHTML(r){return `<div>${badge(r).replace('class="lv','style="display:inline-block;width:52px;margin:0 6px 4px 0" class="lv')}<br>${itemBody(r,true)}</div>`}
 function drawMarkers(){
   if(MAP.layer)MAP.layer.remove();
+  MAP.markers=new Map();
   const rs=filtered().filter(r=>r.lat!=null).sort((a,b)=>a.l-b.l);
   MAP.numbers=new Map(rs.length<=80?rs.map((r,i)=>[r.u,i+1]):[]);
   const R=[7,6.5,5.5,5,3.6];
-  MAP.layer=L.layerGroup(rs.slice().reverse().map(r=>{
+  const z=MAP.m?MAP.m.getZoom():2;
+  // Grid-based marker clustering when >80 points at overview zooms (<13) keeps the map legible.
+  const useCluster=rs.length>80&&z<13&&MAP.m;
+  MAP.clustered=useCluster;
+  if(useCluster){
+    const cell=56,buckets=new Map(),bounds=MAP.m.getBounds().pad(0.25);
+    for(const r of rs){
+      const ll=MAP.amap?[r.glat,r.glng]:[r.lat,r.lng];
+      if(!bounds.contains(ll))continue;
+      const pt=MAP.m.project(ll,z),key=`${Math.floor(pt.x/cell)},${Math.floor(pt.y/cell)}`;
+      let b=buckets.get(key);if(!b){b={items:[],lat:0,lng:0,best:4};buckets.set(key,b);}
+      b.items.push([r,ll]);b.lat+=ll[0];b.lng+=ll[1];if(r.l<b.best)b.best=r.l;
+    }
+    const layers=[];
+    for(const b of buckets.values()){
+      if(b.items.length===1){
+        const [r,ll]=b.items[0];
+        const mk=L.circleMarker(ll,{renderer:MAP.canvas,radius:R[r.l],color:"#fff",weight:1.5,fillColor:LVC[r.l],fillOpacity:.92}).bindPopup(()=>popupHTML(r),{maxWidth:280});
+        MAP.markers.set(r.u,mk);layers.push(mk);
+      }else{
+        const n=b.items.length,lat=b.lat/n,lng=b.lng/n,sz=n>=200?42:n>=50?36:n>=10?31:26;
+        const label=n>=1000?(n/1000).toFixed(1)+"k":String(n);
+        const mk=L.marker([lat,lng],{
+          alt:`${n} 家餐厅聚在一起，点击放大查看`,
+          icon:L.divIcon({className:`map-cluster cl-${b.best}`,html:`<span>${label}</span>`,iconSize:[sz,sz],iconAnchor:[sz/2,sz/2]})
+        });
+        mk.on("click",()=>{const pts=b.items.map(x=>x[1]);MAP.m.fitBounds(L.latLngBounds(pts),{padding:[36,36],maxZoom:Math.max(z+2,13),animate:true});});
+        layers.push(mk);
+      }
+    }
+    MAP.layer=L.layerGroup(layers).addTo(MAP.m);
+    return rs;
+  }
+  const visible=rs.length>80&&MAP.m?(()=>{const b=MAP.m.getBounds().pad(0.35);return rs.filter(r=>b.contains(MAP.amap?[r.glat,r.glng]:[r.lat,r.lng]));})():rs;
+  MAP.layer=L.layerGroup(visible.slice().reverse().map(r=>{
     const ll=MAP.amap?[r.glat,r.glng]:[r.lat,r.lng],n=MAP.numbers.get(r.u);
     const marker=n?L.marker(ll,{title:(r.zh||r.n),alt:`${n} · ${r.zh||r.n}`,icon:L.divIcon({className:`restaurant-pin pin-${r.l}`,html:`<span>${n}</span>`,iconSize:[32,38],iconAnchor:[16,38],popupAnchor:[0,-32]})})
       :L.circleMarker(ll,{renderer:MAP.canvas,radius:R[r.l],color:"#fff",weight:1.5,fillColor:LVC[r.l],fillOpacity:.92});
+    MAP.markers.set(r.u,marker);
     return marker.bindPopup(()=>popupHTML(r),{maxWidth:280});
   })).addTo(MAP.m);
   return rs;
+}
+function focusMapRestaurant(u){
+  const r=DB&&DB.byU[u];if(!r||r.lat==null||!MAP.m)return;
+  const want=S.co!==""?DB.C[S.co][1]==="Chinese Mainland":r.ml;
+  if(want!==MAP.amap)setTiles(want);
+  const ll=MAP.amap?[r.glat,r.glng]:[r.lat,r.lng];
+  if(innerWidth<1024)$("mapbox").scrollIntoView({behavior:matchMedia("(prefers-reduced-motion: reduce)").matches?"instant":"smooth",block:"nearest"});
+  const targetZ=Math.max(MAP.m.getZoom(),14);
+  MAP.ready=false;MAP.m.setView(ll,targetZ,{animate:false});MAP.ready=true;
+  drawMarkers();drawMe();page=1;renderList();
+  const mk=MAP.markers.get(u);
+  if(mk)mk.openPopup();
 }
 function mePoint(){return MAP.amap&&inMainland(ME.lat,ME.lng)?gcj(ME.lat,ME.lng):[ME.lat,ME.lng]}
 function fitTo(rs){
@@ -853,6 +973,7 @@ function fitMapView(rs){
   // Fitting a trip may cross the China / overseas boundary without a user drag.
   const want=wantAmap();
   if(want!==MAP.amap){MAP.ready=false;setTiles(want);drawMarkers();drawMe();fitTo(rs);MAP.ready=true;}
+  else if(rs.length>80){drawMarkers();}
   page=1;renderList();
 }
 function drawMe(){
@@ -868,6 +989,8 @@ function showMap(fit){
       MAP.m.zoomControl.setPosition("bottomright");
       setMapInteraction(MAP.interactive);
       MAP.canvas=L.canvas({padding:.5});
+      // Desktop convenience: Ctrl/⌘ + wheel zooms the map without ever trapping plain page scrolling.
+      $("map").addEventListener("wheel",e=>{if(!e.ctrlKey&&!e.metaKey)return;e.preventDefault();if(!MAP.m||!MAP.ready)return;MAP.m.setZoom(MAP.m.getZoom()+(e.deltaY<0?1:-1));},{passive:false});
       MAP.m.on("moveend",()=>{if(!MAP.ready)return;
         const c=MAP.m.getCenter();
         const want=S.co!==""?DB.C[S.co][1]==="Chinese Mainland":(inMainland(c.lat,c.lng)&&MAP.m.getZoom()>=6);
@@ -875,6 +998,7 @@ function showMap(fit){
           // convert the view centre between the two coordinate systems so the map does not jump
           let ll=[c.lat,c.lng];if(want&&inMainland(c.lat,c.lng))ll=gcj(c.lat,c.lng);else if(!want&&inMainland(c.lat,c.lng)){const g=gcj(c.lat,c.lng);ll=[2*c.lat-g[0],2*c.lng-g[1]]}
           setTiles(want);drawMarkers();drawMe();MAP.ready=false;MAP.m.setView(ll,z,{animate:false});MAP.ready=true}
+        else if(MAP.clustered||filtered().length>80){drawMarkers();}
         clearTimeout(MAP.t);MAP.t=setTimeout(()=>{page=1;renderList()},150)});
       MAP.ready=true;
     }
@@ -896,8 +1020,54 @@ function share(){
   if(navigator.share){navigator.share({title,url}).catch(()=>{});return}
   copyText(url).then(()=>toast("链接已复制，发给朋友打开就是同样的筛选结果"),()=>toast("没能复制，请直接复制地址栏里的链接"));
 }
-function openSheet(){document.body.classList.add("sheet");$("more-f").hidden=false}
-function closeSheet(){document.body.classList.remove("sheet")}
+let sheetPushed=false;
+function openSheet(){
+  if(document.body.classList.contains("sheet"))return;
+  document.body.classList.add("sheet");$("more-f").hidden=false;
+  try{history.pushState({mgSheet:1},"",location.href);sheetPushed=true;}catch(e){}
+}
+function closeSheet(fromPop){
+  if(!document.body.classList.contains("sheet"))return;
+  document.body.classList.remove("sheet");
+  if(sheetPushed&&!fromPop){sheetPushed=false;try{if(history.state?.mgSheet)history.back();}catch(e){}}
+  else sheetPushed=false;
+}
+window.addEventListener("popstate",()=>{if(document.body.classList.contains("sheet"))closeSheet(true);});
+
+// ---- search autocomplete & recent queries ----
+const RECENT_Q="mg-recent-q";
+function getRecentQ(){try{const a=JSON.parse(localStorage.getItem(RECENT_Q)||"[]");return Array.isArray(a)?a.slice(0,5):[];}catch(e){return [];}}
+function addRecentQ(q){q=q.trim();if(q.length<2)return;const a=[q,...getRecentQ().filter(x=>x!==q)].slice(0,5);try{localStorage.setItem(RECENT_Q,JSON.stringify(a));}catch(e){}}
+let sgIdx=-1;
+function hideSuggest(){const box=$("searchSuggest");if(box){box.hidden=true;box.innerHTML="";sgIdx=-1;}}
+function renderSuggest(){
+  const box=$("searchSuggest");if(!box||!DB)return;
+  const raw=$("q").value.trim(),nq=MG.norm(raw);
+  if(!nq){
+    const rec=getRecentQ();if(!rec.length){hideSuggest();return;}
+    box.innerHTML=`<div class="sg-group">最近搜索</div>`+rec.map(q=>`<button type="button" class="sg-item" role="option" data-sg-q="${esc(q)}"><span>${esc(q)}</span></button>`).join("");
+    box.hidden=false;sgIdx=-1;return;
+  }
+  const cities=[],cuisines=[],rests=[];
+  const nonZh=typeof MGI18n!=="undefined"&&MGI18n.nonZh;
+  for(let i=0;i<DB.T.length&&cities.length<3;i++){
+    const t=DB.T[i],c=DB.C[t[1]];
+    const k=MG.norm([t[0],t[2]||"",c[0],c[1]].join(" "));
+    if(k.includes(nq))cities.push({i,co:t[1],label:t[0],sub:c[0],n:DB.cityTot[i]});
+  }
+  for(let i=0;i<DB.cuisines.length&&cuisines.length<3;i++){
+    const zh=DB.cuisines[i],en=DB.cuisinesEn[i]||"";
+    if(MG.norm(zh+" "+en).includes(nq))cuisines.push({zh,label:nonZh&&en?en:zh});
+  }
+  const m=MG.matcher(raw,DB.rows);
+  for(const r of DB.rows){if(m.test(r)){rests.push(r);if(rests.length>=5)break;}}
+  let html="";
+  if(cities.length)html+=`<div class="sg-group">热门城市</div>`+cities.map(c=>`<button type="button" class="sg-item" role="option" data-sg-city="${c.i}" data-sg-co="${c.co}"><b>${esc(c.label)}</b><small>${esc(c.sub)} · ${c.n}</small></button>`).join("");
+  if(cuisines.length)html+=`<div class="sg-group">匹配菜系</div>`+cuisines.map(c=>`<button type="button" class="sg-item" role="option" data-sg-cu="${esc(c.zh)}"><b>${esc(c.label)}</b></button>`).join("");
+  if(rests.length)html+=`<div class="sg-group">匹配餐厅</div>`+rests.map(r=>`<button type="button" class="sg-item" role="option" data-sg-u="${esc(r.u)}"><b>${esc(r.zh||r.n)}</b><small>${esc(DB.T[r.ci][0])} · ${r.l<3?"★".repeat(3-r.l):LVN[r.l]}</small></button>`).join("");
+  if(!html){hideSuggest();return;}
+  box.innerHTML=html;box.hidden=false;sgIdx=-1;
+}
 
 // ---- events ----
 $("conts").innerHTML=['<button class="chip cont" data-c="" aria-pressed="true">全球</button>'].concat(CONT.map(c=>`<button class="chip cont" data-c="${c}" aria-pressed="false">${c}</button>`)).join("");
@@ -907,9 +1077,38 @@ $("country").addEventListener("change",e=>{S.co=e.target.value;S.ci="";reset();r
 $("city").addEventListener("change",e=>{S.ci=e.target.value;reset();render()});
 $("cuisine").addEventListener("change",e=>{S.cu=e.target.value;reset();render()});
 $("price").addEventListener("change",e=>{S.p=e.target.value;reset();render()});
+$("dirSort").addEventListener("change",e=>{S.so=e.target.value;reset();render()});
 $("flags").addEventListener("click",e=>{const b=e.target.closest(".chip");if(!b)return;const f=b.dataset.f;S.f.has(f)?S.f.delete(f):S.f.add(f);reset();render()});
-let qt;$("q").addEventListener("input",()=>{clearTimeout(qt);qt=setTimeout(()=>{S.q=$("q").value;reset();render()},200)});
-$("q").addEventListener("keydown",e=>{if(e.key==="Enter")$("q").blur()});
+$("savedFlags").addEventListener("click",e=>{const b=e.target.closest(".chip");if(!b)return;const sv=b.dataset.sv;S.sv=S.sv===sv?"":sv;reset();render()});
+$("activeFilters").addEventListener("click",e=>{const b=e.target.closest("[data-rm-filter]");if(!b)return;const k=b.dataset.rmFilter;
+  if(k==="all"){clearAll();return;}
+  if(k==="c"){S.c="";S.co="";S.ci="";}
+  else if(k==="co"){S.co="";S.ci="";}
+  else if(k==="ci"){S.ci="";}
+  else if(k==="cu"){S.cu="";}
+  else if(k==="p"){S.p="";}
+  else if(k==="sv"){S.sv="";}
+  else if(k.startsWith("f:")){S.f.delete(k.slice(2));}
+  reset();render();
+});
+let qt;$("q").addEventListener("input",()=>{renderSuggest();clearTimeout(qt);qt=setTimeout(()=>{S.q=$("q").value;reset();render()},200)});
+$("q").addEventListener("focus",()=>{if($("q").value.trim()||getRecentQ().length)renderSuggest();});
+$("q").addEventListener("blur",()=>{setTimeout(hideSuggest,160);});
+$("q").addEventListener("keydown",e=>{
+  const box=$("searchSuggest"),items=box&&!box.hidden?[...box.querySelectorAll(".sg-item")]:[];
+  if(e.key==="ArrowDown"&&items.length){e.preventDefault();sgIdx=(sgIdx+1)%items.length;items.forEach((el,i)=>el.classList.toggle("is-active",i===sgIdx));return;}
+  if(e.key==="ArrowUp"&&items.length){e.preventDefault();sgIdx=(sgIdx-1+items.length)%items.length;items.forEach((el,i)=>el.classList.toggle("is-active",i===sgIdx));return;}
+  if(e.key==="Escape"&&items.length){e.preventDefault();hideSuggest();return;}
+  if(e.key==="Enter"){if(sgIdx>=0&&items[sgIdx]){e.preventDefault();items[sgIdx].click();return;}addRecentQ($("q").value);hideSuggest();$("q").blur();}
+});
+$("searchSuggest").addEventListener("mousedown",e=>{e.preventDefault();});
+$("searchSuggest").addEventListener("click",e=>{const b=e.target.closest(".sg-item");if(!b)return;
+  hideSuggest();
+  if(b.dataset.sgU){addRecentQ($("q").value);upOpenDetail(b.dataset.sgU);return;}
+  if(b.dataset.sgCity!==undefined){S.q="";$("q").value="";S.co=b.dataset.sgCo;S.ci=b.dataset.sgCity;S.c="";reset();render();return;}
+  if(b.dataset.sgCu){S.q="";$("q").value="";S.cu=b.dataset.sgCu;reset();render();return;}
+  if(b.dataset.sgQ){S.q=b.dataset.sgQ;$("q").value=S.q;reset();render();return;}
+});
 $("more").addEventListener("click",()=>{page++;renderList()});
 $("moreStats").addEventListener("click",()=>{showAllStats=true;renderStats()});
 $("stats").addEventListener("click",e=>{const tr=e.target.closest("tr[data-k]");if(!tr||S.ci!=="")return;const k=tr.dataset.k;
@@ -917,17 +1116,21 @@ $("stats").addEventListener("click",e=>{const tr=e.target.closest("tr[data-k]");
   reset();render();$("list").scrollIntoView({behavior:"smooth",block:"start"})});
 document.querySelectorAll("#tabsTop button,#tabbar button").forEach(b=>b.addEventListener("click",()=>goTab(b.dataset.tab)));
 $("toggleMore").addEventListener("click",()=>{const o=$("more-f").hidden;$("more-f").hidden=!o;$("toggleMore").setAttribute("aria-expanded",String(o))});
-const clearAll=()=>{Object.assign(S,{l:"all",c:"",co:"",ci:"",q:"",cu:"",p:"",trip:"",change:"",budget:0});if($("budgetMax"))$("budgetMax").value="";S.f.clear();reset();render()};
+const clearAll=()=>{Object.assign(S,{l:"all",c:"",co:"",ci:"",q:"",cu:"",p:"",sv:"",so:"region",trip:"",change:"",budget:0});if($("budgetMax"))$("budgetMax").value="";S.f.clear();reset();render()};
 $("clearAll").addEventListener("click",clearAll);$("clearAll2").addEventListener("click",clearAll);
 $("share").addEventListener("click",share);$("shareSheet").addEventListener("click",share);
-$("filterBtn").addEventListener("click",openSheet);$("doneSheet").addEventListener("click",closeSheet);$("shade").addEventListener("click",closeSheet);
+$("filterBtn").addEventListener("click",openSheet);$("doneSheet").addEventListener("click",()=>closeSheet());$("shade").addEventListener("click",()=>closeSheet());
 document.addEventListener("keydown",e=>{if(e.key==="Escape")closeSheet()});
 $("locate").addEventListener("click",()=>locateMe(()=>{drawMe();MAP.m.setView(mePoint(),14)}));
 $("mapInteract").addEventListener("click",()=>{if(!MAP.ready){toast("地图正在加载，请稍后再试");return;}setMapInteraction(!MAP.interactive)});
 $("fitMap").addEventListener("click",()=>{if(MAP.ready)fitMapView(filtered().filter(r=>r.lat!=null))});
 $("mapListJump").addEventListener("click",()=>{setMapInteraction(false);const target=$("mapResults");target.style.scrollMarginTop=($("controls").getBoundingClientRect().height+16)+"px";target.scrollIntoView({behavior:matchMedia("(prefers-reduced-motion: reduce)").matches?"instant":"smooth",block:"start"})});
 $("map").addEventListener("keydown",e=>{if(e.key==="Escape"){setMapInteraction(false);$("mapInteract").focus({preventScroll:true})}});
-document.addEventListener("click",e=>{const b=e.target.closest(".fav");if(!b)return;
+document.addEventListener("click",e=>{
+  const locBtn=e.target.closest("[data-map-focus]");if(locBtn){focusMapRestaurant(locBtn.dataset.mapFocus);return;}
+  if(e.target.closest("#retryNear")){goTab("near");return;}
+  if(e.target.closest("#browseNearRegion")){S.near=false;S.nearErr=false;render();openSheet();return;}
+  const b=e.target.closest(".fav");if(!b)return;
   if(b.dataset.v==="2"){upOpenVisit(b.dataset.u);return}
   const u=b.dataset.u,v=+b.dataset.v,previous=FAV[u];if(favOf(u)===v)delete FAV[u];else FAV[u]=[v,Date.now()];if(!saveFav()){if(previous)FAV[u]=previous;else delete FAV[u];return;}updateBadge();
   document.querySelectorAll(`.fav[data-u="${CSS.escape(u)}"]`).forEach(x=>{x.setAttribute("aria-pressed",favOf(u)===+x.dataset.v);if(x.dataset.v==="2")x.textContent=upVisitLabel(u)});
@@ -946,8 +1149,12 @@ function applyTheme(t){try{t==="auto"?localStorage.removeItem("mg-theme"):localS
 document.querySelectorAll("#themeSeg button").forEach(b=>b.addEventListener("click",()=>applyTheme(b.dataset.th)));
 applyTheme(document.documentElement.dataset.theme||"auto");
 // language
-if(typeof MGI18n!=="undefined"){document.querySelectorAll("[data-lang-option]").forEach(b=>b.classList.toggle("on",b.dataset.langOption===MGI18n.lang));document.querySelectorAll("#langSeg button").forEach(b=>{b.setAttribute("aria-pressed",b.dataset.lang===MGI18n.lang);b.addEventListener("click",()=>{if(b.dataset.lang!==MGI18n.lang)MGI18n.set(b.dataset.lang)})});
-  document.querySelectorAll("[data-lang-switch]").forEach(b=>b.addEventListener("click",()=>MGI18n.set(MGI18n.en?"zh":"en")));}
+if(typeof MGI18n!=="undefined"){
+  const enOpt=document.querySelector('[data-lang-option="en"]');if(enOpt&&MGI18n.lang!=='zh'&&MGI18n.lang!=='en')enOpt.textContent=MGI18n.lang.toUpperCase();
+  document.querySelectorAll("[data-lang-option]").forEach(b=>b.classList.toggle("on",b.dataset.langOption==="zh"?MGI18n.lang==="zh":MGI18n.lang!=="zh"));
+  document.querySelectorAll("#langSeg button").forEach(b=>{b.setAttribute("aria-pressed",b.dataset.lang===MGI18n.lang);b.addEventListener("click",()=>{if(b.dataset.lang!==MGI18n.lang)MGI18n.set(b.dataset.lang)})});
+  document.querySelectorAll("[data-lang-switch]").forEach(b=>b.addEventListener("click",()=>MGI18n.set(MGI18n.nonZh?"zh":"en")));
+}
 
 // backup
 $("exportBtn").addEventListener("click",async()=>{
@@ -1046,7 +1253,7 @@ async function healMismatch(){
       const all=new Uint8Array(got);let o=0;for(const p of parts){all.set(p,o);o+=p.length}
       d=JSON.parse(new TextDecoder().decode(all));
     }else d=await res.json();
-    if(typeof MGCity!=="undefined")MGCity.apply(d);
+    if(typeof MGCity!=="undefined"&&!(typeof MGI18n!=="undefined"&&MGI18n.nonZh))MGCity.apply(d);
     if(typeof MGI18n!=="undefined")MGI18n.data(d);
     DB=prep(d);resolveNames();upInit();
     if(DB.updated){const [y,m,dd]=DB.updated.split("-");document.querySelectorAll(".updated").forEach(e=>e.textContent=e.closest(".cell")?`${y} 年 ${+m} 月 ${+dd} 日`:`数据更新至 ${y} 年 ${+m} 月 ${+dd} 日`)}

@@ -80,8 +80,16 @@ begin
   get diagnostics n = row_count; return n;
 end $$;
 
+create or replace function public.mg_delete(code text) returns boolean
+language plpgsql security definer set search_path = '' as $$
+declare k text := public.mg_key(code);
+begin
+  delete from public.mg_sync where id = k;
+  return found;
+end $$;
+
 revoke all on function public.mg_key(text) from public, anon, authenticated;
 revoke all on function public.mg_pull(text), public.mg_push(text, jsonb, integer), public.mg_photo_put(text, text, text),
-  public.mg_photo_get(text, text[]), public.mg_photo_delete(text, text[]) from public;
+  public.mg_photo_get(text, text[]), public.mg_photo_delete(text, text[]), public.mg_delete(text) from public;
 grant execute on function public.mg_pull(text), public.mg_push(text, jsonb, integer), public.mg_photo_put(text, text, text),
-  public.mg_photo_get(text, text[]), public.mg_photo_delete(text, text[]) to anon, authenticated;
+  public.mg_photo_get(text, text[]), public.mg_photo_delete(text, text[]), public.mg_delete(text) to anon, authenticated;

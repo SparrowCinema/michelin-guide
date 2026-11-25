@@ -1,0 +1,20 @@
+name: Keep cloud sync alive
+# Supabase free-tier projects pause after 7 days with no requests.
+# This lightweight read-only ping runs every 3 days to keep the sync endpoint responsive.
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '17 3 */3 * *'
+permissions:
+  contents: read
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Ping mg_pull RPC
+        run: |
+          curl -fsS -X POST "https://dclxhxxjktegyiwafmsv.supabase.co/rest/v1/rpc/mg_pull" \
+            -H "apikey: sb_publishable_2K9O3h8nn2I_I-cIAdks8A_QZ98xwZ2" \
+            -H "Authorization: Bearer sb_publishable_2K9O3h8nn2I_I-cIAdks8A_QZ98xwZ2" \
+            -H "Content-Type: application/json" \
+            -d '{"code":"MG-KEEP-ALIV-PING-0000-0000-0000"}' | grep -q '"rev"'
