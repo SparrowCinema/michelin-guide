@@ -115,9 +115,13 @@ if(typeof window!=='undefined')(()=>{
     return {all,days:MGRoute.plan(pts,{perDay:ST.perDay,start:ST.start}),skipped:all.length-pts.length,custom};
   }
   const name=r=>r.zh||r.n;
+  const tr=s=>typeof MGI18n!=='undefined'&&MGI18n.nonZh?MGI18n.tr(s):s;
   function navLink(a,b,walk){
-    const mode=walk?'walk':'car';
-    if(b.ml||a.ml)return `https://uri.amap.com/navigation?${a.me?'':`from=${a.lng},${a.lat},${encodeURIComponent(name(a))}&`}to=${b.lng},${b.lat},${encodeURIComponent(name(b))}&mode=${mode}&coordinate=wgs84&callnative=1`;
+    const mode=walk?'walk':'car',nonZh=typeof MGI18n!=='undefined'&&MGI18n.nonZh;
+    if(b.ml||a.ml){
+      if(nonZh)return `https://maps.apple.com/?${a.me?'':`saddr=${a.lat},${a.lng}&`}daddr=${b.lat},${b.lng}&dirflg=${walk?'w':'d'}`;
+      return `https://uri.amap.com/navigation?${a.me?'':`from=${a.lng},${a.lat},${encodeURIComponent(name(a))}&`}to=${b.lng},${b.lat},${encodeURIComponent(name(b))}&mode=${mode}&coordinate=wgs84&callnative=1`;
+    }
     return `https://www.google.com/maps/dir/?api=1${a.me?'':`&origin=${a.lat},${a.lng}`}&destination=${b.lat},${b.lng}&travelmode=${walk?'walking':'driving'}&hl=${encodeURIComponent(hl())}`;
   }
   function dayLink(day){
@@ -159,11 +163,22 @@ if(typeof window!=='undefined')(()=>{
     const resetBar=isCustom?`<div class="route-custom-bar"><span>自定义顺序</span><button type="button" class="linkbtn" data-route-reset>恢复最优路线</button></div>`:'';
     body.innerHTML=`<div class="route-summary"><div><b>${days.length}</b><span>天</span></div><div><b>${stops}</b><span>家餐厅</span></div><div><b>${MGRoute.fmtKm(total)}</b><span>总路程（估）</span></div></div>${resetBar}${sketch(days)}<ol class="route-days">${days.map((d,i)=>{
       const col=COLORS[i%COLORS.length],gl=dayLink(d);
-      return `<li class="route-day" style="--day:${col}"><header><b>第 ${i+1} 天</b><span>${d.stops.length} 家 · 约 ${MGRoute.fmtKm(d.road)}</span>${gl?`<a href="${html(gl)}" target="_blank" rel="noopener">谷歌地图看全天 ↗</a>`:''}</header><ol class="route-stops">${d.first?legHTML(d.first,ST.start,d.stops[0]):''}${d.stops.map((r,j)=>{n++;const idx=n,slot=customSlots[r.u]||slots[j]||'';return `${j?legHTML(d.legs[j-1],d.stops[j-1],r):''}<li class="route-stop"><span class="route-num">${n}</span><button type="button" class="route-name" data-route-open="${html(r.u)}"><b>${html(name(r))}</b><small>${slot}${slot?' · ':''}${r.zh&&r.zh!==r.n?html(r.n)+' · ':''}${html(r.cu||'')}</small></button><span class="route-stop-tools">${slot?`<button type="button" class="route-slot-btn" data-route-slot="${html(r.u)}" data-slot="${html(slot)}" title="点击餐次可切换时段" aria-label="点击餐次可切换时段">${html(slot)}</button>`:''}${stops>1?`<span class="route-move-grp"><button type="button" class="route-mv" data-route-move="-1" data-u="${html(r.u)}"${idx===1?' disabled':''} aria-label="将 ${html(name(r))} 上移">↑</button><button type="button" class="route-mv" data-route-move="1" data-u="${html(r.u)}"${idx===stops?' disabled':''} aria-label="将 ${html(name(r))} 下移">↓</button></span>`:''}${badge(r)}</span></li>`;}).join('')}</ol></li>`;}).join('')}</ol><div class="route-foot"><button type="button" class="btn" data-route-copy>复制行程文字</button><p>距离按直线 × 1.3 估算，步行按每小时 4.8 公里、车程按城市平均车速估算，出发前以导航为准。${skipped?`已跳过 ${skipped} 家去过的餐厅。`:''}</p></div>`;
+      return `<li class="route-day" style="--day:${col}"><header><b>第 ${i+1} 天</b><span>${d.stops.length} 家 · 约 ${MGRoute.fmtKm(d.road)}</span>${gl?`<a href="${html(gl)}" target="_blank" rel="noopener">谷歌地图看全天 ↗</a>`:''}</header><ol class="route-stops">${d.first?legHTML(d.first,ST.start,d.stops[0]):''}${d.stops.map((r,j)=>{n++;const idx=n,slot=customSlots[r.u]||slots[j]||'';const sub=[r.zh&&r.zh!==r.n?r.n:'',r.cu||''].filter(Boolean).join(' · ');return `${j?legHTML(d.legs[j-1],d.stops[j-1],r):''}<li class="route-stop"><span class="route-num">${n}</span><button type="button" class="route-name" data-route-open="${html(r.u)}"><b>${html(name(r))}</b>${sub?`<small>${html(sub)}</small>`:''}</button><span class="route-stop-tools">${slot?`<button type="button" class="route-slot-btn" data-route-slot="${html(r.u)}" data-slot="${html(slot)}" title="点击餐次可切换时段" aria-label="点击餐次可切换时段">${html(slot)}</button>`:''}${stops>1?`<span class="route-move-grp"><button type="button" class="route-mv" data-route-move="-1" data-u="${html(r.u)}"${idx===1?' disabled':''} aria-label="将 ${html(name(r))} 上移">↑</button><button type="button" class="route-mv" data-route-move="1" data-u="${html(r.u)}"${idx===stops?' disabled':''} aria-label="将 ${html(name(r))} 下移">↓</button></span>`:''}${badge(r)}</span></li>`;}).join('')}</ol></li>`;}).join('')}</ol><div class="route-foot"><button type="button" class="btn" data-route-copy>复制行程文字</button><p>距离按直线 × 1.3 估算，步行按每小时 4.8 公里、车程按城市平均车速估算，出发前以导航为准。${skipped?`已跳过 ${skipped} 家去过的餐厅。`:''}</p></div>`;
   }
   function textPlan(){
     const t=upTrip(ST.trip),{days,custom}=current(),slots=SLOT[ST.perDay],customSlots=custom?.slots||{};let n=0;
-    return [`${t.name} · ${DB.T[+ST.city][0]} 美食路线`,...days.map((d,i)=>[`\n第 ${i+1} 天（约 ${MGRoute.fmtKm(d.road)}）`,...d.stops.map((r,j)=>{n++;const l=j?d.legs[j-1]:null,slot=customSlots[r.u]||slots[j]||'';return `${l?`  ↓ ${l.walk?'步行':'车程'}约 ${MGRoute.fmtMin(l.min)}\n`:''}${n}. ${slot?slot+' · ':''}${name(r)}（${LVN[r.l]}）`;})].join('\n')),'\n—— 来自 米其林全球名录'].join('\n');
+    const nonZh=typeof MGI18n!=='undefined'&&MGI18n.nonZh;
+    const head=`${t.name} · ${DB.T[+ST.city][0]} ${tr('美食路线')}`;
+    const body=days.map((d,i)=>{
+      const dayHead=nonZh?`${tr(`第 ${i+1} 天`)} (${tr('约')} ${tr(MGRoute.fmtKm(d.road))})`:`第 ${i+1} 天（约 ${MGRoute.fmtKm(d.road)}）`;
+      return ['\n'+dayHead,...d.stops.map((r,j)=>{
+        n++;const l=j?d.legs[j-1]:null,slot=customSlots[r.u]||slots[j]||'';
+        const legTxt=l?(nonZh?`  ↓ ${tr(l.walk?'步行':'车程')} ${tr('约')} ${tr(MGRoute.fmtMin(l.min))}\n`:`  ↓ ${l.walk?'步行':'车程'}约 ${MGRoute.fmtMin(l.min)}\n`):'';
+        const lvTxt=tr(LVN[r.l]);
+        return `${legTxt}${n}. ${slot?tr(slot)+' · ':''}${name(r)}${nonZh?` (${lvTxt})`:`（${lvTxt}）`}`;
+      })].join('\n');
+    });
+    return [head,...body,'\n'+tr('—— 来自 米其林全球名录')].join('\n');
   }
   function open(tripID,city){ensure();ST.trip=tripID;ST.city=city!=null?String(city):'';ST.start=null;draw();const d=document.getElementById('routeDlg');if(!d.open)showAppDialog(d);d.scrollTop=0;}
   const rad=d=>d*Math.PI/180;

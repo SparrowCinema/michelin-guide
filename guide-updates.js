@@ -82,10 +82,21 @@ const MGUpdates=(()=>{
     return row('est',EN()?'TBA':'待公布',0,'');
   }
   let GSORT='next';
+  function jumpGuide(idx){
+    const cities=DB.T.map((t,ci)=>[ci,t]).filter(([,t])=>t.length>3&&t[3]===idx);
+    if(!cities.length)return;
+    const cos=new Set(cities.map(([,t])=>t[1]));
+    if(cities.length===1){S.c='';S.co=String(cities[0][1][1]);S.ci=String(cities[0][0]);}
+    else if(cos.size===1){S.c='';S.co=String([...cos][0]);S.ci='';}
+    else{S.c='';S.co=String(cities[0][1][1]);S.ci='';}
+    S.v='list';S.near=false;S.nearErr=false;S.q='';S.trip='';S.change='';
+    const dlg=document.getElementById('guidesDlg');if(dlg?.open)closeAppDialog(dlg);
+    reset();render();document.getElementById('list')?.scrollIntoView({behavior:'smooth',block:'start'});
+  }
   function guidesDialog(){
     let dlg=document.getElementById('guidesDlg');
     if(!dlg){document.body.insertAdjacentHTML('beforeend','<dialog id="guidesDlg" class="guides-dlg" aria-labelledby="guidesTitle"><div class="dlg"><button type="button" class="close" data-close>关闭</button><h2 id="guidesTitle"></h2><p class="note" id="guidesNote"></p><div class="gt-sort" id="guidesSort" role="group"></div><div id="guidesBody"></div></div></dialog>');dlg=document.getElementById('guidesDlg');
-      dlg.addEventListener('click',e=>{if(e.target===dlg||e.target.closest('[data-close]'))closeAppDialog(dlg);const b=e.target.closest('[data-gsort]');if(b){GSORT=b.dataset.gsort;fillGuides();}});}
+      dlg.addEventListener('click',e=>{if(e.target===dlg||e.target.closest('[data-close]'))closeAppDialog(dlg);const b=e.target.closest('[data-gsort]');if(b){GSORT=b.dataset.gsort;fillGuides();return;}const j=e.target.closest('[data-guide-jump]');if(j)jumpGuide(+j.dataset.guideJump);});}
     fillGuides();showAppDialog(dlg);
   }
   function fillGuides(){
@@ -95,9 +106,9 @@ const MGUpdates=(()=>{
     if(GSORT==='next')rows.sort((a,b)=>a.nx.key.localeCompare(b.nx.key)||(b.g[4]||'').localeCompare(a.g[4]||''));
     else rows.sort((a,b)=>(b.g[4]||'').localeCompare(a.g[4]||''));
     document.getElementById('guidesTitle').textContent=EN()?'Guide editions':'各地指南版本';
-    document.getElementById('guidesNote').textContent=EN()?'Current edition and official release date of every guide, plus the next edition. Announced dates come from MICHELIN (a few from press reports, marked “c.”); the rest are estimated from the previous year’s release month.':'每本指南的当前版本、实际发布日期和下一版。已公布的日期取自米其林官方公告（个别来自媒体报道或官方只给了大致时间，标“约”）；其余按往年发布月份推算，仅供参考。';
+    document.getElementById('guidesNote').textContent=EN()?'Current edition and official release date of every guide, plus the next edition. Tap any guide name to browse its restaurants. Announced dates come from MICHELIN (a few from press reports, marked “c.”); the rest are estimated from the previous year’s release month.':'每本指南的当前版本、实际发布日期和下一版，点击指南名称可直接筛选查看当地餐厅。已公布的日期取自米其林官方公告（个别来自媒体报道或官方只给了大致时间，标“约”）；其余按往年发布月份推算，仅供参考。';
     document.getElementById('guidesSort').innerHTML=[['next',EN()?'Coming up':'即将发布'],['recent',EN()?'Latest released':'最近发布']].map(([k,t])=>`<button type="button" data-gsort="${k}" aria-pressed="${GSORT===k}">${t}</button>`).join('');
-    document.getElementById('guidesBody').innerHTML=`<table class="guides-table"><thead><tr><th>${EN()?'Guide':'指南'}</th><th>${EN()?'Edition':'版本'}</th><th>${EN()?'Released':'发布日期'}</th><th>${EN()?'Next':'下一版'}</th><th>${EN()?'Restaurants':'餐厅'}</th></tr></thead><tbody>${rows.map(({g,n,nx})=>`<tr><td>${h(EN()?g[2]:g[1])}${g[3]?'':`<small class="gt-new">${EN()?'New destination':'新目的地 · 首版'}</small>`}<div class="gt-nl">${nextHTML(nx)}</div></td><td>${g[3]||'—'}</td><td>${g[4]?(g[5]?`<a href="${h(g[5])}" target="_blank" rel="noopener">${h(dot(g[4]))}</a>`:h(dot(g[4]))):'—'}</td><td class="gt-nc">${nextHTML(nx)}</td><td>${n}</td></tr>`).join('')}</tbody></table>`;
+    document.getElementById('guidesBody').innerHTML=`<table class="guides-table"><thead><tr><th>${EN()?'Guide':'指南'}</th><th>${EN()?'Edition':'版本'}</th><th>${EN()?'Released':'发布日期'}</th><th>${EN()?'Next':'下一版'}</th><th>${EN()?'Restaurants':'餐厅'}</th></tr></thead><tbody>${rows.map(({g,i,n,nx})=>`<tr><td>${n?`<button type="button" class="gt-jump" data-guide-jump="${i}">${h(EN()?g[2]:g[1])}</button>`:h(EN()?g[2]:g[1])}${g[3]?'':`<small class="gt-new">${EN()?'New destination':'新目的地 · 首版'}</small>`}<div class="gt-nl">${nextHTML(nx)}</div></td><td>${g[3]||'—'}</td><td>${g[4]?(g[5]?`<a href="${h(g[5])}" target="_blank" rel="noopener">${h(dot(g[4]))}</a>`:h(dot(g[4]))):'—'}</td><td class="gt-nc">${nextHTML(nx)}</td><td>${n}</td></tr>`).join('')}</tbody></table>`;
   }
   function start(){
     if(!DB||!DB.E)return;

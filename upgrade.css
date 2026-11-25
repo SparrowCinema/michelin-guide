@@ -657,7 +657,7 @@ body[data-tab="me"] #controls,body[data-tab="me"] #intro{display:none!important}
 @media(prefers-reduced-motion:reduce){.pp-cover-atlas,.pp-cover-atlas:hover{transform:none;transition:none}}
 
 /* A self-hosted four-character title cut; reading text keeps the system stack. */
-@font-face{font-family:"Passport Calligraphy";src:url("assets/fonts/passport-calligraphy.ttf?v=62") format("truetype");font-style:normal;font-weight:400;font-display:swap;unicode-range:U+7F8E,U+98DF,U+62A4,U+7167}
+@font-face{font-family:"Passport Calligraphy";src:url("assets/fonts/passport-calligraphy.ttf?v=65") format("truetype");font-style:normal;font-weight:400;font-display:swap;unicode-range:U+7F8E,U+98DF,U+62A4,U+7167}
 .pp-cover-atlas .pp-cover-name{font-family:"Passport Calligraphy","Kaiti SC","STKaiti",var(--display);font-weight:400;font-size:42px;line-height:1.35;letter-spacing:.14em;margin-left:.14em;text-shadow:0 1px 0 #f9e9b638,0 2px 1px #230c18;}
 .pp-cover-atlas .pp-cover-en{font-family:Georgia,"Times New Roman",serif;font-size:11px;line-height:1.7;font-weight:400;letter-spacing:.26em;margin-top:10px}
 .pp-cover-atlas .pp-cover-publisher{font-size:12px;letter-spacing:.2em}.pp-cover-atlas .pp-cover-motto{letter-spacing:.2em;margin-top:12px}.pp-cover-atlas .pp-cover-bottom{font-family:var(--display);letter-spacing:.16em}
@@ -829,7 +829,7 @@ body[data-tab="me"] #controls,body[data-tab="me"] #intro{display:none!important}
 @media(max-width:360px){.pp-growth-tabs{margin-inline:14px}.pp-journey .pp-journey-body{padding-inline:14px}.pp-growth-tabs button{font-size:13px}.pp-honor-filters{gap:6px}.pp-honor-filters button{gap:6px}}
 
 /* Editorial typography: real variable weights, a restrained logo bar and clear reading text. */
-@font-face{font-family:"Passport Editorial";src:url("assets/fonts/passport-editorial.woff2?v=64") format("woff2");font-style:normal;font-weight:200 900;font-display:swap}
+@font-face{font-family:"Passport Editorial";src:url("assets/fonts/passport-editorial.woff2?v=65") format("woff2");font-style:normal;font-weight:200 900;font-display:swap}
 .page-language-brand{position:relative;flex:none;gap:0}.page-language-brand img{width:32px;height:32px;border-radius:8px}.page-language-brand #pageBrand{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap;border:0}
 #intro{padding-top:18px;padding-bottom:14px}#intro h1{font:800 clamp(26px,3.5vw,36px)/1.35 var(--display);letter-spacing:.025em;text-wrap:balance}
 .mehead h2{font:800 clamp(26px,3.5vw,34px)/1.4 var(--display);letter-spacing:.025em}
@@ -846,6 +846,9 @@ a.restaurant-title{font:700 16px/1.55 var(--display);letter-spacing:.01em;overfl
 .searchbox{position:relative;flex:1;min-width:0}
 .search-suggest{position:absolute;left:0;right:0;top:calc(100% + 6px);z-index:1200;background:var(--surface);border:1px solid var(--line);border-radius:12px;box-shadow:0 12px 28px rgb(0 0 0 / .12);max-height:min(360px,55vh);overflow-y:auto;padding:6px}
 .sg-group{font-size:11px;color:var(--muted);padding:7px 10px 4px;letter-spacing:.04em}
+.sg-group-row{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.sg-clear{font:inherit;font-size:11px;background:none;border:0;color:var(--muted);cursor:pointer;padding:2px 4px}
+.sg-clear:hover{color:var(--red);text-decoration:underline}
 .sg-item{display:flex;align-items:baseline;justify-content:space-between;gap:10px;width:100%;box-sizing:border-box;border:0;background:none;color:var(--fg);font:inherit;font-size:13.5px;text-align:left;padding:9px 10px;border-radius:8px;cursor:pointer}
 .sg-item:hover,.sg-item.is-active{background:var(--hover)}
 .sg-item b{font-weight:600;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
@@ -881,6 +884,18 @@ a.restaurant-title{font:700 16px/1.55 var(--display);letter-spacing:.01em;overfl
 .near-fallback-actions{display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
 
 /* Personal summary, language selector, sync QR/privacy & interactive route editing */
+.page-language-actions{position:relative;display:inline-flex;align-items:center;gap:6px;flex:none}
+.page-language-more{display:grid;place-items:center;width:36px;height:36px;border:1px solid var(--line);border-radius:999px;background:var(--surface);color:var(--muted);cursor:pointer;padding:0;touch-action:manipulation}
+.page-language-more:hover,.page-language-more[aria-expanded="true"]{color:var(--red);border-color:color-mix(in srgb,var(--red) 35%,var(--line))}
+.page-language-more svg{width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.lang-menu{position:absolute;right:0;top:calc(100% + 6px);z-index:1300;min-width:136px;background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:5px;box-shadow:0 12px 28px rgb(0 0 0 / .14);display:grid;gap:2px}
+.lang-menu button{font:inherit;font-size:13px;text-align:left;border:0;background:none;color:var(--fg);padding:8px 11px;border-radius:8px;cursor:pointer;display:flex;align-items:center;justify-content:space-between;gap:8px}
+.lang-menu button:hover{background:var(--hover)}
+.lang-menu button[aria-checked="true"]{color:var(--red);font-weight:600;background:color-mix(in srgb,var(--red) 8%,var(--surface))}
+.lang-menu button[aria-checked="true"]::after{content:"✓";font-size:12px}
+@media print{.page-language-actions{display:none}}
+.gt-jump{font:inherit;font-weight:600;color:var(--fg);background:none;border:0;padding:0;text-align:left;cursor:pointer}
+.gt-jump:hover{color:var(--red);text-decoration:underline}
 .mehead-summary{margin:4px 0 0!important;font-size:12.5px;color:var(--red)!important;font-variant-numeric:tabular-nums}
 .lang-cell{flex-wrap:wrap;gap:8px 12px}.lang-cell .r{margin-left:auto}.lang-cell .seg{flex-wrap:wrap}.lang-cell .seg button{padding:5px 10px;font-size:12px}
 .sync-qr-box{margin:0 16px 14px;padding:16px;border-radius:12px;background:var(--hover);display:flex;flex-direction:column;align-items:center;gap:10px;text-align:center}
@@ -899,5 +914,5 @@ a.restaurant-title{font:700 16px/1.55 var(--display);letter-spacing:.01em;overfl
 .route-mv{font:inherit;font-size:12px;border:0;background:none;color:var(--muted);padding:3px 7px;cursor:pointer;line-height:1.2}
 .route-mv:hover:not(:disabled){background:var(--hover);color:var(--fg)}
 .route-mv:disabled{opacity:.3;cursor:default}
-@media(max-width:420px){.route-slot-btn{display:none}.route-stop-tools{gap:4px}}
+@media(max-width:420px){.route-slot-btn{padding:2px 6px;font-size:10.5px}.route-mv{padding:2px 5px}.route-stop-tools{gap:4px}}
 @media(prefers-reduced-motion:reduce){.map-cluster{transition:none}}

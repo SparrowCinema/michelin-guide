@@ -156,6 +156,14 @@ const MGSync=(()=>{
   // ---- UI ----
   function ago(t){if(!t)return '';const s=(Date.now()-t)/1000;return s<60?T('刚刚'):s<3600?Math.round(s/60)+T(' 分钟前'):s<86400?Math.round(s/3600)+T(' 小时前'):new Date(t).toLocaleDateString();}
   let mode='',reveal=false,showQR=false;
+  function statusHTML(){
+    if(!st?.code)return '';
+    return status.state==='busy'?`<span class="sync-dot busy"></span>${esc(status.msg||'同步中…')}`:status.state==='error'?`<span class="sync-dot err"></span>同步失败：${esc(status.msg)}`:`<span class="sync-dot ok"></span>已同步${st.at?' · '+esc(ago(st.at)):''}`;
+  }
+  function refreshStatus(){
+    const el=$('syncCard')?.querySelector('.sync-status');
+    if(el&&st?.code)el.innerHTML=statusHTML();
+  }
   function paint(){
     const box=$('syncCard');if(!box)return;
     const privacy=`<details class="sync-privacy"><summary>隐私与存储说明</summary><p>同步数据与用餐照片存储在 Supabase（东京节点 ap-northeast-1），仅以同步码的 SHA-256 哈希作为索引，不收集邮箱或账号信息。随时可点击“清除云端副本”删除云端数据。</p></details>`;
@@ -163,7 +171,7 @@ const MGSync=(()=>{
       box.innerHTML=`<h3>云端同步</h3><p class="sync-lead">用一串同步码，在手机和电脑之间同步“想去 / 去过”、评分、用餐记录、旅行和照片。不用注册账号。</p>${mode==='join'?`<form class="sync-join" id="syncJoin"><input id="syncInput" autocomplete="off" autocapitalize="characters" spellcheck="false" placeholder="MG-XXXX-XXXX-XXXX-XXXX-XXXX-XXXX" aria-label="输入同步码"><button class="btn primary" type="submit">连接</button></form><p class="sync-note">输入另一台设备上的同步码。这台设备上已有的记录会和云端合并，不会丢。</p><button type="button" class="linkbtn" data-sync="cancel">取消</button>`:`<div class="sync-actions"><button type="button" class="btn primary" data-sync="start">开启同步</button><button type="button" class="btn" data-sync="join">我有同步码</button></div>`}${privacy}`;
       return;}
     const code=st.code,shown=reveal?code:code.slice(0,8)+'-••••-••••-••••-••••-'+code.slice(-4);
-    const line=status.state==='busy'?`<span class="sync-dot busy"></span>${esc(status.msg||'同步中…')}`:status.state==='error'?`<span class="sync-dot err"></span>同步失败：${esc(status.msg)}`:`<span class="sync-dot ok"></span>已同步${st.at?' · '+esc(ago(st.at)):''}`;
+    const line=statusHTML();
     const qrPanel=showQR?`<div class="sync-qr-box">${qrSVG(pairURL(code))}<p>用另一台设备扫码，自动填入同步码并合并记录</p><button type="button" class="linkbtn" data-sync="copy-pair">复制配对链接</button></div>`:'';
     box.innerHTML=`<h3>云端同步</h3><p class="sync-status" role="status" aria-live="polite">${line}</p><div class="sync-code"><span>同步码</span><code translate="no">${esc(shown)}</code><div><button type="button" class="linkbtn" data-sync="reveal">${reveal?'隐藏':'显示'}</button><button type="button" class="linkbtn" data-sync="copy">复制</button><button type="button" class="linkbtn" data-sync="qr">${showQR?'收起二维码':'扫码配对'}</button></div></div>${qrPanel}<p class="sync-warn">同步码就是钥匙：拿到它的人能看到并修改你的记录；丢了也无法找回。请存进备忘录或密码管理器，在另一台设备点“我有同步码”输入即可。</p><div class="sync-actions"><button type="button" class="btn primary" data-sync="now"${status.state==='busy'?' disabled':''}>立即同步</button><button type="button" class="btn" data-sync="stop">停止同步</button></div><div class="sync-danger-row"><button type="button" class="linkbtn sync-wipe" data-sync="wipe">清除云端副本</button></div>${privacy}`;
   }
@@ -202,7 +210,7 @@ const MGSync=(()=>{
     // Push local changes a few seconds after they happen; pull again when the app comes back.
     setInterval(()=>{if(!st?.code||busy)return;const p=print();if(p!==lastPrint){lastPrint=p;clearTimeout(timer);timer=setTimeout(quiet,3000);}},2000);
     document.addEventListener('visibilitychange',()=>{if(!st?.code)return;if(document.visibilityState==='visible'&&Date.now()-(st.at||0)>30000)quiet();if(document.visibilityState==='hidden'&&print()!==JSON.stringify(st.base&&[st.base.fav,st.base.personal.trips,st.base.personal.records]))quiet();});
-    setInterval(()=>{if(status.state==='ok')paint();},60000);
+    setInterval(()=>{if(status.state==='ok')refreshStatus();},60000);
   }
   return {start,sync,merge,normalize,newCode,qrMatrix,qrSVG,pairURL,deleteCloud,state:()=>st,_status:()=>status,_rpc:rpc};
 })();

@@ -203,7 +203,7 @@ async function upRenderShare(){
   await document.fonts?.ready;if(token!==state.generation)return;
   const {canvas,mapStatus,photoCount}=await upDrawRecap(rows);if(token!==state.generation)return;
   const blob=await new Promise(resolve=>canvas.toBlob(resolve,'image/png'));if(token!==state.generation||!blob)return;
-  if(state.url)URL.revokeObjectURL(state.url);state.url=URL.createObjectURL(blob);state.file=new File([blob],'我的米其林结算.png',{type:'image/png'});
+  if(state.url)URL.revokeObjectURL(state.url);state.url=URL.createObjectURL(blob);state.file=new File([blob],(typeof MGI18n!=='undefined'&&MGI18n.nonZh)?'my-michelin-recap.png':'我的米其林结算.png',{type:'image/png'});
   $('sharePreview').src=state.url;$('sharePreview').alt='我的米其林结算长图：足迹地图、统计和到访清单';$('sharePreview').hidden=false;
   $('saveShare').disabled=false;$('nativeShare').hidden=!(navigator.share&&navigator.canShare?.({files:[state.file]}));$('nativeShare').disabled=false;
   $('shareStatus').textContent=`共 ${rows.length} 家去过的餐厅${photoCount?` · ${photoCount} 家放了我拍的照片`:''} · 一张长图 · ${mapStatus}`;

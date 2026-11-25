@@ -44,7 +44,7 @@ const MP=(()=>{
   const tile=(id,i,edit)=>`<li class="mp-tile" data-photo-tile="${esc(id)}"><button type="button" class="mp-open" data-photo-open="${i}" aria-label="查看第 ${i+1} 张照片"><img data-photo-id="${esc(id)}" alt="" loading="lazy"></button>${edit?`${i===0?'<span class="mp-cover">封面</span>':''}<button type="button" class="mp-remove" data-photo-remove="${esc(id)}" aria-label="移除第 ${i+1} 张照片">×</button>`:''}</li>`;
   function editorHTML(list){
     const ids=clean(list);
-    return `<div class="mp-edit" data-photos><div class="mp-head"><span>照片</span><small><b data-photo-count>${ids.length}</b> / ${MAX}</small></div><ul class="mp-grid">${ids.map((id,i)=>tile(id,i,true)).join('')}<li class="mp-add-tile"${ids.length>=MAX?' hidden':''}><label class="mp-add">${camera}<span>添加照片</span><input type="file" accept="image/*" multiple data-photo-input></label></li></ul><p class="mp-hint">照片只存在这台设备上，导出备份时一并带走。</p></div>`;
+    return `<div class="mp-edit" data-photos><div class="mp-head"><span>照片</span><small><b data-photo-count>${ids.length}</b> / ${MAX}</small></div><ul class="mp-grid">${ids.map((id,i)=>tile(id,i,true)).join('')}<li class="mp-add-tile"${ids.length>=MAX?' hidden':''}><label class="mp-add">${camera}<span>添加照片</span><input type="file" accept="image/*" multiple data-photo-input></label></li></ul><p class="mp-hint">照片存在这台设备上，开启云端同步或导出备份时一并带走。</p></div>`;
   }
   function cardHTML(list){
     const ids=clean(list);if(!ids.length)return '';const show=ids.slice(0,3),more=ids.length-show.length;
