@@ -862,7 +862,10 @@ function locateMe(done,fail){
 const MAP={m:null,ready:false,layer:null,amap:null,tiles:null,me:null,loading:null,interactive:false,numbers:new Map(),markers:new Map(),clustered:false};
 // Page scrolling always wins until the reader explicitly chooses to move the map.
 // Wheel zoom stays off for plain scroll; desktop Ctrl/⌘+wheel zooms without trapping the page.
+// On a wide screen with a mouse the map sits beside the list, so dragging never fights page scrolling.
+const MAP_DESK=matchMedia("(min-width:1024px) and (hover:hover) and (pointer:fine)");
 function setMapInteraction(on){
+  if(MAP_DESK.matches)on=true;
   MAP.interactive=!!on;
   if(MAP.m){
     for(const key of ["dragging","touchZoom","doubleClickZoom","boxZoom","keyboard"])MAP.m[key][on?"enable":"disable"]();
@@ -871,8 +874,10 @@ function setMapInteraction(on){
   $("map").classList.toggle("map-passive",!on);
   $("mapInteract").setAttribute("aria-pressed",String(!!on));
   $("mapInteract").textContent=on?"完成移动":"移动地图";
-  $("mapHint").textContent=on?"拖动移动地图，双指缩放":"上下滑动页面，查看下方餐厅";
+  $("mapHint").textContent=MAP_DESK.matches?"拖动移动地图，按住 Ctrl 或 ⌘ 滚动缩放":on?"拖动移动地图，双指缩放":"上下滑动页面，查看下方餐厅";
+  $("mapInteract").hidden=MAP_DESK.matches;
 }
+MAP_DESK.addEventListener?.("change",()=>setMapInteraction(MAP.interactive));
 function loadLeaflet(){
   if(window.L)return Promise.resolve();if(MAP.loading)return MAP.loading;
   const bases=["https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/","https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/","https://unpkg.com/leaflet@1.9.4/dist/"];

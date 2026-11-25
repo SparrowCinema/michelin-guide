@@ -938,3 +938,25 @@ body:not([data-tab="list"]) #updateBanner{display:none}
 .links .log-meal{color:var(--red);font-weight:600}
 .detail-platforms{display:flex;flex-wrap:wrap;align-items:center;gap:6px 14px;margin:10px 0 0;font-size:12px}
 .detail-platforms span{color:var(--muted)}.detail-platforms a{color:var(--red);text-decoration:none}.detail-platforms a:hover{text-decoration:underline}
+/* v65: wide screens get a top navigation, a full-height map beside the list and a dialog without the phone drag handle. */
+@media(min-width:1024px){
+  :root{--tabh:0px}
+  #tabbar.tabbar{top:max(8px,env(safe-area-inset-top,0px));bottom:auto;left:50%;right:auto;transform:translateX(-50%);height:46px;padding:4px;gap:2px;border:1px solid var(--line);border-radius:999px;background:color-mix(in srgb,var(--surface) 94%,transparent);box-shadow:0 4px 14px -10px rgb(40 20 20 / .35);z-index:2100}
+  #tabbar.tabbar button{flex:0 0 auto;flex-direction:row;gap:7px;height:38px;min-height:38px;padding:0 18px;border-radius:999px;font-size:14px}
+  #tabbar.tabbar button svg{width:18px;height:18px}
+  #tabbar.tabbar button[aria-current="page"]{background:color-mix(in srgb,var(--red) 11%,var(--surface));color:var(--red);font-weight:600}
+  #tabbar.tabbar button:hover:not([aria-current]){background:var(--hover);color:var(--fg)}
+  #tabbar.tabbar button b{position:static;margin:0 0 0 2px}
+  .tabbar [data-tab="list"]{order:1}.tabbar [data-tab="map"]{order:2}.tabbar [data-tab="near"]{order:3}.tabbar [data-tab="me"]{order:4}
+  body[data-tab="map"] #intro{display:none}
+  body[data-tab="map"] #mapbox #map{height:calc(100dvh - var(--lbh) - 230px);min-height:420px;max-height:none}
+  #detailDlg .detail-drag,#visitDlg .detail-drag{visibility:hidden}
+}
+@media(min-width:1024px) and (max-width:1180px){#tabbar.tabbar button{padding:0 13px}}
+@media(min-width:1024px){
+  body[data-tab="map"] .travel-map-title{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+  body[data-tab="map"] .journey-tools{margin-top:12px;padding-bottom:10px}
+  body[data-tab="map"] .map-heading{padding:10px 16px}
+  body[data-tab="map"] #mapbox{top:calc(var(--lbh) + 112px)}
+  body[data-tab="map"] #mapbox #map{height:calc(100dvh - var(--lbh) - 260px)}
+}
