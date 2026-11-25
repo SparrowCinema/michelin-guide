@@ -25,5 +25,9 @@ for n in font['name'].names:
  if n.nameID in [1,4,6,16,17]:
   value={1:'Passport Editorial',4:'Passport Editorial',6:'PassportEditorial',16:'Passport Editorial',17:'Regular'}[n.nameID]
   n.string=value.encode(n.getEncoding(),errors='replace')
-font.flavor='woff2';font.save('assets/fonts/passport-editorial.woff2')
-print('glyph characters',len(covered),'bytes',Path('assets/fonts/passport-editorial.woff2').stat().st_size)
+# Two unicode-range slices: Latin and punctuation (small, preloaded) and CJK (fetched only when such text is drawn).
+font.flavor='woff2';font.save('/tmp/passport-editorial-full.woff2')
+for name,keep in [('latin',lambda c:c<0x2E80),('cjk',lambda c:c>=0x2E80)]:
+ part=TTFont('/tmp/passport-editorial-full.woff2');cps=[c for c in part.getBestCmap() if keep(c)]
+ s=subset.Subsetter(options=options);s.populate(unicodes=cps);s.subset(part);part.flavor='woff2';out=Path(f'assets/fonts/passport-editorial-{name}.woff2');part.save(out)
+ print(name,'characters',len(cps),'bytes',out.stat().st_size)

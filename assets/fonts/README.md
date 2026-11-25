@@ -8,7 +8,7 @@ License: SIL Open Font License 1.1, included in OFL-Ma-Shan-Zheng.txt. The title
 
 ## Editorial headings
 
-`passport-editorial.woff2` is a renamed character subset of the variable Noto Serif SC font (weight axis 200–900), downloaded 2026-11-05 from Google Fonts. It covers the current interface and restaurant/destination characters; unsupported future characters fall back to the system serif stack. Headings and restaurant names use it; body text and controls keep the system sans-serif stack. It is self-hosted, preloaded and included in the offline shell.
+`passport-editorial-latin.woff2` and `passport-editorial-cjk.woff2` are two unicode-range slices of a renamed character subset of the variable Noto Serif SC font (weight axis 200–900), downloaded 2026-11-05 from Google Fonts. It covers the current interface and restaurant/destination characters; unsupported future characters fall back to the system serif stack. Headings and restaurant names use it; body text and controls keep the system sans-serif stack. Both slices are self-hosted and in the offline shell; only the small Latin slice (about 90 KB) is preloaded, and the CJK slice (about 1.1 MB) loads without blocking the first paint. Rebuild both with `tools/subset_editorial_font.py`.
 
 Source: https://github.com/google/fonts/tree/main/ofl/notoserifsc
 

@@ -21,12 +21,12 @@ const MGMe=(()=>{
     nav.innerHTML=navItems.map(([key,label,target,mode])=>`<button type="button" data-me-jump="${target}"${mode?` data-me-mode="${mode}"`:''} aria-controls="${target}"><span class="me-jump-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="${icons[key]}"/></svg>${mode?`<b data-me-count="${mode}">0</b>`:''}</span><span>${label}</span></button>`).join('');head.after(nav);
     nav.after($('meStats'));$('meStats').after($('meLv'));
     const passport=$('passportContent').closest('section'),trips=$('tripCards').closest('section');
-    fold('mePassport','美食护照','签章与我的旅行记录',[passport],'passport');
+    fold('mePassport','护照签章','每家去过的餐厅一枚章',[passport],'passport');
     const recap=document.createElement('div');recap.id='meRecap';recap.className='me-fold';
-    recap.innerHTML=`<button type="button" class="me-entry" data-passport-share aria-haspopup="dialog"><svg class="me-ico" viewBox="0 0 24 24" aria-hidden="true"><path d="${icons.recap}"/></svg><span><strong>我的米其林结算地图</strong><small>足迹地图、到访清单与评分 · 生成分享长图</small></span><svg class="me-chev" viewBox="0 0 24 24" aria-hidden="true"><path d="m8 5 7 7-7 7"/></svg></button>`;
+    recap.innerHTML=`<button type="button" class="me-entry" data-passport-share aria-haspopup="dialog"><svg class="me-ico" viewBox="0 0 24 24" aria-hidden="true"><path d="${icons.recap}"/></svg><span><strong>足迹长图与分享</strong><small>足迹地图、到访清单与评分 · 生成分享长图</small></span><svg class="me-chev" viewBox="0 0 24 24" aria-hidden="true"><path d="m8 5 7 7-7 7"/></svg></button>`;
     $('mePassport').after(recap);
     fold('meTrips','旅行美食地图','规划旅程，收藏沿途餐厅',[trips],'trips');
-    const tabs=$('mePage').querySelector('.metabs');fold('meCollection','餐厅清单','想去与去过，随时展开查看',[tabs,$('meList')],'want');
+    const tabs=$('mePage').querySelector('.metabs');fold('meCollection','想去与去过','餐厅清单，随时展开查看',[tabs,$('meList')],'want');
     const more=document.createElement('button');more.id='meMore';more.type='button';more.className='me-more';more.hidden=true;$('meList').after(more);
     more.onclick=()=>{meLimit+=24;renderMe();};
     const backup=$('exportBtn').closest('.card'),appearance=$('themeSeg').closest('.card'),about=$('installBtn').closest('.card');
@@ -60,7 +60,10 @@ const MGMe=(()=>{
     friends.innerHTML=`<a href="https://sparrowcinema.github.io/SparrowTribe/?v=2&amp;lang=${friendLang}#my" target="_blank" rel="noopener noreferrer"><img class="friend-logo" src="assets/tribe-logo.png" alt="" width="44" height="44" loading="lazy"><span class="friend-text"><strong>麻雀观影护照</strong><small>记录光影足迹，收藏每一次观影。</small></span><span aria-hidden="true">↗</span></a>`;
     $('meSettings').after(friends);
     fold('meFriends','友情链接','发现更多生活记录',[friends],'friends');
-    const menu=document.createElement('div');menu.id='meMenu';menu.className='me-menu';$('mePassport').before(menu);['mePassport','meRecap','meTrips','meCollection','meSync','meInstall','meGuide','meSettings','meFriends'].forEach(id=>{if($(id))menu.append($(id));});
+    const menu=document.createElement('div');menu.id='meMenu';menu.className='me-menu';$('mePassport').before(menu);['meCollection','mePassport','meTrips','meRecap'].forEach(id=>{if($(id))menu.append($(id));});
+    // Everyday lists first; setup and help sit under their own small heading.
+    const minor=document.createElement('p');minor.className='me-menu-label';minor.textContent='设置与帮助';menu.append(minor);
+    ['meSync','meInstall','meGuide','meSettings','meFriends'].forEach(id=>{if($(id)){$(id).classList.add('me-fold-minor');menu.append($(id));}});
     menu.addEventListener('click',e=>{
       const sum=e.target.closest('details.me-fold > summary');if(!sum)return;
       const item=sum.parentElement;

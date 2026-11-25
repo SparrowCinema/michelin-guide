@@ -9,9 +9,10 @@ const {chromium}=require('playwright');
   const ver=swText.match(/const ASSET_VER = "([^"]+)"/)[1];
   const cssText=fs.readFileSync(path.join(base,'upgrade.css'),'utf8');
   const htmlText=fs.readFileSync(path.join(base,'index.html'),'utf8');
-  // Font preload and @font-face must share the exact same asset version (no duplicate 1.2 MB download).
-  assert(htmlText.includes('passport-editorial.woff2?v='+ver),'index.html preload font version mismatch');
-  assert(cssText.includes('passport-editorial.woff2?v='+ver),'upgrade.css @font-face version mismatch');
+  // Font preload and @font-face must share the exact same asset version; only the small Latin slice is preloaded.
+  assert(htmlText.includes('passport-editorial-latin.woff2?v='+ver),'index.html preload font version mismatch');
+  assert(!htmlText.includes('passport-editorial-cjk.woff2'),'the large CJK slice must not be preloaded');
+  assert(cssText.includes('passport-editorial-latin.woff2?v='+ver)&&cssText.includes('passport-editorial-cjk.woff2?v='+ver),'upgrade.css @font-face version mismatch');
 
   const server=http.createServer((req,res)=>{
     let p=path.resolve(base,'.'+decodeURIComponent(new URL(req.url,'http://localhost').pathname));
@@ -38,7 +39,7 @@ const {chromium}=require('playwright');
     const page=await ctx.newPage(),errors=[];
     page.on('pageerror',e=>errors.push('zh: '+e.message));
     const fontReqs=[];
-    page.on('request',req=>{if(req.url().includes('passport-editorial.woff2'))fontReqs.push(req.url());});
+    page.on('request',req=>{if(req.url().includes('passport-editorial-latin.woff2'))fontReqs.push(req.url());});
 
     await page.goto(url+'/?lang=zh');
     await page.waitForFunction(()=>typeof DB!=='undefined'&&DB&&document.getElementById('mePassport'));
